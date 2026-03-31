@@ -3631,73 +3631,93 @@ window.loadProjectFromFile = function(event) {
 
 window.exportEverythingAsZip = async function() {
     const exportBtn = document.getElementById('exportBtn');
-    if (exportBtn) exportBtn.innerText = "⏳ Bundling Art...";
+    if (exportBtn) exportBtn.innerText = "⏳ Bundling Assets...";
 
-    const zip = new JSZip();
-    let clone = document.documentElement.cloneNode(true);
-    
-    // 1. Handle the Uploaded Card Art (The Fix)
-    if (uploadedArtFile) {
-        const fileName = uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
+    try {
+        const zip = new JSZip();
+        let clone = document.documentElement.cloneNode(true);
         
-        // Add the actual file data to the ZIP
-        zip.file(fileName, uploadedArtFile);
+        // 1. Handle the Uploaded Card Art (Using the global window variables)
+        if (window.uploadedArtFile) {
+            const fileName = window.uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
+            
+            // Add the actual file data to the ZIP
+            zip.file(fileName, window.uploadedArtFile);
 
-        // Update the exported HTML to point to this new local file
-        if (uploadedArtType === 'video') {
-            const videoSource = clone.querySelector('#myOverlayVideo source');
-            const videoTag = clone.querySelector('#myOverlayVideo');
-            if (videoSource) videoSource.setAttribute('src', fileName);
-            if (videoTag) videoTag.setAttribute('src', fileName);
-        } else {
-            const imageTag = clone.querySelector('#myOverlayImage');
-            if (imageTag) imageTag.setAttribute('src', fileName);
-        }
-    }
-
-    // 2. Clear out UI boxes from the final page
-    const toRemove = ['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
-    toRemove.forEach(sel => {
-        clone.querySelectorAll(sel).forEach(el => el.remove());
-    });
-    
-    clone.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
-    clone.querySelectorAll('[onclick]').forEach(el => el.removeAttribute('onclick'));
-
-    const assetPaths = new Set();
-
-    // 3. Collect standard assets (CSS/Images)
-    clone.querySelectorAll('link[rel="stylesheet"], img').forEach(el => {
-        const attr = el.tagName === 'LINK' ? 'href' : 'src';
-        const path = el.getAttribute(attr);
-        // Only collect local files, skip Imgur/External links
-        if (path && !path.startsWith('http') && !path.startsWith('data:') && !path.startsWith('blob:')) {
-            assetPaths.add(path);
-        }
-    });
-
-    const fetchPromises = Array.from(assetPaths).map(async (path) => {
-        try {
-            const response = await fetch(path);
-            if (response.ok) {
-                const blob = await response.blob();
-                zip.file(path.replace(/^\.\//, ''), blob);
+            // Update the exported HTML to point to this new local file
+            if (window.uploadedArtType === 'video') {
+                const videoSource = clone.querySelector('#myOverlayVideo source');
+                const videoTag = clone.querySelector('#myOverlayVideo');
+                if (videoSource) videoSource.setAttribute('src', fileName);
+                if (videoTag) videoTag.setAttribute('src', fileName);
+            } else {
+                const imageTag = clone.querySelector('#myOverlayImage');
+                if (imageTag) imageTag.setAttribute('src', fileName);
             }
-        } catch (e) {
-            console.warn("Skipping asset (CORS or missing): " + path);
         }
-    });
 
-    await Promise.all(fetchPromises);
-    
-    zip.file("index.html", "<!DOCTYPE html>\n" + clone.outerHTML);
-    const content = await zip.generateAsync({type: "blob"});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = (document.getElementById("nameInput").value || "DokkanCard") + ".zip";
-    link.click();
-    
-    if (exportBtn) exportBtn.innerText = "🚀 Export Final Website";
+        // 2. Clear out UI boxes from the final page
+        const toRemove = ['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
+        toRemove.forEach(sel => {
+            clone.querySelectorAll(sel).forEach(el => el.remove());
+        });
+        
+        clone.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
+        clone.querySelectorAll('[onclick]').forEach(el => {
+            el.removeAttribute('onclick');
+            if (el.style.cursor === 'pointer') el.style.cursor = 'default';
+        });
+
+        // 3. Collect standard assets (CSS/Images/Videos)
+        const assetPaths = new Set();
+
+        clone.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('http') && !href.startsWith('data:') && !href.startsWith('blob:')) assetPaths.add(href);
+        });
+
+        clone.querySelectorAll('img').forEach(img => {
+            const src = img.getAttribute('src');
+            if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
+        });
+        
+        clone.querySelectorAll('source').forEach(vid => {
+            const src = vid.getAttribute('src');
+            if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
+        });
+
+        const fetchPromises = Array.from(assetPaths).map(async (path) => {
+            try {
+                const response = await fetch(path);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    let cleanPath = path.replace(/^\.\//, ''); 
+                    zip.file(cleanPath, blob);
+                }
+            } catch (e) {
+                console.warn("Could not ZIP bundle external asset: " + path);
+            }
+        });
+
+        await Promise.all(fetchPromises);
+        
+        // 4. Generate ZIP and Download
+        zip.file("index.html", "<!DOCTYPE html>\n" + clone.outerHTML);
+        const content = await zip.generateAsync({type: "blob"});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        const nameInput = document.getElementById("nameInput");
+        link.download = (nameInput && nameInput.value ? nameInput.value : "DokkanCard") + ".zip";
+        link.click();
+        
+    } catch (error) {
+        console.error("Export Error:", error);
+        alert("Something went wrong during export. Please check the console.");
+    } finally {
+        // Reset button text even if it succeeds or fails
+        if (exportBtn) exportBtn.innerText = "🚀 Export Final Website";
+    }
 };
 
 
@@ -3899,25 +3919,27 @@ if(btnRemoveSa) {
         });
     }
 
-   // --- ART UPLOAD LOGIC (VIDEO OR IMAGE) ---
+
+// --- ART UPLOAD LOGIC (VIDEO OR IMAGE) ---
+// Using window. so the export function can access them globally
+window.uploadedArtFile = null;
+window.uploadedArtType = null;
+
 const vidUpload = document.getElementById('videoUpload');
 const imgUpload = document.getElementById('imageUpload');
 const vidOverlay = document.getElementById('myOverlayVideo');
 const imgOverlay = document.getElementById('myOverlayImage');
-
-// Variable to hold the actual file objects for exporting
-let uploadedArtFile = null;
-let uploadedArtType = null; // 'video' or 'image'
 
 // Handle Video Upload
 if (vidUpload && vidOverlay && imgOverlay) {
     vidUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            uploadedArtFile = f; // Store for export
-            uploadedArtType = 'video';
+            window.uploadedArtFile = f; // Store for export
+            window.uploadedArtType = 'video';
             vidOverlay.style.display = 'block';
             imgOverlay.style.display = 'none';
+            vidOverlay.pause();
             vidOverlay.src = URL.createObjectURL(f);
             vidOverlay.load();
             vidOverlay.play();
@@ -3930,11 +3952,12 @@ if (imgUpload && imgOverlay && vidOverlay) {
     imgUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            uploadedArtFile = f; // Store for export
-            uploadedArtType = 'image';
+            window.uploadedArtFile = f; // Store for export
+            window.uploadedArtType = 'image';
             imgOverlay.style.display = 'block';
             vidOverlay.style.display = 'none';
-            vidOverlay.src = URL.createObjectURL(f);
+            vidOverlay.pause(); // stop video if playing
+            imgOverlay.src = URL.createObjectURL(f);
         }
     });
 }
