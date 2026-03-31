@@ -31,35 +31,31 @@
     }
 }
 
-/* The Icon Glow */
 .special-skill-glow-effect {
     width: 32px;
     height: 32px;
     object-fit: contain;
     
-    /* 1. Set the initial shadow */
-    filter: drop-shadow(0 0 5px var(--lightning-color, rgb(255, 255, 255)));
-
-    /* 2. Apply the animation */
-    /* 2s duration, smooth easing, repeats forever */
-    animation: pulse-white 2s ease-in-out infinite;
+    /* 
+       Stacking Filters: 
+       1. The black shadow (tight to the icon for definition)
+       2. The white glow (behind the black shadow)
+    */
+    filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 5px #fff);
+    
+    animation: black-white-pulse 2s ease-in-out infinite;
 }
 
-/* 3. Define the animation steps */
-@keyframes pulse-white {
-    0% {
-        filter: drop-shadow(0 0 5px var(--lightning-color, rgb(255, 255, 255)));
-        transform: scale(1);
+@keyframes black-white-pulse {
+    0%, 100% {
+        /* Black shadow stays the same, white glow is small */
+        filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
     }
     50% {
-        /* Glow becomes larger and turns white at the peak */
-        filter: drop-shadow(0 0 12px rgb(255, 255, 255));
-        /* Optional: makes the icon grow slightly for more "punch" */
-        transform: scale(1.1); 
-    }
-    100% {
-        filter: drop-shadow(0 0 5px var(--lightning-color, rgb(255, 255, 255)));
-        transform: scale(1);
+        /* Black shadow stays the same, white glow expands and brightens */
+        filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 12px rgba(255, 255, 255, 1));
+        /* Optional: slight scale up for extra effect */
+        transform: scale(1.05);
     }
 }
 
