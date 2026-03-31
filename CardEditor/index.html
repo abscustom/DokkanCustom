@@ -3639,6 +3639,75 @@ window.exportEverythingAsZip = async function() {
     try {
         const zip = new JSZip();
         let clone = document.documentElement.cloneNode(true);
+
+// --- START OF META DATA UPDATE ---
+const charTitle = document.getElementById("descInput").value;
+const charName = document.getElementById("nameInput").value;
+const leaderSkill = document.getElementById("leaderInput").value;
+const artUrl = document.getElementById("imageInput").value || "https://i.imgur.com/7E8KqH3.png";
+const fullDisplayName = `[${charTitle}] ${charName}`;
+
+// 1. Update Browser Tab Title
+if (clone.querySelector('title')) {
+    clone.querySelector('title').innerText = fullDisplayName;
+}
+
+// 2. Update Meta Name Tags ([Title] Name)
+const nameSelectors = [
+    'meta[itemprop="name"]',
+    'meta[property="og:title"]',
+    'meta[name="twitter:title"]',
+    'meta[name="apple-mobile-web-app-title"]'
+];
+nameSelectors.forEach(sel => {
+    const el = clone.querySelector(sel);
+    if (el) el.setAttribute('content', fullDisplayName);
+});
+
+// 3. Update Meta Description Tags (Leader Skill)
+const descSelectors = [
+    'meta[name="description"]',
+    'meta[itemprop="description"]',
+    'meta[property="og:description"]',
+    'meta[property="twitter:description"]'
+];
+descSelectors.forEach(sel => {
+    const el = clone.querySelector(sel);
+    if (el) el.setAttribute('content', leaderSkill);
+});
+
+// 4. Update Meta Image Tags (Card Art URL)
+const imgSelectors = [
+    'meta[itemprop="image"]',
+    'meta[property="og:image"]',
+    'meta[name="twitter:image"]'
+];
+imgSelectors.forEach(sel => {
+    const el = clone.querySelector(sel);
+    if (el) el.setAttribute('content', artUrl);
+});
+
+// Update the <title> tag
+if (clone.querySelector('title')) {
+    clone.querySelector('title').innerText = fullTitle;
+}
+
+// Optional: Update social media meta tags so they look correct when shared
+const metaTitleSelectors = [
+    'meta[itemprop="name"]',
+    'meta[property="og:title"]',
+    'meta[name="twitter:title"]',
+    'meta[name="apple-mobile-web-app-title"]'
+];
+
+metaTitleSelectors.forEach(selector => {
+    const metaTag = clone.querySelector(selector);
+    if (metaTag) metaTag.setAttribute('content', fullTitle);
+});
+// ------------------------
+    
+// Clear out UI boxes from the static final page
+const toRemove =['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
         
         // 1. Handle the Uploaded Card Art (Using the global window variables)
         if (window.uploadedArtFile) {
@@ -3711,7 +3780,7 @@ window.exportEverythingAsZip = async function() {
         const link = document.createElement('a');
         link.href = URL.createObjectURL(content);
         const nameInput = document.getElementById("nameInput");
-        link.download = (nameInput && nameInput.value ? nameInput.value : "DokkanCard") + ".zip";
+        link.download = `[${charTitle}] ${charName}.zip`;
         link.click();
         
     } catch (error) {
