@@ -3631,45 +3631,49 @@ window.loadProjectFromFile = function(event) {
 
 window.exportEverythingAsZip = async function() {
     const exportBtn = document.getElementById('exportBtn');
-    if (exportBtn) exportBtn.innerText = "⏳ Gathering Files...";
+    if (exportBtn) exportBtn.innerText = "⏳ Bundling Art...";
 
     const zip = new JSZip();
     let clone = document.documentElement.cloneNode(true);
     
-    // Clear out UI boxes from the static final page
-    const toRemove =['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
+    // 1. Handle the Uploaded Card Art (The Fix)
+    if (uploadedArtFile) {
+        const fileName = uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
+        
+        // Add the actual file data to the ZIP
+        zip.file(fileName, uploadedArtFile);
+
+        // Update the exported HTML to point to this new local file
+        if (uploadedArtType === 'video') {
+            const videoSource = clone.querySelector('#myOverlayVideo source');
+            const videoTag = clone.querySelector('#myOverlayVideo');
+            if (videoSource) videoSource.setAttribute('src', fileName);
+            if (videoTag) videoTag.setAttribute('src', fileName);
+        } else {
+            const imageTag = clone.querySelector('#myOverlayImage');
+            if (imageTag) imageTag.setAttribute('src', fileName);
+        }
+    }
+
+    // 2. Clear out UI boxes from the final page
+    const toRemove = ['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
     toRemove.forEach(sel => {
         clone.querySelectorAll(sel).forEach(el => el.remove());
     });
     
-    // ----------------------------------------------------
-    // IMPORTANT: Make the output Card static and un-editable!
-    // ----------------------------------------------------
     clone.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
-    
-    // Disarm Category and Link deletion commands & resets their mouse cursors
-    clone.querySelectorAll('[onclick]').forEach(el => {
-        el.removeAttribute('onclick');
-        if (el.style.cursor === 'pointer') {
-            el.style.cursor = 'default';
-        }
-    });
+    clone.querySelectorAll('[onclick]').forEach(el => el.removeAttribute('onclick'));
 
     const assetPaths = new Set();
 
-    clone.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && !href.startsWith('http') && !href.startsWith('data:') && !href.startsWith('blob:')) assetPaths.add(href);
-    });
-
-    clone.querySelectorAll('img').forEach(img => {
-        const src = img.getAttribute('src');
-        if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
-    });
-    
-    clone.querySelectorAll('source').forEach(vid => {
-        const src = vid.getAttribute('src');
-        if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
+    // 3. Collect standard assets (CSS/Images)
+    clone.querySelectorAll('link[rel="stylesheet"], img').forEach(el => {
+        const attr = el.tagName === 'LINK' ? 'href' : 'src';
+        const path = el.getAttribute(attr);
+        // Only collect local files, skip Imgur/External links
+        if (path && !path.startsWith('http') && !path.startsWith('data:') && !path.startsWith('blob:')) {
+            assetPaths.add(path);
+        }
     });
 
     const fetchPromises = Array.from(assetPaths).map(async (path) => {
@@ -3677,11 +3681,10 @@ window.exportEverythingAsZip = async function() {
             const response = await fetch(path);
             if (response.ok) {
                 const blob = await response.blob();
-                let cleanPath = path.replace(/^\.\//, ''); 
-                zip.file(cleanPath, blob);
+                zip.file(path.replace(/^\.\//, ''), blob);
             }
         } catch (e) {
-            console.warn("Could not ZIP bundle external asset: " + path);
+            console.warn("Skipping asset (CORS or missing): " + path);
         }
     });
 
@@ -3691,7 +3694,7 @@ window.exportEverythingAsZip = async function() {
     const content = await zip.generateAsync({type: "blob"});
     const link = document.createElement('a');
     link.href = URL.createObjectURL(content);
-    link.download = (document.getElementById("nameInput").value);
+    link.download = (document.getElementById("nameInput").value || "DokkanCard") + ".zip";
     link.click();
     
     if (exportBtn) exportBtn.innerText = "🚀 Export Final Website";
@@ -3902,16 +3905,19 @@ const imgUpload = document.getElementById('imageUpload');
 const vidOverlay = document.getElementById('myOverlayVideo');
 const imgOverlay = document.getElementById('myOverlayImage');
 
+// Variable to hold the actual file objects for exporting
+let uploadedArtFile = null;
+let uploadedArtType = null; // 'video' or 'image'
+
 // Handle Video Upload
 if (vidUpload && vidOverlay && imgOverlay) {
     vidUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            // Show video, hide image
+            uploadedArtFile = f; // Store for export
+            uploadedArtType = 'video';
             vidOverlay.style.display = 'block';
             imgOverlay.style.display = 'none';
-            
-            vidOverlay.pause();
             vidOverlay.src = URL.createObjectURL(f);
             vidOverlay.load();
             vidOverlay.play();
@@ -3924,12 +3930,11 @@ if (imgUpload && imgOverlay && vidOverlay) {
     imgUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            // Show image, hide video
+            uploadedArtFile = f; // Store for export
+            uploadedArtType = 'image';
             imgOverlay.style.display = 'block';
             vidOverlay.style.display = 'none';
-            vidOverlay.pause(); // stop video if playing
-            
-            imgOverlay.src = URL.createObjectURL(f);
+            vidOverlay.src = URL.createObjectURL(f);
         }
     });
 }
