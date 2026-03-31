@@ -23,6 +23,16 @@
 
 <style>
 
+    /* By default, hide the APNG and show the video */
+.apng-fallback { display: none; }
+.lightning-overlay { display: block; }
+
+/* If it's an iOS device (which often handles APNG better than WebM transparency) */
+@supports (-webkit-touch-callout: none) {
+    .apng-fallback { display: block; }
+    .lightning-overlay { display: none; }
+}
+    
 /* Container for the icon: Dark box */
 
 
@@ -2066,7 +2076,7 @@ abscustom">
   
 
                       </div>
-                      <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0px;">
+                      <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0;">
     
     <!-- BOTTOM LAYER: The Dial -->
     <img class="lr-spin-dial" src="./images/lr_spin_dial.png" alt="spin-effect">
@@ -2074,7 +2084,7 @@ abscustom">
     <!-- MIDDLE LAYER: The Lightning Video -->
     <video class="lightning-overlay" autoplay muted loop playsinline>
        
-        <source src="./images/lightningfx.mov" type="video/quicktime">
+        <img src="lightningSafariAPNG.png" class="apng-fallback" alt="Animation">
         
         <source src="./images/lightningfx.webm" type="video/webm">
         
