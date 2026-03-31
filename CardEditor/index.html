@@ -37,25 +37,26 @@
     object-fit: contain;
     
     /* 
-       Stacking Filters: 
-       1. The black shadow (tight to the icon for definition)
-       2. The white glow (behind the black shadow)
+       Tight Stack:
+       1. Black shadow: 1px (very sharp)
+       2. White glow: 2px (very tight)
     */
-    filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 5px #fff);
+    filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 2px #fff);
     
-    animation: black-white-pulse 2s ease-in-out infinite;
+    animation: tight-white-pulse 1.5s ease-in-out infinite;
 }
 
-@keyframes black-white-pulse {
+@keyframes tight-white-pulse {
     0%, 100% {
-        /* Black shadow stays the same, white glow is small */
-        filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 4px rgba(255, 255, 255, 0.6));
+        /* Glow is barely visible, very close to the edge */
+        filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 1px rgba(255, 255, 255, 0.8));
     }
     50% {
-        /* Black shadow stays the same, white glow expands and brightens */
-        filter: drop-shadow(0 0 2px #000) drop-shadow(0 0 12px rgba(255, 255, 255, 1));
-        /* Optional: slight scale up for extra effect */
-        transform: scale(1.05);
+        /* Glow expands only slightly (to 4px) but gets very bright */
+        /* Stacking two 3px shadows makes it look 'thicker' without being 'blurry' */
+        filter: drop-shadow(0 0 1px #000) 
+                drop-shadow(0 0 3px #fff) 
+                drop-shadow(0 0 3px #fff);
     }
 }
 
