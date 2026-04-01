@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<!-- saved from url=(0058)file:///C:/Users/Ruffy/Desktop/NamekGokuWebsite/index.html -->
+
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -8,9 +8,10 @@
     
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
 
+    <link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png" sizes="48x48">
     
     
-
+        
 
 
     <link rel="stylesheet" href="style.css">
@@ -22,16 +23,41 @@
 
 <style>
 
-/* Container for the icon: Dark box */
 
+/* Target only iOS/Safari devices to hide the broken video */
+@supports (-webkit-touch-callout: none) {
+    .lightning-overlay {
+        display: none !important;
+    }
+}
 
-/* The Icon Glow */
 .special-skill-glow-effect {
     width: 32px;
     height: 32px;
     object-fit: contain;
-    /* Uses the same dynamic color as your lightning overlay */
-    filter: drop-shadow(0 0 5px var(--lightning-color, rgb(0, 0, 0)));
+    
+    /* 
+       Tight Stack:
+       1. Black shadow: 1px (very sharp)
+       2. White glow: 2px (very tight)
+    */
+    filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 2px #fff);
+    
+    animation: tight-white-pulse 1.5s ease-in-out infinite;
+}
+
+@keyframes tight-white-pulse {
+    0%, 100% {
+        /* Glow is barely visible, very close to the edge */
+        filter: drop-shadow(0 0 1px #000) drop-shadow(0 0 1px rgba(255, 255, 255, 0.8));
+    }
+    50% {
+        /* Glow expands only slightly (to 4px) but gets very bright */
+        /* Stacking two 3px shadows makes it look 'thicker' without being 'blurry' */
+        filter: drop-shadow(0 0 1px #000) 
+                drop-shadow(0 0 3px #fff) 
+                drop-shadow(0 0 3px #fff);
+    }
 }
 
   /* The Glow Effect for the selected editing row */
@@ -624,7 +650,7 @@
   <!-- / Venatus Ad Manager -->
    
   <!-- Icon image -->
-  <link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png" sizes="48x48">
+ 
   <link rel="preload" as="style" href="./images/app.5abbaa9e.css">
   
   <link rel="stylesheet" href="./images/app.faebf566.css">
@@ -646,24 +672,24 @@
   <meta property="og:site_name" content="abs Info">
   <meta name="application-name" content="Dokkan Info!">
 
-  <meta itemprop="name" content="[Instinct and Destruction Intertwined]
-Goku (Ultra Instinct) + Vegeta (Ultra Ego)">
-  <meta property="og:title" content="[Instinct and Destruction Intertwined]
-Goku (Ultra Instinct) + Vegeta (Ultra Ego)">
-  <meta name="twitter:title" content="[Instinct and Destruction Intertwined]
-Goku (Ultra Instinct) + Vegeta (Ultra Ego)">
-  <meta name="apple-mobile-web-app-title" content="[Instinct and Destruction Intertwined]
-Goku (Ultra Instinct) + Vegeta (Ultra Ego)">
+  <meta itemprop="name" content="[Editor]
+abscustom">
+  <meta property="og:title" content="[Editor]
+abscustom">
+  <meta name="twitter:title" content="[Editor]
+abscustom">
+  <meta name="apple-mobile-web-app-title" content="[Editor]
+abscustom">
 
 
   <meta itemprop="image" content="https://i.imgur.com/7E8KqH3.png">
   <meta property="og:image" content="https://i.imgur.com/7E8KqH3.png">
   <meta name="twitter:image" content="https://i.imgur.com/7E8KqH3.png">
 
-  <meta name="description" id="meta-description" content="Realm of Gods Category Ki +4 and HP, ATK & DEF +220%">
-  <meta itemprop="description" id="meta-itemprop-description" content="Realm of Gods Category Ki +4 and HP, ATK & DEF +220%">
-  <meta property="og:description" id="meta-og-description" content="Realm of Gods Category Ki +4 and HP, ATK & DEF +220%">
-  <meta property="twitter:description" id="meta-twitter-description" content="Realm of Gods Category Ki +4 and HP, ATK & DEF +220%">
+  <meta name="description" id="meta-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+  <meta itemprop="description" id="meta-itemprop-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+  <meta property="og:description" id="meta-og-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+  <meta property="twitter:description" id="meta-twitter-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
 
   <title>
     [Instinct and Destruction Intertwined] Goku (Ultra Instinct) + Vegeta (Ultra Ego)
@@ -2065,15 +2091,14 @@ Goku (Ultra Instinct) + Vegeta (Ultra Ego)">
   
 
                       </div>
-                      <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0px;">
+                      <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0; position: relative;">
     
     <!-- BOTTOM LAYER: The Dial -->
     <img class="lr-spin-dial" src="./images/lr_spin_dial.png" alt="spin-effect">
 
-    <!-- MIDDLE LAYER: The Lightning Video -->
+    <!-- MIDDLE LAYER: The Lightning Video (Hidden on mobile via CSS) -->
     <video class="lightning-overlay" autoplay muted loop playsinline>
         <source src="./images/lightningfx.webm" type="video/webm">
-        <source src="./images/lightningfx.mov" type="video/mov">
     </video>
 
     <!-- TOP LAYER: The Character Image -->
@@ -3630,70 +3655,134 @@ window.loadProjectFromFile = function(event) {
 
 window.exportEverythingAsZip = async function() {
     const exportBtn = document.getElementById('exportBtn');
-    if (exportBtn) exportBtn.innerText = "⏳ Gathering Files...";
+    if (exportBtn) exportBtn.innerText = "⏳ Bundling Assets...";
 
-    const zip = new JSZip();
-    let clone = document.documentElement.cloneNode(true);
-    
-    // Clear out UI boxes from the static final page
-    const toRemove =['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
-    toRemove.forEach(sel => {
-        clone.querySelectorAll(sel).forEach(el => el.remove());
-    });
-    
-    // ----------------------------------------------------
-    // IMPORTANT: Make the output Card static and un-editable!
-    // ----------------------------------------------------
-    clone.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
-    
-    // Disarm Category and Link deletion commands & resets their mouse cursors
-    clone.querySelectorAll('[onclick]').forEach(el => {
-        el.removeAttribute('onclick');
-        if (el.style.cursor === 'pointer') {
-            el.style.cursor = 'default';
+    try {
+        const zip = new JSZip();
+        let clone = document.documentElement.cloneNode(true);
+
+        // --- 1. GET DATA FROM INPUTS ---
+        const charTitle = document.getElementById("descInput").value;
+        const charName = document.getElementById("nameInput").value;
+        const leaderSkill = document.getElementById("leaderInput").value;
+        const artUrl = document.getElementById("imageInput").value || "https://i.imgur.com/7E8KqH3.png";
+        const fullDisplayName = `[${charTitle}] ${charName}`;
+
+        // --- 2. UPDATE CLONE TITLE & META DATA ---
+        
+        // Update Browser Tab Title
+        if (clone.querySelector('title')) {
+            clone.querySelector('title').innerText = fullDisplayName;
         }
-    });
 
-    const assetPaths = new Set();
+        // Update Meta Name Tags ([Title] Name)
+        const nameSelectors = [
+            'meta[itemprop="name"]',
+            'meta[property="og:title"]',
+            'meta[name="twitter:title"]',
+            'meta[name="apple-mobile-web-app-title"]'
+        ];
+        nameSelectors.forEach(sel => {
+            const el = clone.querySelector(sel);
+            if (el) el.setAttribute('content', fullDisplayName);
+        });
 
-    clone.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-        const href = link.getAttribute('href');
-        if (href && !href.startsWith('http') && !href.startsWith('data:') && !href.startsWith('blob:')) assetPaths.add(href);
-    });
+        // Update Meta Description Tags (Leader Skill)
+        const descSelectors = [
+            'meta[name="description"]',
+            'meta[itemprop="description"]',
+            'meta[property="og:description"]',
+            'meta[property="twitter:description"]'
+        ];
+        descSelectors.forEach(sel => {
+            const el = clone.querySelector(sel);
+            if (el) el.setAttribute('content', leaderSkill);
+        });
 
-    clone.querySelectorAll('img').forEach(img => {
-        const src = img.getAttribute('src');
-        if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
-    });
-    
-    clone.querySelectorAll('source').forEach(vid => {
-        const src = vid.getAttribute('src');
-        if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
-    });
+        // Update Meta Image Tags (Card Art URL from Sidebar)
+        const imgSelectors = [
+            'meta[itemprop="image"]',
+            'meta[property="og:image"]',
+            'meta[name="twitter:image"]'
+        ];
+        imgSelectors.forEach(sel => {
+            const el = clone.querySelector(sel);
+            if (el) el.setAttribute('content', artUrl);
+        });
 
-    const fetchPromises = Array.from(assetPaths).map(async (path) => {
-        try {
-            const response = await fetch(path);
-            if (response.ok) {
-                const blob = await response.blob();
-                let cleanPath = path.replace(/^\.\//, ''); 
-                zip.file(cleanPath, blob);
+        // --- 3. HANDLE UPLOADED LOCAL FILES ---
+        if (window.uploadedArtFile) {
+            const fileName = window.uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
+            zip.file(fileName, window.uploadedArtFile);
+
+            if (window.uploadedArtType === 'video') {
+                const videoSource = clone.querySelector('#myOverlayVideo source');
+                const videoTag = clone.querySelector('#myOverlayVideo');
+                if (videoSource) videoSource.setAttribute('src', fileName);
+                if (videoTag) videoTag.setAttribute('src', fileName);
+            } else {
+                const imageTag = clone.querySelector('#myOverlayImage');
+                if (imageTag) imageTag.setAttribute('src', fileName);
             }
-        } catch (e) {
-            console.warn("Could not ZIP bundle external asset: " + path);
         }
-    });
 
-    await Promise.all(fetchPromises);
-    
-    zip.file("index.html", "<!DOCTYPE html>\n" + clone.outerHTML);
-    const content = await zip.generateAsync({type: "blob"});
-    const link = document.createElement('a');
-    link.href = URL.createObjectURL(content);
-    link.download = (document.getElementById("nameInput").value);
-    link.click();
-    
-    if (exportBtn) exportBtn.innerText = "🚀 Export Final Website";
+        // --- 4. CLEANUP UI ELEMENTS ---
+        const toRemove = ['#editor', '#toggleBtn', '#exportBtn', 'script', 'template', '.form-controls', '.upload-icon'];
+        toRemove.forEach(sel => {
+            clone.querySelectorAll(sel).forEach(el => el.remove());
+        });
+        
+        clone.querySelectorAll('[contenteditable="true"]').forEach(el => el.removeAttribute('contenteditable'));
+        clone.querySelectorAll('[onclick]').forEach(el => {
+            el.removeAttribute('onclick');
+            if (el.style.cursor === 'pointer') el.style.cursor = 'default';
+        });
+
+        // --- 5. COLLECT ASSETS (CSS/Images/Videos) ---
+        const assetPaths = new Set();
+        clone.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            const href = link.getAttribute('href');
+            if (href && !href.startsWith('http') && !href.startsWith('data:') && !href.startsWith('blob:')) assetPaths.add(href);
+        });
+        clone.querySelectorAll('img').forEach(img => {
+            const src = img.getAttribute('src');
+            if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
+        });
+        clone.querySelectorAll('source').forEach(vid => {
+            const src = vid.getAttribute('src');
+            if (src && !src.startsWith('http') && !src.startsWith('data:') && !src.startsWith('blob:')) assetPaths.add(src);
+        });
+
+        const fetchPromises = Array.from(assetPaths).map(async (path) => {
+            try {
+                const response = await fetch(path);
+                if (response.ok) {
+                    const blob = await response.blob();
+                    let cleanPath = path.replace(/^\.\//, ''); 
+                    zip.file(cleanPath, blob);
+                }
+            } catch (e) {
+                console.warn("Could not ZIP bundle external asset: " + path);
+            }
+        });
+
+        await Promise.all(fetchPromises);
+        
+        // --- 6. GENERATE ZIP AND DOWNLOAD ---
+        zip.file("index.html", "<!DOCTYPE html>\n" + clone.outerHTML);
+        const content = await zip.generateAsync({type: "blob"});
+        
+        const link = document.createElement('a');
+        link.href = URL.createObjectURL(content);
+        link.download = `${fullDisplayName}.zip`; // Use the character name for the zip file
+        link.click();
+        
+    } catch (error) {
+        console.error("Export Error:", error);
+        alert("Something went wrong during export. Please check the console.");
+    } finally {
+        if (exportBtn) exportBtn.innerText = "🚀 Export Final Website";
+    }
 };
 
 
@@ -3895,7 +3984,12 @@ if(btnRemoveSa) {
         });
     }
 
-   // --- ART UPLOAD LOGIC (VIDEO OR IMAGE) ---
+
+// --- ART UPLOAD LOGIC (VIDEO OR IMAGE) ---
+// Using window. so the export function can access them globally
+window.uploadedArtFile = null;
+window.uploadedArtType = null;
+
 const vidUpload = document.getElementById('videoUpload');
 const imgUpload = document.getElementById('imageUpload');
 const vidOverlay = document.getElementById('myOverlayVideo');
@@ -3906,10 +4000,10 @@ if (vidUpload && vidOverlay && imgOverlay) {
     vidUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            // Show video, hide image
+            window.uploadedArtFile = f; // Store for export
+            window.uploadedArtType = 'video';
             vidOverlay.style.display = 'block';
             imgOverlay.style.display = 'none';
-            
             vidOverlay.pause();
             vidOverlay.src = URL.createObjectURL(f);
             vidOverlay.load();
@@ -3923,11 +4017,11 @@ if (imgUpload && imgOverlay && vidOverlay) {
     imgUpload.addEventListener("change", function(event) {
         const f = event.target.files[0];
         if(f) {
-            // Show image, hide video
+            window.uploadedArtFile = f; // Store for export
+            window.uploadedArtType = 'image';
             imgOverlay.style.display = 'block';
             vidOverlay.style.display = 'none';
             vidOverlay.pause(); // stop video if playing
-            
             imgOverlay.src = URL.createObjectURL(f);
         }
     });
@@ -3970,16 +4064,16 @@ const skillTitles = {
 // 1. Pre-written descriptions map
 const skillTemplates = {
     "UgDef.png": "After receiving [n] or more attack(s) in battle,:once:DEF [n]%:up:, damage reduction rate [n]%:up:when receiving a Super Attack temporarily and fully recovers HP at the end of turn",
-    "UgCharge.png": "After obtaining a total of [n] Ki Sphere(s) or more,:once:ATK [n]%:up:and Ki +[n] when performing a Super Attack starting from the character's next attacking turn",
-    "UgAvoid.png": ":once:Evades enemy's Super Attack(s) starting from the character's next attacking turn after evading [n] or more attacks in battle",
-    "UgAtk.png": "After performing [n] or more attack(s) in battle,:once:launches [n] additional Super Attack(s) and ATK [n]%:up:for [n] turn(s)",
-    "UgCounter.png": "After receiving [n] or more attack(s) in battle,:once:damage reduction rate [n]%:up:and ATK [n]%:up:for every attack received within the same turn",
-    "UgTime.png": "Starting from the [n]th turn from the start of battle, ATK & DEF [n]%:up::inf:",
+    "UgCharge.png": "After obtaining [n] Ki Sphere(s) or more,:once:ATK [n]%:up:and Ki +[n] when performing a Super Attack starting from the character's next attacking turn",
+    "UgAvoid.png": ":once:Evades enemy's Attack(s) starting from the character's next attacking turn after evading [n] or more attacks in battle",
+    "UgAtk.png": "After performing [n] or more attack(s),:once:launch [n] additional Super Attack(s) and ATK [n]%:up:for [n] turn(s)",
+    "UgCounter.png": "After receiving [n] or more attack(s),:once:damage reduction rate [n]%:up:and ATK [n]%:up:for every attack received within the turn",
+    "UgTime.png": "At the start of each turn after the [n] turn from start of battle,:inf:ATK & DEF [n]%:up:",
     "UgSwitch.png": "Upon the first attack performed after reversible exchange,:once:ATK & DEF [n]%:up:",
-    "UgDB.png": "After a total of [n] or more Dragon Ball(s) have been obtained by the character, ATK [n]%:up:",
-    "UgUnleash.png": "After receiving [n] or more Super Attacks in battle,:inf:ATK [n]%:up:, chance of performing a critical hit [n]% and attacks effective against all types",
-    "UgEvo.png": "Every time the character performs 5 attacks in battle, ATK [n]%:up:, DEF [n]%:up:and chance of performing a critical hit [n]%:up:starting from the character's next attacking turn",
-    "UgEnergy.png": "Ki +[n] and ATK [n]%:up: per Ki Sphere obtained by allies and plus an additional :once:ATK [n]%:up:, attacks are guaranteed to hit and performs a critical hit when Ki is 24 or more at the start of turn"
+    "UgDB.png": "After [n] Dragon Ball(s) have been obtained by the character, ATK [n]%:up:",
+    "UgUnleash.png": "After receiving [n] Super Attacks,:inf:ATK [n]%:up:, chance of performing a critical hit [n]%:up: and attacks are effective against all Types",
+    "UgEvo.png": "Every time the character performs 5 or more attacks in battle, ATK [n]%:up:, DEF [n]%:up:and chance of performing a critical hit [n]%:up:starting from the character's next attacking turn",
+    "UgEnergy.png": "Ki +[n] and ATK [n]%:up:within the next attacking turn per Ki Sphere obtained by allies; plus an additional :once:ATK [n]%:up:, attacks are guaranteed to hit and performs a critical hit when Ki is 24 at the start of turn"
 };
 
 document.querySelectorAll('.special-choice').forEach(img => {
