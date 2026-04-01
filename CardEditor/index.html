@@ -2835,7 +2835,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
     </div>
 </div>
 
-              <template id="sa-template">
+             <template id="sa-template">
     <div class="row sa-block font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-agl dokkan-card">
         <div class="col">
             <div class="row padding-top-bottom-10 bg-agl dokkan-card">
@@ -2852,15 +2852,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
                         <div class="row"><div class="col">Causes colossal damage to enemy</div></div>
                     </div>
 
-                    <!-- Toggle Sections -->
-                    <div class="sa-lv-container">
-                        <div class="row sa-20-bonus">
-                            <div class="col"><hr class="divider py bg-secondary">
-                                <div class="text-center py-1">SA Lv 20: Super Attack +30%</div>
-                            </div>
-                        </div>
-                    </div>
-
+                    <!-- 1. ACTIVATION CONDITION (Hidden by default, shows above SA logo when active) -->
                     <div class="activation-row d-none">
                         <hr class="divider py bg-secondary">
                         <div class="row">
@@ -2870,12 +2862,23 @@ Raises allies' DEF by 59% for 2 turns</textarea>
                         </div>
                     </div>
 
+                    <!-- 2. SA STATS LOGO (Always visible, stays below activation text) -->
                     <div class="row">
                         <div class="col">
                             <hr class="divider py bg-secondary">
                             <div class="stats-container row"></div>
                         </div>
                     </div>
+
+                    <!-- 3. SA LV 20 TEXT (Below SA Logo by default, hides when Activation toggled on) -->
+                    <div class="sa-lv-container">
+                        <div class="row sa-20-bonus">
+                            <div class="col"><hr class="divider py bg-secondary">
+                                <div class="text-center py-1">SA Lv 20: Super Attack +30%</div>
+                            </div>
+                        </div>
+                    </div>
+
                 </div>
             </div>
         </div>
