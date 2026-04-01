@@ -3385,8 +3385,13 @@ window.addSuperAttackSection = function() {
 
 window.removeSuperAttackSection = function() {
     const blocks = document.querySelectorAll('.sa-block');
-    if (blocks.length > 1) {
+    
+    // Changed this from "> 1" to "> 0" so you are allowed to delete the very last attack
+    if (blocks.length > 0) {
+        // Deletes the last (bottom) Super Attack, exactly how your working code did
         blocks[blocks.length - 1].remove();
+        
+        // Refresh the dropdown and inputs
         window.refreshSADropdown();
     }
 };
@@ -3395,12 +3400,28 @@ window.refreshSADropdown = function() {
     const sel = document.getElementById('sa-selector');
     const all = document.querySelectorAll('.sa-block');
     if(!sel) return;
+    
     sel.innerHTML = '';
+    
+    // If you just deleted the last Super Attack, safely wipe out the text boxes
+    if (all.length === 0) {
+        currentSuperAttack = null; // Unlink from the editor
+        if (document.getElementById('input-sa-name')) document.getElementById('input-sa-name').value = '';
+        if (document.getElementById('input-sa-type-label')) document.getElementById('input-sa-type-label').value = '';
+        if (document.getElementById('input-sa-effects')) document.getElementById('input-sa-effects').value = '';
+        if (document.getElementById('input-activation')) document.getElementById('input-activation').value = '';
+        if (document.getElementById('statList')) document.getElementById('statList').innerHTML = '';
+        return; // STOP HERE so the script doesn't crash trying to select "0"
+    }
+
+    // Rebuild the dropdown if you still have attacks left
     all.forEach((b, i) => {
-        const nameEl = b.querySelector('.sa-name') || b.querySelector('#display-sa-name');
+        // Using your exact logic, but safely catching all possible class names you used
+        const nameEl = b.querySelector('.sa-display-name') || b.querySelector('.sa-name') || b.querySelector('#display-sa-name');
         const name = nameEl ? nameEl.textContent : "Super Attack";
         sel.insertAdjacentHTML('beforeend', `<option value="${i}">${i+1}: ${name}</option>`);
     });
+    
     sel.value = "0";
     window.handleSASelection();
 };
