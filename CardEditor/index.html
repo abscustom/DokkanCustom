@@ -297,7 +297,7 @@
    MENU TOGGLE BUTTON (Clean, Minimal, Modern)
 ============================================================ */
 .dokkan-menu-btn {
-    position: absolute;
+    position: fixed;
     right: 25px;
     top: 6px;
     z-index: 10001;
@@ -2477,9 +2477,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
 <div class="sidebar-editor">
     <h3 class="collapsible-header"><b>PASSIVE EDITOR</b></h3>
      <div class="collapsible-content">
-    <div id="sidebar-sections-area">
-        </div>
-
+   
 
         <div class="mb-3">
     <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">Passive Skill Name</label>
@@ -3648,6 +3646,16 @@ window.saveProjectToFile = function() {
 
         const saHTMLBlocks = [];
         document.querySelectorAll(".sa-block").forEach(b => saHTMLBlocks.push(b.outerHTML));
+
+        // --- FIX: SYNC DYNAMIC PASSIVE BOXES TO HTML BEFORE SAVING ---
+        // This forces the typed text into the raw HTML so the snapshot catches it!
+        document.querySelectorAll('#sidebar-sections-area input').forEach(input => {
+            input.setAttribute('value', input.value);
+        });
+        document.querySelectorAll('#sidebar-sections-area textarea').forEach(ta => {
+            ta.textContent = ta.value; 
+        });
+        // -------------------------------------------------------------
 
         const projectData = {
             currentType: currentType,
