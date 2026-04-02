@@ -24,6 +24,29 @@
 <style>
 
 
+/* ============================================================
+   SIDEBAR RESIZER HANDLE
+============================================================ */
+#editor-resizer {
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 6px;
+    height: 100%;
+    cursor: ew-resize; /* Shows the left/right arrow cursor */
+    background-color: transparent;
+    z-index: 10000;
+    transition: background-color 0.2s;
+}
+
+#editor-resizer:hover, 
+#editor-resizer.is-resizing {
+    background-color: #3b82f6; /* Glows blue when hovered or dragged */
+    box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+}
+/* ============================================================
+   VIDEO DISBLER
+============================================================ */
 /* Target only iOS/Safari devices to hide the broken video */
 @supports (-webkit-touch-callout: none) {
     .lightning-overlay {
@@ -31,6 +54,10 @@
     }
 }
 
+
+/* ============================================================
+   SPECIAL SKILL
+============================================================ */
 .special-skill-glow-effect {
     width: 32px;
     height: 32px;
@@ -311,7 +338,6 @@
     overflow-y: auto;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
     
-    /* Modern UI Dark BG */
     background: #121212; 
     border-right: 1px solid #27272a;
     box-shadow: 10px 0 25px rgba(0,0,0,0.5);
@@ -319,13 +345,38 @@
 
     transform: translateX(-100%);
     transition: transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1);
+
+    /* TRICK: Puts the scrollbar on the left side */
+    direction: rtl; 
 }
 
-/* Beautiful Editor Scrollbar */
-#editor::-webkit-scrollbar { width: 8px; }
-#editor::-webkit-scrollbar-track { background: #121212; }
-#editor::-webkit-scrollbar-thumb { background: #3f3f46; border-radius: 10px; }
-#editor::-webkit-scrollbar-thumb:hover { background: #52525b; }
+/* TRICK: Resets all content inside so it reads normally (Left-to-Right) */
+#editor > * {
+    direction: ltr;
+}
+
+/* Beautiful Editor Scrollbar - Hidden by default */
+#editor::-webkit-scrollbar { 
+    width: 8px; 
+}
+#editor::-webkit-scrollbar-track { 
+    background: transparent; /* Invisible track */
+}
+#editor::-webkit-scrollbar-thumb { 
+    background: transparent; /* Invisible thumb */
+    border-radius: 10px; 
+}
+
+/* Wakes up the scrollbar when hovering over the sidebar OR actively scrolling */
+#editor:hover::-webkit-scrollbar-thumb,
+#editor.is-scrolling::-webkit-scrollbar-thumb { 
+    background: rgba(63, 63, 70, 0.8); /* Dark gray, semi-transparent */
+}
+
+/* Gets slightly brighter when you actively hover over the scrollbar itself */
+#editor::-webkit-scrollbar-thumb:hover { 
+    background: rgba(82, 82, 91, 1); 
+}
 
 
 /* ============================================================
@@ -2102,7 +2153,7 @@ abscustom">
     </video>
 
     <!-- TOP LAYER: The Character Image -->
-    <img id="img-lr" src="./images/card_1030390_thumb.png" height="150" alt="icon">
+    <img id="img-lr" src="./images/LR_Icon.png" height="150" alt="icon">
     
 </div>
                         
@@ -2118,6 +2169,9 @@ abscustom">
           </div>
         </div>
  <div id="editor">
+    <!-- NEW RESIZER BAR -->
+    <div id="editor-resizer"></div>
+
     <div class="sidebar-main-title">
       Dokkan Card <span>Editor</span>
   </div>
@@ -2433,6 +2487,12 @@ Raises allies' DEF by 59% for 2 turns</textarea>
            style="background: #1a1a1a; color: #fff; border: 1px solid #444; border-radius: 4px;">
 </div>
 
+
+
+    <div id="sidebar-sections-area">
+        </div>
+
+
     <button type="button" id="btn-passive-add" onclick="addNewSection()">
         + ADD PASSIVE SECTION
     </button>
@@ -2692,9 +2752,9 @@ Raises allies' DEF by 59% for 2 turns</textarea>
                  <!-- We removed the inner 'row' and 'col' tags that were squishing the sides -->
                  <div class="card-art-canvas">
                    <video autoplay muted playsinline loop preload="auto" id="myOverlayVideo">
-                     <source src="uigoku.mp4" type="video/mp4">
+                     <source src="" type="video/mp4">
                    </video>
-                   <img id="myOverlayImage" src="" alt="Card Art" style="display:none;">
+                   <img id="myOverlayImage" src="images/Card Art Template.png" alt="Card Art">
                  </div>
 
     </div>
@@ -2739,7 +2799,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
           <img class="card-frame" src="./images/frame_teq.png" height="120" alt="Card Frame"></div>
          <!---->
          <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-ssr"
-             src="./images/card_1030370_thumb.png" height="150" alt="icon"></div>
+             src="./images/SSR_Icon.png" height="150" alt="icon"></div>
          <div class="card-icon-item card-icon-item-rarity card-info-above-thumb" style=""><img
              src="./images/rarity_ssr.png" height="72" alt="rarity"></div>
          <div class="card-icon-item card-icon-item-type card-info-above-thumb" style=""><img id="typing-icon-ssr"
@@ -2754,7 +2814,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
            <img class="card-frame" src="./images/frame_teq.png" height="120" alt="Card Frame"></div>
          <!---->
          <div class="card-icon-item card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-tur"
-             src="./images/card_1030380_thumb.png" height="150" alt="icon"></div>
+             src="./images/TUR_Icon.png" height="150" alt="icon"></div>
          <div class="card-icon-item card-icon-item-rarity card-info-above-thumb" style=""><img
              src="./images/rarity_TUR.png" height="72" alt="rarity"></div>
          <div class="card-icon-item card-icon-item-type card-info-above-thumb" style=""><img class="typing-icon"
@@ -2844,13 +2904,13 @@ Raises allies' DEF by 59% for 2 turns</textarea>
                 <div class="col-sm-8" style="display: flex; justify-content: center; align-items: center;">
                     <!-- Use Classes here -->
                     <img class="sa-display-icon" src="./images/sp_skill_icon_01.png">
-                    <b class="sa-display-name">New Super Attack</b>
+                    <b class="sa-display-name">Super Attack new</b>
                 </div>
             </div>
             <div class="row padding-top-bottom-5 bg-agl-2 dokkan-card">
                 <div class="col padding-top-bottom-5">
                     <div class="sa-display-effects-list">
-                        <div class="row"><div class="col">Causes colossal damage to enemy</div></div>
+                        <div class="row"><div class="col">Raises ATK & DEF -- Causes colossal damage to enemy</div></div>
                     </div>
 
                     <!-- 1. ACTIVATION CONDITION (Hidden by default, shows above SA logo when active) -->
@@ -2897,7 +2957,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
               <div class="col">
                  <div class="row padding-top-bottom-10 bg-agl dokkan-card">
   <div class="col-sm-2"><b>Passive Skill</b></div>
-  <div class="col-sm-8"><b class="passive-name-display">Instinct Refined Through Combat</b></div>
+  <div class="col-sm-8"><b class="passive-name-display">(Enter Passive Name)</b></div>
 </div>
 
 
@@ -2923,13 +2983,13 @@ Raises allies' DEF by 59% for 2 turns</textarea>
                 <div class="col">
                   <div class="row padding-top-bottom-10 bg-agl dokkan-card">
     <div class="col-sm-2"><b>Active Skill</b></div>
-    <div class="col-sm-8"><b id="card-active-name">Active Skill Name</b></div>
+    <div class="col-sm-8"><b id="card-active-name">(Enter Active Skill Name)</b></div>
   </div>
 
   <div class="row padding-top-bottom-5 bg-agl-2 dokkan-card">
     <div class="col">
       <div class="row padding-top-5">
-        <div id="card-active-effect" class="col">Description</div>
+        <div id="card-active-effect" class="col">(Enter what the Active Skill Does)</div>
       </div>
 
       <div class="row">
@@ -2945,7 +3005,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
           </div>
           <div class="row">
             <div id="card-active-conditions" class="col">
-              Can be activated starting from the 5th turn from the start of battle (once only)</div>
+              (ex.) Can be activated starting from the 5th turn from the start of battle (once only)</div>
                           
             </div>
                         </div>
@@ -3104,19 +3164,39 @@ window.calcFromMin = function(type) {
     document.getElementById(`stat-${type}-100`).innerText = maxVal + 5000;
 };
 
-// PASSIVE MANAGER
+/* ============================================================
+   PASSIVE MANAGER 2.0
+   ============================================================ */
 window.addNewSection = function() {
     sIdx++;
+    // 1. Add the Card Display Area
     document.getElementById('card-passive-container').insertAdjacentHTML('beforeend', 
         `<div id="card-sec-${sIdx}"><strong id="card-header-text-${sIdx}" style="display:block; margin-top:0px;">Basic effect(s)</strong><ul id="card-ul-${sIdx}"></ul></div>`);
+    
+    // 2. Add the Sidebar Editor Area
     document.getElementById('sidebar-sections-area').insertAdjacentHTML('beforeend', `
         <div id="side-sec-${sIdx}" style="background:#222; border:1px solid #555; padding:10px; margin-top:10px; border-radius:5px;">
-            <div style="display:flex; justify-content:space-between; align-items:center;"><b>LINE ${sIdx}</b><button onclick="removeThisSection(${sIdx})" style="background:blue; color:white; border:none; width:16px; height:16px; font-size:10px; display:inline-flex; justify-content:center; align-items:center; cursor:pointer; font-weight:bold; border-radius:2px;  ">X</button></div>
-            <input type="text" oninput="updateHeader(${sIdx}, this.value)" value="Basic effect(s)" class="form-control form-control-sm mb-2">
-            <div id="side-lines-container-${sIdx}"></div>
-            <button onclick="addNewLine(${sIdx})" class="btn btn-sm btn-outline-light w-100">+ Add Line</button>
+            <div style="display:flex; justify-content:space-between; align-items:center;">
+                <b style="font-size: 12px; color: #a1a1aa;">SECTION ${sIdx}</b>
+                <button onclick="removeThisSection(${sIdx})" style="background:blue; color:white; border:none; width:16px; height:16px; font-size:10px; display:inline-flex; justify-content:center; align-items:center; cursor:pointer; font-weight:bold; border-radius:2px;">X</button>
+            </div>
+            
+            <input type="text" oninput="updateHeader(${sIdx}, this.value)" value="Basic effect(s)" class="form-control form-control-sm mb-2 mt-2">
+            
+            <!-- TALLER TEXT BOX (rows="7") -->
+            <textarea id="input-sec-${sIdx}" oninput="updateSection(${sIdx}, this.value)" class="form-control form-control-sm mb-2" rows="7" placeholder="Type effects here... Press Enter for a new line."></textarea>
+            
+            <!-- SMALLER ICONS -->
+            <div style="margin-top:5px; display:flex; gap: 6px;">
+                <button onclick="insertShortcut('input-sec-${sIdx}', ':up:')" class="btn-icon-tool" style="color:#00ffcc; font-size: 9px; padding: 3px 7px;">↑</button>
+                <button onclick="insertShortcut('input-sec-${sIdx}', ':down:')" class="btn-icon-tool" style="color:#ff4444; font-size: 9px; padding: 3px 7px;">↓</button>
+                <button onclick="insertShortcut('input-sec-${sIdx}', ':once:')" class="btn-icon-tool" style="font-size: 9px; padding: 3px 7px;">!</button>
+                <button onclick="insertShortcut('input-sec-${sIdx}', ':inf:')" class="btn-icon-tool" style="font-size: 9px; padding: 3px 7px;">∞</button>
+            </div>
         </div>`);
-    window.addNewLine(sIdx);
+        
+    // Initialize the default line on the card
+    window.updateSection(sIdx, "");
 };
 
 window.updateHeader = function(id, val) {
@@ -3124,42 +3204,61 @@ window.updateHeader = function(id, val) {
     if(el) el.innerText = val;
 };
 
-window.addNewLine = function(sectionID) {
-    lIdx++;
-    document.getElementById("card-ul-" + sectionID).insertAdjacentHTML('beforeend', `<li id="card-li-${lIdx}">New effect...</li>`);
-    document.getElementById("side-lines-container-" + sectionID).insertAdjacentHTML('beforeend', `
-        <div id="side-li-box-${lIdx}" style="background:#2a2a2a; padding:5px; margin-top:5px; border-radius:4px;">
-            <div style="display:flex; gap:5px;">
-                <textarea id="input-li-${lIdx}" oninput="updateLine(${lIdx}, this.value)" class="form-control form-control-sm" rows="1">New effect...</textarea>
-                <button onclick="confirmDeleteLine(this, ${lIdx})" class="btn btn-dark btn-sm shadow-sm" style="width: 70px;">×</button>
-            </div>
-            <div style="margin-top:5px;">
-                <button onclick="insertShortcut(${lIdx}, ':up:')" class="btn-icon-tool" style="color:#00ffcc">↑</button>
-                <button onclick="insertShortcut(${lIdx}, ':down:')" class="btn-icon-tool" style="color:#ff4444">↓</button>
-                <button onclick="insertShortcut(${lIdx}, ':once:')" class="btn-icon-tool">!</button>
-                <button onclick="insertShortcut(${lIdx}, ':inf:')" class="btn-icon-tool">∞</button>
-            </div>
-        </div>`);
-};
-
-window.insertShortcut = function(lineID, code) {
-    const ta = document.getElementById(`input-li-${lineID}`);
-    ta.value += code;
-    window.updateLine(lineID, ta.value);
+// PLACES ICON SHORTCUT EXACTLY AT YOUR MOUSE CURSOR
+window.insertShortcut = function(targetId, code) {
+    const ta = document.getElementById(targetId);
+    if(!ta) return;
+    
+    // Get cursor position
+    const startPos = ta.selectionStart;
+    const endPos = ta.selectionEnd;
+    const text = ta.value;
+    
+    // Insert text at cursor
+    ta.value = text.substring(0, startPos) + code + text.substring(endPos);
+    
+    // Move cursor to right after the inserted code and refocus
+    ta.selectionStart = ta.selectionEnd = startPos + code.length;
     ta.focus();
+
+    // Force the card to update with the new icon
+    const sectionId = targetId.split('-').pop();
+    window.updateSection(sectionId, ta.value);
 };
 
-window.updateLine = function(id, val) {
+// READS THE BIG TEXT BOX AND CREATES NEW LINES AUTOMATICALLY
+window.updateSection = function(id, val) {
     const icons = {
-        ':up:': `<img src="./images/passive_skill_dialog_arrow01.png" class="dokkan-icon" style="height:18px">`,
-        ':down:': `<img src="./images/passive_skill_dialog_arrow02.png" class="dokkan-icon" style="height:18px">`,
-        ':once:': `<img src="./images/passive_skill_dialog_icon_01.png" class="dokkan-icon" style="height:18px">`,
-        ':inf:': `<img src="./images/passive_skill_dialog_icon_02.png" class="dokkan-icon" style="height:18px">`
+        ':up:': '<img src="./images/passive_skill_dialog_arrow01.png" class="dokkan-icon" style="height:18px">',
+        ':down:': '<img src="./images/passive_skill_dialog_arrow02.png" class="dokkan-icon" style="height:18px">',
+        ':once:': '<img src="./images/passive_skill_dialog_icon_01.png" class="dokkan-icon" style="height:18px">',
+        ':inf:': '<img src="./images/passive_skill_dialog_icon_02.png" class="dokkan-icon" style="height:18px">'
     };
+    
     let out = val;
-    for (const [code, img] of Object.entries(icons)) { out = out.replace(new RegExp(code, 'g'), img); }
-    const li = document.getElementById("card-li-" + id);
-    if(li) li.innerHTML = out;
+    // Apply icon images
+    for (const [code, img] of Object.entries(icons)) { 
+        out = out.replace(new RegExp(code, 'g'), img); 
+    }
+    
+    // Split the text box by New Lines (hitting Enter)
+    const lines = out.split('\n');
+    let html = "";
+    
+    lines.forEach(line => {
+        let trimmed = line.trim();
+        // If you typed a dash, automatically strip it out so it becomes a clean bullet point
+        if (trimmed.startsWith('-')) {
+            trimmed = trimmed.substring(1).trim();
+        }
+        // If the line isn't empty, wrap it in a List Item (bullet)
+        if (trimmed !== "") {
+            html += `<li>${trimmed}</li>`;
+        }
+    });
+    
+    const ul = document.getElementById("card-ul-" + id);
+    if(ul) ul.innerHTML = html;
 };
 
 window.removeThisSection = function(id) {
@@ -3167,33 +3266,14 @@ window.removeThisSection = function(id) {
     document.getElementById("side-sec-" + id)?.remove();
 };
 
-window.removeThisLine = function(id) {
-    document.getElementById("card-li-" + id)?.remove();
-    document.getElementById("side-li-box-" + id)?.remove();
-};
 
 
-window.confirmDeleteLine = function(btn, id) {
-    // If the button is currently showing the X
-    if (btn.innerText === '×') {
-        btn.innerText = 'Confirm?';
-        btn.classList.replace('btn-dark', 'btn-danger'); // Turn red
-        
-        // If they don't click again within 3 seconds, reset it
-        setTimeout(() => {
-            if (btn) {
-                btn.innerText = '×';
-                btn.classList.replace('btn-danger', 'btn-dark'); // Turn back to dark
-            }
-        }, 3000);
-    } 
-    // If they click while it says "Confirm?", actually delete it
-    else {
-        removeThisLine(id);
-    }
-};
 
-// CATEGORY & LINK
+
+
+/* ============================================================
+   CATEGORY AND LINK SKILL
+   ============================================================ */
 window.addLinkSkill = function() {
     const input = document.getElementById('side-link-input');
     const linkName = input.value.trim();
@@ -3205,6 +3285,7 @@ window.addLinkSkill = function() {
     input.value = "";
     input.focus();
 };
+
 
 window.addCategory = function() {
     const input = document.getElementById('side-category-input');
@@ -4293,6 +4374,93 @@ window.updateCardDisplay = function() {
         sideContainer.appendChild(sideItem);
     });
 };
+
+
+
+
+
+
+
+
+
+// --- SIDEBAR RESIZE LOGIC ---
+    const resizer = document.getElementById('editor-resizer');
+    const sidebar = document.getElementById('editor');
+    let isResizing = false;
+
+    let scrollTimeout;
+    if (sidebar && resizer) {
+        sidebar.addEventListener('scroll', function() {
+            // 1. Keep the blue drag handle perfectly in view
+            resizer.style.top = sidebar.scrollTop + 'px';
+            
+            // 2. "Wake up" the scrollbar by adding the active class
+            sidebar.classList.add('is-scrolling');
+            
+            // 3. Clear the old timer and set a new one to hide the scrollbar after 1 second of no scrolling
+            clearTimeout(scrollTimeout);
+            scrollTimeout = setTimeout(() => {
+                sidebar.classList.remove('is-scrolling');
+            }, 1000);
+        });
+    }
+    
+
+    if (resizer && sidebar) {
+        resizer.addEventListener('mousedown', function(e) {
+            isResizing = true;
+            resizer.classList.add('is-resizing');
+            
+            // Prevent text highlighting while dragging
+            document.body.style.userSelect = 'none'; 
+            
+            // Disable sidebar transition temporarily so resizing is smooth and instant
+            sidebar.style.transition = 'none';
+        });
+
+        document.addEventListener('mousemove', function(e) {
+            if (!isResizing) return;
+            
+            // The new width is simply the mouse's X position on the screen
+            let newWidth = e.clientX;
+            
+            // Constraints: Don't let it get too small or take up the whole screen
+            if (newWidth < 350) newWidth = 350; 
+            if (newWidth > 1200) newWidth = 1200; 
+            
+            sidebar.style.width = newWidth + 'px';
+        });
+
+        document.addEventListener('mouseup', function(e) {
+            if (isResizing) {
+                isResizing = false;
+                resizer.classList.remove('is-resizing');
+                
+                // Turn text selection back on
+                document.body.style.userSelect = '';
+                
+                // Turn the slide-in/out transition back on for the toggle button
+                sidebar.style.transition = 'transform 0.35s cubic-bezier(0.2, 0.8, 0.2, 1)';
+            }
+        });
+    }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Init state safely
 window.updateIdentity();
