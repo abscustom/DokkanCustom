@@ -3165,6 +3165,50 @@ window.calcFromMin = function(type) {
 /* ============================================================
    PASSIVE MANAGER 2.0
    ============================================================ */
+
+
+   window.confirmDeleteSection = function(btn, id) {
+    // If the button is currently showing the X
+    if (btn.innerText === '×') {
+        btn.innerText = '?'; 
+        btn.style.background = '#facc15'; // Change to Yellow
+        btn.style.color = '#000'; // Black text for contrast
+        btn.title = "Click again to confirm delete";
+        
+        // Reset the button after 3 seconds if not clicked again
+        setTimeout(() => {
+            if (btn && btn.innerText === '?') {
+                btn.innerText = '×';
+                btn.style.background = '#ef4444'; // Back to Red
+                btn.style.color = '#fff';
+                btn.title = "Delete";
+            }
+        }, 3000);
+    } 
+    // If they click while it says "?", actually delete it
+    else {
+        window.removeThisSection(id);
+    }
+};
+
+window.reindexSections = function() {
+    const sidebarArea = document.getElementById("sidebar-sections-area");
+    const sections = sidebarArea.querySelectorAll('[id^="side-sec-"]');
+    
+    sections.forEach((sec, index) => {
+        // Find the bold text that says "SECTION X"
+        const label = sec.querySelector('b');
+        if (label) {
+            label.innerText = `SECTION ${index + 1}`;
+        }
+    });
+};
+
+
+
+
+
+
 window.addNewSection = function() {
     sIdx++;
     // 1. Add the Card Display Area
@@ -3174,15 +3218,21 @@ window.addNewSection = function() {
     // 2. Add the Sidebar Editor Area
     document.getElementById('sidebar-sections-area').insertAdjacentHTML('beforeend', `
         <div id="side-sec-${sIdx}" style="background:#222; border:1px solid #555; padding:10px; margin-top:10px; border-radius:5px;">
+            
+            <!-- HEADER WITH UP/DOWN/DELETE BUTTONS -->
             <div style="display:flex; justify-content:space-between; align-items:center;">
                 <b style="font-size: 12px; color: #a1a1aa;">SECTION ${sIdx}</b>
-                <button onclick="removeThisSection(${sIdx})" style="background:blue; color:white; border:none; width:16px; height:16px; font-size:10px; display:inline-flex; justify-content:center; align-items:center; cursor:pointer; font-weight:bold; border-radius:2px;">X</button>
+                <div style="display:flex; gap: 4px;">
+                    <button onclick="moveSection(${sIdx}, -1)" title="Move Up" style="background:#3f3f46; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; border-radius:3px; display:flex; justify-content:center; align-items:center;">↑</button>
+                    <button onclick="moveSection(${sIdx}, 1)" title="Move Down" style="background:#3f3f46; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; border-radius:3px; display:flex; justify-content:center; align-items:center;">↓</button>
+                    <button onclick="confirmDeleteSection(this, ${sIdx})" title="Delete" style="background:#ef4444; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; font-weight:bold; border-radius:3px; display:flex; justify-content:center; align-items:center;">×</button>
+                </div>
             </div>
             
             <input type="text" oninput="updateHeader(${sIdx}, this.value)" value="Basic effect(s)" class="form-control form-control-sm mb-2 mt-2">
             
-            <!-- TALLER TEXT BOX (rows="7") -->
-            <textarea id="input-sec-${sIdx}" oninput="updateSection(${sIdx}, this.value)" class="form-control form-control-sm mb-2" rows="7" placeholder="Type effects here... Press Enter for a new line."></textarea>
+            <!-- BIGGER TEXT BOX: Split by newlines -->
+            <textarea id="input-sec-${sIdx}" oninput="updateSection(${sIdx}, this.value)" class="form-control form-control-sm mb-2" rows="7" placeholder="Type effects here... Press Enter for a new line.">- New effect...</textarea>
             
             <!-- SMALLER ICONS -->
             <div style="margin-top:5px; display:flex; gap: 6px;">
@@ -3194,7 +3244,8 @@ window.addNewSection = function() {
         </div>`);
         
     // Initialize the default line on the card
-    window.updateSection(sIdx, "");
+    window.updateSection(sIdx, "- New effect...");
+    window.reindexSections();
 };
 
 window.updateHeader = function(id, val) {
@@ -3262,6 +3313,7 @@ window.updateSection = function(id, val) {
 window.removeThisSection = function(id) {
     document.getElementById("card-sec-" + id)?.remove();
     document.getElementById("side-sec-" + id)?.remove();
+    window.reindexSections(); // <--- ADD THIS
 };
 
 
@@ -3475,6 +3527,52 @@ window.removeSuperAttackSection = function() {
         window.refreshSADropdown();
     }
 };
+
+
+
+window.moveSection = function(id, direction) {
+    const sideSec = document.getElementById("side-sec-" + id);
+    const cardSec = document.getElementById("card-sec-" + id);
+    
+    if (!sideSec || !cardSec) return;
+
+    if (direction === -1) { // Move Up
+        const prevSide = sideSec.previousElementSibling;
+        const prevCard = cardSec.previousElementSibling;
+        
+        if (prevSide && prevCard) {
+            // Swap them in the sidebar
+            sideSec.parentNode.insertBefore(sideSec, prevSide);
+            // Swap them on the card
+            cardSec.parentNode.insertBefore(cardSec, prevCard);
+        }
+    } else if (direction === 1) { // Move Down
+        const nextSide = sideSec.nextElementSibling;
+        const nextCard = cardSec.nextElementSibling;
+        
+        if (nextSide && nextCard) {
+            // Swap them in the sidebar (by moving the next one above the current one)
+            sideSec.parentNode.insertBefore(nextSide, sideSec);
+            // Swap them on the card
+            cardSec.parentNode.insertBefore(nextCard, cardSec);
+        }
+    }
+
+    window.reindexSections(); // <--- ADD THIS
+};
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 window.refreshSADropdown = function() {
     const sel = document.getElementById('sa-selector');
@@ -3715,6 +3813,29 @@ window.loadProjectFromFile = function(event) {
             document.getElementById("card-category-container").innerHTML = data.containers.categories;
             document.getElementById("forms-container").innerHTML = data.containers.forms;
 
+            // --- NEW: AUTO-REPAIR OLD PASSIVE SAVES ---
+            const sidebarArea = document.getElementById("sidebar-sections-area");
+            const sections = sidebarArea.querySelectorAll('[id^="side-sec-"]');
+            sections.forEach(sec => {
+                const id = sec.id.replace('side-sec-', '');
+                const headerRow = sec.querySelector('div'); // Grab the top header row
+                // ... end of repair logic loop ...
+               window.reindexSections(); // <--- ADD THIS HERE inside the Load function
+                
+                // If this header row doesn't contain the moveSection function, it's an old save
+                if (headerRow && !headerRow.innerHTML.includes('moveSection')) {
+                    headerRow.innerHTML = `
+                        <b style="font-size: 12px; color: #a1a1aa;">Passive ${id}</b>
+                        <div style="display:flex; gap: 4px;">
+                            <button onclick="moveSection(${id}, -1)" title="Move Up" style="background:#3f3f46; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; border-radius:3px; display:flex; justify-content:center; align-items:center;">↑</button>
+                            <button onclick="moveSection(${id}, 1)" title="Move Down" style="background:#3f3f46; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; border-radius:3px; display:flex; justify-content:center; align-items:center;">↓</button>
+                            <button onclick="confirmDeleteSection(this, ${id})" title="Delete" style="background:#ef4444; color:white; border:none; width:22px; height:22px; font-size:12px; cursor:pointer; font-weight:bold; border-radius:3px; display:flex; justify-content:center; align-items:center;">×</button>
+                        </div>
+                    `;
+                }
+            });
+            // ------------------------------------------
+
             // Rebuild SA blocks
             document.querySelectorAll(".sa-block").forEach(el => el.remove()); 
             const saSpot = document.getElementById("sa-insert-spot");
@@ -3736,27 +3857,23 @@ window.loadProjectFromFile = function(event) {
             document.getElementById("img-ssr").src = data.icons.ssrIcon;
             document.getElementById("main-rarity-icon").src = data.icons.mainRarityIcon;
             
-            // Sync Everything
             window.updateIdentity(); 
             window.updateActiveCard();
             window.calcFromMin('hp'); window.calcFromMin('atk'); window.calcFromMin('def');
             window.refreshSADropdown();
             window.refreshFormList();
-
-            // --- CRITICAL FIX START: DRAW AND SHOW SPECIAL SKILLS ---
-            updateCardDisplay(); // Draw the text/icons from the specialRows array
+            updateCardDisplay(); 
 
             const specSection = document.getElementById("special-skill-section");
             const btnToggle = document.getElementById("btn-toggle-special");
 
             if (specialRows.length > 0) {
                 specSection.classList.remove("d-none");
-                specSection.style.setProperty('display', 'flex', 'important'); // Force flex override
+                specSection.style.setProperty('display', 'flex', 'important'); 
                 if (btnToggle) btnToggle.innerText = "Hide Special Skill Box";
             }
-            // --- CRITICAL FIX END ---
 
-            alert("📂 Save Project Restored!");
+            alert("📂 Save Project Restored & Upgraded!");
         } catch (err) {
             console.error(err);
             alert("Corrupted Save File.");
