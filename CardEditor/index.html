@@ -2302,7 +2302,7 @@ abscustom">
     </div>
     </div>
   <div class="editor-section">
-    <h3 class="collapsible-header"><b>Typing Editor</b></h3>
+    <h3 class="collapsible-header"><b>Typing</b></h3>
     <div class="collapsible-content">
 
       <div class="rarity-group">
@@ -2352,7 +2352,7 @@ abscustom">
       </div>
     </div>
     <div id="form-editor" class="sidebar-section">
-      <h3 class="collapsible-header"><b>FORM EDITOR</b></h3>
+      <h3 class="collapsible-header"><b>FORM</b></h3>
       <div class="collapsible-content">
         <label class="form-label small">Add or Remove Forms</label>
         <div id="formList" class="form-list"></div>
@@ -2430,7 +2430,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
           <div class="mt-3">
             <label>EX OR UNIT SUPER Condition (Optional)</label>
             <textarea id="input-activation" class="form-control mb-2" placeholder="Activation Conditions"></textarea>
-            <button id="btn-toggle-activation" class="btn btn-sm w-100">Toggle Activation Mode</button>
+            <button id="btn-toggle-activation" class="btn btn-sm w-100">Toggle Activation and Divider</button>
           </div>
           <label class="form-label small">SA Logo</label>
           <div id="stat-editor">
@@ -2475,7 +2475,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
 
 
 <div class="sidebar-editor">
-    <h3 class="collapsible-header"><b>PASSIVE EDITOR</b></h3>
+    <h3 class="collapsible-header"><b>PASSIVE</b></h3>
      <div class="collapsible-content">
    
 
@@ -2510,28 +2510,52 @@ Raises allies' DEF by 59% for 2 turns</textarea>
 </div>
 
   
-    <h3 class="collapsible-header"><b>ACTIVE SKILL EDITOR</b></h3>
-    <div class="collapsible-content">
-       <label class="form-label small"><b>Editing Active Skill</b></label>
-   <div class="editor-field">
-            <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">SKILL NAME</label>
-            <input type="text" id="side-active-name" value="Giant Form" oninput="updateActiveCard()">
-        </div>
+    <h3 class="collapsible-header"><b>ACTIVE</b></h3>
+<div class="collapsible-content">
+    <button id="btn-add-active" class="btn btn-primary btn-sm w-100 mb-1">+ Add Active Skill Box</button>
+    <button id="btn-remove-active" class="btn btn-danger btn-sm w-100 mb-3">- Remove Active Skill Box</button>
 
-        <div class="editor-field">
-            <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">EFFECT</label>
-            <textarea id="side-active-effect" rows="2" oninput="updateActiveCard()">"Massively raises ATK temporarily"</textarea>
-        </div>
-
-        <div class="editor-field" style="margin-bottom: 0;"> <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">CONDITIONS</label>
-        
-          <textarea id="side-active-conditions" rows="2" oninput="updateActiveCard()">Can be activated starting from the 5th turn...</textarea>
+    <div class="mb-3">
+        <label class="form-label small text-muted" style="letter-spacing: 1px;"><b>EDITING SKILL BOX:</b></label>
+        <div class="d-flex gap-1">
+            <select id="active-selector" class="form-control form-control-sm" style="background:#1a1a1a; color:#fff; border:1px solid #444; flex-grow: 1;">
+            </select>
+            <button class="btn btn-sm" style="background:#3f3f46; color:#fff; border:none;" onclick="moveActiveSkill(-1)" title="Move Up">↑</button>
+            <button class="btn btn-sm" style="background:#3f3f46; color:#fff; border:none;" onclick="moveActiveSkill(1)" title="Move Down">↓</button>
         </div>
     </div>
+    <div class="mb-3">
+        <label class="form-label small text-muted" style="letter-spacing: 1px;"><b>EDITING SKILL BOX:</b></label>
+        <select id="active-selector" class="form-control form-control-sm" style="background:#1a1a1a; color:#fff; border:1px solid #444;">
+        </select>
+    </div>
+
+    <div class="editor-field">
+        <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">SKILL TYPE (e.g. Active, Standby)</label>
+        <input type="text" id="input-active-type" class="form-control" value="Active Skill" oninput="syncActiveSkill()">
+    </div>
+
+    <div class="editor-field">
+        <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">SKILL NAME</label>
+        <input type="text" id="input-active-name" class="form-control" value="New Skill" oninput="syncActiveSkill()">
+    </div>
+
+    <div class="editor-field">
+        <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">EFFECT</label>
+        <textarea id="input-active-effect" class="form-control" rows="3" oninput="syncActiveSkill()"></textarea>
+    </div>
+
+    <div class="editor-field" style="margin-bottom: 0;">
+        <label class="small text-muted" style="text-transform: uppercase; font-size: 10px; letter-spacing: 1px;">CONDITIONS</label>
+        <textarea id="input-active-conditions" class="form-control" rows="3" oninput="syncActiveSkill()"></textarea>
+    </div>
+
+         <button id="btn-toggle-active-divider" class="btn btn-sm w-100 mt-2" style="background:#3f3f46; color:#fff; border: 1px solid #555;">Toggle Divider Line</button>
+</div>
 
 
 
-  <h3 class="collapsible-header"><b>LINK SKILL EDITOR</b></h3>
+  <h3 class="collapsible-header"><b>LINK SKILL</b></h3>
     <div class="collapsible-content">
 <div class="editor-panel">
         <div class="editor-field">
@@ -2565,7 +2589,7 @@ Raises allies' DEF by 59% for 2 turns</textarea>
 
     </div>
 
-    <h3 class="collapsible-header"><b>Category Editor</b></h3>
+    <h3 class="collapsible-header"><b>Category</b></h3>
     <div class="collapsible-content">
     <div class="editor-panel">
         <div class="editor-field">
@@ -2976,40 +3000,62 @@ Raises allies' DEF by 59% for 2 turns</textarea>
               </div>
                 </div>
               </div><!---->
-              <div
-                class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-agl dokkan-card">
-                <div class="col">
-                  <div class="row padding-top-bottom-10 bg-agl dokkan-card">
-    <div class="col-sm-2"><b>Active Skill</b></div>
-    <div class="col-sm-8"><b id="card-active-name">(Enter Active Skill Name)</b></div>
-  </div>
+              <!-- The invisible spot where new Active/Standby Skills will be injected -->
+<div id="active-skill-insert-spot"></div>
 
-  <div class="row padding-top-bottom-5 bg-agl-2 dokkan-card">
-    <div class="col">
-      <div class="row padding-top-5">
-        <div id="card-active-effect" class="col">(Enter what the Active Skill Does)</div>
-      </div>
-
-      <div class="row">
-        <div class="col">
-          <hr class="divider py bg-secondary">
+<!-- The Template for the dynamic boxes -->
+<template id="active-template">
+  <div class="row active-block font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-agl dokkan-card">
+    <!-- p-0 ensures the background colors touch the exact edges of the border -->
+    <div class="col p-0">
+      
+      <!-- HEADER ROW -->
+      <div class="row padding-top-bottom-10 bg-agl m-0 position-relative d-flex align-items-center">
+        <!-- 1. Label strictly locked to the left -->
+        <div class="position-absolute start-0 w-auto" style="padding-left: 15px;">
+          <b class="active-type-label">Active Skill</b>
+        </div>
+        <!-- 2. Skill Name perfectly centered -->
+        <div class="col text-center px-5">
+          <b class="active-display-name">(Enter Skill Name)</b>
         </div>
       </div>
 
-      <div class="row padding-bottom-5">
-        <div class="col">
-          <div class="row">
-            <div class="col"><b>Activation Condition(s)</b></div>
+      <!-- BODY ROW -->
+      <div class="row padding-top-bottom-5 bg-agl-2 m-0">
+        <!-- 3. All text below centered -->
+        <div class="col text-center">
+          <div class="row padding-top-5">
+            <div class="col active-display-effect">(Enter what the Skill Does)</div>
           </div>
-          <div class="row">
-            <div id="card-active-conditions" class="col">
-              (ex.) Can be activated starting from the 5th turn from the start of battle (once only)</div>
-                          
+
+          <!-- Divider line with toggle class -->
+          <div class="row active-divider-row">
+            <div class="col">
+              <hr class="divider py bg-secondary">
             </div>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
+          </div>
+
+          <div class="row padding-bottom-5 active-condition-row">
+            <div class="col">
+              <div class="row">
+                <div class="col"><b>Activation Condition(s)</b></div>
+              </div>
+              <div class="row">
+                <div class="col active-display-condition">(ex.) Can be activated starting from the 5th turn...</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+  </div>
+</template>
+                        
+                    
+                   
+                  
                 </div>
               </div><!----><!---->
               <div
@@ -3106,6 +3152,8 @@ let selectedListItem = null;
 let selectedSpecialPath = "./images/help_0118_01.png"; // Current active icon
 let specialRows = []; // Current rows on card
 let editingIdx = null; // Are we currently editing one?
+let currentActiveSkill = null;
+let isSwitchingActive = false;
 
 const lightningColors = {
     agl: 'rgb(0, 150, 255)',   // Sharp Cyan/Blue
@@ -3129,7 +3177,7 @@ const savedInputs =[
     "descInput", "nameInput", "dateInput", "leaderInput", "imageInput",
     "input-hp-min", "input-atk-min", "input-def-min",
     "input-passive-name-sidebar",
-    "side-active-name", "side-active-effect", "side-active-conditions",
+    "input-active-type", "input-active-name", "input-active-effect", "input-active-conditions",
     "formNameInput", "formLinkInput"
 ];
 
@@ -3743,6 +3791,140 @@ window.selectStat = function(statEl, listItemEl) {
     });
 };
 
+/* ============================================================
+   ACTIVE / STANDBY SKILL ENGINE
+   ============================================================ */
+window.addActiveSkillSection = function() {
+    const template = document.getElementById('active-template');
+    const spot = document.getElementById('active-skill-insert-spot');
+    const clone = document.importNode(template.content, true);
+    
+    // Inserts right above the invisible anchor spot
+    spot.parentNode.insertBefore(clone, spot);
+    
+    window.applyCardTheme(currentType); // Apply correct card colors immediately
+    window.refreshActiveDropdown();
+};
+
+window.moveActiveSkill = function(direction) {
+    if (!currentActiveSkill) return;
+
+    if (direction === -1) { // Move Up
+        const prev = currentActiveSkill.previousElementSibling;
+        if (prev && prev.classList.contains('active-block')) {
+            currentActiveSkill.parentNode.insertBefore(currentActiveSkill, prev);
+        }
+    } else if (direction === 1) { // Move Down
+        const next = currentActiveSkill.nextElementSibling;
+        if (next && next.classList.contains('active-block')) {
+            // To move down, we actually insert the NEXT element BEFORE the current one
+            currentActiveSkill.parentNode.insertBefore(next, currentActiveSkill);
+        }
+    }
+    
+    // Remember the name so we can re-select it after refreshing the dropdown
+    const currentName = document.getElementById('input-active-name').value;
+    window.refreshActiveDropdown();
+    
+    // Re-select the item that just moved
+    const sel = document.getElementById('active-selector');
+    Array.from(sel.options).forEach((opt, index) => {
+        if (opt.text.includes(currentName)) {
+            sel.value = index;
+            window.handleActiveSelection();
+        }
+    });
+};
+
+window.removeActiveSkillSection = function() {
+    const blocks = document.querySelectorAll('.active-block');
+    if (blocks.length > 0) {
+        blocks[blocks.length - 1].remove(); // Removes the bottom-most skill box
+        window.refreshActiveDropdown();
+    }
+};
+
+window.refreshActiveDropdown = function() {
+    const sel = document.getElementById('active-selector');
+    const all = document.querySelectorAll('.active-block');
+    if(!sel) return;
+    
+    sel.innerHTML = '';
+    
+    // If deleted to 0 boxes, clear inputs safely
+    if (all.length === 0) {
+        currentActiveSkill = null;
+        if (document.getElementById('input-active-type')) document.getElementById('input-active-type').value = '';
+        if (document.getElementById('input-active-name')) document.getElementById('input-active-name').value = '';
+        if (document.getElementById('input-active-effect')) document.getElementById('input-active-effect').value = '';
+        if (document.getElementById('input-active-conditions')) document.getElementById('input-active-conditions').value = '';
+        return;
+    }
+
+    all.forEach((b, i) => {
+        const nameEl = b.querySelector('.active-display-name');
+        const name = nameEl ? nameEl.textContent : "Skill";
+        sel.insertAdjacentHTML('beforeend', `<option value="${i}">${i+1}: ${name}</option>`);
+    });
+    
+    // Select the newest one added
+    sel.value = (all.length - 1).toString(); 
+    window.handleActiveSelection();
+};
+
+window.handleActiveSelection = function() {
+    const idx = document.getElementById('active-selector').value;
+    const blocks = document.querySelectorAll('.active-block');
+    currentActiveSkill = blocks[idx];
+    
+    if(!currentActiveSkill) return;
+    isSwitchingActive = true; 
+    
+    const typeEl = currentActiveSkill.querySelector('.active-type-label');
+    document.getElementById('input-active-type').value = typeEl ? typeEl.textContent : "Active Skill";
+    
+    const nameEl = currentActiveSkill.querySelector('.active-display-name');
+    document.getElementById('input-active-name').value = nameEl ? nameEl.textContent : "New Skill";
+    
+    // Convert HTML line breaks back to text editor formatting
+    const effEl = currentActiveSkill.querySelector('.active-display-effect');
+    document.getElementById('input-active-effect').value = effEl ? effEl.innerHTML.replace(/<br\s*[\/]?>/gi, "\n") : "";
+    
+    const condEl = currentActiveSkill.querySelector('.active-display-condition');
+    document.getElementById('input-active-conditions').value = condEl ? condEl.innerHTML.replace(/<br\s*[\/]?>/gi, "\n") : "";
+    
+    isSwitchingActive = false;
+};
+
+window.syncActiveSkill = function() {
+    if (!currentActiveSkill || isSwitchingActive) return;
+    
+    const typeStr = document.getElementById('input-active-type').value;
+    const nameStr = document.getElementById('input-active-name').value;
+    // Apply Multi-line HTML tags from standard Enter key presses
+    const effStr = document.getElementById('input-active-effect').value.replace(/\n/g, '<br>');
+    const condStr = document.getElementById('input-active-conditions').value.replace(/\n/g, '<br>');
+    
+    const typeDisp = currentActiveSkill.querySelector('.active-type-label');
+    if(typeDisp) typeDisp.textContent = typeStr;
+    
+    const nameDisp = currentActiveSkill.querySelector('.active-display-name');
+    if(nameDisp) nameDisp.textContent = nameStr;
+    
+    const effDisp = currentActiveSkill.querySelector('.active-display-effect');
+    if(effDisp) effDisp.innerHTML = effStr;
+    
+    const condDisp = currentActiveSkill.querySelector('.active-display-condition');
+    if(condDisp) condDisp.innerHTML = condStr;
+    
+    // Update the visual dropdown text
+    const sel = document.getElementById('active-selector');
+    if (sel && sel.options[sel.selectedIndex]) {
+        sel.options[sel.selectedIndex].text = `${parseInt(sel.value) + 1}: ${nameStr}`;
+    }
+};
+
+
 
 /* ============================================================
    6. JSON EXPORT & RESTORE + FULL ZIP WEBSITE EXPORT
@@ -3756,8 +3938,13 @@ window.saveProjectToFile = function() {
             if (el) inputData[id] = el.value;
         });
 
+        // 1. Grab Super Attacks
         const saHTMLBlocks = [];
         document.querySelectorAll(".sa-block").forEach(b => saHTMLBlocks.push(b.outerHTML));
+        
+        // 2. Grab Active/Standby Skill Boxes
+        const activeHTMLBlocks = [];
+        document.querySelectorAll(".active-block").forEach(b => activeHTMLBlocks.push(b.outerHTML));
 
         // --- FIX: SYNC DYNAMIC PASSIVE BOXES TO HTML BEFORE SAVING ---
         // This forces the typed text into the raw HTML so the snapshot catches it!
@@ -3774,6 +3961,7 @@ window.saveProjectToFile = function() {
             currentClass: currentClass,
             counters: { sIdx, lIdx },
             inputs: inputData,
+            activeBlocksHTML: activeHTMLBlocks, // Saves the active boxes!
             saBlocksHTML: saHTMLBlocks,
             specialRows: specialRows, // Save the "Brain" of the special skills
             containers: {
@@ -3799,9 +3987,12 @@ window.saveProjectToFile = function() {
         downloadNode.click(); 
         downloadNode.remove();
     } catch (e) {
-        alert("Error saving JSON file.");
+        console.error(e);
+        alert("Error saving JSON file. Check console for details.");
     }
 };
+
+
 
 window.loadProjectFromFile = function(event) {
     const file = event.target.files[0];
@@ -3827,14 +4018,38 @@ window.loadProjectFromFile = function(event) {
             document.getElementById("card-category-container").innerHTML = data.containers.categories;
             document.getElementById("forms-container").innerHTML = data.containers.forms;
 
+            // --- REBUILD ACTIVE BLOCKS & REPAIR OLD SAVES ---
+            document.querySelectorAll(".active-block").forEach(el => el.remove()); 
+            const actSpot = document.getElementById("active-skill-insert-spot");
             
-            // --- NEW: AUTO-REPAIR OLD PASSIVE SAVES ---
+            // Check if it's a NEW save
+            if (data.activeBlocksHTML && data.activeBlocksHTML.length > 0) {
+                data.activeBlocksHTML.forEach(html => actSpot.insertAdjacentHTML('beforebegin', html));
+            } 
+            // Check if it's an OLD save (Looks aggressively for the old sidebar input)
+            else if (data.inputs && 'side-active-name' in data.inputs) {
+                const oldName = data.inputs['side-active-name'] || "Active Skill";
+                const oldEffect = data.inputs['side-active-effect'] || "";
+                const oldCond = data.inputs['side-active-conditions'] || "";
+
+                // Spawn a new dynamic block from the template
+                const template = document.getElementById('active-template');
+                const clone = document.importNode(template.content, true);
+                
+                // Populate it with the old save's data
+                clone.querySelector('.active-display-name').textContent = oldName;
+                clone.querySelector('.active-display-effect').innerHTML = oldEffect.replace(/\n/g, '<br>');
+                clone.querySelector('.active-display-condition').innerHTML = oldCond.replace(/\n/g, '<br>');
+
+                actSpot.parentNode.insertBefore(clone, actSpot);
+            }
+            window.refreshActiveDropdown();
+
+            // --- REPAIR OLD PASSIVE SAVES ---
             const sidebarArea = document.getElementById("sidebar-sections-area");
             const sections = sidebarArea.querySelectorAll('[id^="side-sec-"]');
             sections.forEach(sec => {
                 const id = sec.id.replace('side-sec-', '');
-                
-                // 1. Check if we need the new header buttons
                 const headerRow = sec.querySelector('div');
                 if (headerRow && !headerRow.innerHTML.includes('toggleSectionCollapse')) {
                     headerRow.innerHTML = `
@@ -3847,18 +4062,14 @@ window.loadProjectFromFile = function(event) {
                         </div>
                     `;
                 }
-
-                // 2. Check if we need to wrap the content (if side-content div is missing)
                 if (!sec.querySelector('#side-content-' + id)) {
                     const children = Array.from(sec.children);
                     const wrapper = document.createElement('div');
                     wrapper.id = 'side-content-' + id;
-                    // Move all children except the header (index 0) into the wrapper
                     children.slice(1).forEach(child => wrapper.appendChild(child));
                     sec.appendChild(wrapper);
                 }
             });
-            // ------------------------------------------
 
             // Rebuild SA blocks
             document.querySelectorAll(".sa-block").forEach(el => el.remove()); 
@@ -3881,8 +4092,14 @@ window.loadProjectFromFile = function(event) {
             document.getElementById("img-ssr").src = data.icons.ssrIcon;
             document.getElementById("main-rarity-icon").src = data.icons.mainRarityIcon;
             
+            // --- FIX PASSIVE NAME SYNC ON LOAD ---
+            const passiveTitleCard = document.querySelector('.passive-name-display');
+            const passiveTitleSidebar = document.getElementById('input-passive-name-sidebar');
+            if (passiveTitleCard && passiveTitleSidebar) {
+                passiveTitleCard.innerText = passiveTitleSidebar.value || "(Enter Passive Name)";
+            }
+
             window.updateIdentity(); 
-            window.updateActiveCard();
             window.calcFromMin('hp'); window.calcFromMin('atk'); window.calcFromMin('def');
             window.refreshSADropdown();
             window.refreshFormList();
@@ -4128,6 +4345,45 @@ if (saActInput) {
         }
     });
 }
+
+
+
+// ACTIVE SKILL ENGINE BINDS
+    const btnAddActive = document.getElementById("btn-add-active");
+    if(btnAddActive) btnAddActive.addEventListener("click", window.addActiveSkillSection);
+
+    const btnRemActive = document.getElementById("btn-remove-active");
+    if(btnRemActive) {
+        btnRemActive.addEventListener("click", function() {
+            if (confirm("Remove this Skill Box?")) window.removeActiveSkillSection();
+        });
+    }
+
+    const activeSelector = document.getElementById("active-selector");
+    if(activeSelector) activeSelector.addEventListener("change", window.handleActiveSelection);
+
+
+
+
+
+// TOGGLE DIVIDER LINE & CONDITIONS FOR ACTIVE SKILLS
+    const btnToggleActiveDiv = document.getElementById("btn-toggle-active-divider");
+    if (btnToggleActiveDiv) {
+        btnToggleActiveDiv.addEventListener('click', (e) => {
+            e.preventDefault(); 
+            if (!currentActiveSkill) return;
+
+            // Target both the divider row AND the conditions row
+            const divRow = currentActiveSkill.querySelector('.active-divider-row');
+            const condRow = currentActiveSkill.querySelector('.active-condition-row');
+            
+            // Toggle the 'd-none' (display: none) class on both
+            if (divRow) divRow.classList.toggle('d-none');
+            if (condRow) condRow.classList.toggle('d-none');
+        });
+    }
+
+
 
     const btnAddSa = document.getElementById("btn-add-sa");
     if(btnAddSa) btnAddSa.addEventListener("click", window.addSuperAttackSection);
@@ -4615,9 +4871,9 @@ window.updateCardDisplay = function() {
 window.updateIdentity();
 window.updateIconImages();
 window.refreshSADropdown();
+window.refreshActiveDropdown(); // <--- ADD THIS LINE HERE
 window.refreshFormList();
-window.updateCardDisplay(); // <--- Now it correctly uses the global version!
-
+window.updateCardDisplay(); 
 
 
 
