@@ -4,32 +4,40 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Custom Dokkan Box</title>
-    <link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png">
     <style>
         body { background-color: #27272a; background-image: linear-gradient(180deg, #18181b 0%, #27272a 100%); color: #ffffff; font-family: sans-serif; margin: 0; padding: 40px 20px; text-align: center; min-height: 100vh; }
-        h1 { font-size: 2.5rem; color: #facc15; text-shadow: 0 0 10px rgba(250, 204, 21, 0.4); margin-bottom: 5px; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; }
-        p.subtitle { color: #a1a1aa; margin-bottom: 40px; font-size: 1.1rem; }
-        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 15px; max-width: 1200px; margin: 0 auto; background: rgba(0,0,0,0.4); padding: 25px; border-radius: 12px; box-shadow: inset 0 0 20px rgba(0,0,0,0.8); border: 1px solid #3f3f46; }
+        h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 2px; font-weight: 900; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px; border: 1px solid #3f3f46; }
         .char-box { text-decoration: none; color: #f8fafc; transition: all 0.2s ease; display: flex; flex-direction: column; align-items: center; }
-        .char-box:hover { transform: scale(1.05); filter: drop-shadow(0 0 15px rgba(250, 204, 21, 0.5)); z-index: 10; }
-        .card-icon { position: relative; width: 120px; height: 120px; margin-bottom: 8px; }
+        .char-box:hover { transform: scale(1.05); filter: drop-shadow(0 0 20px rgba(250, 204, 21, 0.5)); z-index: 10; }
+        
+        /* LARGER ICON BOX */
+        .card-icon { position: relative; width: 150px; height: 150px; margin-bottom: 10px; }
         .card-icon img, .card-icon video { position: absolute; pointer-events: none; }
-        .frame { width: 120px; height: 120px; z-index: 1; top: 0; left: 0; }
         
-        /* SHIFTED DOWN 14 PIXELS */
-        .char-img { height: 135px; z-index: 2; bottom: -9px; left: 50%; transform: translateX(-50%); }
+        .frame { width: 150px; height: 150px; z-index: 1; top: 0; left: 0; }
         
-        .lr-dial { width: 110px; height: 110px; z-index: 1; top: 5px; left: 5px; animation: spin 6s linear infinite; }
-        .lr-lightning { z-index: 2; width: 190px; top: -35px; left: -35px; mix-blend-mode: screen; }
-        .rarity { height: 60px; z-index: 3; bottom: -5px; left: -10px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)); }
-        .type { height: 45px; z-index: 3; top: -5px; right: -5px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)); }
-        .char-name { font-size: 11px; font-weight: 700; background: rgba(0,0,0,0.7); padding: 4px 8px; border-radius: 4px; border: 1px solid #555; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; box-shadow: 0 2px 4px rgba(0,0,0,0.5); }
+        /* PORTRAIT POSITION SHIFTED DOWN */
+        .char-img { height: 175px; z-index: 2; bottom: -18px; left: 50%; transform: translateX(-50%); }
+        
+        .lr-dial { width: 140px; height: 140px; z-index: 1; top: 5px; left: 5px; animation: spin 6s linear infinite; }
+        .lr-lightning { z-index: 2; width: 230px; top: -45px; left: -40px; mix-blend-mode: screen; }
+        .rarity { height: 75px; z-index: 3; bottom: -8px; left: -10px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)); }
+        .type { height: 55px; z-index: 3; top: -8px; right: -8px; filter: drop-shadow(0 2px 2px rgba(0,0,0,0.8)); }
+        
+        /* SCROLLING NAMES */
+        .name-container { width: 150px; overflow: hidden; background: rgba(0,0,0,0.8); border: 1px solid #555; border-radius: 6px; padding: 6px 0; }
+        .char-name { font-size: 14px; font-weight: 700; white-space: nowrap; display: inline-block; padding: 0 10px; animation: scroll-text 6s linear infinite; }
+        
+        @keyframes scroll-text {
+            0% { transform: translateX(10%); }
+            100% { transform: translateX(-100%); }
+        }
         @keyframes spin { 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
     <h1>Character Box</h1>
-    <p class="subtitle">Your Custom Dokkan Battle Roster</p>
     <div class="grid">
         
             <a href="https://abscustom.github.io/giant MUI/" target="_blank" class="char-box">
@@ -40,7 +48,7 @@
                     <img class="rarity" src="https://abscustom.github.io/giant MUI/[Final Fighter of Namek] Super Saiyan Goku_files/cha_rare_sm_lr.png">
                     <img class="type" src="https://abscustom.github.io/giant MUI/[Final Fighter of Namek] Super Saiyan Goku_files/cha_type_icon_10.png">
                 </div>
-                <div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div>
+                <div class="name-container"><div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div></div>
             </a>
             <a href="https://abscustom.github.io/ui goku/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -50,7 +58,7 @@
                     <img class="rarity" src="https://abscustom.github.io/ui goku/[Final Fighter of Namek] Super Saiyan Goku_files/cha_rare_sm_lr.png">
                     <img class="type" src="https://abscustom.github.io/ui goku/[Final Fighter of Namek] Super Saiyan Goku_files/cha_type_icon_10.png">
                 </div>
-                <div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div>
+                <div class="name-container"><div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div></div>
             </a>
             <a href="https://abscustom.github.io/ultra ego/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -60,7 +68,7 @@
                     <img class="rarity" src="https://abscustom.github.io/ultra ego/[Final Fighter of Namek] Super Saiyan Goku_files/cha_rare_sm_lr.png">
                     <img class="type" src="https://abscustom.github.io/ultra ego/[Final Fighter of Namek] Super Saiyan Goku_files/cha_type_icon_10.png">
                 </div>
-                <div class="char-name">Vegeta (Ultra Ego) + Goku (Ultra Instinct)</div>
+                <div class="name-container"><div class="char-name">Vegeta (Ultra Ego) + Goku (Ultra Instinct)</div></div>
             </a>
             <a href="https://abscustom.github.io/buu evil/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -73,7 +81,7 @@
                     <img class="rarity" src="https://abscustom.github.io/DokkanCustom/CardEditor/images/rarity_LR.png">
                     <img class="type" src="https://abscustom.github.io/buu evil/images/extreme_type_agl.png">
                 </div>
-                <div class="char-name">Majin Buu (Pure Evil) + Majin Buu (Good)</div>
+                <div class="name-container"><div class="char-name">Majin Buu (Pure Evil) + Majin Buu (Good)</div></div>
             </a>
             <a href="https://abscustom.github.io/good buu/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -86,7 +94,7 @@
                     <img class="rarity" src="https://abscustom.github.io/DokkanCustom/CardEditor/images/rarity_LR.png">
                     <img class="type" src="https://abscustom.github.io/good buu/images/extreme_type_agl.png">
                 </div>
-                <div class="char-name">Majin Buu (Good) + Majin Buu (Pure Evil)</div>
+                <div class="name-container"><div class="char-name">Majin Buu (Good) + Majin Buu (Pure Evil)</div></div>
             </a>
             <a href="https://abscustom.github.io/super buu/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -99,7 +107,7 @@
                     <img class="rarity" src="https://abscustom.github.io/DokkanCustom/CardEditor/images/rarity_LR.png">
                     <img class="type" src="https://abscustom.github.io/super buu/images/extreme_type_agl.png">
                 </div>
-                <div class="char-name">Buu (Super)</div>
+                <div class="name-container"><div class="char-name">Buu (Super)</div></div>
             </a>
             <a href="https://abscustom.github.io/fp frieza/" target="_blank" class="char-box">
                 <div class="card-icon">
@@ -112,7 +120,7 @@
                     <img class="rarity" src="https://abscustom.github.io/fp frieza/images/rarity_LR.png">
                     <img class="type" src="https://abscustom.github.io/fp frieza/images/extreme_type_teq.png">
                 </div>
-                <div class="char-name">Frieza (Full Power)</div>
+                <div class="name-container"><div class="char-name">Frieza (Full Power)</div></div>
             </a>
     </div>
 </body>
