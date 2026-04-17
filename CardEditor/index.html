@@ -513,7 +513,7 @@
         #char-description { font-size: 32px; font-weight: bold; margin: 0; line-height: 1.8; }
         #release-date { font-size: 16px; margin: 0; line-height: 1.5; }
 
-        .btn-icon-tool { background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; font-size: 10px; font-weight: bold; padding: 2px 6px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
+        .btn-icon-tool { flex: 1; display: flex; justify-content: center; align-items: center; background: #27272a; border: 1px solid #3f3f46; color: #a1a1aa; font-size: 10px; font-weight: bold; padding: 4px 6px; border-radius: 4px; cursor: pointer; transition: 0.2s; }
         .btn-icon-tool:hover { background: #3b82f6; color: #fff; border-color: #60a5fa; }
     </style>
 </head>
@@ -723,7 +723,7 @@
                                            
                                             <div class="edit-row mt-3">
                                                 <label class="form-label small">Image Redirect Link:</label>
-                                                <input type="text" id="formLinkInput" placeholder="Paste Next Form Site URL here" oninput="updateImageLink(this.value)">
+                                                <input type="text" id="formLinkInput" value="https://abscustom.github.io/" placeholder="https://abscustom.github.io/" oninput="updateImageLink(this.value)">
                                             </div>
                                         </div>
                                     </div>
@@ -1658,12 +1658,12 @@ window.calcFromMin = window.calcFromMax;
                     <div id="side-content-${sIdx}">
                         <input type="text" oninput="updateHeader(${sIdx}, this.value)" value="Basic effect(s)" class="form-control form-control-sm mb-2 mt-2">
                         <textarea id="input-sec-${sIdx}" oninput="updateSection(${sIdx}, this.value)" class="form-control form-control-sm mb-2" rows="7" placeholder="Type effects here... Press Enter for a new line.">- New effect...</textarea>
-                        <div style="margin-top:5px; display:flex; gap: 6px;">
-                            <button onclick="insertShortcut('input-sec-${sIdx}', ':up:')" title="Green Up Arrow" class="btn-icon-tool" style="color:#00ffcc; font-size: 15px; padding: 3px 7px; ">↑</button>
-                            <button onclick="insertShortcut('input-sec-${sIdx}', ':down:')" title="Self debuff arrow" class="btn-icon-tool" style="color:#ff4444; font-size: 15px; padding: 3px 7px;">↓</button>
-                            <button onclick="insertShortcut('input-sec-${sIdx}', ':ydown:')" title="Enemy debuff arrow" class="btn-icon-tool" style="color:#FFFF00; font-size: 15px; padding: 3px 7px;">↓</button>
-                            <button onclick="insertShortcut('input-sec-${sIdx}', ':once:')" title="Once only" class="btn-icon-tool" style="font-size: 15px; padding: 3px 7px;">!</button>
-                            <button onclick="insertShortcut('input-sec-${sIdx}', ':inf:')" title="Infinite" class="btn-icon-tool" style="font-size: 15px; padding: 3px 7px;">∞</button>
+                        <div style="margin-top:5px; display:flex; gap: 6px; width: 100%;">
+                            <button onclick="insertShortcut('input-sec-${sIdx}', ':up:')" title="Green Up Arrow" class="btn-icon-tool" style="color:#00ffcc; font-size: 15px; padding: 3px 7px; flex: 1;">↑</button>
+                            <button onclick="insertShortcut('input-sec-${sIdx}', ':down:')" title="Self debuff arrow" class="btn-icon-tool" style="color:#ff4444; font-size: 15px; padding: 3px 7px; flex: 1;">↓</button>
+                            <button onclick="insertShortcut('input-sec-${sIdx}', ':ydown:')" title="Enemy debuff arrow" class="btn-icon-tool" style="color:#FFFF00; font-size: 15px; padding: 3px 7px; flex: 1;">↓</button>
+                            <button onclick="insertShortcut('input-sec-${sIdx}', ':once:')" title="Once only" class="btn-icon-tool" style="font-size: 15px; padding: 3px 7px; flex: 1;">!</button>
+                            <button onclick="insertShortcut('input-sec-${sIdx}', ':inf:')" title="Infinite" class="btn-icon-tool" style="font-size: 15px; padding: 3px 7px; flex: 1;">∞</button>
                         </div>
                     </div>
                 </div>`);
@@ -2088,9 +2088,9 @@ window.addFormBlock = function(name = "New Form", blobUrl = "", exportName = "")
     const allForms = container.querySelectorAll(".dokkan-card");
     selectedForm = allForms[allForms.length - 1] || null;
     
-    // Clear the link input box for the newly created form
+    // Preset the link input box for the newly created form
     const linkInput = document.getElementById("formLinkInput");
-    if (linkInput) linkInput.value = "";
+    if (linkInput) linkInput.value = "https://abscustom.github.io/";
 
     window.refreshFormList();
 };
@@ -2176,7 +2176,7 @@ window.refreshFormList = function() {
             const linkInput = document.getElementById("formLinkInput");
             if (linkInput && linkAnchor) {
                 const currentHref = linkAnchor.getAttribute("href");
-                linkInput.value = (currentHref && currentHref !== "javascript:void(0)") ? currentHref : "";
+                linkInput.value = (currentHref && currentHref !== "javascript:void(0)") ? currentHref : "https://abscustom.github.io/";
             }
         });
 
@@ -2187,7 +2187,7 @@ window.refreshFormList = function() {
             const linkInput = document.getElementById("formLinkInput");
             if (linkInput && linkAnchor) {
                 const currentHref = linkAnchor.getAttribute("href");
-                linkInput.value = (currentHref && currentHref !== "javascript:void(0)") ? currentHref : "";
+                linkInput.value = (currentHref && currentHref !== "javascript:void(0)") ? currentHref : "https://abscustom.github.io/";
             }
         }
 
@@ -6459,10 +6459,14 @@ window.manualUpdateHub = async function() {
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png">
 <title>Custom Dokkan Box</title>
 <style>
 body { background: linear-gradient(180deg, #18181b 0%, #27272a 100%); color: #fff; font-family: sans-serif; text-align: center; padding: 40px 20px; min-height: 100vh; margin: 0; }
-h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin-bottom: 10px; text-transform: uppercase; font-weight: 900; }
+.hub-header { display: flex; justify-content: center; align-items: center; position: relative; max-width: 1400px; margin: 0 auto 20px auto; }
+h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin: 0; text-transform: uppercase; font-weight: 900; }
+.editor-btn { position: absolute; right: 20px; background: #3b82f6; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
+.editor-btn:hover { background: #60a5fa; transform: scale(1.05); box-shadow: 0 0 15px rgba(59, 130, 246, 0.8); }
 
 .controls { margin-bottom: 30px; }
 select { 
@@ -6491,7 +6495,12 @@ select:focus { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.
 </style>
 </head>
 <body>
-    <h1>Character Box</h1>
+    <div class="hub-header">
+        <h1>Character Box</h1>
+        <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" class="editor-btn">
+            <span>📝</span> Dokkan Editor
+        </a>
+    </div>
     
     <!-- DROPDOWN FILTER (NOW DEFAULTS TO SHOW ALL) -->
     <div class="controls">
