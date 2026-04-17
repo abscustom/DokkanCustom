@@ -3230,14 +3230,22 @@ window.uploadToGitHub = async function() {
             folderExists = false;
         }
 
+        let uploadHtmlOnly = false;
         if (folderExists) {
-            const overwrite = confirm(
+            const userChoice = prompt(
                 `Folder "${basePath}" already exists!\n\n` +
-                `Do you want to overwrite it?\n\n` +
-                `(This will replace all existing files)`
+                `Type "1" to overwrite ONLY the HTML (fast update, keeps existing images/assets)\n` +
+                `Type "2" to overwrite the FULL folder (replaces everything)\n\n` +
+                `Leave blank or click Cancel to abort.`
             );
-            if (!overwrite) {
+            
+            if (userChoice === "1") {
+                uploadHtmlOnly = true;
+            } else if (userChoice === "2") {
+                uploadHtmlOnly = false;
+            } else {
                 alert("Upload cancelled.");
+                if (uploadBtn) uploadBtn.innerText = " Upload to GitHub";
                 return;
             }
         }
@@ -3812,24 +3820,28 @@ await Promise.all([...fetchPromises, ...cssFetchPromises, ...lrAssetPromises, ..
         console.log(" HTML paths fixed");
 
         // 8. Upload all files sequentially to avoid conflicts
-        console.log(`\n Uploading ${filesToUpload.length} files...`);
+        if (!uploadHtmlOnly) {
+            console.log(`\n Uploading ${filesToUpload.length} files...`);
 
-        for (let i = 0; i < filesToUpload.length; i++) {
-            const file = filesToUpload[i];
-            try {
-                console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
-                await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Add: ${file.path.split('/').pop()}`);
-                console.log(`  SUCCESS: ${file.path}`);
-            } catch (uploadError) {
-                console.error(`  FAILED: ${file.path} - ${uploadError.message}`);
-                // Continue with next file instead of stopping the whole upload
-                continue;
+            for (let i = 0; i < filesToUpload.length; i++) {
+                const file = filesToUpload[i];
+                try {
+                    console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
+                    await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Add: ${file.path.split('/').pop()}`);
+                    console.log(`  SUCCESS: ${file.path}`);
+                } catch (uploadError) {
+                    console.error(`  FAILED: ${file.path} - ${uploadError.message}`);
+                    // Continue with next file instead of stopping the whole upload
+                    continue;
+                }
+                
+                // Small delay between uploads to avoid rate limiting
+                if (i < filesToUpload.length - 1) {
+                    await new Promise(resolve => setTimeout(resolve, 300));
+                }
             }
-            
-            // Small delay between uploads to avoid rate limiting
-            if (i < filesToUpload.length - 1) {
-                await new Promise(resolve => setTimeout(resolve, 300));
-            }
+        } else {
+            console.log(`\n Skipping asset uploads (HTML-only override selected)...`);
         }
 
         // 9. Upload HTML last with fixed paths
@@ -6465,8 +6477,9 @@ window.manualUpdateHub = async function() {
 body { background: linear-gradient(180deg, #18181b 0%, #27272a 100%); color: #fff; font-family: sans-serif; text-align: center; padding: 40px 20px; min-height: 100vh; margin: 0; }
 .hub-header { display: flex; justify-content: center; align-items: center; position: relative; max-width: 1400px; margin: 0 auto 20px auto; }
 h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin: 0; text-transform: uppercase; font-weight: 900; }
-.editor-btn { position: absolute; right: 20px; background: #3b82f6; color: white; text-decoration: none; padding: 10px 15px; border-radius: 8px; font-weight: bold; font-size: 14px; box-shadow: 0 0 10px rgba(59, 130, 246, 0.5); display: flex; align-items: center; gap: 8px; transition: 0.2s; }
-.editor-btn:hover { background: #60a5fa; transform: scale(1.05); box-shadow: 0 0 15px rgba(59, 130, 246, 0.8); }
+.editor-btn { position: absolute; right: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); font-weight: 800; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(5px); }
+.editor-btn:hover { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); border-color: rgba(255, 255, 255, 0.4); }
+.editor-btn:active { transform: translateY(1px); }
 
 .controls { margin-bottom: 30px; }
 select { 
