@@ -3230,19 +3230,37 @@ window.uploadToGitHub = async function() {
             folderExists = false;
         }
 
-        let uploadHtmlOnly = false;
+        let smartUpdate = false;
+        let existingFiles = new Set();
+
         if (folderExists) {
             const userChoice = prompt(
                 `Folder "${basePath}" already exists!\n\n` +
-                `Type "1" to overwrite ONLY the HTML (fast update, keeps existing images/assets)\n` +
-                `Type "2" to overwrite the FULL folder (replaces everything)\n\n` +
+                `Type "1" to SMART UPDATE (Fast! Updates HTML & adds NEW icons only. Keeps existing SSR/TUR/Art)\n` +
+                `Type "2" to FULL OVERWRITE (Forces re-upload of ALL images and HTML)\n\n` +
                 `Leave blank or click Cancel to abort.`
             );
             
             if (userChoice === "1") {
-                uploadHtmlOnly = true;
+                smartUpdate = true;
+                if (uploadBtn) uploadBtn.innerText = "⏳ Scanning Repo...";
+                try {
+                    // Quickly fetch the list of files already on GitHub
+                    const treeRes = await fetch(`https://api.github.com/repos/${owner}/${repo}/git/trees/main?recursive=1`, {
+                        headers: { 'Authorization': `token ${githubToken}` }
+                    });
+                    if (treeRes.ok) {
+                        const treeData = await treeRes.json();
+                        treeData.tree.forEach(item => {
+                            if (item.path.startsWith(basePath + '/')) {
+                                existingFiles.add(item.path);
+                            }
+                        });
+                    }
+                } catch(e) { console.warn("Failed to fetch tree for smart update"); }
+                if (uploadBtn) uploadBtn.innerText = "⏳ Uploading (Smart)...";
             } else if (userChoice === "2") {
-                uploadHtmlOnly = false;
+                smartUpdate = false;
             } else {
                 alert("Upload cancelled.");
                 if (uploadBtn) uploadBtn.innerText = " Upload to GitHub";
@@ -3820,28 +3838,31 @@ await Promise.all([...fetchPromises, ...cssFetchPromises, ...lrAssetPromises, ..
         console.log(" HTML paths fixed");
 
         // 8. Upload all files sequentially to avoid conflicts
-        if (!uploadHtmlOnly) {
-            console.log(`\n Uploading ${filesToUpload.length} files...`);
+        console.log(`\n Uploading ${filesToUpload.length} files...`);
 
-            for (let i = 0; i < filesToUpload.length; i++) {
-                const file = filesToUpload[i];
-                try {
-                    console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
-                    await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Add: ${file.path.split('/').pop()}`);
-                    console.log(`  SUCCESS: ${file.path}`);
-                } catch (uploadError) {
-                    console.error(`  FAILED: ${file.path} - ${uploadError.message}`);
-                    // Continue with next file instead of stopping the whole upload
-                    continue;
-                }
-                
-                // Small delay between uploads to avoid rate limiting
-                if (i < filesToUpload.length - 1) {
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                }
+        for (let i = 0; i < filesToUpload.length; i++) {
+            const file = filesToUpload[i];
+            
+            // SMART UPDATE: Skip uploading the file if it already exists on GitHub
+            if (smartUpdate && existingFiles.has(file.path)) {
+                console.log(`[${i + 1}/${filesToUpload.length}] SKIPPING (Already Exists): ${file.path}`);
+                continue;
             }
-        } else {
-            console.log(`\n Skipping asset uploads (HTML-only override selected)...`);
+
+            try {
+                console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
+                await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Add/Update: ${file.path.split('/').pop()}`);
+                console.log(`  SUCCESS: ${file.path}`);
+            } catch (uploadError) {
+                console.error(`  FAILED: ${file.path} - ${uploadError.message}`);
+                // Continue with next file instead of stopping the whole upload
+                continue;
+            }
+            
+            // Small delay between uploads to avoid rate limiting
+            if (i < filesToUpload.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
         }
 
         // 9. Upload HTML last with fixed paths
