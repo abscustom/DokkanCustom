@@ -3843,12 +3843,9 @@ await Promise.all([...fetchPromises, ...cssFetchPromises, ...lrAssetPromises, ..
 
         for (let i = 0; i < filesToUpload.length; i++) {
                     await new Promise(resolve => setTimeout(resolve, 300));
-                }
-            }
-        } else {
-            console.log(`\n Skipping asset uploads (HTML-only override selected)...`);
+                
         }
-
+    
         // 9. Upload HTML last with fixed paths
         console.log(" Uploading index.html...");
         await uploadFileToGitHub(
