@@ -3321,7 +3321,7 @@ window.uploadToGitHub = async function() {
             if (el.style.cursor === 'pointer') el.style.cursor = 'default';
         });
 
-        const filesToUpload = [];
+        let filesToUpload = [];
         const fileMap = new Map();
 
         // 1. Add scraped assets
@@ -3833,17 +3833,26 @@ await Promise.all([...fetchPromises, ...cssFetchPromises, ...lrAssetPromises, ..
             const originalCount = filesToUpload.length;
             filesToUpload = filesToUpload.filter(file => {
                 const fileName = file.path.split('/').pop();
+                // Check if the filename contains any of the protected patterns
                 const isBlacklisted = blacklist.some(pattern => fileName.includes(pattern));
                 return !isBlacklisted;
             });
-            console.log(`Filtered out ${originalCount - filesToUpload.length} main assets.`);
+            console.log(`Filtered out ${originalCount - filesToUpload.length} main assets. Remaining: ${filesToUpload.length}`);
         }
 
         console.log(`\n Uploading ${filesToUpload.length} files...`);
 
+        // Perform actual upload loop
         for (let i = 0; i < filesToUpload.length; i++) {
-                    await new Promise(resolve => setTimeout(resolve, 300));
-                
+            const file = filesToUpload[i];
+            try {
+                console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
+                await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Smart Update: ${file.path.split('/').pop()}`);
+            } catch (err) {
+                console.error(`Failed to upload ${file.path}:`, err);
+            }
+            // Anti-rate limit delay
+            await new Promise(resolve => setTimeout(resolve, 350));
         }
     
         // 9. Upload HTML last with fixed paths
