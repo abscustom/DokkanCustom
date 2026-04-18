@@ -3230,22 +3230,14 @@ window.uploadToGitHub = async function() {
             folderExists = false;
         }
 
-        let smartUpdate = false;
         if (folderExists) {
-            const userChoice = prompt(
+            const overwrite = confirm(
                 `Folder "${basePath}" already exists!\n\n` +
-                `Type "1" for SMART UPDATE (Fast! Updates text/HTML and NEW icons only. Ignores changes to main Art/SSR/TUR/Forms)\n` +
-                `Type "2" for FULL OVERWRITE (Forces upload of everything including all images)\n\n` +
-                `Leave blank or click Cancel to abort.`
+                `Do you want to overwrite it?\n\n` +
+                `(This will replace all existing files)`
             );
-            
-            if (userChoice === "1") {
-                smartUpdate = true;
-            } else if (userChoice === "2") {
-                smartUpdate = false;
-            } else {
+            if (!overwrite) {
                 alert("Upload cancelled.");
-                if (uploadBtn) uploadBtn.innerText = " Upload to GitHub";
                 return;
             }
         }
@@ -3321,7 +3313,7 @@ window.uploadToGitHub = async function() {
             if (el.style.cursor === 'pointer') el.style.cursor = 'default';
         });
 
-        let filesToUpload = [];
+        const filesToUpload = [];
         const fileMap = new Map();
 
         // 1. Add scraped assets
@@ -3819,42 +3811,27 @@ await Promise.all([...fetchPromises, ...cssFetchPromises, ...lrAssetPromises, ..
 
         console.log(" HTML paths fixed");
 
-
-        // 8. Filter and Upload files
-        if (smartUpdate) {
-            console.log("Applying Smart Update Filter: Ignoring Main Identity Images...");
-            // List of file patterns that should NEVER be updated during a Smart Update
-            const blacklist = [
-                'SSR_Icon.png', 'TUR_Icon.png', 'LR_Icon.png', 
-                'card_art.png', 'card_art.mp4', 'Form_Cutin'
-            ];
-            
-            // Remove any file from the upload queue if it matches the blacklist
-            const originalCount = filesToUpload.length;
-            filesToUpload = filesToUpload.filter(file => {
-                const fileName = file.path.split('/').pop();
-                // Check if the filename contains any of the protected patterns
-                const isBlacklisted = blacklist.some(pattern => fileName.includes(pattern));
-                return !isBlacklisted;
-            });
-            console.log(`Filtered out ${originalCount - filesToUpload.length} main assets. Remaining: ${filesToUpload.length}`);
-        }
-
+        // 8. Upload all files sequentially to avoid conflicts
         console.log(`\n Uploading ${filesToUpload.length} files...`);
 
-        // Perform actual upload loop
         for (let i = 0; i < filesToUpload.length; i++) {
             const file = filesToUpload[i];
             try {
                 console.log(`[${i + 1}/${filesToUpload.length}] Uploading: ${file.path}`);
-                await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Smart Update: ${file.path.split('/').pop()}`);
-            } catch (err) {
-                console.error(`Failed to upload ${file.path}:`, err);
+                await uploadFileToGitHub(githubToken, owner, repo, file.path, file.blob, `Add: ${file.path.split('/').pop()}`);
+                console.log(`  SUCCESS: ${file.path}`);
+            } catch (uploadError) {
+                console.error(`  FAILED: ${file.path} - ${uploadError.message}`);
+                // Continue with next file instead of stopping the whole upload
+                continue;
             }
-            // Anti-rate limit delay
-            await new Promise(resolve => setTimeout(resolve, 350));
+            
+            // Small delay between uploads to avoid rate limiting
+            if (i < filesToUpload.length - 1) {
+                await new Promise(resolve => setTimeout(resolve, 300));
+            }
         }
-    
+
         // 9. Upload HTML last with fixed paths
         console.log(" Uploading index.html...");
         await uploadFileToGitHub(
