@@ -70,34 +70,6 @@
 
 
 
-
-.custom-logo {
-    max-width: 450px;
-    width: 100%;
-    height: auto;
-
-    transition:
-        transform 0.25s ease,
-        filter 0.25s ease;
-
-    cursor: pointer;
-}
-
-.custom-logo:hover {
-    transform: scale(1.08);
-
-    filter:
-        drop-shadow(0 0 10px #ff4da6)
-        drop-shadow(0 0 20px #ff4da6)
-        drop-shadow(0 0 35px #ff4da6);
-}
-.custom-logo {
-    max-width: 320px;
-    width: 320px;
-    height: auto;
-}
-
-
 /* --- ICON PICKER MODAL --- */
 #icon-picker-modal {
     position: fixed; top: 0; left: 0; width: 100%; height: 100%;
@@ -6487,8 +6459,28 @@ window.manualUpdateHub = async function() {
 <title>absCustom</title>
 <style>
 body { background: linear-gradient(180deg, #18181b 0%, #27272a 100%); color: #fff; font-family: sans-serif; text-align: center; padding: 40px 20px; min-height: 100vh; margin: 0; }
-.hub-header { display: flex; justify-content: center; align-items: center; position: relative; max-width: 1400px; margin: 0 auto 20px auto; }
+.hub-header { display: flex; justify-content: center; align-items: center; position: relative; max-width: 1400px; margin: 0 auto 20px auto; min-height: 100px; }
 h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin: 0; text-transform: uppercase; font-weight: 900; }
+
+/* --- NEW LOGO STYLES --- */
+.custom-logo {
+    max-height: 100px; /* Constrains the size so it doesn't overlap the button */
+    width: auto;
+    cursor: pointer;
+    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+}
+
+/* Bounce effect on hover */
+.custom-logo:hover {
+    animation: bounceLogo 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
+}
+
+@keyframes bounceLogo {
+    0% { transform: translateY(0) scale(1); }
+    100% { transform: translateY(-12px) scale(1.05); }
+}
+/* ----------------------- */
+
 .editor-btn { position: absolute; right: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); font-weight: 800; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(5px); }
 .editor-btn:hover { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); border-color: rgba(255, 255, 255, 0.4); }
 .editor-btn:active { transform: translateY(1px); }
@@ -6522,10 +6514,10 @@ select:focus { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.
 <body>
     <div class="hub-header">
         <img
-    src="https://i.imgur.com/GGH4YyL.png"
-    alt="Custom Cards"
-    class="custom-logo"
-/>
+            src="https://i.imgur.com/MM4mZEu.png"
+            alt="Custom Cards"
+            class="custom-logo"
+        />
         <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" class="editor-btn">
             <span>📝</span> Dokkan Editor
         </a>
