@@ -72,42 +72,29 @@
 
 
 .custom-logo {
-    height: 140px;
-    width: auto;
+    max-width: 450px;
+    width: 100%;
+    height: auto;
+
+    transition:
+        transform 0.25s ease,
+        filter 0.25s ease;
+
     cursor: pointer;
-    transition: all 0.35s ease;
-    animation: floatLogo 3s ease-in-out infinite;
 }
 
 .custom-logo:hover {
-    transform: scale(1.1);
+    transform: scale(1.08);
+
     filter:
-        drop-shadow(0 0 10px #ff4db8)
-        drop-shadow(0 0 25px #ff4db8)
-        drop-shadow(0 0 50px #ff4db8);
+        drop-shadow(0 0 10px #ff4da6)
+        drop-shadow(0 0 20px #ff4da6)
+        drop-shadow(0 0 35px #ff4da6);
 }
-
-@keyframes floatLogo {
-    0%,100% {
-        transform: translateY(0);
-    }
-    50% {
-        transform: translateY(-5px);
-    }
-}
-
-.hub-header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    max-width: 1400px;
-    margin: 0 auto 20px auto;
-}
-
 .custom-logo {
-    height: 200px;
-    width: auto;
+    max-width: 320px;
+    width: 320px;
+    height: auto;
 }
 
 
