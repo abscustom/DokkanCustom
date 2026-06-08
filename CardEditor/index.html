@@ -71,7 +71,44 @@
 
 
 
+.custom-logo {
+    height: 140px;
+    width: auto;
+    cursor: pointer;
+    transition: all 0.35s ease;
+    animation: floatLogo 3s ease-in-out infinite;
+}
 
+.custom-logo:hover {
+    transform: scale(1.1);
+    filter:
+        drop-shadow(0 0 10px #ff4db8)
+        drop-shadow(0 0 25px #ff4db8)
+        drop-shadow(0 0 50px #ff4db8);
+}
+
+@keyframes floatLogo {
+    0%,100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-5px);
+    }
+}
+
+.hub-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    max-width: 1400px;
+    margin: 0 auto 20px auto;
+}
+
+.custom-logo {
+    height: 200px;
+    width: auto;
+}
 
 
 /* --- ICON PICKER MODAL --- */
@@ -6497,7 +6534,11 @@ select:focus { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.
 </head>
 <body>
     <div class="hub-header">
-        <h1>Custom Cards</h1>
+        <img
+    src="https://i.imgur.com/GGH4YyL.png"
+    alt="Custom Cards"
+    class="custom-logo"
+/>
         <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" class="editor-btn">
             <span>📝</span> Dokkan Editor
         </a>
