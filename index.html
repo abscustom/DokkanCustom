@@ -1,229 +1,966 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png">
-<title>absCustom</title>
-<style>
-body { background: linear-gradient(180deg, #18181b 0%, #27272a 100%); color: #fff; font-family: sans-serif; text-align: center; padding: 40px 20px; min-height: 100vh; margin: 0; }
-.hub-header { display: flex; justify-content: center; align-items: center; position: relative; max-width: 1400px; margin: 0 auto 20px auto; min-height: 100px; }
-h1 { font-size: 3rem; color: #facc15; text-shadow: 0 0 15px rgba(250, 204, 21, 0.4); margin: 0; text-transform: uppercase; font-weight: 900; }
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="https://i.imgur.com/7E8KqH3.png">
+    <title>absCustom</title>
+    <style>
+        /* Glass News Popup Window */
+        .news-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            background: rgba(0, 0, 0, 0.65);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.3s ease;
+        }
 
-/* --- NEW LOGO STYLES --- */
-.custom-logo {
-    max-height: 100px; /* Constrains the size so it doesn't overlap the button */
-    width: auto;
-    cursor: pointer;
-    filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
-}
+        .news-modal.open {
+            opacity: 1;
+            pointer-events: auto;
+        }
 
-/* Bounce effect on hover */
-.custom-logo:hover {
-    animation: bounceLogo 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
-}
+        .news-content {
+            background: rgba(15, 23, 42, 0.85);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 24px;
+            width: 90%;
+            max-width: 650px;
+            padding: 24px;
+            box-shadow: 0 10px 40px rgba(0, 0, 0, 0.6);
+        }
 
-@keyframes bounceLogo {
-    0% { transform: translateY(0) scale(1); }
-    100% { transform: translateY(-12px) scale(1.05); }
-}
-/* ----------------------- */
+        .news-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 18px;
+            border-bottom: 1px solid rgba(250, 204, 21, 0.3);
+            padding-bottom: 12px;
+        }
 
-.editor-btn { position: absolute; right: 20px; background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%); color: #ffffff; text-decoration: none; padding: 10px 22px; border-radius: 30px; border: 1px solid rgba(255, 255, 255, 0.2); font-weight: 800; font-size: 13px; letter-spacing: 1px; text-transform: uppercase; box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4); display: flex; align-items: center; gap: 8px; transition: all 0.3s ease; backdrop-filter: blur(5px); }
-.editor-btn:hover { background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6); border-color: rgba(255, 255, 255, 0.4); }
-.editor-btn:active { transform: translateY(1px); }
+        .news-header h2 {
+            color: #facc15;
+            margin: 0;
+            font-size: 1.2rem;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
 
-.controls { margin-bottom: 30px; }
-select { 
-    background: #1e293b; color: #fff; padding: 10px 20px; border: 2px solid #3b82f6; 
-    border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; outline: none;
-    box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
-}
-select:focus { border-color: #facc15; box-shadow: 0 0 15px rgba(250, 204, 21, 0.5); }
+        /* Top Nav Container */
+        /* Top Nav Container */
+        .top-nav {
+            position: relative;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 520px;
+            /* Defined width guarantees News is in the exact center */
+            max-width: 92%;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            padding: 6px;
+            border-radius: 30px;
+            margin: 0 auto 15px auto;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            box-sizing: border-box;
+        }
 
-.grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 20px; max-width: 1400px; margin: 0 auto; background: rgba(0,0,0,0.5); padding: 30px; border-radius: 12px; }
-.char-box { text-decoration: none; color: #f8fafc; display: flex; flex-direction: column; align-items: center; transition: 0.2s; }
-.char-box:hover { transform: scale(1.05); z-index: 10; }
-.card-icon { position: relative; width: 150px; height: 150px; margin-bottom: 10px; }
-.card-icon img, .card-icon video { position: absolute; pointer-events: none; }
-.frame { width: 150px; height: 150px; z-index: 1; top: 0; left: 0; }
-.char-img { height: 188px; z-index: 2; bottom: -13px; left: 50%; transform: translateX(-50%); }
-.lr-dial { width: 140px; height: 140px; z-index: 1; top: 5px; left: 5px; animation: spin 6s linear infinite; }
-.lr-lightning { z-index: 2; width: 290px; top: 50%; left: 50%; transform: translate(-50%, -50%); filter: brightness(10) contrast(1.2); mix-blend-mode: screen; }
-.rarity { height: 75px; z-index: 3; bottom: -16px; left: -10px; filter: drop-shadow(0 2px 2px #000); }
-.type { height: 55px; z-index: 3; top: -8px; right: -8px; }
-.name-container { width: 150px; overflow: hidden; background: rgba(0,0,0,0.8); border: 1px solid #555; border-radius: 6px; padding: 6px 0; }
-.char-name { font-size: 14px; font-weight: 700; white-space: nowrap; display: inline-block; padding: 0 10px; }
-.char-name.scrolling { animation: scroll-text 8s linear infinite; }
-@keyframes scroll-text { 0% { transform: translateX(20%); } 100% { transform: translateX(-100%); } }
-@keyframes spin { 100% { transform: rotate(360deg); } }
-</style>
+        /* Nav Item (Equal Widths) */
+        .nav-item {
+            flex: 1;
+            /* Forces all 3 tabs to take up equal width */
+            position: relative;
+            z-index: 2;
+            color: #cbd5e1;
+            text-decoration: none;
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            padding: 9px 0;
+            border-radius: 20px;
+            transition: color 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            /* Centers text/icon inside each tab slot */
+            gap: 6px;
+            white-space: nowrap;
+        }
+
+        .nav-item:hover,
+        .nav-item.active {
+            color: #facc15;
+            /* Text turns yellow on hover/active */
+        }
+
+        /* Smooth Sliding Yellow Pill Indicator */
+        .nav-indicator {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 0;
+            height: 0;
+            background: rgba(250, 204, 21, 0.15);
+            border: 1.5px solid rgba(250, 204, 21, 0.6);
+            box-shadow: 0 0 12px rgba(250, 204, 21, 0.3);
+            border-radius: 20px;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1;
+            pointer-events: none;
+            box-sizing: border-box;
+            /* Ensures borders match perfectly */
+        }
+
+
+
+        /* 3-Line Hamburger Button (Top Left) */
+        /* 1. Sleek Filters Button (Matches Top Nav Pill Style) */
+        .menu-btn {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            z-index: 999;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            padding: 8px 18px;
+            border-radius: 30px;
+            /* Matching rounded pill shape */
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .menu-btn:hover {
+            color: #facc15;
+            border-color: rgba(250, 204, 21, 0.5);
+            background: rgba(250, 204, 21, 0.1);
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.25);
+        }
+
+        /* 2. Matching Glass Sidebar Drawer */
+        .sidebar-drawer {
+            position: fixed;
+            top: 0;
+            left: -320px;
+            width: 290px;
+            height: 100vh;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border-right: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 0 24px 24px 0;
+            /* Smooth rounded corners on the right edge */
+            z-index: 1002;
+            padding: 30px 22px;
+            box-sizing: border-box;
+            transition: left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            box-shadow: 8px 0 30px rgba(0, 0, 0, 0.5);
+            text-align: left;
+        }
+
+        .sidebar-drawer.open {
+            left: 0;
+        }
+
+        /* 3. Matching Glass Dropdowns Inside Sidebar */
+        .filter-group select {
+            width: 100%;
+            background: rgba(30, 41, 59, 0.6);
+            color: #fff;
+            padding: 10px 14px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 12px;
+            font-size: 13px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group select:hover {
+            border-color: rgba(250, 204, 21, 0.6);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.25);
+        }
+
+        /* Sidebar Header & Close Button */
+        .sidebar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 22px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+            padding-bottom: 12px;
+        }
+
+        .sidebar-header h2 {
+            font-size: 1.1rem;
+            color: #facc15;
+            margin: 0;
+            font-weight: 900;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+        }
+
+        /* Round Glass Close Button (✕) */
+        .close-btn {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.08);
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            color: #cbd5e1;
+            font-size: 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+        }
+
+        .close-btn:hover {
+            background: rgba(255, 255, 255, 0.2);
+            color: #fff;
+            border-color: rgba(250, 204, 21, 0.5);
+        }
+
+        /* Filter Card Containers */
+        .filter-group {
+            margin-bottom: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            background: rgba(255, 255, 255, 0.03);
+            padding: 12px 14px;
+            border-radius: 14px;
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .filter-group label {
+            font-size: 11px;
+            font-weight: 800;
+            color: #facc15;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        /* Glass Select Dropdowns */
+        .filter-group select {
+            width: 100%;
+            background: rgba(15, 23, 42, 0.75);
+            color: #f8fafc;
+            padding: 9px 12px;
+            border: 1px solid rgba(255, 255, 255, 0.15);
+            border-radius: 10px;
+            font-size: 13px;
+            font-weight: 700;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s ease;
+        }
+
+        .filter-group select:focus,
+        .filter-group select:hover {
+            border-color: rgba(250, 204, 21, 0.5);
+            box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+        }
+
+        /* Matching Glass Reset Button */
+        .reset-btn {
+            width: 100%;
+            margin-top: 10px;
+            background: rgba(239, 68, 68, 0.15);
+            border: 1px solid rgba(239, 68, 68, 0.4);
+            color: #fca5a5;
+            padding: 10px;
+            border-radius: 20px;
+            /* Pill shape */
+            font-weight: 800;
+            font-size: 12px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(8px);
+            margin-bottom: 20px;
+        }
+
+        .reset-btn:hover {
+            background: rgba(239, 68, 68, 0.3);
+            color: #fff;
+            border-color: #ef4444;
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+        }
+
+
+
+
+
+        /* Grid adjusts to take remaining space */
+        .grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+            gap: 25px;
+            background: rgba(255, 255, 255, 0.5);
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        body {
+            background: transparent;
+            /* Makes background transparent so video shows through */
+            color: #000000;
+            font-family: sans-serif;
+            text-align: center;
+            padding: 15px 20px;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        /* Fixes video to cover the entire screen behind content */
+        #bg-video {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            object-fit: cover;
+            z-index: -2;
+        }
+
+        /* The Frosted Glass Layer */
+        .glass-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            background: rgba(0, 0, 0, 0.95);
+            backdrop-filter: blur(0px);
+            -webkit-backdrop-filter: blur(0px);
+        }
+
+        .hub-header {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+            max-width: 1400px;
+            margin: 0 auto 5px auto;
+            min-height: 60px;
+        }
+
+        h1 {
+            font-size: 3rem;
+            color: #facc15;
+            text-shadow: 0 0 15px rgba(250, 204, 21, 0.4);
+            margin: 0;
+            text-transform: uppercase;
+            font-weight: 900;
+        }
+
+        /* --- NEW LOGO STYLES --- */
+        .custom-logo {
+            max-height: 240px;
+            /* Constrains the size so it doesn't overlap the button */
+            width: auto;
+            cursor: default;
+            margin: -50px 0;
+            filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
+        }
+
+        /* Bounce effect on hover */
+        .custom-logo:hover {
+            animation: bounceLogo 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
+        }
+
+        @keyframes bounceLogo {
+            0% {
+                transform: translateY(0) scale(1);
+            }
+
+            100% {
+                transform: translateY(-12px) scale(1.05);
+            }
+        }
+
+        /* ----------------------- */
+
+        .editor-btn {
+            position: absolute;
+            right: 20px;
+            background: linear-gradient(135deg, #1e3a8a 0%, #3b82f6 100%);
+            color: #ffffff;
+            text-decoration: none;
+            padding: 10px 22px;
+            border-radius: 30px;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            font-weight: 800;
+            font-size: 13px;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            box-shadow: 0 4px 15px rgba(59, 130, 246, 0.4);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
+        }
+
+        .editor-btn:hover {
+            background: linear-gradient(135deg, #3b82f6 0%, #60a5fa 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(59, 130, 246, 0.6);
+            border-color: rgba(255, 255, 255, 0.4);
+        }
+
+        .editor-btn:active {
+            transform: translateY(1px);
+        }
+
+        .controls {
+            margin-bottom: 30px;
+        }
+
+        select {
+            background: #1e293b;
+            color: #fff;
+            padding: 10px 20px;
+            border: 2px solid #3b82f6;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+            outline: none;
+            box-shadow: 0 0 10px rgba(59, 130, 246, 0.3);
+        }
+
+        select:focus {
+            border-color: #facc15;
+            box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 0px;
+            max-width: 95%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.122);
+            padding: 30px;
+            border-radius: 16px;
+        }
+
+        .char-box {
+            /* 1. CHANGE THIS NUMBER TO SCALE ALL CARDS UP OR DOWN */
+            --scale: .8;
+            /* 1 = Normal, 1.2 = 20% Bigger, 0.8 = 20% Smaller */
+
+            text-decoration: none;
+            color: #f8fafc;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+
+            /* Applies scale to the entire card and all internal layers */
+            transform: scale(var(--scale));
+            transform-origin: center center;
+            transition: transform 0.2s ease;
+        }
+
+        .char-box:hover {
+            transform: scale(calc(var(--scale) * 1.05));
+            z-index: 10;
+        }
+
+        .card-icon {
+            position: relative;
+            width: 150px;
+            height: 150px;
+            margin-bottom: 4px;
+        }
+
+        .card-icon img,
+        .card-icon video {
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .frame {
+            width: 150px;
+            height: 150px;
+            z-index: 1;
+            top: 0;
+            left: 0;
+        }
+
+        .char-img {
+            height: 188px;
+            z-index: 2;
+            bottom: -13px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .lr-dial {
+            width: 140px;
+            height: 140px;
+            z-index: 1;
+            top: 5px;
+            left: 5px;
+            animation: spin 6s linear infinite;
+        }
+
+        .lr-lightning {
+            z-index: 2;
+            width: 290px;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            filter: brightness(10) contrast(1.2);
+            mix-blend-mode: screen;
+        }
+
+        .rarity {
+            height: 75px;
+            z-index: 3;
+            bottom: -16px;
+            left: -10px;
+            filter: drop-shadow(0 2px 2px #000);
+        }
+
+        .type {
+            height: 55px;
+            z-index: 3;
+            top: -8px;
+            right: -8px;
+        }
+
+        .name-container {
+            width: 150px;
+            height: 32px;
+            /* Fixed height for all boxes */
+            overflow: hidden;
+            background: rgba(0, 0, 0, 0.8);
+            border: 1px solid #555;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-sizing: border-box;
+        }
+
+        .char-name {
+            font-size: 13px;
+            font-weight: 700;
+            white-space: nowrap;
+            line-height: 1;
+            color: #f8fafc;
+        }
+
+        /* 3. Scrolling text rule */
+        .char-name.scrolling {
+            display: flex;
+            align-items: center;
+            width: max-content;
+            animation: scroll-text 10s linear infinite;
+        }
+
+        /* Scrolls exactly halfway through the duplicated text, creating an invisible seamless reset */
+        @keyframes scroll-text {
+            0% {
+                transform: translateX(0);
+            }
+
+            100% {
+                transform: translateX(-50%);
+            }
+        }
+
+        @keyframes scroll-text {
+            0% {
+                transform: translateX(20%);
+            }
+
+            100% {
+                transform: translateX(-100%);
+            }
+        }
+
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+    </style>
 </head>
+
 <body>
+
+    <video autoplay muted loop playsinline id="bg-video">
+        <source src="webbg3.mp4" type="video/mp4">
+
+    </video>
+    <div class="glass-overlay"></div>
+
     <div class="hub-header">
-        <img
-            src="https://i.imgur.com/MM4mZEu.png"
-            alt="Custom Cards"
-            class="custom-logo"
-        />
-        <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" class="editor-btn">
-            <span>📝</span> Dokkan Editor
-        </a>
+        <img src="./abs.custom.png" onerror="this.src='https://i.imgur.com/MM4mZEu.png';" alt="Custom Cards"
+            class="custom-logo" />
+
     </div>
-    
+
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="top-nav" id="topNav">
+        <div class="nav-indicator" id="navIndicator"></div>
+        <a href="#" class="nav-item active">🏠 Home</a>
+        <a href="https://x.com/dokkan_global" target="_blank" class="nav-item">📰 News</a>
+        <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" target="_blank" class="nav-item">📝Editor</a>
+    </nav>
+
     <!-- DROPDOWN FILTER (NOW DEFAULTS TO SHOW ALL) -->
-    <div class="controls">
-        <select id="formFilter" onchange="filterCards()">
-            <option value="all" selected>Show All Characters</option>
-            <option value="a">Main Forms (A)</option>
-            <option value="b">Transformations (B)</option>
-            <option value="c">Transformations (C)</option>
-        </select>
-    </div>
+    <!-- 1. Top-Left 3-Line Menu Button -->
+    <button class="menu-btn" onclick="toggleSidebar()">
+        <span>☰</span> Filters
+    </button>
+
+    <!-- 2. Dark Overlay when open -->
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+
+    <!-- 3. Slide-out Panel -->
+    <aside class="sidebar-drawer" id="sidebarDrawer">
+        <div class="sidebar-header">
+            <h2>Filters</h2>
+            <button class="close-btn" onclick="toggleSidebar()">✕</button>
+        </div>
+
+        <!-- RESET FILTERS BUTTON -->
+        <button class="reset-btn" onclick="resetFilters()">
+            🔄 Reset Filters
+        </button>
+
+        <!-- TYPE FILTER -->
+        <div class="filter-group">
+            <label>Character Type</label>
+            <select id="typeFilter" onchange="filterCards()">
+                <option value="all">Show All Types</option>
+                <option value="agl">AGL</option>
+                <option value="teq">TEQ</option>
+                <option value="int">INT</option>
+                <option value="str">STR</option>
+                <option value="phy">PHY</option>
+            </select>
+        </div>
+
+        <!-- RARITY FILTER -->
+        <div class="filter-group">
+            <label>Card Rarity</label>
+            <select id="rarityFilter" onchange="filterCards()">
+                <option value="all">Show All Rarities</option>
+                <option value="lr">LR</option>
+                <option value="tur">TUR</option>
+            </select>
+        </div>
+
+        <!-- FORM FILTER -->
+        <div class="filter-group">
+            <label>Character Form</label>
+            <select id="formFilter" onchange="filterCards()">
+                <option value="all">Show All Forms</option>
+                <option value="a">Main Form (A)</option>
+                <option value="b">Form (B)</option>
+                <option value="c">Form (C)</option>
+            </select>
+        </div>
+    </aside>
 
     <div class="grid" id="cardGrid">
-    <a href="https://abscustom.github.io/ego-vegeta/" target="_blank" class="char-box" data-tag="b">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/ego-vegeta/images/frame_agl.png">
-            
+        <a href="https://abscustom.github.io/ego-vegeta/" target="_blank" class="char-box" data-tag="b">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/ego-vegeta/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/ego-vegeta/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/ego-vegeta/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/ego-vegeta/images/auto_1776474673503_8jjhy4zm8.png">
-            <img class="rarity" src="https://abscustom.github.io/ego-vegeta/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/ego-vegeta/images/super_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Vegeta (Ultra Ego) + Goku (Ultra Instinct)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/giant-mui/" target="_blank" class="char-box" data-tag="c">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/giant-mui/images/frame_agl.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/ego-vegeta/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/ego-vegeta/images/auto_1776474673503_8jjhy4zm8.png">
+                <img class="rarity" src="https://abscustom.github.io/ego-vegeta/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/ego-vegeta/images/super_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Vegeta (Ultra Ego) + Goku (Ultra Instinct)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/giant-mui/" target="_blank" class="char-box" data-tag="c">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/giant-mui/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/giant-mui/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/giant-mui/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/giant-mui/images/auto_1776464094905_fe6edixym.png">
-            <img class="rarity" src="https://abscustom.github.io/giant-mui/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/giant-mui/images/super_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Perfected Ultra Instinct (Giant Form)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/mui-goku/" target="_blank" class="char-box" data-tag="a">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/mui-goku/images/frame_agl.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/giant-mui/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/giant-mui/images/auto_1776464094905_fe6edixym.png">
+                <img class="rarity" src="https://abscustom.github.io/giant-mui/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/giant-mui/images/super_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Perfected Ultra Instinct (Giant Form)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/mui-goku/" target="_blank" class="char-box" data-tag="a">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/mui-goku/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/mui-goku/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/mui-goku/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/mui-goku/images/auto_1776462599524_jxhd4rr0e.png">
-            <img class="rarity" src="https://abscustom.github.io/mui-goku/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/mui-goku/images/super_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/base-vegeta/" target="_blank" class="char-box" data-tag="a">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/base-vegeta/images/frame_agl.png">
-            
-            <img class="char-img" src="https://abscustom.github.io/base-vegeta/images/auto_1776453101815_dwh8hqc5o.png">
-            <img class="rarity" src="https://abscustom.github.io/base-vegeta/images/rarity_TUR.png">
-            <img class="type" src="https://abscustom.github.io/base-vegeta/images/super_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Vegeta</div></div>
-    </a>
-    <a href="https://abscustom.github.io/god-vegeta/" target="_blank" class="char-box" data-tag="b">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/god-vegeta/images/frame_agl.png">
-            
-            <img class="char-img" src="https://abscustom.github.io/god-vegeta/images/auto_1776453355462_2g1arzauf.png">
-            <img class="rarity" src="https://abscustom.github.io/god-vegeta/images/rarity_TUR.png">
-            <img class="type" src="https://abscustom.github.io/god-vegeta/images/super_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Super Saiyan God Vegeta</div></div>
-    </a>
-    <a href="https://abscustom.github.io/evil-buu/" target="_blank" class="char-box" data-tag="a">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/evil-buu/images/frame_agl.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/mui-goku/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/mui-goku/images/auto_1776462599524_jxhd4rr0e.png">
+                <img class="rarity" src="https://abscustom.github.io/mui-goku/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/mui-goku/images/super_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/base-vegeta/" target="_blank" class="char-box" data-tag="a">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/base-vegeta/images/frame_agl.png">
+
+                <img class="char-img"
+                    src="https://abscustom.github.io/base-vegeta/images/auto_1776453101815_dwh8hqc5o.png">
+                <img class="rarity" src="https://abscustom.github.io/base-vegeta/images/rarity_TUR.png">
+                <img class="type" src="https://abscustom.github.io/base-vegeta/images/super_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Vegeta</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/god-vegeta/" target="_blank" class="char-box" data-tag="b">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/god-vegeta/images/frame_agl.png">
+
+                <img class="char-img"
+                    src="https://abscustom.github.io/god-vegeta/images/auto_1776453355462_2g1arzauf.png">
+                <img class="rarity" src="https://abscustom.github.io/god-vegeta/images/rarity_TUR.png">
+                <img class="type" src="https://abscustom.github.io/god-vegeta/images/super_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Super Saiyan God Vegeta</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/evil-buu/" target="_blank" class="char-box" data-tag="a">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/evil-buu/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/evil-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/evil-buu/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/evil-buu/images/auto_1776450710130_18hnv4guy.png">
-            <img class="rarity" src="https://abscustom.github.io/evil-buu/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/evil-buu/images/extreme_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Majin Buu (Pure Evil) + Majin Buu (Good)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/good-buu/" target="_blank" class="char-box" data-tag="b">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/good-buu/images/frame_agl.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/evil-buu/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/evil-buu/images/auto_1776450710130_18hnv4guy.png">
+                <img class="rarity" src="https://abscustom.github.io/evil-buu/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/evil-buu/images/extreme_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Majin Buu (Pure Evil) + Majin Buu (Good)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/good-buu/" target="_blank" class="char-box" data-tag="b">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/good-buu/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/good-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/good-buu/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/good-buu/images/auto_1776451214548_aexdbzorq.png">
-            <img class="rarity" src="https://abscustom.github.io/good-buu/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/good-buu/images/extreme_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Majin Buu (Good) + Majin Buu (Pure Evil)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/super-buu/" target="_blank" class="char-box" data-tag="c">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/super-buu/images/frame_agl.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/good-buu/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/good-buu/images/auto_1776451214548_aexdbzorq.png">
+                <img class="rarity" src="https://abscustom.github.io/good-buu/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/good-buu/images/extreme_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Majin Buu (Good) + Majin Buu (Pure Evil)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/super-buu/" target="_blank" class="char-box" data-tag="c">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/super-buu/images/frame_agl.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/super-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/super-buu/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/super-buu/images/auto_1776451912437_v7z5o7hwc.png">
-            <img class="rarity" src="https://abscustom.github.io/super-buu/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/super-buu/images/extreme_type_agl.png">
-        </div>
-        <div class="name-container"><div class="char-name">Buu (Super)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/fp-frieza/" target="_blank" class="char-box" data-tag="a">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/fp-frieza/images/frame_teq.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/super-buu/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/super-buu/images/auto_1776451912437_v7z5o7hwc.png">
+                <img class="rarity" src="https://abscustom.github.io/super-buu/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/super-buu/images/extreme_type_agl.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Buu (Super)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/fp-frieza/" target="_blank" class="char-box" data-tag="a">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/fp-frieza/images/frame_teq.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/fp-frieza/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/fp-frieza/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/fp-frieza/images/auto_1776455880566_sqikpzma4.png">
-            <img class="rarity" src="https://abscustom.github.io/fp-frieza/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/fp-frieza/images/extreme_type_teq.png">
-        </div>
-        <div class="name-container"><div class="char-name">Frieza (Full Power)</div></div>
-    </a>
-    <a href="https://abscustom.github.io/namek-goku/" target="_blank" class="char-box" data-tag="a">
-        <div class="card-icon">
-            <img class="frame" src="https://abscustom.github.io/namek-goku/images/frame_phy.png">
-            
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/fp-frieza/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/fp-frieza/images/auto_1776455880566_sqikpzma4.png">
+                <img class="rarity" src="https://abscustom.github.io/fp-frieza/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/fp-frieza/images/extreme_type_teq.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Frieza (Full Power)</div>
+            </div>
+        </a>
+        <a href="https://abscustom.github.io/namek-goku/" target="_blank" class="char-box" data-tag="a">
+            <div class="card-icon">
+                <img class="frame" src="https://abscustom.github.io/namek-goku/images/frame_phy.png">
+
                 <img class="lr-dial" src="https://abscustom.github.io/namek-goku/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline><source src="https://abscustom.github.io/namek-goku/images/lightningfx.webm" type="video/webm"></video>
-            <img class="char-img" src="https://abscustom.github.io/namek-goku/images/auto_1776461424402_zgiwhfy3x.png">
-            <img class="rarity" src="https://abscustom.github.io/namek-goku/images/rarity_LR.png">
-            <img class="type" src="https://abscustom.github.io/namek-goku/images/super_type_phy.png">
-        </div>
-        <div class="name-container"><div class="char-name">Super Saiyan Goku</div></div>
-    </a></div>
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="https://abscustom.github.io/namek-goku/images/lightningfx.webm" type="video/webm">
+                    </video>
+                <img class="char-img"
+                    src="https://abscustom.github.io/namek-goku/images/auto_1776461424402_zgiwhfy3x.png">
+                <img class="rarity" src="https://abscustom.github.io/namek-goku/images/rarity_LR.png">
+                <img class="type" src="https://abscustom.github.io/namek-goku/images/super_type_phy.png">
+            </div>
+            <div class="name-container">
+                <div class="char-name">Super Saiyan Goku</div>
+            </div>
+        </a></div>
 
     <script>
         // Filtering Logic
+        // Toggle Sidebar Open / Close
+        function toggleSidebar() {
+            document.getElementById('sidebarDrawer').classList.toggle('open');
+            document.getElementById('sidebarOverlay').classList.toggle('open');
+        }
+        // Combined Filter Function
         function filterCards() {
-            const filterValue = document.getElementById('formFilter').value;
+            const selectedType = document.getElementById('typeFilter').value;
+            const selectedForm = document.getElementById('formFilter').value;
+            const selectedRarity = document.getElementById('rarityFilter').value;
             const cards = document.querySelectorAll('.char-box');
-            
             cards.forEach(card => {
-                const tag = card.getAttribute('data-tag') || 'a'; // older untagged cards default to 'a'
-                if (filterValue === 'all' || tag === filterValue) {
+                // 1. Get Form tag (a, b, or c)
+                const cardForm = card.getAttribute('data-tag') || 'a';
+                // 2. Detect Type from <img class="type"> src
+                const typeImg = card.querySelector('img.type');
+                let cardType = 'unknown';
+                if (typeImg && typeImg.src) {
+                    const src = typeImg.src.toLowerCase();
+                    if (src.includes('agl')) cardType = 'agl';
+                    else if (src.includes('teq')) cardType = 'teq';
+                    else if (src.includes('int')) cardType = 'int';
+                    else if (src.includes('str')) cardType = 'str';
+                    else if (src.includes('phy')) cardType = 'phy';
+                }
+                // 3. Detect Rarity from <img class="rarity"> src
+                const rarityImg = card.querySelector('img.rarity');
+                let cardRarity = 'unknown';
+                if (rarityImg && rarityImg.src) {
+                    const src = rarityImg.src.toLowerCase();
+                    if (src.includes('lr')) cardRarity = 'lr';
+                    else if (src.includes('tur')) cardRarity = 'tur';
+                }
+                // 4. Match against all 3 dropdown selections
+                const matchesType = (selectedType === 'all' || cardType === selectedType);
+                const matchesForm = (selectedForm === 'all' || cardForm === selectedForm);
+                const matchesRarity = (selectedRarity === 'all' || cardRarity === selectedRarity);
+                // 5. Show or hide card
+                if (matchesType && matchesForm && matchesRarity) {
                     card.style.display = 'flex';
                 } else {
                     card.style.display = 'none';
                 }
             });
         }
+        // Sliding Yellow Nav Indicator Logic
+        const topNav = document.getElementById('topNav');
+        const navIndicator = document.getElementById('navIndicator');
+        const navItems = document.querySelectorAll('.nav-item');
+        const activeNavItem = document.querySelector('.nav-item.active');
 
+        function moveNavIndicator(element) {
+            if (!element || !navIndicator) return;
+            navIndicator.style.left = `${element.offsetLeft}px`;
+            navIndicator.style.top = `${element.offsetTop}px`;
+            navIndicator.style.width = `${element.offsetWidth}px`;
+            navIndicator.style.height = `${element.offsetHeight}px`;
+        }
+        // Set initial position to Home
+        moveNavIndicator(activeNavItem);
+        // Slide to hovered tab
+        navItems.forEach(item => {
+            item.addEventListener('mouseenter', () => moveNavIndicator(item));
+        });
+        // Return to Home tab when mouse leaves top bar
+        topNav.addEventListener('mouseleave', () => moveNavIndicator(activeNavItem));
+        // Adjust if window resizes
+        window.addEventListener('resize', () => moveNavIndicator(activeNavItem));
+        // Resets all dropdowns back to "Show All" and updates the grid
+        function resetFilters() {
+            document.getElementById('typeFilter').value = 'all';
+            document.getElementById('formFilter').value = 'all';
+            document.getElementById('rarityFilter').value = 'all';
+            filterCards(); // Refresh card display
+        }
         // Run immediately to ensure proper setup
         filterCards();
-        
-        // Auto-scroll long names
+        // Auto-scroll long names seamlessly
         document.querySelectorAll('.char-name').forEach(el => {
-            if(el.scrollWidth > el.parentElement.clientWidth) {
+            if (el.scrollWidth > el.parentElement.clientWidth) {
+                // Duplicate text content with spacing so it loops continuously
+                const text = el.innerText;
+                el.innerHTML =
+                    `<span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span><span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
                 el.classList.add('scrolling');
-                el.style.display = 'inline-block';
             }
         });
+        // Slow down the background video (0.5 = half speed, 0.25 = quarter speed)
+        const bgVideo = document.getElementById('bg-video');
+        bgVideo.playbackRate = 0.5;
     </script>
+
 </body>
-</html>
+
+</html>>
