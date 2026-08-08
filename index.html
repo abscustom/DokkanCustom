@@ -61,14 +61,12 @@
         }
 
         /* Top Nav Container */
-        /* Top Nav Container */
         .top-nav {
             position: relative;
             display: flex;
             justify-content: space-between;
             align-items: center;
             width: 520px;
-            /* Defined width guarantees News is in the exact center */
             max-width: 92%;
             background: rgba(15, 23, 42, 0.75);
             backdrop-filter: blur(12px);
@@ -84,7 +82,6 @@
         /* Nav Item (Equal Widths) */
         .nav-item {
             flex: 1;
-            /* Forces all 3 tabs to take up equal width */
             position: relative;
             z-index: 2;
             color: #cbd5e1;
@@ -99,7 +96,6 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            /* Centers text/icon inside each tab slot */
             gap: 6px;
             white-space: nowrap;
         }
@@ -107,7 +103,6 @@
         .nav-item:hover,
         .nav-item.active {
             color: #facc15;
-            /* Text turns yellow on hover/active */
         }
 
         /* Smooth Sliding Yellow Pill Indicator */
@@ -125,13 +120,9 @@
             z-index: 1;
             pointer-events: none;
             box-sizing: border-box;
-            /* Ensures borders match perfectly */
         }
 
-
-
-        /* 3-Line Hamburger Button (Top Left) */
-        /* 1. Sleek Filters Button (Matches Top Nav Pill Style) */
+        /* 1. Sleek Filters Button (Top Left) */
         .menu-btn {
             position: fixed;
             top: 20px;
@@ -144,7 +135,6 @@
             color: #cbd5e1;
             padding: 8px 18px;
             border-radius: 30px;
-            /* Matching rounded pill shape */
             font-size: 13px;
             font-weight: 800;
             letter-spacing: 1px;
@@ -164,6 +154,107 @@
             box-shadow: 0 0 15px rgba(250, 204, 21, 0.25);
         }
 
+        /* ------------------------------------------------------------- */
+        /* --- UPDATE BOX BUTTON (TOP RIGHT GLASS PILL) --- */
+        /* ------------------------------------------------------------- */
+        .update-box-btn {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(15, 23, 42, 0.75);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(16, 185, 129, 0.4);
+            color: #34d399;
+            padding: 8px 18px;
+            border-radius: 30px;
+            font-size: 13px;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
+            transition: all 0.3s ease;
+        }
+
+        .update-box-btn:hover {
+            color: #ffffff;
+            border-color: #10b981;
+            background: rgba(16, 185, 129, 0.2);
+            box-shadow: 0 0 15px rgba(16, 185, 129, 0.4);
+            transform: translateY(-1px);
+        }
+
+        .update-box-btn .spinning {
+            display: inline-block;
+            animation: spinIcon 1s linear infinite;
+        }
+
+        @keyframes spinIcon {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ------------------------------------------------------------- */
+        /* --- ADMIN MODE STYLING & DELETION BADGES --- */
+        /* ------------------------------------------------------------- */
+        .admin-status-badge {
+            position: fixed;
+            top: 65px;
+            right: 20px;
+            z-index: 999;
+            background: rgba(239, 68, 68, 0.25);
+            border: 1px solid #ef4444;
+            color: #fca5a5;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            letter-spacing: 0.5px;
+            backdrop-filter: blur(8px);
+            display: none;
+            align-items: center;
+            gap: 6px;
+            box-shadow: 0 0 12px rgba(239, 68, 68, 0.4);
+        }
+
+        .hub-admin-mode .admin-status-badge {
+            display: inline-flex !important;
+        }
+
+        .card-delete-badge {
+            display: none;
+        }
+
+        .hub-admin-mode .card-delete-badge {
+            display: flex !important;
+            position: absolute;
+            top: -6px;
+            right: -6px;
+            z-index: 999;
+            background: #ef4444;
+            color: #ffffff;
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            width: 26px;
+            height: 26px;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 13px;
+            cursor: pointer;
+            box-shadow: 0 0 10px rgba(239, 68, 68, 0.8);
+            transition: transform 0.2s ease, background 0.2s ease;
+        }
+
+        .card-delete-badge:hover {
+            transform: scale(1.2) !important;
+            background: #dc2626 !important;
+        }
+
         /* 2. Matching Glass Sidebar Drawer */
         .sidebar-drawer {
             position: fixed;
@@ -176,7 +267,6 @@
             -webkit-backdrop-filter: blur(16px);
             border-right: 1px solid rgba(255, 255, 255, 0.15);
             border-radius: 0 24px 24px 0;
-            /* Smooth rounded corners on the right edge */
             z-index: 1002;
             padding: 30px 22px;
             box-sizing: border-box;
@@ -302,7 +392,6 @@
             color: #fca5a5;
             padding: 10px;
             border-radius: 20px;
-            /* Pill shape */
             font-weight: 800;
             font-size: 12px;
             letter-spacing: 1px;
@@ -320,24 +409,21 @@
             box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
         }
 
-
-
-
-
         /* Grid adjusts to take remaining space */
         .grid {
             flex: 1;
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-            gap: 25px;
-            background: rgba(255, 255, 255, 0.5);
+            gap: 0px;
+            max-width: 95%;
+            margin: 0 auto;
+            background: rgba(255, 255, 255, 0.122);
             padding: 30px;
             border-radius: 16px;
         }
 
         body {
             background: transparent;
-            /* Makes background transparent so video shows through */
             color: #000000;
             font-family: sans-serif;
             text-align: center;
@@ -389,17 +475,15 @@
             font-weight: 900;
         }
 
-        /* --- NEW LOGO STYLES --- */
+        /* --- LOGO STYLES --- */
         .custom-logo {
-            max-height: 240px;
-            /* Constrains the size so it doesn't overlap the button */
+            max-height: 220px;
             width: auto;
             cursor: default;
-            margin: -50px 0;
+            margin: -10px 0;
             filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.5));
         }
 
-        /* Bounce effect on hover */
         .custom-logo:hover {
             animation: bounceLogo 0.5s cubic-bezier(0.28, 0.84, 0.42, 1) infinite alternate;
         }
@@ -413,8 +497,6 @@
                 transform: translateY(-12px) scale(1.05);
             }
         }
-
-        /* ----------------------- */
 
         .editor-btn {
             position: absolute;
@@ -470,32 +552,17 @@
             box-shadow: 0 0 15px rgba(250, 204, 21, 0.5);
         }
 
-        .grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
-            gap: 0px;
-            max-width: 95%;
-            margin: 0 auto;
-            background: rgba(255, 255, 255, 0.122);
-            padding: 30px;
-            border-radius: 16px;
-        }
-
         .char-box {
-            /* 1. CHANGE THIS NUMBER TO SCALE ALL CARDS UP OR DOWN */
             --scale: .8;
-            /* 1 = Normal, 1.2 = 20% Bigger, 0.8 = 20% Smaller */
-
             text-decoration: none;
             color: #f8fafc;
             display: flex;
             flex-direction: column;
             align-items: center;
-
-            /* Applies scale to the entire card and all internal layers */
             transform: scale(var(--scale));
             transform-origin: center center;
             transition: transform 0.2s ease;
+            position: relative;
         }
 
         .char-box:hover {
@@ -569,7 +636,6 @@
         .name-container {
             width: 150px;
             height: 32px;
-            /* Fixed height for all boxes */
             overflow: hidden;
             background: rgba(0, 0, 0, 0.8);
             border: 1px solid #555;
@@ -588,7 +654,6 @@
             color: #f8fafc;
         }
 
-        /* 3. Scrolling text rule */
         .char-name.scrolling {
             display: flex;
             align-items: center;
@@ -596,7 +661,6 @@
             animation: scroll-text 10s linear infinite;
         }
 
-        /* Scrolls exactly halfway through the duplicated text, creating an invisible seamless reset */
         @keyframes scroll-text {
             0% {
                 transform: translateX(0);
@@ -604,16 +668,6 @@
 
             100% {
                 transform: translateX(-50%);
-            }
-        }
-
-        @keyframes scroll-text {
-            0% {
-                transform: translateX(20%);
-            }
-
-            100% {
-                transform: translateX(-100%);
             }
         }
 
@@ -629,14 +683,17 @@
 
     <video autoplay muted loop playsinline id="bg-video">
         <source src="webbg3.mp4" type="video/mp4">
-
     </video>
     <div class="glass-overlay"></div>
 
     <div class="hub-header">
         <img src="./abs.custom.png" onerror="this.src='https://i.imgur.com/MM4mZEu.png';" alt="Custom Cards"
             class="custom-logo" />
+    </div>
 
+    <!-- ADMIN STATUS BADGE -->
+    <div class="admin-status-badge">
+        🔓 Admin Mode Active (Click ✕ on cards to delete)
     </div>
 
     <!-- TOP NAVIGATION BAR -->
@@ -647,16 +704,20 @@
         <a href="https://abscustom.github.io/DokkanCustom/CardEditor/" target="_blank" class="nav-item">📝Editor</a>
     </nav>
 
-    <!-- DROPDOWN FILTER (NOW DEFAULTS TO SHOW ALL) -->
-    <!-- 1. Top-Left 3-Line Menu Button -->
+    <!-- 1. TOP-LEFT FILTERS BUTTON -->
     <button class="menu-btn" onclick="toggleSidebar()">
         <span>☰</span> Filters
     </button>
 
-    <!-- 2. Dark Overlay when open -->
+    <!-- 2. TOP-RIGHT UPDATE BOX BUTTON -->
+    <button class="update-box-btn" onclick="updateCharacterBox()">
+        <span id="update-box-icon">📦</span> Update Box
+    </button>
+
+    <!-- 3. Dark Overlay when open -->
     <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
 
-    <!-- 3. Slide-out Panel -->
+    <!-- 4. Slide-out Panel -->
     <aside class="sidebar-drawer" id="sidebarDrawer">
         <div class="sidebar-header">
             <h2>Filters</h2>
@@ -703,177 +764,15 @@
         </div>
     </aside>
 
-    <div class="grid" id="cardGrid">
-        <a href="https://abscustom.github.io/ego-vegeta/" target="_blank" class="char-box" data-tag="b">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/ego-vegeta/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/ego-vegeta/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/ego-vegeta/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/ego-vegeta/images/auto_1776474673503_8jjhy4zm8.png">
-                <img class="rarity" src="https://abscustom.github.io/ego-vegeta/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/ego-vegeta/images/super_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Vegeta (Ultra Ego) + Goku (Ultra Instinct)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/giant-mui/" target="_blank" class="char-box" data-tag="c">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/giant-mui/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/giant-mui/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/giant-mui/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/giant-mui/images/auto_1776464094905_fe6edixym.png">
-                <img class="rarity" src="https://abscustom.github.io/giant-mui/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/giant-mui/images/super_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Perfected Ultra Instinct (Giant Form)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/mui-goku/" target="_blank" class="char-box" data-tag="a">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/mui-goku/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/mui-goku/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/mui-goku/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/mui-goku/images/auto_1776462599524_jxhd4rr0e.png">
-                <img class="rarity" src="https://abscustom.github.io/mui-goku/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/mui-goku/images/super_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Goku (Ultra Instinct) + Vegeta (Ultra Ego)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/base-vegeta/" target="_blank" class="char-box" data-tag="a">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/base-vegeta/images/frame_agl.png">
-
-                <img class="char-img"
-                    src="https://abscustom.github.io/base-vegeta/images/auto_1776453101815_dwh8hqc5o.png">
-                <img class="rarity" src="https://abscustom.github.io/base-vegeta/images/rarity_TUR.png">
-                <img class="type" src="https://abscustom.github.io/base-vegeta/images/super_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Vegeta</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/god-vegeta/" target="_blank" class="char-box" data-tag="b">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/god-vegeta/images/frame_agl.png">
-
-                <img class="char-img"
-                    src="https://abscustom.github.io/god-vegeta/images/auto_1776453355462_2g1arzauf.png">
-                <img class="rarity" src="https://abscustom.github.io/god-vegeta/images/rarity_TUR.png">
-                <img class="type" src="https://abscustom.github.io/god-vegeta/images/super_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Super Saiyan God Vegeta</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/evil-buu/" target="_blank" class="char-box" data-tag="a">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/evil-buu/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/evil-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/evil-buu/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/evil-buu/images/auto_1776450710130_18hnv4guy.png">
-                <img class="rarity" src="https://abscustom.github.io/evil-buu/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/evil-buu/images/extreme_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Majin Buu (Pure Evil) + Majin Buu (Good)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/good-buu/" target="_blank" class="char-box" data-tag="b">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/good-buu/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/good-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/good-buu/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/good-buu/images/auto_1776451214548_aexdbzorq.png">
-                <img class="rarity" src="https://abscustom.github.io/good-buu/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/good-buu/images/extreme_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Majin Buu (Good) + Majin Buu (Pure Evil)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/super-buu/" target="_blank" class="char-box" data-tag="c">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/super-buu/images/frame_agl.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/super-buu/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/super-buu/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/super-buu/images/auto_1776451912437_v7z5o7hwc.png">
-                <img class="rarity" src="https://abscustom.github.io/super-buu/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/super-buu/images/extreme_type_agl.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Buu (Super)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/fp-frieza/" target="_blank" class="char-box" data-tag="a">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/fp-frieza/images/frame_teq.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/fp-frieza/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/fp-frieza/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/fp-frieza/images/auto_1776455880566_sqikpzma4.png">
-                <img class="rarity" src="https://abscustom.github.io/fp-frieza/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/fp-frieza/images/extreme_type_teq.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Frieza (Full Power)</div>
-            </div>
-        </a>
-        <a href="https://abscustom.github.io/namek-goku/" target="_blank" class="char-box" data-tag="a">
-            <div class="card-icon">
-                <img class="frame" src="https://abscustom.github.io/namek-goku/images/frame_phy.png">
-
-                <img class="lr-dial" src="https://abscustom.github.io/namek-goku/images/lr_spin_dial.png">
-                <video class="lr-lightning" autoplay muted loop playsinline>
-                    <source src="https://abscustom.github.io/namek-goku/images/lightningfx.webm" type="video/webm">
-                    </video>
-                <img class="char-img"
-                    src="https://abscustom.github.io/namek-goku/images/auto_1776461424402_zgiwhfy3x.png">
-                <img class="rarity" src="https://abscustom.github.io/namek-goku/images/rarity_LR.png">
-                <img class="type" src="https://abscustom.github.io/namek-goku/images/super_type_phy.png">
-            </div>
-            <div class="name-container">
-                <div class="char-name">Super Saiyan Goku</div>
-            </div>
-        </a></div>
+    <div class="grid" id="cardGrid"></div>
 
     <script>
         // Filtering Logic
-        // Toggle Sidebar Open / Close
         function toggleSidebar() {
             document.getElementById('sidebarDrawer').classList.toggle('open');
             document.getElementById('sidebarOverlay').classList.toggle('open');
         }
+
         // Combined Filter Function
         function filterCards() {
             const selectedType = document.getElementById('typeFilter').value;
@@ -881,9 +780,7 @@
             const selectedRarity = document.getElementById('rarityFilter').value;
             const cards = document.querySelectorAll('.char-box');
             cards.forEach(card => {
-                // 1. Get Form tag (a, b, or c)
                 const cardForm = card.getAttribute('data-tag') || 'a';
-                // 2. Detect Type from <img class="type"> src
                 const typeImg = card.querySelector('img.type');
                 let cardType = 'unknown';
                 if (typeImg && typeImg.src) {
@@ -894,7 +791,7 @@
                     else if (src.includes('str')) cardType = 'str';
                     else if (src.includes('phy')) cardType = 'phy';
                 }
-                // 3. Detect Rarity from <img class="rarity"> src
+
                 const rarityImg = card.querySelector('img.rarity');
                 let cardRarity = 'unknown';
                 if (rarityImg && rarityImg.src) {
@@ -902,11 +799,11 @@
                     if (src.includes('lr')) cardRarity = 'lr';
                     else if (src.includes('tur')) cardRarity = 'tur';
                 }
-                // 4. Match against all 3 dropdown selections
+
                 const matchesType = (selectedType === 'all' || cardType === selectedType);
                 const matchesForm = (selectedForm === 'all' || cardForm === selectedForm);
                 const matchesRarity = (selectedRarity === 'all' || cardRarity === selectedRarity);
-                // 5. Show or hide card
+
                 if (matchesType && matchesForm && matchesRarity) {
                     card.style.display = 'flex';
                 } else {
@@ -914,6 +811,7 @@
                 }
             });
         }
+
         // Sliding Yellow Nav Indicator Logic
         const topNav = document.getElementById('topNav');
         const navIndicator = document.getElementById('navIndicator');
@@ -927,40 +825,345 @@
             navIndicator.style.width = `${element.offsetWidth}px`;
             navIndicator.style.height = `${element.offsetHeight}px`;
         }
-        // Set initial position to Home
+
         moveNavIndicator(activeNavItem);
-        // Slide to hovered tab
+
         navItems.forEach(item => {
             item.addEventListener('mouseenter', () => moveNavIndicator(item));
         });
-        // Return to Home tab when mouse leaves top bar
+
         topNav.addEventListener('mouseleave', () => moveNavIndicator(activeNavItem));
-        // Adjust if window resizes
         window.addEventListener('resize', () => moveNavIndicator(activeNavItem));
-        // Resets all dropdowns back to "Show All" and updates the grid
+
         function resetFilters() {
             document.getElementById('typeFilter').value = 'all';
             document.getElementById('formFilter').value = 'all';
             document.getElementById('rarityFilter').value = 'all';
-            filterCards(); // Refresh card display
+            filterCards();
         }
-        // Run immediately to ensure proper setup
-        filterCards();
+
         // Auto-scroll long names seamlessly
-        document.querySelectorAll('.char-name').forEach(el => {
-            if (el.scrollWidth > el.parentElement.clientWidth) {
-                // Duplicate text content with spacing so it loops continuously
-                const text = el.innerText;
-                el.innerHTML =
-                    `<span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span><span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
-                el.classList.add('scrolling');
+        function initNameScrolling() {
+            document.querySelectorAll('.char-name').forEach(el => {
+                if (el.scrollWidth > el.parentElement.clientWidth && !el.classList.contains('scrolling')) {
+                    const text = el.innerText;
+                    el.innerHTML =
+                        `<span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span><span>${text}&nbsp;&nbsp;&nbsp;&nbsp;</span>`;
+                    el.classList.add('scrolling');
+                }
+            });
+        }
+
+        // Slow down background video
+        const bgVideo = document.getElementById('bg-video');
+        if (bgVideo) bgVideo.playbackRate = 0.5;
+
+        // -------------------------------------------------------------
+        // --- ADMIN MODE & CARD DELETION ENGINE (Spiderman Password + Retries)
+        // -------------------------------------------------------------
+        window.toggleHubAdminMode = function() {
+            if (document.body.classList.contains('hub-admin-mode')) {
+                document.body.classList.remove('hub-admin-mode');
+                window.hubAdminToken = null;
+                alert("🔒 Admin Mode Deactivated.");
+                return;
+            }
+
+            const pass = prompt("🔒 Enter Admin Password:");
+            if (pass !== "spiderman") {
+                alert("❌ Incorrect password!");
+                return;
+            }
+
+            document.body.classList.add('hub-admin-mode');
+            attachDeleteBadges();
+
+            alert("🔓 Admin Mode Activated!\n\nClick the red ✕ button on any card to permanently delete it from GitHub.");
+        };
+
+        // Keyboard Shortcut: Ctrl + Shift + A ONLY to toggle Admin Mode
+        document.addEventListener('keydown', function(e) {
+            if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
+                e.preventDefault();
+                window.toggleHubAdminMode();
             }
         });
-        // Slow down the background video (0.5 = half speed, 0.25 = quarter speed)
-        const bgVideo = document.getElementById('bg-video');
-        bgVideo.playbackRate = 0.5;
+
+        // Attach red ✕ badges to all cards for deletion
+        function attachDeleteBadges() {
+            document.querySelectorAll('#cardGrid .char-box').forEach(card => {
+                if (!card.querySelector('.card-delete-badge')) {
+                    const href = card.getAttribute('href') || '';
+                    const match = href.match(/abscustom\.github\.io\/([^\/]+)/);
+                    const folderName = match ? match[1] : '';
+                    const charName = card.querySelector('.char-name')?.textContent || 'Card';
+
+                    const badge = document.createElement('div');
+                    badge.className = 'card-delete-badge';
+                    badge.innerHTML = '✕';
+                    badge.title = 'Delete card from GitHub';
+                    badge.onclick = (e) => {
+                        e.preventDefault();
+                        e.stopPropagation();
+                        confirmDeleteCard(card, folderName, charName);
+                    };
+                    card.appendChild(badge);
+                }
+            });
+        }
+
+        // Confirm and delete card folder from GitHub repository (Handles delays to prevent 409 errors)
+        async function confirmDeleteCard(cardElement, folderName, charName) {
+            if (!folderName) {
+                alert("Could not detect GitHub folder for this card.");
+                return;
+            }
+
+            let token = window.hubAdminToken;
+            if (!token) {
+                token = prompt(`🗑️ Enter GitHub Personal Access Token to DELETE '${charName}' (${folderName}):`);
+                if (!token || !token.trim()) {
+                    alert("Deletion cancelled (GitHub token required).");
+                    return;
+                }
+                token = token.trim();
+                window.hubAdminToken = token; // Store in session so user doesn't type it 20 times!
+            }
+
+            const confirmed = confirm(`⚠️ Are you sure you want to PERMANENTLY DELETE '${charName}' (${folderName}) from GitHub?`);
+            if (!confirmed) return;
+
+            const badge = cardElement.querySelector('.card-delete-badge');
+            if (badge) badge.innerText = '⏳';
+
+            try {
+                // Delete files in folder from GitHub (Robust Method)
+                await purgeCardFromGitHub(folderName, token);
+
+                // Remove from DOM
+                cardElement.remove();
+
+                // Save updated grid
+                const grid = document.getElementById('cardGrid');
+                localStorage.setItem('hub_cached_cards_html', grid.innerHTML);
+
+                alert(`✅ '${charName}' deleted successfully!`);
+            } catch (err) {
+                console.error("Delete Error:", err);
+                alert("Failed to delete card from GitHub: " + err.message);
+                if (badge) badge.innerText = '✕';
+            }
+        }
+
+        // Robust GitHub API Folder Purge (Catches individual file errors & retries)
+        async function purgeCardFromGitHub(folderName, token) {
+            const getRes = await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${folderName}?t=${Date.now()}`, {
+                headers: { 'Authorization': `token ${token}` }
+            });
+
+            if (!getRes.ok) throw new Error("Could not access folder on GitHub. Check token permissions.");
+            const items = await getRes.json();
+
+            let filesToDelete = [];
+            
+            // Map out all files in main folder and sub-folders (like /images/)
+            for (const item of items) {
+                if (item.type === 'file') {
+                    filesToDelete.push(item);
+                } else if (item.type === 'dir') {
+                    const subRes = await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${item.path}?t=${Date.now()}`, {
+                        headers: { 'Authorization': `token ${token}` }
+                    });
+                    if (subRes.ok) {
+                        const subItems = await subRes.json();
+                        for (const subItem of subItems) {
+                            if (subItem.type === 'file') {
+                                filesToDelete.push(subItem);
+                            }
+                        }
+                    }
+                }
+            }
+
+            // Delete files sequentially with a small delay to prevent 409 Conflict Errors
+            let failed = 0;
+            for (const file of filesToDelete) {
+                try {
+                    const delRes = await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${file.path}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Authorization': `token ${token}`,
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            message: `Purge card asset: ${file.path}`,
+                            sha: file.sha
+                        })
+                    });
+
+                    if (!delRes.ok) {
+                        // If GitHub returns 409 Conflict, fetch fresh SHA and try one more time
+                        if(delRes.status === 409) {
+                            const retryGet = await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${file.path}?t=${Date.now()}`, { headers: { 'Authorization': `token ${token}` } });
+                            if(retryGet.ok) {
+                                const freshFile = await retryGet.json();
+                                await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${file.path}`, {
+                                    method: 'DELETE',
+                                    headers: { 'Authorization': `token ${token}`, 'Content-Type': 'application/json' },
+                                    body: JSON.stringify({ message: `Purge card asset: ${file.path}`, sha: freshFile.sha })
+                                });
+                            }
+                        } else if (delRes.status !== 404) {
+                            failed++;
+                        }
+                    }
+                    // Crucial 300ms pause to stop GitHub Abuse detection flagging us
+                    await new Promise(r => setTimeout(r, 300));
+                } catch(e) {
+                    failed++;
+                }
+            }
+
+            if (failed === filesToDelete.length && filesToDelete.length > 0) {
+                throw new Error("Failed to delete the files. Ensure your token has 'repo' scope.");
+            }
+        }
+
+        // -------------------------------------------------------------
+        // --- LIVE UPDATE CHARACTER BOX FROM GITHUB ---
+        // -------------------------------------------------------------
+        async function updateCharacterBox() {
+            const btn = document.querySelector('.update-box-btn');
+            const originalText = btn.innerHTML;
+
+            try {
+                btn.innerHTML = `<span class="spinning">🔄</span> Scanning...`;
+                btn.style.pointerEvents = 'none';
+
+                const repoRes = await fetch('https://api.github.com/repos/abscustom/abscustom.github.io/contents/');
+                if (!repoRes.ok) throw new Error("GitHub API limit or network issue.");
+                const contents = await repoRes.json();
+
+                const ignored = ['DokkanCustom', 'CardEditor', 'images', 'css', 'js', 'assets', '.github'];
+                const cardFolders = contents.filter(item => 
+                    item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.')
+                );
+
+                if (cardFolders.length === 0) {
+                    alert("No character card folders found on GitHub!");
+                    btn.innerHTML = originalText;
+                    btn.style.pointerEvents = 'auto';
+                    return;
+                }
+
+                btn.innerHTML = `<span class="spinning">🔄</span> Syncing ${cardFolders.length} Cards...`;
+
+                const cardHtmlArray = [];
+
+                for (const folder of cardFolders) {
+                    try {
+                        const folderName = folder.name;
+                        const cardUrl = `https://abscustom.github.io/${folderName}/`;
+                        
+                        const indexRes = await fetch(`${cardUrl}index.html?nocache=${Date.now()}`);
+                        if (!indexRes.ok) continue;
+
+                        const htmlText = await indexRes.text();
+                        const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+
+                        const tag = doc.querySelector('meta[name="hub-id"]')?.getAttribute('content') || 'a';
+                        
+                        let charName = doc.querySelector('#char-name')?.textContent?.trim() || '';
+                        if (!charName) {
+                            const rawTitle = doc.querySelector('title')?.textContent || folderName;
+                            charName = rawTitle.replace(/^\[.*?\]\s*/, '').trim();
+                        }
+
+                        const fixUrl = (src, fallback) => {
+                            if (!src) return fallback;
+                            if (src.startsWith('http')) return src;
+                            const clean = src.replace(/^\.\//, '');
+                            return `${cardUrl}${clean}`;
+                        };
+
+                        const raritySrc = fixUrl(doc.querySelector('#main-rarity-icon')?.getAttribute('src'), `${cardUrl}images/rarity_LR.png`);
+                        const isLR = raritySrc.toLowerCase().includes('lr');
+
+                        const iconEl = doc.querySelector(isLR ? '#img-lr' : '#img-tur')
+                                    || doc.querySelector('#db-thumb-img')
+                                    || doc.querySelector('#img-tur')
+                                    || doc.querySelector('#img-ssr')
+                                    || doc.querySelector('.thumb-img')
+                                    || doc.querySelector('.card-info-thumb img:not(.lr-spin-dial)')
+                                    || doc.querySelector('#myOverlayImage');
+
+                        const charImgSrc = fixUrl(iconEl?.getAttribute('src'), `${cardUrl}images/SSR_Icon.png`);
+                        const frameSrc = fixUrl(doc.querySelector('.card-frame')?.getAttribute('src'), `${cardUrl}images/frame_agl.png`);
+                        const typeSrc = fixUrl(doc.querySelector('.typing-icon')?.getAttribute('src'), `${cardUrl}images/super_type_agl.png`);
+
+                        let lrOverlayHtml = '';
+                        if (isLR) {
+                            lrOverlayHtml = `
+                <img class="lr-dial" src="${cardUrl}images/lr_spin_dial.png" onerror="this.remove()">
+                <video class="lr-lightning" autoplay muted loop playsinline>
+                    <source src="${cardUrl}images/lightningfx.webm" type="video/webm">
+                </video>`;
+                        }
+
+                        const cardHtml = `
+        <a href="${cardUrl}" target="_blank" class="char-box" data-tag="${tag}">
+            <div class="card-icon">
+                <img class="frame" src="${frameSrc}">
+                ${lrOverlayHtml}
+                <img class="char-img" src="${charImgSrc}">
+                <img class="rarity" src="${raritySrc}">
+                <img class="type" src="${typeSrc}">
+            </div>
+            <div class="name-container">
+                <div class="char-name">${charName}</div>
+            </div>
+        </a>`;
+
+                        cardHtmlArray.push(cardHtml);
+                    } catch (err) {
+                        console.warn(`Could not sync card ${folder.name}:`, err);
+                    }
+                }
+
+                if (cardHtmlArray.length > 0) {
+                    const grid = document.getElementById('cardGrid');
+                    grid.innerHTML = cardHtmlArray.join('\n');
+                    
+                    localStorage.setItem('hub_cached_cards_html', grid.innerHTML);
+                    
+                    if (document.body.classList.contains('hub-admin-mode')) attachDeleteBadges();
+                    filterCards();
+                    initNameScrolling();
+                    
+                    alert(`✅ Box Updated Successfully! Synced ${cardHtmlArray.length} character cards from GitHub.`);
+                }
+
+            } catch (error) {
+                console.error("Update Box Error:", error);
+                alert("Could not update box from GitHub: " + error.message);
+            } finally {
+                btn.innerHTML = originalText;
+                btn.style.pointerEvents = 'auto';
+            }
+        }
+
+        // Restore cached box on startup
+        window.addEventListener('DOMContentLoaded', () => {
+            const cachedBox = localStorage.getItem('hub_cached_cards_html');
+            if (cachedBox) {
+                document.getElementById('cardGrid').innerHTML = cachedBox;
+            }
+            if (document.body.classList.contains('hub-admin-mode')) attachDeleteBadges();
+            filterCards();
+            initNameScrolling();
+        });
     </script>
 
 </body>
 
-</html>>
+</html>
