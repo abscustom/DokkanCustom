@@ -1,4 +1,5 @@
 
+
 /* ======================================================================= */
 /*    PERMANENTLY NEUTRALIZE CLICK-TO-DELETE ON LINKS & CATEGORIES         */
 /* ======================================================================= */
@@ -28,12 +29,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 // PUBLISHED SITE ADMIN MODE UNLOCK LOGIC
-window.ADMIN_MODE = false;
-
-// ============================================================
-// Replace window.unlockAdminMode logic (Near the top)
-// ============================================================
-
 window.ADMIN_MODE = false;
 
 window.unlockAdminMode = function() {
@@ -113,34 +108,116 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('click', function(e) {
     if (window.IS_PUBLISHED && !window.ADMIN_MODE) return;
 
-    if (e.target.closest('#context-gui, #editor, nav, .navbar, .glass-modal-overlay')) return;
+    ensureGUIContainerExists();
 
-    let targetBox = e.target.closest('.dokkan-card, .abs-box, #card-link-container, #card-category-container, #abs-link-container, #abs-category-container');
+    if (e.target.closest('#context-gui, #editor, nav, .navbar, .abs-stat-tabs, .abs-stat-tab, .glass-modal-overlay')) return;
+
     let editType = null;
+    let target = e.target.closest('[data-edit]');
 
-    if (targetBox) {
-        const boxText = targetBox.innerText || "";
-        
-        if (e.target.closest('#card-link-container, #abs-link-container, .abs-links-container, .abs-link-badge') || boxText.includes('Link Skills')) {
+    if (target) {
+        editType = target.getAttribute('data-edit');
+    } else {
+        // Character Title & Name -> IDENTITY
+        if (e.target.closest('#char-name, #char-description, #abs-char-title, #abs-char-name, .abs-header-text')) {
+            editType = 'identity';
+            target = e.target.closest('.abs-header-text') || e.target;
+        }
+        // Leader Skill -> LEADER (Fixed: Supports clicking ABS Leader Header)
+        else if (e.target.closest('#leader-skill, #abs-leader-skill, [data-edit="leader"]') || 
+                 (e.target.closest('.abs-box') && e.target.closest('.abs-box').querySelector('#abs-leader-skill'))) {
+            editType = 'leader';
+            target = e.target.closest('#leader-skill, #abs-leader-skill, [data-edit="leader"]') || e.target.closest('.abs-box');
+        }
+        // Passive Skill -> PASSIVE
+        else if (e.target.closest('#card-passive-container, .passive-name-display, #abs-passive-container, #abs-passive-name')) {
+            editType = 'passive';
+        }
+        // Link Skills -> LINKS
+        else if (e.target.closest('#card-link-container, #abs-link-container, .abs-links-container, .abs-link-badge')) {
             editType = 'links';
-        } else if (e.target.closest('#card-category-container, #abs-category-container, .abs-cat-btn') || boxText.includes('Categories')) {
+        }
+        // Categories -> CATEGORIES
+        else if (e.target.closest('#card-category-container, #abs-category-container, .abs-cat-btn')) {
             editType = 'categories';
         }
-    }
-
-    if (editType) {
-        const clickedChild = e.target.closest('a, img, div');
-        if (clickedChild) {
-            clickedChild.removeAttribute('onclick');
-            clickedChild.onclick = null;
+        // Card Art & Media -> ART
+        else if (e.target.closest('#myOverlayImage, #myOverlayVideo, .card-art-canvas, .abs-art-box')) {
+            editType = 'art';
         }
+        // Forms & Transformations -> FORMS
+        else if (e.target.closest('#forms-container, #forms-container .dokkan-card, #abs-transformations-box, .abs-transform-row')) {
+            editType = 'forms';
+            target = document.getElementById('forms-container') || document.getElementById('abs-transformations-box') || e.target;
+        }
+        // SSR, TUR, LR Icons & Awakening Icons -> ICONS
+        else if (e.target.closest('#ssr-row, #tur-row, #img-ssr, #img-tur, #img-lr, .card-icon, #abs-awakenings-box, .abs-awaken-row, .abs-awaken-divider, #abs-composed-icon, #abs-top-rarity-icon, #abs-rarity-icon, #main-rarity-icon, #ssr-rarity-icon, #tur-rarity-icon, #awakening-container, #abs-awakening-img')) {
+            editType = 'icons';
+            target = e.target.closest('.row.d-flex.flex-wrap.border.card-icon, #abs-awakenings-box, .dokkan-card, .abs-box') || e.target;
+        }
+        // Stats Table & Cards -> STATS
+        else if (e.target.closest('table.col, .abs-stats-table, #abs-stats-box, .abs-stat-cards-row')) {
+            editType = 'stats';
+        }
+        // Super Attack -> SA
+        else if (e.target.closest('.sa-block, #abs-sa-container > div, .dokkan-abs-sa-section')) {
+            editType = 'sa';
+            let clickedBlock = e.target.closest('.sa-block');
+            
+            if (!clickedBlock) {
+                const dbBlock = e.target.closest('#abs-sa-container > div, .dokkan-abs-sa-section');
+                const dbContainer = document.getElementById('abs-sa-container');
+                const dbBlocks = Array.from(dbContainer.children);
+                let index = dbBlocks.indexOf(dbBlock);
+                if (index === -1) index = 0;
+                clickedBlock = document.querySelectorAll('.sa-block')[index];
+            }
 
-        e.stopImmediatePropagation();
-        e.preventDefault();
-        openContextGUI(e.clientX, e.clientY, editType, targetBox);
+            currentSuperAttack = clickedBlock;
+            
+            const saBlocks = Array.from(document.querySelectorAll('.sa-block'));
+            const idx = saBlocks.indexOf(clickedBlock);
+            if (idx !== -1) {
+                const sel = document.getElementById('sa-selector');
+                if (sel) { sel.value = idx.toString(); }
+                if (window.handleSASelection) window.handleSASelection();
+            }
+            target = clickedBlock || e.target.closest('#abs-sa-container > div');
+        }
+        // Active Skill -> ACTIVE
+        else if (e.target.closest('.active-block, #abs-active-container > div, .dokkan-abs-active-section')) {
+            editType = 'active';
+            let clickedActive = e.target.closest('.active-block');
+            
+            if (!clickedActive) {
+                const dbActive = e.target.closest('#abs-active-container > div, .dokkan-abs-active-section');
+                const dbContainer = document.getElementById('abs-active-container');
+                const dbActives = Array.from(dbContainer.children);
+                let index = dbActives.indexOf(dbActive);
+                if (index === -1) index = 0;
+                clickedActive = document.querySelectorAll('.active-block')[index];
+            }
+
+            currentActiveSkill = clickedActive;
+            
+            const activeBlocks = Array.from(document.querySelectorAll('.active-block'));
+            const idx = activeBlocks.indexOf(clickedActive);
+            if (idx !== -1) {
+                const sel = document.getElementById('active-selector');
+                if (sel) { sel.value = idx.toString(); }
+                if (window.handleActiveSelection) window.handleActiveSelection();
+            }
+            target = clickedActive || e.target.closest('#abs-active-container > div');
+        }
+        
+        target = target || e.target;
     }
-}, true);
 
+    if (!editType) return;
+
+    e.preventDefault();
+    openContextGUI(e.clientX, e.clientY, editType, target);
+});
 
 /* ======================================================================= */
 /*               SMART MOUSE CONTEXT GUI CONTROLLER                        */
@@ -168,8 +245,6 @@ function ensureGUIContainerExists() {
     makeGUIDraggable();
 }
 
-
-
 window.closeContextGUI = function() {
     const gui = document.getElementById('context-gui');
     if (gui) gui.style.display = 'none';
@@ -184,7 +259,9 @@ window.highlightCardElement = function(element) {
 
     // Target ONLY outer container boxes so inner items never glow individually
     let outerBox = null;
-    if (element.closest('#forms-container, #abs-transformations-box, .abs-transform-row')) {
+    if (element.closest('#abs-char-title, #abs-char-name, .abs-header-text')) {
+        outerBox = element.closest('.abs-header-text');
+    } else if (element.closest('#forms-container, #abs-transformations-box, .abs-transform-row')) {
         outerBox = document.getElementById('forms-container') || document.getElementById('abs-transformations-box');
     } else if (element.closest('#ssr-row, #tur-row, .card-icon, #abs-awakenings-box, .abs-awaken-row, .abs-awaken-divider, #abs-composed-icon, #abs-top-rarity-icon, #abs-rarity-icon, #main-rarity-icon, #ssr-rarity-icon, #tur-rarity-icon, #awakening-container, #abs-awakening-img')) {
         outerBox = element.closest('.row.d-flex.flex-wrap.border.card-icon, #abs-awakenings-box, .dokkan-card, .abs-box');
@@ -306,118 +383,6 @@ function makeGUIDraggable() {
 
 document.addEventListener("DOMContentLoaded", function() {
     ensureGUIContainerExists();
-});
-
-// GLOBAL CLICK DELEGATION
-document.addEventListener('click', function(e) {
-    if (window.IS_PUBLISHED && !window.ADMIN_MODE) return;
-
-    ensureGUIContainerExists();
-
-    if (e.target.closest('#context-gui, #editor, nav, .navbar, .abs-stat-tabs, .abs-stat-tab')) return;
-    
-    let editType = null;
-    let target = e.target.closest('[data-edit]');
-
-    if (target) {
-        editType = target.getAttribute('data-edit');
-    } else {
-        // Character Title & Name -> IDENTITY
-        if (e.target.closest('#char-name, #char-description, #abs-char-title, #abs-char-name')) {
-            editType = 'identity';
-        }
-        // Leader Skill -> LEADER
-        else if (e.target.closest('#leader-skill, #abs-leader-skill')) {
-            editType = 'leader';
-        }
-        // Passive Skill -> PASSIVE
-        else if (e.target.closest('#card-passive-container, .passive-name-display, #abs-passive-container, #abs-passive-name')) {
-            editType = 'passive';
-        }
-        // Link Skills -> LINKS
-        else if (e.target.closest('#card-link-container, #abs-link-container, .abs-links-container, .abs-link-badge')) {
-            editType = 'links';
-        }
-        // Categories -> CATEGORIES
-        else if (e.target.closest('#card-category-container, #abs-category-container, .abs-cat-btn')) {
-            editType = 'categories';
-        }
-        // Card Art & Media -> ART
-        else if (e.target.closest('#myOverlayImage, #myOverlayVideo, .card-art-canvas, .abs-art-box')) {
-            editType = 'art';
-        }
-        // Forms & Transformations -> FORMS
-        else if (e.target.closest('#forms-container, #forms-container .dokkan-card, #abs-transformations-box, .abs-transform-row')) {
-            editType = 'forms';
-            target = document.getElementById('forms-container') || document.getElementById('abs-transformations-box') || e.target;
-        }
-        // SSR, TUR, LR Icons & Awakening Icons -> ICONS (Opens Icon Upload GUI)
-        else if (e.target.closest('#ssr-row, #tur-row, #img-ssr, #img-tur, #img-lr, .card-icon, #abs-awakenings-box, .abs-awaken-row, .abs-awaken-divider, #abs-composed-icon, #abs-top-rarity-icon, #abs-rarity-icon, #main-rarity-icon, #ssr-rarity-icon, #tur-rarity-icon, #awakening-container, #abs-awakening-img')) {
-            editType = 'icons';
-            target = e.target.closest('.row.d-flex.flex-wrap.border.card-icon, #abs-awakenings-box, .dokkan-card, .abs-box') || e.target;
-        }
-        // Stats Table & Cards -> STATS
-        else if (e.target.closest('table.col, .abs-stats-table, #abs-stats-box, .abs-stat-cards-row')) {
-            editType = 'stats';
-        }
-        // Super Attack -> SA
-        else if (e.target.closest('.sa-block, #abs-sa-container > div, .dokkan-abs-sa-section')) {
-            editType = 'sa';
-            let clickedBlock = e.target.closest('.sa-block');
-            
-            if (!clickedBlock) {
-                const dbBlock = e.target.closest('#abs-sa-container > div, .dokkan-abs-sa-section');
-                const dbContainer = document.getElementById('abs-sa-container');
-                const dbBlocks = Array.from(dbContainer.children);
-                let index = dbBlocks.indexOf(dbBlock);
-                if (index === -1) index = 0;
-                clickedBlock = document.querySelectorAll('.sa-block')[index];
-            }
-
-            currentSuperAttack = clickedBlock;
-            
-            const saBlocks = Array.from(document.querySelectorAll('.sa-block'));
-            const idx = saBlocks.indexOf(clickedBlock);
-            if (idx !== -1) {
-                const sel = document.getElementById('sa-selector');
-                if (sel) { sel.value = idx.toString(); }
-                if (window.handleSASelection) window.handleSASelection();
-            }
-            target = clickedBlock || e.target.closest('#abs-sa-container > div');
-        }
-        // Active Skill -> ACTIVE
-        else if (e.target.closest('.active-block, #abs-active-container > div, .dokkan-abs-active-section')) {
-            editType = 'active';
-            let clickedActive = e.target.closest('.active-block');
-            
-            if (!clickedActive) {
-                const dbActive = e.target.closest('#abs-active-container > div, .dokkan-abs-active-section');
-                const dbContainer = document.getElementById('abs-active-container');
-                const dbActives = Array.from(dbContainer.children);
-                let index = dbActives.indexOf(dbActive);
-                if (index === -1) index = 0;
-                clickedActive = document.querySelectorAll('.active-block')[index];
-            }
-
-            currentActiveSkill = clickedActive;
-            
-            const activeBlocks = Array.from(document.querySelectorAll('.active-block'));
-            const idx = activeBlocks.indexOf(clickedActive);
-            if (idx !== -1) {
-                const sel = document.getElementById('active-selector');
-                if (sel) { sel.value = idx.toString(); }
-                if (window.handleActiveSelection) window.handleActiveSelection();
-            }
-            target = clickedActive || e.target.closest('#abs-active-container > div');
-        }
-        
-        target = target || e.target;
-    }
-
-    if (!editType) return;
-
-    e.preventDefault();
-    openContextGUI(e.clientX, e.clientY, editType, target);
 });
 
 // PASSIVE RE-ORDERING HELPER

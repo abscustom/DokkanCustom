@@ -2091,3 +2091,55 @@ body.admin-mode-active #admin-quick-save-btn {
   0%, 100% { transform: scale(0); opacity: 0.5; }
   50% { transform: scale(1); opacity: 1; }
 }
+
+
+/* Append to the bottom of editor-ui.css */
+
+/* ======================================================================= */
+/* 11. STATS WEIGHT & DOKKAN INFO TITLE / NAME TYPOGRAPHY                  */
+/* ======================================================================= */
+
+/* 1. Stat Numbers Weight (Larger & Bolder) */
+#layout-dokkaninfo table td,
+#layout-dokkaninfo table td b {
+    font-weight: 700 !important; /* Bold stat values */
+    font-style: normal !important;
+}
+
+/* 2. Dokkan Info Title Typography */
+#char-description {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin: 0 0 6px 0 !important;
+    line-height: 1.2 !important;
+}
+
+/* 3. Dokkan Info Character Name Typography & Auto-Wrap */
+#char-name {
+    font-size: 32px !important;
+    font-weight: 700 !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+    line-height: 1.25 !important;
+    word-break: break-word !important;
+    overflow-wrap: break-word !important;
+
+}
+
+/* 4. ABS Layout Title & Name Selection Glow */
+body.admin-mode-active .abs-header-text:hover,
+body:not(.is-published) .abs-header-text:hover {
+    cursor: pointer !important;
+    outline: 2px solid #ffffff !important;
+    outline-offset: 4px !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8) !important;
+    border-radius: 4px;
+}
+
+.abs-header-text.active-selected-glow {
+    outline: 2px solid #ffffff !important;
+    outline-offset: 4px !important;
+    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.2), 0 0 15px rgba(255, 255, 255, 0.9) !important;
+    border-radius: 4px;
+}

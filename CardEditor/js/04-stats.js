@@ -1,3 +1,5 @@
+
+
 /* ============================================================
    ULTIMATE DOKKAN STAT CALCULATOR
 ============================================================ */
@@ -86,16 +88,17 @@ window.calcFromMax = function(statType, explicitMin = null) {
     const el55 = document.getElementById(`stat-${statType}-55`);
     const el100 = document.getElementById(`stat-${statType}-100`);
 
-    if (elMin) elMin.innerText = minVal.toLocaleString();
-    if (elMax) elMax.innerText = baseMax.toLocaleString();
-    if (el55) el55.innerText = (baseMax + freePathBonus).toLocaleString();
-    if (el100) el100.innerText = (baseMax + rainbowBonus).toLocaleString();
+    // REMOVED .toLocaleString() SO DOKKAN INFO STATS SHOW WITHOUT COMMAS
+    if (elMin) elMin.innerText = minVal;
+    if (elMax) elMax.innerText = baseMax;
+    if (el55) el55.innerText = (baseMax + freePathBonus);
+    if (el100) el100.innerText = (baseMax + rainbowBonus);
 
     const elEzaMax = document.getElementById(`stat-${statType}-eza-max`);
     const elEza100 = document.getElementById(`stat-${statType}-eza-100`);
 
-    if (elEzaMax) elEzaMax.innerText = ezaBaseMax.toLocaleString();
-    if (elEza100) elEza100.innerText = (ezaBaseMax + rainbowBonus).toLocaleString();
+    if (elEzaMax) elEzaMax.innerText = ezaBaseMax;
+    if (elEza100) elEza100.innerText = (ezaBaseMax + rainbowBonus);
 
     // Store calculated values for interactive ABS Stats tabs
     if (!window.calculatedStats) window.calculatedStats = { hp: {}, atk: {}, def: {} };
