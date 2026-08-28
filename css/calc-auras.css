@@ -1,0 +1,258 @@
+/* ==========================================================================
+   absCustom - Super Attack Inner-Box Aura (GPU-cheap)
+   Animates only transform/opacity on clipped overlays. Border + inset glow stay
+   static so we never repaint giant outer box-shadows every frame.
+   ========================================================================== */
+
+.sa-card-ultra,
+.sa-card-ex,
+.sa-card-unit,
+.sa-card-standard,
+.sa-card-active,
+.sa-card-sa-counter,
+.sa-card-norm-counter,
+#res-main-sa-card.sa-card-ultra,
+#res-main-sa-card.sa-card-ex,
+#res-main-sa-card.sa-card-unit,
+#res-main-sa-card.sa-card-standard,
+#res-active-skill-dash-card.sa-card-active,
+#res-sa-counter-dash-card.sa-card-sa-counter {
+    --sa-rim: rgba(253, 224, 71, 0.92);
+    --sa-edge: rgba(161, 98, 7, 0.92);
+    --sa-core: rgba(234, 179, 8, 0.28);
+    --sa-hot: rgba(253, 224, 71, 0.55);
+    --sa-wash: 40px 70%;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden !important;
+    border-width: 1px;
+    border-style: solid;
+    border-color: var(--sa-edge);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.55),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.45),
+        inset 0 0 0 1px var(--sa-rim),
+        inset 0 0 0 2px var(--sa-edge),
+        inset 0 0 18px var(--sa-core);
+    transition: border-color 0.25s ease, box-shadow 0.25s ease !important;
+}
+
+.sa-card-ultra > *,
+.sa-card-ex > *,
+.sa-card-unit > *,
+.sa-card-standard > *,
+.sa-card-active > *,
+.sa-card-sa-counter > *,
+.sa-card-norm-counter > * {
+    position: relative;
+    z-index: 1;
+}
+
+/* Angular energy facets: contained texture, not a soft bloom. */
+.sa-card-ultra::before,
+.sa-card-ex::before,
+.sa-card-unit::before,
+.sa-card-standard::before,
+.sa-card-active::before,
+.sa-card-sa-counter::before,
+.sa-card-norm-counter::before {
+    content: "";
+    position: absolute;
+    inset: -8%;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+        linear-gradient(112deg, transparent 0 22%, var(--sa-core) 22.5% 24%, transparent 24.5% 48%, var(--sa-hot) 48.5% 50%, transparent 50.5% 100%),
+        linear-gradient(68deg, transparent 0 36%, var(--sa-core) 36.5% 38%, transparent 38.5% 65%, var(--sa-hot) 65.5% 67%, transparent 67.5% 100%),
+        linear-gradient(180deg, transparent 0%, color-mix(in srgb, var(--sa-core) 68%, transparent) 100%);
+    opacity: 0.28;
+    transform: translateZ(0) scale(1);
+    animation: sa-energy-facets 6.4s ease-in-out infinite;
+}
+
+/* A small drifting energy shard keeps movement away from the value itself. */
+.sa-card-ultra::after,
+.sa-card-ex::after,
+.sa-card-unit::after,
+.sa-card-standard::after,
+.sa-card-active::after,
+.sa-card-sa-counter::after,
+.sa-card-norm-counter::after {
+    content: "";
+    position: absolute;
+    top: 16%;
+    right: 7%;
+    width: 10px;
+    height: 36%;
+    z-index: 2;
+    pointer-events: none;
+    clip-path: polygon(50% 0, 100% 22%, 72% 100%, 0 78%, 28% 26%);
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.72), var(--sa-hot) 42%, transparent 88%);
+    opacity: 0;
+    transform: translate3d(0, 12px, 0) rotate(-10deg) scale(0.72);
+    animation: sa-energy-shard 5.8s cubic-bezier(.25, .8, .25, 1) infinite;
+}
+
+/* ?? Ultra Super Attack — fire rising from the floor */
+.sa-card-ultra,
+#res-main-sa-card.sa-card-ultra {
+    --sa-rim: rgba(254, 202, 202, 0.95);
+    --sa-edge: rgba(220, 38, 38, 0.95);
+    --sa-core: rgba(239, 68, 68, 0.38);
+    --sa-hot: rgba(248, 113, 113, 0.65);
+    --sa-wash: 50% 115%;
+}
+
+.sa-card-ultra::before,
+#res-main-sa-card.sa-card-ultra::before {
+    animation-name: sa-inner-breathe, sa-ember-rise;
+    animation-duration: 4.8s, 5.2s;
+    animation-timing-function: ease-in-out, ease-in-out;
+    animation-iteration-count: infinite, infinite;
+}
+
+/* ? EX Super Attack — centered golden slash */
+.sa-card-ex,
+#res-main-sa-card.sa-card-ex {
+    --sa-rim: rgba(250, 204, 21, 0.95);
+    --sa-edge: rgba(185, 28, 28, 0.95);
+    --sa-core: rgba(220, 38, 38, 0.28);
+    --sa-hot: rgba(250, 204, 21, 0.58);
+    --sa-wash: 28% 78%;
+}
+
+.sa-card-ex::after,
+#res-main-sa-card.sa-card-ex::after {
+    right: auto;
+    left: 8%;
+    background: linear-gradient(145deg, rgba(255, 245, 157, 0.82), rgba(250, 204, 21, 0.78) 42%, rgba(220, 38, 38, 0.1) 88%);
+    animation-duration: 5.1s;
+}
+
+/* ?? Unit Super Attack — god-ki from the crown */
+.sa-card-unit,
+#res-main-sa-card.sa-card-unit {
+    --sa-rim: rgba(192, 132, 252, 0.92);
+    --sa-edge: rgba(126, 34, 206, 0.92);
+    --sa-core: rgba(126, 34, 206, 0.34);
+    --sa-hot: rgba(233, 213, 255, 0.5);
+    --sa-wash: 50% -10%;
+}
+
+.sa-card-unit::after,
+#res-main-sa-card.sa-card-unit::after {
+    animation-duration: 6.2s;
+}
+
+/* ? Regular Super Attack — edge-lit dokkan gold */
+.sa-card-standard,
+#res-main-sa-card.sa-card-standard {
+    --sa-rim: rgba(234, 179, 8, 0.88);
+    --sa-edge: rgba(161, 98, 7, 0.92);
+    --sa-core: rgba(161, 98, 7, 0.28);
+    --sa-hot: rgba(253, 224, 71, 0.48);
+    --sa-wash: 8% 40%;
+}
+
+.sa-card-standard::before,
+#res-main-sa-card.sa-card-standard::before {
+    background:
+        radial-gradient(ellipse at 8% 40%, var(--sa-hot) 0%, transparent 52%),
+        radial-gradient(ellipse at 92% 60%, var(--sa-core) 0%, transparent 50%);
+}
+/* 💥 Active Skill — blazing orange */
+.sa-card-active,
+#res-active-skill-dash-card.sa-card-active {
+    --sa-rim: rgba(253, 186, 116, 0.95);
+    --sa-edge: rgba(234, 88, 12, 0.95);
+    --sa-core: rgba(194, 65, 12, 0.32);
+    --sa-hot: rgba(251, 146, 60, 0.55);
+    --sa-wash: 50% 115%;
+}
+
+/* 💠 SA Counter — electric cyan */
+.sa-card-sa-counter,
+#res-sa-counter-dash-card.sa-card-sa-counter {
+    --sa-rim: rgba(165, 243, 252, 0.95);
+    --sa-edge: rgba(2, 132, 199, 0.95);
+    --sa-core: rgba(3, 105, 161, 0.32);
+    --sa-hot: rgba(56, 189, 248, 0.55);
+    --sa-wash: 28% 78%;
+}
+
+/* 🌿 Normal Counter — mint teal */
+.sa-card-norm-counter {
+    --sa-rim: rgba(153, 246, 228, 0.95);
+    --sa-edge: rgba(13, 148, 136, 0.95);
+    --sa-core: rgba(15, 118, 110, 0.32);
+    --sa-hot: rgba(45, 212, 191, 0.55);
+    --sa-wash: 28% 78%;
+}
+
+@keyframes sa-energy-facets {
+    0%, 100% { opacity: 0.18; transform: translate3d(0, 4%, 0) scale(1.01); }
+    50% { opacity: 0.42; transform: translate3d(0, -3%, 0) scale(1.05); }
+}
+
+@keyframes sa-ember-rise {
+    0%, 100% { transform: translate3d(0, 10%, 0) scale(1); }
+    50% { transform: translate3d(0, -6%, 0) scale(1.04); }
+}
+
+@keyframes sa-inner-glint {
+    0%, 42%, 100% { opacity: 0; transform: translate3d(0, -8%, 0) scale(0.78); }
+    58% { opacity: 0.62; transform: translate3d(0, 5%, 0) scale(1); }
+    72% { opacity: 0; transform: translate3d(0, 12%, 0) scale(1.1); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sa-card-ultra::before,
+    .sa-card-ex::before,
+    .sa-card-unit::before,
+    .sa-card-standard::before,
+    .sa-card-ultra::after,
+    .sa-card-ex::after,
+    .sa-card-unit::after,
+    .sa-card-standard::after {
+        animation: none;
+        opacity: 0.45;
+        transform: none;
+    }
+}
+
+/* The calculator's simplex-wave motif, cloned into SA cards by
+   calc-sa-line-texture.js. It stays passive and is clipped by the card. */
+.sa-card-ultra::before,
+.sa-card-ex::before,
+.sa-card-unit::before,
+.sa-card-standard::before,
+.sa-card-active::before,
+.sa-card-sa-counter::before,
+.sa-card-norm-counter::before,
+.sa-card-ultra::after,
+.sa-card-ex::after,
+.sa-card-unit::after,
+.sa-card-standard::after,
+.sa-card-active::after,
+.sa-card-sa-counter::after,
+.sa-card-norm-counter::after {
+    display: none;
+}
+
+.sa-card-lines {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.5;
+    mix-blend-mode: screen;
+}
+
+.sa-card-ex .sa-card-lines { opacity: 0.56; }
+
+@media (prefers-reduced-motion: reduce) {
+    .sa-card-lines { display: none; }
+}

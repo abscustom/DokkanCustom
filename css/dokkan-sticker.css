@@ -1,0 +1,38 @@
+/* ==========================================================================
+   DOKKAN TUR SPECIAL STICKER SHADER OVERLAY
+   ========================================================================== */
+
+.abs-sticker-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+    border-radius: inherit !important;
+    display: none;
+    
+    transform: rotate(180deg) scaleX(-1) !important;
+    
+    /* ADDITIVE BLENDING: Critical for making the sticker actually "glow" over the art */
+    mix-blend-mode: screen !important; 
+    
+    filter: brightness(1.25) contrast(1.2) !important;
+    opacity: 1 !important;
+}
+
+/* Sticker Active Mode: Show canvas over character and effect layers */
+.abs-art-box.sticker-active .abs-sticker-canvas {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.abs-art-box.sticker-active #abs-art-bg,
+.abs-art-box.sticker-active #abs-art-char,
+.abs-art-box.sticker-active #abs-art-effect {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}

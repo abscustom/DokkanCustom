@@ -1,0 +1,582 @@
+@charset "UTF-8";
+/* ==========================================================================
+   DOKKAN INFO 1:1 AUTHENTIC CORE STYLESHEET (FIXED ALIGNMENTS)
+   ========================================================================== */
+
+/* 1. BASE THEME & RESET */
+:root {
+  --bs-light-rgb: 248, 249, 250;
+  --bs-body-color: #ffffff;
+  --bs-body-bg: #2d2d2d;
+  --bs-gutter-x: 1.5rem;
+  --bs-gutter-y: 0;
+}
+
+*, *:before, *:after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #ffffff;
+  background-color: #2d2d2d;
+}
+
+p { margin-top: 0; margin-bottom: 1rem; }
+h1, h2, h3, h4, h5, h6 { margin-top: 0; margin-bottom: 0.5rem; font-weight: 500; line-height: 1.2; }
+b, strong { font-weight: bolder; }
+ul, ol { padding-left: 2rem; margin-top: 0; margin-bottom: 1rem; }
+img, svg, video { vertical-align: middle; }
+a { color: #ffffff; text-decoration: none; }
+a:hover { color: #ffffff; text-decoration: none; cursor: pointer; }
+
+/* 2. GRID SYSTEM & RESPONSIVE COLUMNS */
+.container-1220,
+body.theme-dokkaninfo #top-content .container-1220,
+#app.theme-dokkaninfo #top-content .container-1220,
+.theme-dokkaninfo .container-1220 {
+  width: 100% !important;
+  max-width: 1220px !important;
+  margin-right: auto !important;
+  margin-left: auto !important;
+  padding-right: calc(var(--bs-gutter-x) * 0.5) !important;
+  padding-left: calc(var(--bs-gutter-x) * 0.5) !important;
+}
+
+.row {
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: calc(-1 * var(--bs-gutter-y));
+  margin-right: calc(-0.5 * var(--bs-gutter-x));
+  margin-left: calc(-0.5 * var(--bs-gutter-x));
+}
+
+.row > * {
+  flex-shrink: 0;
+  width: 100%;
+  max-width: 100%;
+  padding-right: calc(var(--bs-gutter-x) * 0.5);
+  padding-left: calc(var(--bs-gutter-x) * 0.5);
+  margin-top: var(--bs-gutter-y);
+}
+
+/* Flex Col splits evenly side-by-side */
+.col { flex: 1 0 0%; width: auto !important; }
+.col-4 { flex: 0 0 auto; width: 33.33333333%; }
+.col-5 { flex: 0 0 auto; width: 41.66666667%; }
+.col-7 { flex: 0 0 auto; width: 58.33333333%; }
+.col-12 { flex: 0 0 auto; width: 100%; }
+
+@media (min-width: 576px) {
+  .col-sm-2 { flex: 0 0 auto; width: 16.66666667% !important; }
+  .col-sm-8 { flex: 0 0 auto; width: 66.66666667% !important; }
+  .col-sm { flex: 1 0 0%; }
+}
+
+@media (min-width: 1200px) {
+  .col-xl-4 { flex: 0 0 auto; width: 33.33333333% !important; }
+  .col-xl-8 { flex: 0 0 auto; width: 66.66666667% !important; }
+}
+
+@media (max-width: 1199.98px) {
+  .col-xl-4, .col-xl-8 { width: 100% !important; }
+}
+
+/* Flex utilities */
+.d-flex { display: flex !important; }
+.flex-column { flex-direction: column !important; }
+.flex-wrap { flex-wrap: wrap !important; }
+.justify-content-center { justify-content: center !important; }
+.justify-content-between { justify-content: space-between !important; }
+.align-items-center { align-items: center !important; }
+.align-items-start { align-items: flex-start !important; }
+
+/* Positioning & width overrides */
+.position-relative { position: relative !important; }
+.position-absolute { position: absolute !important; }
+.start-0 { left: 0 !important; }
+.w-auto { width: auto !important; max-width: none !important; }
+.w-100 { width: 100% !important; }
+.d-none { display: none !important; }
+
+/* Spacing */
+.m-0 { margin: 0 !important; }
+.p-0 { padding: 0 !important; }
+.p-2 { padding: 0.5rem !important; }
+.p-3 { padding: 1rem !important; }
+.px-5 { padding-right: 3.5rem !important; padding-left: 3.5rem !important; }
+.mt-1 { margin-top: 0.25rem !important; }
+.mb-2 { margin-bottom: 0.5rem !important; }
+.mb-4 { margin-bottom: 1.5rem !important; }
+
+.padding-top-5 { padding-top: 5px; }
+.padding-bottom-5 { padding-bottom: 5px; }
+.padding-top-bottom-5 { padding-top: 5px; padding-bottom: 5px; }
+.padding-top-bottom-10 { padding-top: 10px; padding-bottom: 10px; }
+.padding-left-right-1 { padding-left: 2px; padding-right: 2px; }
+.margin-top-5 { margin-top: 5px; }
+.margin-bottom-5 { margin-bottom: 5px; }
+.margin-top-bottom-3 { margin-top: 3px; margin-bottom: 3px; }
+.margin-top-bottom-5 { margin-top: 5px; margin-bottom: 5px; }
+
+.container-text-center { text-align: center; }
+.container-text-light { --bs-text-opacity: 1; color: rgba(var(--bs-light-rgb), var(--bs-text-opacity)); }
+.text-center { text-align: center !important; }
+.text-start { text-align: left !important; }
+.font-size-1_2 { font-size: 1.2em; }
+.unselectable { user-select: none; -webkit-user-select: none; }
+
+/* 3. DOKKAN SQUARED BOXES & ELEMENT THEMES */
+#layout-dokkaninfo .dokkan-card {
+  border-radius: 0px !important;
+}
+
+.bg-none { background-color: #000000 !important; }
+.bg-none-2 { background-color: #222222 !important; }
+.border-none { border-color: #3d3d3d !important; }
+.border { border: 1px solid #3d3d3d !important; }
+.border-1 { border-width: 1px !important; }
+.border-2 { border-width: 2px !important; }
+.border-dark { border-color: #212529 !important; }
+
+.bg-main { background-color: #555; }
+.bg-secondary { background-color: #666 !important; }
+.bg-third { background-color: #777; }
+
+/* Subtle dark divider lines */
+hr, .divider, .divider.py.bg-secondary {
+  margin: 0.5rem 0 !important;
+  color: inherit;
+  border: 0 !important;
+  border-top: 1px solid rgba(255, 255, 255, 0.25) !important;
+  opacity: 0.25 !important;
+  width: 100%;
+}
+
+/* Typing Colors */
+.border-agl { border-color: #3315c6 !important; }
+.border-teq { border-color: #117721 !important; }
+.border-int { border-color: #84048a !important; }
+.border-str { border-color: #991c00 !important; }
+.border-phy { border-color: #e6b044 !important; }
+
+.bg-agl { background: #23127D !important; }
+.bg-agl-2 { background: #090868 !important; }
+.bg-teq { background: #004F17 !important; }
+.bg-teq-2 { background: #002D09 !important; }
+.bg-int { background: #660071 !important; }
+.bg-int-2 { background: #47004C !important; }
+.bg-str { background: #711100 !important; }
+.bg-str-2 { background: #560400 !important; }
+.bg-phy { background: #AA7500 !important; }
+.bg-phy-2 { background: #724E00 !important; }
+
+/* 4. TITLE, NAME & LEADER SKILL (CENTERED) */
+#char-description {
+  font-size: 28px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0 0 6px 0;
+  line-height: 1.2;
+  text-align: center;
+  width: 100%;
+}
+
+#char-name {
+  font-size: 32px;
+  font-weight: 700;
+  color: #ffffff;
+  margin: 0;
+  line-height: 1.25;
+  word-break: break-word;
+  text-align: center;
+  width: 100%;
+}
+
+#leader-skill {
+  text-align: center;
+  color: #ffffff;
+  line-height: 1.5;
+}
+
+/* 5. PASSIVE SKILL FORMATTING */
+.passive-container-main { width: 100%; }
+#card-passive-container { color: #ffffff; }
+
+#card-passive-container strong {
+  display: block;
+  font-weight: 700;
+  color: #ffffff;
+  margin-top: 8px;
+  margin-bottom: 3px;
+  text-align: left;
+  font-size: 1.22rem;
+}
+
+#card-passive-container ul {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0 !important;
+  margin-bottom: 0.6rem !important;
+  text-align: left;
+}
+
+#card-passive-container li {
+  color: #ffffff !important;
+  line-height: 1.65 !important;
+  margin-bottom: 3px !important;
+  text-align: left !important;
+  font-size: 1.15rem;
+  display: list-item !important;
+}
+
+#card-passive-container li::before { content: none !important; }
+
+#card-passive-container img.dokkan-dialog-icon,
+#card-passive-container img[src*="passive_skill_dialog"] {
+  height: 20px !important;
+  max-height: 20px !important;
+  width: auto !important;
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+  display: inline-block !important;
+  transform: translateY(-1.5px);
+}
+
+#card-passive-container img.dokkan-debuff-icon,
+#card-passive-container img[src*="st_"] {
+  height: 22px !important;
+  max-height: 22px !important;
+  width: auto !important;
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+  display: inline-block !important;
+  transform: translateY(-1.5px);
+}
+
+/* Category Quotes: Plain unhighlighted on Dokkan Info side */
+#main-card-container .abs-category-quote,
+.dokkan-card .abs-category-quote {
+  color: inherit !important;
+  background: none !important;
+  text-shadow: none !important;
+  font-weight: inherit !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+/* 6. SUPER ATTACK 2-LINE WRAP & CENTERING */
+.sa-type-label {
+  display: inline-block !important;
+  max-width: 110px !important;
+  line-height: 1.15 !important;
+  text-align: center !important;
+}
+
+.sa-block .sa-display-name {
+  color: #ffffff;
+  text-align: center;
+  margin-left: 6px;
+}
+
+.sa-display-effects-list,
+.sa-display-effects-list .col,
+.sa-block .activation-text,
+.sa-block .stats-container,
+.sa-block .sa-lv-container {
+  text-align: center;
+  color: #ffffff;
+}
+
+/* 7. ACTIVE SKILL (NO OVERLAPPING, PERFECT LEFT-PINNED TAG) */
+.active-block .position-relative {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+.active-block .position-absolute.start-0 {
+  position: absolute !important;
+  left: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  z-index: 2 !important;
+}
+
+.active-block .active-display-name,
+.active-block .active-display-effect,
+.active-block .active-display-condition-title,
+.active-block .active-display-condition {
+  text-align: center;
+  color: #ffffff;
+  margin: 0 auto;
+}
+
+.sa-display-icon {
+  width: 35px !important;
+  height: 35px !important;
+  max-width: 35px !important;
+  max-height: 35px !important;
+  min-width: 35px !important;
+  min-height: 35px !important;
+  object-fit: contain !important;
+  vertical-align: middle !important;
+  flex-shrink: 0 !important;
+  display: inline-block !important;
+}
+
+/* ==========================================================================
+   8. CARD ICON GRID & THUMBNAIL LAYERS (INDEPENDENT POSITIONING)
+   ========================================================================== */
+.col.card-icon {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  position: relative !important;
+  min-height: 150px !important;
+  height: 150px !important;
+  width: 100% !important;
+}
+
+.row.card-icon {
+  display: flex !important;
+  flex-wrap: wrap !important;
+}
+
+/* Master Fixed Container (Does not shift) */
+.card-info-thumb {
+  position: relative !important;
+  width: 150px !important;
+  height: 150px !important;
+  margin: 0 auto !important;
+  display: block !important;
+  overflow: visible !important;
+  z-index: 2 !important;
+}
+
+.card-icon-item {
+  position: absolute !important;
+  display: block !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+}
+
+.card-icon-item-base {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  width: 120px !important;
+  height: 120px !important;
+  z-index: 1 !important;
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.card-icon-item-base .card-frame,
+.card-frame {
+  position: relative !important;
+  width: 120px !important;
+  height: 120px !important;
+  display: block !important;
+  object-fit: contain !important;
+}
+
+/* ----------------------------------------------------
+   1. CHARACTER IMAGE (SSR, TUR, LR)
+   ---------------------------------------------------- */
+#img-lr, #img-tur, #img-ssr {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  /* (X = Left/Right, Y = Up/Down - Adjust +7px here to move image vertically) */
+  transform: translate(-50%, calc(-55% + 3px)) !important;
+  z-index: 3 !important;
+  height: 150px !important;
+  width: auto !important;
+  max-width: none !important;
+  margin: 0 !important;
+  display: block !important;
+  pointer-events: none !important;
+}
+
+/* LR Dial & Lightning */
+.lr-spin-dial {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 1 !important;
+  width: 110px !important;
+  height: 110px !important;
+  animation: lr-dial-spin 6s linear infinite !important;
+  pointer-events: none !important;
+}
+
+.lightning-overlay {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  z-index: 2 !important;
+  width: 240px !important;
+  height: auto !important;
+  mix-blend-mode: screen !important;
+  display: block !important;
+  filter: drop-shadow(0 0 10px var(--lightning-color, rgb(0, 200, 255))) brightness(10.5) contrast(1.2) !important;
+  transition: filter 0.3s ease !important;
+  pointer-events: none !important;
+}
+
+@keyframes lr-dial-spin {
+  from { transform: translate(-50%, -50%) rotate(0deg); }
+  to { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+/* ----------------------------------------------------
+   2. RARITY BADGE (LR / UR / SSR)
+   ---------------------------------------------------- */
+.card-icon-item-rarity {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-78px, 6px) !important;
+  z-index: 5 !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.card-icon-item-rarity img {
+  position: relative !important;
+  height: 72px !important;
+  width: auto !important;
+  display: block !important;
+  filter: drop-shadow(0 2px 2px #000) !important;
+}
+
+/* ----------------------------------------------------
+   3. ELEMENT / TYPE BADGE (AGL, STR, etc.)
+   ---------------------------------------------------- */
+.card-icon-item-type {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(24px, -66px) !important;
+  z-index: 5 !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+}
+
+.card-icon-item-type img {
+  position: relative !important;
+  height: 57px !important;
+  width: auto !important;
+  display: block !important;
+}
+
+/* ----------------------------------------------------
+   4. EZA STAR / AWAKENING BADGE
+   ---------------------------------------------------- */
+.card-icon-item-eza-ja {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-9px, 15px) !important;
+  z-index: 6 !important;
+  margin: 0 !important;
+}
+
+#awakening-img {
+  position: relative !important;
+  width: 64px !important;
+  height: auto !important;
+  display: block !important;
+  filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.5)) !important;
+}
+
+/* 9. STAT TABLE, CATEGORIES & LINKS */
+#card-category-container img {
+  max-width: 100% !important;
+  height: auto !important;
+  display: block !important;
+  margin: 0 auto !important;
+}
+
+#card-link-container a {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-height: 42px !important;
+}
+
+table {
+  caption-side: bottom;
+  border-collapse: collapse;
+  table-layout: fixed;
+  width: 100%;
+  margin-bottom: 0;
+  color: #ffffff;
+  vertical-align: top;
+}
+
+#layout-dokkaninfo table th,
+#layout-dokkaninfo table td {
+  text-align: center !important;
+  vertical-align: middle !important;
+  color: #ffffff !important;
+  padding: 8px 4px;
+}
+
+#layout-dokkaninfo table th b { font-weight: 800 !important; }
+#layout-dokkaninfo table td b { font-weight: 400 !important; font-style: normal !important; }
+
+.safe-centered-frame { padding: 12px !important; }
+
+.card-art-canvas {
+  position: relative;
+  width: 426px;
+  height: 568px;
+  border-radius: inherit;
+  overflow: hidden;
+  margin: 0 auto;
+}
+
+#myOverlayVideo, #myOverlayImage {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 10. INLINE PASSIVE ICONS (CLEAN 12.5px SCALED) */
+#card-passive-container img,
+#card-passive-container li img,
+.dokkan-dialog-icon,
+img[src*="passive_skill_dialog"] {
+  height: 12.5px !important;
+  max-height: 13px !important;
+  width: auto !important;
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+  transform: translateY(-1px) !important;
+  display: inline-block !important;
+}
+
+.dokkan-debuff-icon,
+#card-passive-container img[src*="st_"] {
+  height: 14px !important;
+  max-height: 14px !important;
+  width: auto !important;
+  vertical-align: middle !important;
+  margin: 0 2px !important;
+  transform: translateY(-1px) !important;
+  display: inline-block !important;
+}

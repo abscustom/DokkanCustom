@@ -1,0 +1,272 @@
+/* ==========================================================================
+   absCustom - Dokkan LWF Animation Stylesheet
+   ========================================================================== */
+
+.seza-lwf-border-canvas {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    max-width: none !important;
+    max-height: none !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+    mix-blend-mode: screen !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    display: block !important;
+}
+
+/* Remove container box-shadows */
+.seza-glow-card,
+#abs-composed-icon.seza-glow-card,
+.abs-composed-icon.seza-glow-card,
+.char-box .card-icon.seza-glow-card {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+}
+
+/* Badges above the flames */
+#abs-composed-icon .rarity-icon,
+.abs-composed-icon .rarity-icon,
+#abs-composed-icon .type-icon,
+.abs-composed-icon .type-icon,
+.char-box .card-icon .rarity,
+.char-box .card-icon .type {
+    position: absolute !important;
+    z-index: 20 !important;
+}
+
+#abs-composed-icon .eza-icon,
+.abs-composed-icon .eza-icon,
+.char-box .card-icon .hub-eza-badge {
+    position: absolute !important;
+    z-index: 25 !important;
+}
+
+/* Main Top Header Card Icon in Inspector */
+#abs-composed-icon {
+    position: relative !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+
+#abs-composed-icon .seza-lwf-border-canvas {
+    width: 500px !important;
+    height: 888px !important;
+    transform: translate(-50%, -50%) scale(1.41) !important;
+}
+
+/* Small Composed Icons in Awakenings Box */
+.abs-composed-icon {
+    position: relative !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+
+.abs-composed-icon .seza-lwf-border-canvas {
+    width: 640px !important;
+    height: 1136px !important;
+    transform: translate(-50%, -50%) scale(0.75) !important;
+}
+
+/* Home Page Card Grid Thumbnail Frame (Your Custom Scale) */
+.char-box .card-icon {
+    position: relative !important;
+    overflow: visible !important;
+    background: transparent !important;
+}
+
+.char-box .card-icon .seza-lwf-border-canvas {
+    width: 640px !important;
+    height: 1136px !important;
+    transform: translate(-50%, -50%) scale(1.4) !important;
+}
+
+/* ==========================================================================
+   DOKKAN DOMAIN MODAL / POPOUT VIEWPORT
+   ========================================================================== */
+
+.abs-domain-modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.abs-domain-modal-dialog {
+    background: linear-gradient(180deg, rgba(20, 26, 40, 0.95) 0%, rgba(9, 12, 20, 0.98) 100%);
+    border: 2px solid var(--theme-border, #3b82f6);
+    border-radius: 16px;
+    width: 100%;
+    max-width: 440px;
+    overflow: hidden;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.9), 0 0 25px var(--theme-glow, rgba(56, 189, 248, 0.4));
+    display: flex;
+    flex-direction: column;
+}
+
+.abs-domain-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 18px;
+    background: linear-gradient(180deg, var(--theme-header, #1e40af) 0%, var(--theme-main, #1d4ed8) 100%);
+    border-bottom: 2px solid var(--theme-border, #3b82f6);
+}
+
+.abs-domain-modal-title-text {
+    font-size: 13.5px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+}
+
+.abs-domain-modal-close {
+    all: unset;
+    cursor: pointer;
+    font-size: 22px;
+    font-weight: 900;
+    color: #cbd5e1;
+    line-height: 1;
+    transition: color 0.2s;
+}
+
+.abs-domain-modal-close:hover {
+    color: #ef4444;
+}
+
+.abs-domain-modal-body {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: #000000;
+}
+
+.abs-domain-canvas-viewport {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 426 / 568;
+    max-height: 70vh;
+    border-radius: 8px;
+    overflow: hidden;
+    background: #000;
+}
+
+.abs-domain-canvas-viewport canvas {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    display: block;
+}
+
+
+/* ==========================================================================
+   DOMAIN ICON IN DOKKAN FIELD HEADER (SAME SIZE AS SA ICONS WITH HOVER GLOW)
+   ========================================================================== */
+
+.abs-domain-header-icon {
+    cursor: pointer !important;
+    pointer-events: auto !important;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), filter 0.2s ease !important;
+}
+
+.abs-domain-header-icon:hover {
+    transform: scale(1.25) !important;
+    filter: drop-shadow(0 0 6px rgba(250, 204, 21, 0.9)) !important;
+}
+
+/* ==========================================================================
+   ANIMATED LWF CARD ART & STICKER LAYER
+   ========================================================================= */
+
+.abs-art-bg-lwf-canvas {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    pointer-events: none !important;
+    z-index: 5 !important;
+    border-radius: inherit !important;
+    transition: opacity 0.25s ease !important;
+}
+
+/* Static Art Mode */
+.abs-art-box.static-mode .abs-art-bg-lwf-canvas,
+.abs-art-box.static-mode .abs-sticker-canvas {
+    display: none !important;
+    opacity: 0 !important;
+}
+
+.abs-art-box.static-mode #abs-art-bg[src]:not([src=""]):not([src$="/"]):not([src$="editor.html"]),
+.abs-art-box.static-mode #abs-art-char[src]:not([src=""]):not([src$="/"]):not([src$="editor.html"]),
+.abs-art-box.static-mode #abs-art-effect[src]:not([src=""]):not([src$="/"]):not([src$="editor.html"]) {
+    opacity: 1 !important;
+    visibility: visible !important;
+    display: block !important;
+}
+
+#abs-art-bg:not([src]), #abs-art-bg[src=""], #abs-art-bg[src$="editor.html"], #abs-art-bg[src$="/"],
+#abs-art-char:not([src]), #abs-art-char[src=""], #abs-art-char[src$="editor.html"], #abs-art-char[src$="/"],
+#abs-art-effect:not([src]), #abs-art-effect[src=""], #abs-art-effect[src$="editor.html"], #abs-art-effect[src$="/"] {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+/* Animated Art Mode */
+.abs-art-box.animated-mode .abs-art-bg-lwf-canvas {
+    display: block !important;
+    opacity: 1 !important;
+}
+
+.abs-art-box.animated-mode #abs-art-bg,
+.abs-art-box.animated-mode #abs-art-char,
+.abs-art-box.animated-mode #abs-art-effect {
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.seza-lwf-border-canvas {
+    position: absolute !important;
+    top: 50% !important;
+    left: 50% !important;
+    max-width: none !important;
+    max-height: none !important;
+    pointer-events: none !important;
+    z-index: 10 !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    display: block !important;
+}
+
+/* Ensure no parent containers force background colors */
+.seza-glow-card,
+#abs-composed-icon.seza-glow-card,
+.abs-composed-icon.seza-glow-card,
+.char-box .card-icon.seza-glow-card {
+    box-shadow: none !important;
+    border: none !important;
+    outline: none !important;
+    background: transparent !important;
+}

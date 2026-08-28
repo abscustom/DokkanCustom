@@ -1,0 +1,300 @@
+/* ==========================================================================
+   absCustom - Full-Width Edge-to-Edge Themed Accordion Headers
+   ========================================================================== */
+
+.ds-accordion,
+.compact-card {
+    background: transparent !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+}
+
+.ds-accordion-header,
+.compact-card .ds-accordion-header {
+    width: 100% !important;
+    padding: 10px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+    transition: filter 0.2s ease !important;
+}
+
+.ds-accordion-header:hover {
+    filter: brightness(1.1);
+}
+
+/* Make dashboard section titles read as primary controls, with a clearer split. */
+.ds-accordion-header,
+.compact-card .ds-accordion-header {
+    border-bottom-color: rgba(255, 255, 255, 0.42) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 5px 13px rgba(0, 0, 0, 0.42) !important;
+}
+
+.ds-accordion-header span[class*="box-badge-"],
+.compact-card .ds-accordion-header span[class*="box-badge-"] {
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.55px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9), 0 0 7px rgba(255, 255, 255, 0.24) !important;
+}
+
+.ds-accordion-header-center {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    justify-content: center !important;
+}
+
+/* Remove duplicate right-side icon in the header */
+.ds-accordion-header-center .dock-svg-icon:nth-of-type(2),
+.ds-accordion-header-center > span:last-of-type:not([class*="box-badge-"]) {
+    display: none !important;
+}
+
+.ds-accordion-header .dock-svg-icon {
+    width: 18px !important;
+    height: 18px !important;
+    color: #ffffff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.ds-accordion-header span[class*="box-badge-"] {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    padding: 0 !important;
+}
+
+.ds-accordion-arrow {
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    opacity: 0.85;
+    margin-left: auto;
+}
+
+
+/* ==========================================================================
+   PERFECT VERTICAL CENTERING FOR ACCORDION HEADERS & ICONS
+   ========================================================================== */
+
+.ds-accordion,
+.compact-card {
+    background: transparent !important;
+    border-radius: 14px !important;
+    overflow: hidden !important;
+    margin-bottom: 14px !important;
+    width: 100% !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7) !important;
+}
+
+.ds-accordion-header,
+.compact-card .ds-accordion-header {
+    width: 100% !important;
+    min-height: 42px !important;
+    padding: 10px 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    box-sizing: border-box !important;
+    border-bottom: 2px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+    transition: filter 0.2s ease !important;
+    line-height: 1 !important;
+}
+
+.ds-accordion-header:hover {
+    filter: brightness(1.1);
+}
+
+/* Center Container: Strict Flex Centering */
+.ds-accordion-header-center {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    flex: 1 !important;
+    margin: 0 auto !important;
+    line-height: 1 !important;
+}
+
+/* Perfect Vertical Alignment for the Leading SVG Icon */
+.ds-accordion-header .dock-svg-icon {
+    width: 18px !important;
+    height: 18px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+    color: #ffffff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.7));
+}
+
+.ds-accordion-header .dock-svg-icon svg {
+    width: 18px !important;
+    height: 18px !important;
+    display: block !important;
+    margin: 0 !important;
+    stroke: currentColor !important;
+}
+
+/* Automatically hide any redundant 2nd icon on the right side of text */
+.ds-accordion-header-center .dock-svg-icon:nth-of-type(2) {
+    display: none !important;
+}
+
+/* Header Text Badge Centered */
+.ds-accordion-header span[class*="box-badge-"] {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1px !important;
+    text-transform: uppercase !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    line-height: 1 !important;
+}
+
+/* Right-side Toggle Chevron */
+.ds-accordion-arrow {
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    opacity: 0.85;
+    margin-left: auto !important;
+    line-height: 1 !important;
+}
+
+/* Transparent Frosted Accordion Body */
+.ds-accordion-body,
+.compact-card .ds-accordion-body {
+    background: rgba(8, 14, 28, 0.55) !important;
+    backdrop-filter: blur(28px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(190%) !important;
+    padding: 16px 18px !important;
+    border-top: none !important;
+    text-align: left !important;
+    box-sizing: border-box !important;
+}
+
+/* ==========================================================================
+   THEMED ACCORDION BORDERS & GRADIENTS
+   ========================================================================== */
+
+/* 🔷 BLUE (Passive) */
+.ds-accordion:has(.box-badge-blue),
+.compact-card:has(.box-badge-blue) { border: 2px solid rgba(59, 130, 246, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-blue),
+.compact-card:has(.box-badge-blue) .ds-accordion-header {
+    background: linear-gradient(135deg, #1e40af 0%, #1d4ed8 50%, #2563eb 100%) !important;
+    border-bottom-color: rgba(96, 165, 250, 0.6) !important;
+}
+
+/* 🟩 GREEN (Leader) */
+.ds-accordion:has(.box-badge-green),
+.compact-card:has(.box-badge-green) { border: 2px solid rgba(16, 185, 129, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-green),
+.compact-card:has(.box-badge-green) .ds-accordion-header {
+    background: linear-gradient(135deg, #065f46 0%, #059669 50%, #10b981 100%) !important;
+    border-bottom-color: rgba(52, 211, 153, 0.6) !important;
+}
+
+/* ⚡ YELLOW (Super Attack Actions) */
+.ds-accordion:has(.box-badge-yellow),
+.compact-card:has(.box-badge-yellow) { border: 2px solid rgba(234, 179, 8, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-yellow),
+.compact-card:has(.box-badge-yellow) .ds-accordion-header {
+    background: linear-gradient(135deg, #854d0e 0%, #ca8a04 50%, #eab308 100%) !important;
+    border-bottom-color: rgba(253, 224, 71, 0.6) !important;
+}
+
+/* 🟧 ORANGE (Links / Active) */
+.ds-accordion:has(.box-badge-orange),
+.compact-card:has(.box-badge-orange) { border: 2px solid rgba(249, 115, 22, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-orange),
+.compact-card:has(.box-badge-orange) .ds-accordion-header {
+    background: linear-gradient(135deg, #9a3412 0%, #ea580c 50%, #f97316 100%) !important;
+    border-bottom-color: rgba(251, 146, 60, 0.6) !important;
+}
+
+/* 🌸 PINK (Stats) */
+.ds-accordion:has(.box-badge-pink),
+.compact-card:has(.box-badge-pink) { border: 2px solid rgba(236, 72, 153, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-pink),
+.compact-card:has(.box-badge-pink) .ds-accordion-header {
+    background: linear-gradient(135deg, #9d174d 0%, #db2777 50%, #ec4899 100%) !important;
+    border-bottom-color: rgba(244, 114, 182, 0.6) !important;
+}
+
+/* 🔮 PURPLE (Enemy Def) */
+.ds-accordion:has(.box-badge-purple),
+.compact-card:has(.box-badge-purple) { border: 2px solid rgba(168, 85, 247, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-purple),
+.compact-card:has(.box-badge-purple) .ds-accordion-header {
+    background: linear-gradient(135deg, #581c87 0%, #7e22ce 50%, #9333ea 100%) !important;
+    border-bottom-color: rgba(192, 132, 252, 0.6) !important;
+}
+
+/* 🩸 RED (Damage Output) */
+.ds-accordion:has(.box-badge-red),
+.compact-card:has(.box-badge-red) { border: 2px solid rgba(239, 68, 68, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-red),
+.compact-card:has(.box-badge-red) .ds-accordion-header {
+    background: linear-gradient(135deg, #991b1b 0%, #dc2626 50%, #ef4444 100%) !important;
+    border-bottom-color: rgba(248, 113, 113, 0.6) !important;
+}
+
+/* 🌐 TEAL (Domain / Stats) */
+.ds-accordion:has(.box-badge-teal),
+.compact-card:has(.box-badge-teal) { border: 2px solid rgba(20, 184, 166, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-teal),
+.compact-card:has(.box-badge-teal) .ds-accordion-header {
+    background: linear-gradient(135deg, #115e59 0%, #0d9488 50%, #14b8a6 100%) !important;
+    border-bottom-color: rgba(45, 212, 191, 0.6) !important;
+}
+
+/* 🌌 INDIGO (Card View) */
+.ds-accordion:has(.box-badge-indigo),
+.compact-card:has(.box-badge-indigo) { border: 2px solid rgba(99, 102, 241, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-indigo),
+.compact-card:has(.box-badge-indigo) .ds-accordion-header {
+    background: linear-gradient(135deg, #312e81 0%, #4f46e5 50%, #818cf8 100%) !important;
+    border-bottom-color: rgba(129, 140, 248, 0.6) !important;
+}
+
+/* 🍋 LIME (Skill Orbs) */
+.ds-accordion:has(.box-badge-lime),
+.compact-card:has(.box-badge-lime) { border: 2px solid rgba(132, 204, 22, 0.6) !important; }
+.ds-accordion-header:has(.box-badge-lime),
+.compact-card:has(.box-badge-lime) .ds-accordion-header {
+    background: linear-gradient(135deg, #365314 0%, #65a30d 50%, #84cc16 100%) !important;
+    border-bottom-color: rgba(163, 230, 53, 0.6) !important;
+}

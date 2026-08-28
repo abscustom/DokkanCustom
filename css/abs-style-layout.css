@@ -1,0 +1,1365 @@
+/* ======================================================================= */
+/*                         ABS.STYLE 3D LAYOUT CSS                         */
+/* ======================================================================= */
+
+:root {
+    --abs-none: #3b82f6; 
+    --abs-none-header: #1d4ed8;
+    --abs-none-bg-high: #132448;
+    --abs-none-bg-low: #080e1c;
+    --abs-none-text: #38bdf8;
+    --abs-none-glow: rgba(56, 189, 248, 0.45);
+}
+
+/* Base Body Background */
+#app.theme-abs-style,
+#app.theme-abs-style #top-content,
+#app.theme-abs-style #top-content .container-1220,
+#app.theme-abs-style #top-content .container-text-center,
+#app.theme-abs-style #top-content .container-text-light,
+#app.theme-abs-style #top-content .container,
+#layout-abs-style {
+    background-color: #0b0f19 !important;
+    background: #0b0f19 !important;
+}
+
+#app.theme-abs-style .dokkan-card {
+    background: transparent !important;
+    border: none !important;
+}
+
+#app.theme-abs-style #top-content .container-1220 {
+    max-width: 1650px !important;
+    width: 95vw !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+    padding-left: 10px !important;
+    padding-right: 10px !important;
+}
+
+#layout-abs-style {
+    --theme-main: var(--abs-none);
+    --theme-border: var(--abs-none);
+    --theme-header: var(--abs-none-header);
+    --theme-bg-high: var(--abs-none-bg-high);
+    --theme-bg-low: var(--abs-none-bg-low);
+    --theme-text: var(--abs-none-text);
+    --theme-glow: var(--abs-none-glow);
+    
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    color: #e2e8f0;
+    width: 100% !important;
+    max-width: 100% !important;
+    margin: 0 auto;
+    padding: 10px 0;
+}
+
+/* Grid Columns */
+.abs-grid-container { 
+    display: flex; 
+    gap: 24px; 
+    align-items: flex-start; 
+    width: 100%; 
+}
+
+.abs-main-col { 
+    flex: 1 1 0%; 
+    min-width: 0;
+    width: 100%; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+}
+
+.abs-side-col { 
+    width: 350px; 
+    flex-shrink: 0; 
+    display: flex; 
+    flex-direction: column; 
+    gap: 16px; 
+}
+
+/* Header & Top Titles */
+.abs-top-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 20px;
+    padding: 0 10px;
+    width: 100%;
+}
+
+.abs-header-left { 
+    display: flex; 
+    align-items: center; 
+    gap: 20px; 
+    text-align: left; 
+}
+
+#abs-char-title { 
+    color: #cbd5e1 !important; 
+    font-style: italic; 
+    font-size: 14px; 
+    margin-bottom: 4px; 
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+}
+
+#abs-char-name { 
+    color: #ffffff !important; 
+    font-size: 28px; 
+    font-weight: bold; 
+    text-shadow: 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 10px rgba(255, 255, 255, 0.3) !important;
+}
+
+#abs-art-header-text {
+    color: #ffffff !important;
+    text-shadow: 0 1px 3px rgba(0,0,0,0.8) !important;
+}
+
+/* ======================================================================= */
+/* 1. 3D TWO-COLOR GRADIENT CONTAINER BOXES                                */
+/* ======================================================================= */
+
+.abs-box { 
+    border: 2.5px solid var(--theme-border, #3b82f6) !important; 
+    border-radius: 12px !important;
+    background: linear-gradient(180deg, var(--theme-bg-high, #132448) 0%, var(--theme-bg-low, #080e1c) 100%) !important; 
+    width: 100%; 
+    overflow: hidden;
+    box-shadow: 
+        0 6px 18px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5) !important;
+    transition: transform 0.2s ease, border-color 0.2s ease;
+}
+
+.abs-header { 
+    background: linear-gradient(180deg, var(--theme-header, #1e40af) 0%, var(--theme-main, #1d4ed8) 100%) !important; 
+    color: #ffffff !important; 
+    padding: 10px 16px !important; 
+    font-weight: bold; 
+    font-size: 13.5px; 
+    display: flex; 
+    justify-content: flex-start; 
+    align-items: center;
+    border-bottom: 2.5px solid var(--theme-border, #3b82f6) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), 0 2px 5px rgba(0, 0, 0, 0.4) !important;
+}
+
+.abs-header i,
+.abs-header em {
+    font-style: italic !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8) !important;
+}
+
+.abs-content { 
+    padding: 14px 18px !important; 
+    font-size: 13px; 
+    line-height: 1.7; 
+    text-align: left; 
+    color: #f1f5f9 !important;
+    background: linear-gradient(180deg, var(--theme-bg-high, #132448) 0%, var(--theme-bg-low, #080e1c) 100%) !important;
+}
+
+/* Category Quotes & Label Highlights */
+#abs-passive-container strong,
+.abs-content strong,
+.abs-content .abs-skill-label { 
+    color: var(--theme-text, #38bdf8) !important; 
+    display: block; 
+    margin-top: 6px; 
+    margin-bottom: 4px; 
+    font-weight: bold; 
+    font-size: 13.5px;
+    text-shadow: 0 0 6px var(--theme-glow, rgba(56, 189, 248, 0.5)) !important;
+}
+
+.abs-category-quote {
+    color: var(--theme-text, #38bdf8) !important;
+    font-weight: bold !important;
+    display: inline !important;
+    text-shadow: 0 0 6px var(--theme-glow, rgba(56, 189, 248, 0.5)) !important;
+}
+
+/* Inline Passive Dialog Arrows, Once/Inf & Debuff Icons matching Card Viewer 1:1 (Scaled to clean 12.5px) */
+#abs-passive-container img,
+#abs-passive-container img.dokkan-dialog-icon,
+#abs-passive-container img[src*="passive_skill_dialog"] {
+    height: 12.5px !important;
+    max-height: 13px !important;
+    width: auto !important;
+    vertical-align: middle !important;
+    margin: 0 2px !important;
+    transform: translateY(-1px) !important;
+    display: inline-block !important;
+}
+
+#abs-passive-container img.dokkan-debuff-icon,
+#abs-passive-container img[src*="st_"] {
+    height: 14px !important;
+    max-height: 14px !important;
+    width: auto !important;
+    vertical-align: middle !important;
+    margin: 0 2px !important;
+    transform: translateY(-1px) !important;
+    display: inline-block !important;
+}
+
+/* ======================================================================= */
+/* SA HEADER ICONS (CLAMPED TO 24px)                                       */
+/* ======================================================================= */
+
+.abs-sa-header-title {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    line-height: 1 !important;
+}
+
+.abs-sa-icon-left,
+.abs-sa-header-title img,
+.abs-header .abs-sa-icon-left,
+#abs-sa-container .abs-sa-icon-left,
+#abs-active-container .abs-sa-icon-left {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    object-fit: contain !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    filter: none !important;
+}
+
+.abs-ex-prefix {
+    color: #facc15 !important;
+    font-weight: 900 !important;
+    text-shadow: 0 0 8px rgba(250, 204, 21, 0.8) !important;
+    letter-spacing: 0.5px !important;
+}
+
+/* ======================================================================= */
+/* 2. iOS FROSTED GLASS SPECIAL EFFECTS (SELF, ALLIES, ENEMY)              */
+/* ======================================================================= */
+
+.abs-special-effects-section {
+    margin-top: 14px;
+    padding-top: 4px;
+    text-align: left !important;
+    margin-bottom: 12px;
+    width: 100% !important;
+}
+
+.abs-special-effects-title {
+    font-size: 11px;
+    font-weight: 900;
+    font-style: italic;
+    color: #ffffff;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 14px;
+    text-shadow: 0 0 6px rgba(255, 255, 255, 0.5);
+}
+
+.abs-special-effects-groups {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 16px 14px !important;
+    align-items: flex-start !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+}
+
+/* iOS Glass Effect Group Shell */
+.abs-effect-group {
+    position: relative !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%) !important;
+    backdrop-filter: blur(20px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(180%) !important;
+    border-radius: 12px !important;
+    padding: 15px 12px 10px 12px !important;
+    margin-top: 8px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.4),
+        inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    width: auto !important;
+    flex-shrink: 0 !important;
+}
+
+.abs-effect-group.self {
+    border-color: rgba(16, 185, 129, 0.55) !important;
+    box-shadow: 0 0 14px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.abs-effect-group.allies {
+    border-color: rgba(56, 189, 248, 0.55) !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+.abs-effect-group.enemy {
+    border-color: rgba(239, 68, 68, 0.55) !important;
+    box-shadow: 0 0 14px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+/* Floating iOS Glass Pill on Top-Left */
+.abs-floating-target-tag,
+.abs-target-tag,
+.abs-group-label {
+    position: absolute !important;
+    top: -12px !important;
+    left: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3px 9px !important;
+    border-radius: 20px !important;
+    background: rgba(15, 23, 42, 0.85) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    z-index: 10 !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+.abs-floating-target-tag.self,
+.abs-target-tag.self,
+.abs-group-label.self {
+    border-color: #10b981 !important;
+    color: #10b981 !important;
+    filter: drop-shadow(0 0 6px rgba(16, 185, 129, 0.6));
+}
+
+.abs-floating-target-tag.allies,
+.abs-target-tag.allies,
+.abs-group-label.allies {
+    border-color: #38bdf8 !important;
+    color: #38bdf8 !important;
+    filter: drop-shadow(0 0 6px rgba(56, 189, 248, 0.6));
+}
+
+.abs-floating-target-tag.enemy,
+.abs-target-tag.enemy,
+.abs-group-label.enemy {
+    border-color: #ef4444 !important;
+    color: #ef4444 !important;
+    filter: drop-shadow(0 0 6px rgba(239, 68, 68, 0.6));
+}
+
+.abs-target-svg {
+    display: block;
+    flex-shrink: 0;
+}
+
+/* Badges Row */
+.abs-group-badges-row {
+    display: inline-flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    gap: 8px !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+}
+
+/* iOS Glass Effect Badge */
+.abs-effect-badge {
+    display: inline-flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.04) 100%) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 10px !important;
+    padding: 5px 10px 4px 10px !important;
+    min-width: 56px !important;
+    box-shadow: 
+        0 4px 12px rgba(0, 0, 0, 0.35),
+        inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.2s ease !important;
+}
+
+.abs-effect-badge:hover {
+    transform: translateY(-2px) scale(1.04) !important;
+    box-shadow: 
+        0 8px 18px rgba(0, 0, 0, 0.45),
+        inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.abs-badge-top {
+    display: flex !important;
+    align-items: center !important;
+    gap: 3px !important;
+}
+
+.abs-badge-top img {
+    height: 18px !important;
+    width: auto !important;
+}
+
+.abs-badge-top span {
+    font-size: 12px !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+}
+
+/* Fading Divider */
+.abs-badge-fading-divider {
+    width: 100% !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.35) 50%, transparent 100%) !important;
+    margin: 3px 0 !important;
+}
+
+/* Bright Turn Duration Text */
+.abs-badge-bottom {
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
+    white-space: nowrap !important;
+}
+
+/* ======================================================================= */
+/* 3. PRESERVED DARK STEEL MULTIPLIER BOX                                  */
+/* ======================================================================= */
+
+.abs-damage-multiplier-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: linear-gradient(180deg, #1b2230 0%, #0e131d 100%) !important;
+    border: 1.5px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 8px !important;
+    padding: 8px 14px;
+    margin-top: 10px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), 0 3px 8px rgba(0, 0, 0, 0.5) !important;
+}
+
+.abs-multiplier-left {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    text-align: left;
+}
+
+.abs-multiplier-title {
+    font-size: 11.5px;
+    font-weight: 900;
+    font-style: italic;
+    color: var(--theme-text, #38bdf8);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+}
+
+.abs-multiplier-pills { display: flex; gap: 8px; align-items: center; }
+
+.abs-multiplier-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    background: linear-gradient(180deg, #273142 0%, #151a24 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 6px !important;
+    padding: 4px 10px;
+    font-size: 11.5px;
+    font-weight: 800;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), 0 2px 4px rgba(0,0,0,0.4) !important;
+}
+
+.abs-multiplier-pill .pill-val { color: #ffffff; font-weight: 900; }
+.abs-multiplier-pill .pill-at { color: #38bdf8; font-size: 10px; font-style: italic; font-weight: 700; }
+.abs-multiplier-pill .pill-lv { color: #facc15; font-weight: 900; }
+
+.abs-multiplier-ki-tag {
+    background: #0e131d !important;
+    border: 1px solid var(--theme-text, #38bdf8) !important;
+    color: #ffffff !important;
+    font-size: 9px;
+    font-weight: 900;
+    padding: 1px 6px;
+    border-radius: 4px !important;
+}
+
+/* ======================================================================= */
+/* 4. iOS FROSTED GLASS STATS DASHBOARD                                    */
+/* ======================================================================= */
+
+.abs-stat-tabs {
+    display: flex;
+    justify-content: space-between;
+    gap: 6px;
+    background: rgba(255, 255, 255, 0.06) !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    padding: 5px;
+    border-radius: 12px !important;
+    margin-bottom: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+.abs-stat-tab {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #cbd5e1 !important;
+    font-size: 11px;
+    font-weight: 800;
+    padding: 6px 0;
+    border-radius: 8px !important;
+    cursor: pointer;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    transition: all 0.25s cubic-bezier(0.25, 1, 0.5, 1) !important;
+}
+
+.abs-stat-tab:hover {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+}
+
+
+/* ======================================================================= */
+/* DYNAMIC THEME COLOR TABS & TOOLTIPS                                     */
+/* ======================================================================= */
+
+/* Active percentage tabs (0%, 55%, 100%) now match card typing color */
+.abs-stat-tab.active {
+    background: linear-gradient(135deg, var(--theme-header, #1e40af) 0%, var(--theme-main, #1d4ed8) 100%) !important;
+    color: #ffffff !important;
+    border: 1px solid var(--theme-border, #3b82f6) !important;
+    box-shadow: 
+        0 4px 14px var(--theme-glow, rgba(56, 189, 248, 0.45)), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+    font-weight: 900;
+}
+
+/* Floating Tooltip matching card typing glow & border */
+#abs-global-floating-tooltip {
+    position: fixed !important;
+    pointer-events: none !important;
+    background: rgba(10, 15, 29, 0.98) !important;
+    border: 1px solid var(--theme-border, #3b82f6) !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    padding: 5px 10px !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+    z-index: 99999999 !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95), 0 0 12px var(--theme-glow) !important;
+    transition: opacity 0.12s ease !important;
+    display: none;
+}
+
+.abs-stat-cards-row { display: flex; gap: 8px; width: 100%; }
+
+.abs-stat-card {
+    flex: 1;
+    position: relative;
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%) !important;
+    backdrop-filter: blur(20px) saturate(190%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+    border-radius: 12px !important;
+    padding: 16px 4px 10px 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: 
+        0 8px 24px rgba(0, 0, 0, 0.45), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.35),
+        inset 0 -1px 0 rgba(0, 0, 0, 0.3) !important;
+    transition: transform 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), box-shadow 0.25s ease !important;
+}
+
+.abs-stat-card:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 
+        0 12px 28px rgba(0, 0, 0, 0.55), 
+        inset 0 1px 0 rgba(255, 255, 255, 0.5) !important;
+}
+
+.abs-stat-card.hp-card { 
+    border-color: rgba(16, 185, 129, 0.5) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(16, 185, 129, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important; 
+}
+.abs-stat-card.atk-card { 
+    border-color: rgba(239, 68, 68, 0.5) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(239, 68, 68, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important; 
+}
+.abs-stat-card.def-card { 
+    border-color: rgba(59, 130, 246, 0.5) !important; 
+    box-shadow: 0 8px 24px rgba(0,0,0,0.45), 0 0 12px rgba(59, 130, 246, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important; 
+}
+
+.abs-stat-card-label {
+    position: absolute;
+    top: 0;
+    left: 0;
+    font-size: 9px;
+    font-weight: 900;
+    color: #ffffff;
+    padding: 2px 7px;
+    border-bottom-right-radius: 6px;
+    border-top-left-radius: 8px;
+    text-transform: uppercase;
+}
+
+.hp-label { background: #10b981; }
+.atk-label { background: #ef4444; }
+.def-label { background: #3b82f6; }
+
+.abs-stat-card-value {
+    font-size: 15px;
+    font-weight: 900;
+    color: #ffffff;
+    letter-spacing: 0.5px;
+    white-space: nowrap;
+}
+
+/* ======================================================================= */
+/* AWAKENINGS BOX - CENTERING & ALIGNMENT FIX                              */
+/* ======================================================================= */
+
+/* 1. Even vertical spacing and perfect center alignment for each row */
+.abs-awaken-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 16px 20px !important;
+    margin: 0 !important;
+}
+
+/* 2. Vertically and horizontally center the Release Date text block */
+.abs-awaken-date {
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: center !important;
+    align-items: center !important;
+    text-align: center !important;
+    line-height: 1.4 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+/* 3. Center the EZA divider line & badge */
+.abs-awaken-divider {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    padding: 12px 0 !important;
+    margin: 0 !important;
+}
+
+.abs-awaken-divider::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 20px !important;
+    right: 20px !important;
+    top: 50% !important;
+    transform: translateY(-50%) !important; /* Locks the line dead center */
+    height: 2px !important;
+    background: var(--theme-border, #3b82f6) !important;
+    z-index: 1 !important;
+}
+
+.abs-awaken-divider img {
+    height: 28px !important;
+    width: auto !important;
+    position: relative !important;
+    z-index: 2 !important;
+    display: block !important;
+    padding: 0 10px !important; /* Masks the line so it doesn't cut through the text */
+
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8)) !important;
+}
+
+/* ======================================================================= */
+/* 6. LINK SKILLS & CATEGORY BADGES                                        */
+/* ======================================================================= */
+
+.abs-links-container { 
+    display: flex !important; 
+    flex-wrap: wrap !important; 
+    gap: 8px !important;
+    padding: 12px 16px !important; 
+}
+
+.abs-link-badge {
+    display: inline-flex !important;
+    align-items: center;
+    gap: 8px;
+    background: linear-gradient(180deg, #1b2230 0%, #0e131d 100%) !important;
+    border: 1.5px solid #facc15 !important;
+    border-radius: 8px !important;
+    padding: 5px 12px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 3px 6px rgba(0, 0, 0, 0.4) !important;
+    cursor: default;
+}
+
+.abs-link-lv {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1px solid #94a3b8;
+    background: radial-gradient(circle, #27272a 0%, #09090b 100%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.abs-link-lv .lv-text { font-size: 7px; color: #94a3b8; font-weight: 700; line-height: 1; }
+.abs-link-lv .num-text { font-size: 9.5px; color: #ffffff !important; font-weight: 900; line-height: 1; }
+.abs-link-name { color: #ffffff !important; font-weight: 800 !important; font-size: 12.5px; }
+
+#abs-category-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    padding: 12px 16px !important;
+}
+
+#abs-category-container img {
+    width: 140px !important;
+    height: auto !important;
+}
+
+/* ======================================================================= */
+/* 7. COMPOSED CARD ICONS                                                  */
+/* ======================================================================= */
+
+#abs-composed-icon {
+    position: relative !important;
+    width: 110px !important;
+    height: 110px !important;
+    flex-shrink: 0 !important;
+    margin-right: 15px !important;
+}
+
+#abs-composed-icon .card-frame {
+    position: absolute !important; top: 0 !important; left: 0 !important; width: 110px !important; height: 115px !important; z-index: 1 !important; pointer-events: none !important;
+}
+
+#abs-composed-icon .lr-spin-dial {
+    position: absolute !important; top: 50% !important; left: 50% !important; width: 102px !important; height: 102px !important; z-index: 2 !important; pointer-events: none !important;
+    animation: lr-dial-spin 6s linear infinite !important;
+}
+
+#abs-composed-icon .lightning-overlay {
+    position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
+    width: 230px !important; height: auto !important; z-index: 3 !important; mix-blend-mode: screen !important; pointer-events: none !important;
+}
+
+#abs-composed-icon .thumb-box {
+    position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
+    width: 137px !important; height: 137px !important; z-index: 4 !important; overflow: hidden !important; border-radius: 4px !important;
+}
+
+#abs-composed-icon .thumb-img {
+    width: 100% !important; height: 100% !important; object-fit: contain !important;
+}
+
+#abs-composed-icon .rarity-icon {
+    position: absolute !important; bottom: -15px !important; left: -20px !important; height: 48px !important; width: auto !important; z-index: 5 !important;
+}
+
+#abs-composed-icon .type-icon {
+    position: absolute !important; top: -10px !important; right: -10px !important; height: 48px !important; width: auto !important; z-index: 5 !important;
+}
+
+#abs-composed-icon .eza-icon {
+    position: absolute !important; bottom: -2px !important; right: -14px !important; height: 25px !important; width: auto !important; z-index: 6 !important;
+}
+
+.abs-composed-icon {
+    position: relative !important;
+    width: 75px !important;
+    height: 75px !important;
+    flex-shrink: 0 !important;
+    margin-right: 15px !important;
+    display: block !important;
+}
+
+.abs-composed-icon .card-frame {
+    position: absolute !important; top: 0 !important; left: 0 !important; width: 75px !important; height: 78px !important; z-index: 1 !important; pointer-events: none !important;
+}
+
+.abs-composed-icon .lr-spin-dial {
+    position: absolute !important; top: 50% !important; left: 50% !important; width: 68px !important; height: 68px !important; z-index: 2 !important; pointer-events: none !important;
+    animation: lr-dial-spin 6s linear infinite !important;
+}
+
+.abs-composed-icon .lightning-overlay {
+    position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
+    width: 150px !important; height: auto !important; z-index: 3 !important; mix-blend-mode: screen !important; pointer-events: none !important;
+}
+
+.abs-composed-icon .thumb-box {
+    position: absolute !important; top: 50% !important; left: 50% !important; transform: translate(-50%, -50%) !important;
+    width: 93px !important; height: 93px !important; z-index: 4 !important; overflow: hidden !important; border-radius: 3px !important;
+}
+
+.abs-composed-icon .thumb-img {
+    width: 100% !important; height: 100% !important; object-fit: contain !important;
+}
+
+.abs-composed-icon .rarity-icon {
+    position: absolute !important; bottom: -8px !important; left: -12px !important; height: 26px !important; width: auto !important; z-index: 5 !important;
+}
+
+.abs-composed-icon .type-icon {
+    position: absolute !important; top: -8px !important; right: -10px !important; height: 32px !important; width: auto !important; z-index: 5 !important;
+}
+
+.abs-composed-icon .eza-icon {
+    position: absolute !important; bottom: -2px !important; right: -14px !important; height: 20px !important; width: auto !important; z-index: 6 !important;
+}
+
+@keyframes lr-dial-spin {
+    0% { transform: translate(-50%, -50%) rotate(0deg); }
+    100% { transform: translate(-50%, -50%) rotate(360deg); }
+}
+
+.abs-header-right {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 350px;
+    gap: 15px;
+    flex-shrink: 0;
+}
+
+.abs-header-right img {
+    height: 85px !important;
+    filter: drop-shadow(0 4px 6px rgba(0,0,0,0.6));
+}
+
+.abs-header-right #abs-top-awakening-img {
+    height: 48px !important;
+    width: auto !important;
+    margin-left: 2px !important;
+}
+
+
+
+
+/* ======================================================================= */
+/* PASSIVE HEADER & SMART IN-GAME ABILITY ICONS STRIP                      */
+/* ======================================================================= */
+
+/* Allow tooltips to float above the box without getting clipped */
+.abs-box {
+    overflow: visible !important;
+}
+
+#abs-passive-name.abs-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    flex-wrap: wrap !important;
+    gap: 8px 12px !important;
+    position: relative !important;
+    z-index: 50 !important;
+}
+
+.abs-passive-header-title {
+    font-weight: bold;
+    color: #ffffff !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2px !important;
+}
+
+.abs-passive-header-title i,
+.abs-passive-header-title em {
+    font-style: italic !important;
+    margin-left: 3px !important;
+}
+
+.abs-passive-icons-strip {
+    display: inline-flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    gap: 4px !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 6px !important;
+    padding: 2px 5px !important;
+    margin: 0 !important;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.7) !important;
+}
+
+.abs-passive-ability-badge {
+    position: relative !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 25px !important;
+    height: 25px !important;
+    cursor: pointer !important;
+    transition: transform 0.15s ease !important;
+}
+
+.abs-passive-ability-badge:hover {
+    transform: scale(1.2) translateY(-2px) !important;
+    z-index: 100 !important;
+}
+
+.abs-passive-ability-badge img {
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: contain !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.8)) !important;
+}
+
+
+
+/* ======================================================================= */
+/* UNLOCK PARENT CLIPPING & FLOAT TOOLTIP FREELY ONTO WEBPAGE              */
+/* ======================================================================= */
+
+/* 1. Remove overflow clipping from all parent containers */
+.container-1220,
+#top-content,
+#layout-abs-style,
+.abs-grid-container,
+.abs-main-col,
+.abs-box,
+.abs-box:hover,
+.abs-header,
+#abs-passive-name,
+.abs-passive-icons-strip {
+    overflow: visible !important;
+}
+
+/* 2. Maintain perfect rounded top corners on headers without needing overflow:hidden */
+.abs-box {
+    border-radius: 12px !important;
+}
+
+.abs-header:first-child {
+    border-top-left-radius: 9px !important;
+    border-top-right-radius: 9px !important;
+}
+
+/* 3. Elevate passive header above neighboring elements */
+#abs-passive-name.abs-header {
+    position: relative !important;
+    z-index: 100 !important;
+}
+
+.abs-passive-icons-strip {
+    position: relative !important;
+    z-index: 101 !important;
+}
+
+/* ======================================================================= */
+/* GLOBAL FLOATING TOOLTIP STYLING (FLOATS FREELY OVER THE WEBPAGE)        */
+/* ======================================================================= */
+
+#abs-global-floating-tooltip {
+    position: fixed !important;
+    pointer-events: none !important;
+    background: rgba(10, 15, 29, 0.98) !important;
+    border: 1.5px solid var(--theme-border, #38bdf8) !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    padding: 5px 10px !important;
+    border-radius: 6px !important;
+    white-space: nowrap !important;
+    z-index: 99999999 !important; /* Floats above everything on the webpage */
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95), 0 0 12px var(--theme-glow, rgba(0, 0, 0, 0.6)) !important;
+    transition: opacity 0.12s ease !important;
+    display: none;
+    top: 0;
+    left: 0;
+}
+
+/* Disable old CSS ::after tooltips to prevent duplicates */
+.abs-passive-ability-badge[data-tooltip]::after {
+    display: none !important;
+}
+
+
+
+/* ======================================================================= */
+/* TRANSFORMATIONS BOX SPACING & DIVIDERS                                  */
+/* ======================================================================= */
+
+.abs-transform-row {
+    display: flex !important;
+    align-items: center !important;
+    padding: 14px 16px !important;
+    background: transparent !important;
+    transition: background 0.15s ease !important;
+}
+
+.abs-transform-divider {
+    height: 1.5px !important;
+    background: var(--theme-border, #3b82f6) !important;
+    margin: 4px 16px !important;
+    opacity: 0.65 !important;
+}
+
+.abs-transform-name {
+    flex: 1;
+    text-align: center;
+    font-size: 15px;
+    font-weight: bold;
+    color: #ffffff;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8);
+}
+
+
+
+/* ==========================================================================
+   CARD THUMBNAIL COIN BADGES (TOP-LEFT OF CARD FRAME)
+   ========================================================================== */
+.card-coin-badge, 
+.abs-coin-badge {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 32px;
+    height: 32px;
+    z-index: 6;
+    object-fit: contain;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(255, 215, 0, 0.6));
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+.char-box:hover .card-coin-badge,
+.abs-composed-icon:hover .abs-coin-badge {
+    transform: scale(1.15);
+}
+
+
+/* ==========================================================================
+   OVERLAPPING LEADER SKILL LOGOS
+   ========================================================================== */
+.abs-leader-badge-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: flex-end;
+    margin-left: auto;
+    pointer-events: none;
+}
+
+.abs-banner-badge-img {
+    height: 52px;
+    width: auto;
+    object-fit: contain;
+
+}
+
+.abs-banner-badge-combo {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    padding: 2px 0;
+}
+
+.abs-banner-badge-combo .badge-legendary {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+
+    z-index: 1;
+}
+
+.abs-banner-badge-combo .badge-carnival {
+    height: 30px;
+    width: auto;
+    object-fit: contain;
+    margin-top: -14px;
+
+    z-index: 2;
+}
+
+/* Top Right Header Coin (No Glow) */
+#abs-top-coin-img {
+    height: 42px;
+    width: auto;
+    object-fit: contain;
+    filter: none;
+    margin-left: 6px;
+    margin-right: 0;
+}
+
+/* Card Frame Thumbnail Coin (Clean shadow without yellow glow) */
+.abs-coin-badge {
+    position: absolute;
+    top: -6px;
+    left: -6px;
+    width: 32px;
+    height: 32px;
+    z-index: 6;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.7)); /* Simple dark shadow */
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+
+
+.abs-sa-icon-left,
+.abs-sa-header-title img,
+.abs-header .abs-sa-icon-left,
+#abs-sa-container .abs-sa-icon-left,
+#abs-active-container .abs-sa-icon-left {
+    width: 24px !important;
+    height: 24px !important;
+    max-width: 24px !important;
+    max-height: 24px !important;
+    min-width: 24px !important;
+    min-height: 24px !important;
+    object-fit: contain !important;
+    vertical-align: middle !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    margin: 0 !important;
+    filter: none !important;
+    cursor: pointer !important;
+    pointer-events: auto !important;
+}
+/* ==========================================================================
+   UNIFIED CARD ART BOX WITH DOCKED BOTTOM ANIMATION TOGGLE
+   ========================================================================== */
+
+/* Outer shell for Card Art + Bottom Toggle Bar */
+.abs-art-dock-wrapper {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 0 16px 0 !important;
+    overflow: hidden !important;
+    border-radius: 12px !important;
+    border: 2.5px solid var(--theme-border, #3b82f6) !important;
+    background: linear-gradient(180deg, var(--theme-bg-high, #132448) 0%, var(--theme-bg-low, #080e1c) 100%) !important;
+    box-shadow: 
+        0 6px 18px rgba(0, 0, 0, 0.65),
+        inset 0 1px 0 rgba(255, 255, 255, 0.15),
+        inset 0 -2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Card Art Header (Banner Tag) */
+.abs-header.abs-art-header-bar {
+    width: 100% !important;
+    border-top: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-bottom: 2.5px solid var(--theme-border, #3b82f6) !important;
+    border-top-left-radius: 9px !important;
+    border-top-right-radius: 9px !important;
+    border-bottom-left-radius: 0 !important;
+    border-bottom-right-radius: 0 !important;
+    padding: 10px 14px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
+    box-sizing: border-box !important;
+    background: linear-gradient(180deg, var(--theme-header, #1e40af) 0%, var(--theme-main, #1d4ed8) 100%) !important;
+}
+
+#abs-art-header-text {
+    width: 100% !important;
+    text-align: center !important;
+    display: block !important;
+    color: #ffffff !important;
+    font-weight: 700 !important;
+    font-size: 13px !important;
+    letter-spacing: 0.8px !important;
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.8) !important;
+    margin: 0 auto !important;
+}
+
+/* Card Art Viewport Box */
+.abs-art-dock-wrapper .abs-art-box {
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+}
+
+/* Docked Bottom Animation Toggle Bar */
+.abs-docked-tab-bar.bottom-dock {
+    width: 100% !important;
+    background: linear-gradient(180deg, var(--theme-main, #1d4ed8) 0%, var(--theme-header, #1e40af) 100%) !important;
+    border-top: 2.5px solid var(--theme-border, #3b82f6) !important;
+    border-bottom: none !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-radius: 0 !important;
+    padding: 8px 12px !important;
+    box-sizing: border-box !important;
+}
+
+
+/* ==========================================================================
+   GLOBAL ZOOM SCALE & SIDEBAR SPACING
+   ========================================================================== */
+
+#app #top-content .container-1220,
+#layout-abs-style {
+    max-width: 1540px !important;
+    width: 93vw !important;
+    zoom: 0.96; /* Subtle zoom out for a clean, cohesive view */
+}
+
+/* Card art tag font weight: cleaner and less heavy */
+#abs-art-header-text {
+    font-weight: 700 !important; /* Clean weight */
+    letter-spacing: 0.5px !important;
+}
+
+
+/* ==========================================================================
+   THEMED HIDDEN POTENTIAL SLIDER
+   ========================================================================== */
+
+.abs-stat-slider-wrapper {
+    background: linear-gradient(135deg, rgba(255, 255, 255, 0.08) 0%, rgba(255, 255, 255, 0.02) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 12px;
+    padding: 10px 14px 8px 14px;
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.2), 0 4px 12px rgba(0, 0, 0, 0.4);
+}
+
+.abs-stat-slider-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 6px;
+}
+
+.abs-slider-label {
+    font-size: 11px;
+    font-weight: 800;
+    color: #94a3b8;
+    letter-spacing: 0.8px;
+}
+
+.abs-slider-value {
+    font-size: 13px;
+    font-weight: 900;
+    color: var(--theme-text, #38bdf8);
+    text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.5));
+}
+
+.abs-slider-track-container {
+    position: relative;
+    width: 100%;
+}
+
+#abs-stat-range-slider {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 6px;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, 0.6);
+    outline: none;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    margin: 8px 0 6px 0;
+    cursor: pointer;
+}
+
+#abs-stat-range-slider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: linear-gradient(180deg, #ffffff 0%, var(--theme-main, #1d4ed8) 100%);
+    border: 2px solid #ffffff;
+    box-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.8)), 0 2px 5px rgba(0, 0, 0, 0.8);
+    cursor: pointer;
+    transition: transform 0.15s ease;
+}
+
+#abs-stat-range-slider::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+}
+
+.abs-slider-ticks {
+    display: flex;
+    justify-content: space-between;
+    padding: 0 2px;
+}
+
+.abs-slider-ticks span {
+    font-size: 9.5px;
+    font-weight: 800;
+    color: #64748b;
+    cursor: pointer;
+    transition: color 0.15s ease;
+}
+
+.abs-slider-ticks span:hover {
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   EVEN & SPACED LINKING PARTNER PILLS
+   ========================================================================== */
+
+.partner-pills-container {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    margin-top: 10px !important; /* Space down away from link count badge */
+    width: 100%;
+    max-width: 110px !important;
+    align-items: stretch !important;
+    box-sizing: border-box;
+}
+
+.partner-pill-row {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important; /* Perfectly even 50/50 columns */
+    gap: 3px !important;
+    width: 100% !important;
+    box-sizing: border-box;
+}
+
+.partner-stat-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 2px;
+    padding: 2px 4px !important;
+    border-radius: 4px;
+    font-size: 9px !important;
+    font-weight: 900;
+    box-sizing: border-box;
+    width: 100% !important;
+}
+
+

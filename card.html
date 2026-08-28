@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>absCustom - Card Inspector</title>
+
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png" sizes="48x48">
+    <meta name="color-scheme" content="dark">
+    
+    <!-- STYLESHEETS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/abs-style-layout.css">
+    <link rel="stylesheet" href="css/editor-ui.css">
+    <link rel="stylesheet" href="css/card-inspector.css">
+    <link rel="stylesheet" href="css/lwf.css">
+    <link rel="stylesheet" href="css/dokkan-sticker.css">
+    <link rel="stylesheet" href="css/loading-screen.css">
+
+    <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
+    <script src="js-card-details/card-image-interceptor.js"></script>
+</head>
+<body class="theme-abs-style is-published">
+    <div id="abs-loading-screen" role="status" aria-label="Loading page"><div class="abs-loader-card"><div class="abs-loader-art"></div></div></div>
+
+<div class="content theme-abs-style" id="app">
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="modern-top-bar sticky-top scouter-hud-bar">
+        <div class="top-bar-container scouter-hud-container" style="justify-content: space-between !important;">
+           <div class="top-bar-left">
+                <div class="top-left-dock">
+                    <div class="button-wrap glass-btn-wrap">
+                        <div class="button-shadow"></div>
+                        <a href="index.html" class="glass-btn-link" title="Return to Main Hub">
+                            <button type="button" class="glass-btn">
+                                <span class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </a>
+                    </div>
+                    <div class="button-wrap glass-btn-wrap">
+                        <div class="button-shadow"></div>
+                        <a href="https://github.com/abscustom" target="_blank" rel="noopener" class="glass-btn-link" title="Visit GitHub Repository">
+                            <button type="button" class="glass-btn">
+                                <span class="d-flex align-items-center gap-2">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </a>
+                    </div>
+                </div>
+            </div>
+            <div class="top-bar-center">
+                <a class="nav-center-link" href="index.html">
+                    <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs.custom.png" alt="Custom Logo" class="nav-center-logo-img">
+                </a>
+            </div>
+            <div class="top-bar-right d-flex align-items-center gap-3">
+                <div class="hud-theme-stack">
+                    <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn active" style="cursor:default;" title="ABS Theme Active">
+                        <img src="https://abscustom.github.io/assets/images/abs.style.png" alt="ABS" class="hud-btn-logo" style="transform: scale(1); margin-left: 1px;">
+                        <span class="hud-btn-indicator">abs.style</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <div id="top-content" class="mt-3">
+        <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
+            <div id="layout-abs-style" style="display: block;">
+
+                <!-- HEADER -->
+                <div class="abs-top-header">
+                    <div class="abs-header-left">
+                        <div id="abs-composed-icon">
+                            <img id="abs-frame-img" class="card-frame" src="">
+                            <img id="abs-spin-dial" class="lr-spin-dial" src="https://abscustom.github.io/assets/images/lr_spin_dial.png" style="display: none;">
+                            <video id="abs-lightning" class="lightning-overlay" autoplay muted loop playsinline style="display: none;">
+                                <source src="https://abscustom.github.io/assets/images/lightningfx.webm" type="video/webm">
+                            </video>
+                            <div class="thumb-box">
+                                <img id="abs-thumb-img" class="thumb-img" src="">
+                            </div>
+                            <img id="abs-top-rarity-icon" class="rarity-icon" src="">
+                            <img id="abs-top-type-icon" class="type-icon" src="">
+                            <img id="abs-awakening-img" class="eza-icon" src="" style="display: none;">
+                        </div>
+
+                        <div class="abs-header-text text-start">
+                            <div id="abs-char-title"></div>
+                            <div id="abs-char-name">Loading...</div>
+                        </div>
+                    </div>
+
+                    <div class="abs-header-right" id="abs-header-right-slot"></div>
+                </div>
+
+                <div class="abs-grid-container">
+                    <div class="abs-main-col">
+                        <!-- LEADER SKILL BOX -->
+                        <div class="abs-box">
+                            <div class="abs-header"><span id="abs-leader-title">Leader Skill</span></div>
+                            <div class="abs-content text-start" id="abs-leader-skill"></div>
+                        </div>
+
+                        <!-- PASSIVE SKILL BOX -->
+                        <div class="abs-box">
+                            <div class="abs-header" id="abs-passive-name">Passive Skill</div>
+                            <div class="abs-content" id="abs-passive-container"></div>
+                        </div>
+
+                        <div id="abs-sa-container"></div>
+                        <div id="abs-active-container"></div>
+                        <div id="abs-field-container"></div>
+                        <div id="abs-standby-container"></div>
+                        <div id="abs-finish-container"></div>
+
+                        <!-- LINKS BOX -->
+                        <div class="abs-box">
+                            <div class="abs-header justify-content-center">Links</div>
+                            <div class="abs-content abs-links-container justify-content-center" id="abs-link-container"></div>
+                        </div>
+
+                        <!-- CATEGORIES BOX -->
+                        <div class="abs-box">
+                            <div class="abs-header justify-content-center">Categories</div>
+                            <div class="abs-content justify-content-center" style="display: flex; flex-wrap: wrap; gap: 6px; padding: 12px 15px !important;" id="abs-category-container"></div>
+                        </div>
+
+                        <!-- LINKING PARTNERS BOX -->
+                        <div class="abs-box mt-3" id="abs-partners-box" style="display: none;">
+                            <div class="abs-header text-center justify-content-center">
+                                <span>Linking Partners</span>
+                            </div>
+                            <div class="abs-content p-3">
+                                <div class="d-flex justify-content-center gap-2 mb-3">
+                                    <button type="button" class="abs-stat-tab active partner-limit-btn" onclick="setPartnerLimit(10, this)">10</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(20, this)">20</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(30, this)">30</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(40, this)">40</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(50, this)">50</button>
+                                </div>
+
+                                <div id="abs-partners-container" class="linking-partners-grid"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="abs-side-col">
+                        <!-- 1. STANDALONE BASE vs EZA vs SEZA TOGGLE BAR -->
+                        <div id="abs-eza-toggle-bar" class="abs-box mb-2" style="display: none;">
+                            <div class="abs-content p-2 text-center">
+                                <div class="abs-stat-tabs justify-content-center m-0" id="abs-eza-toggle-container">
+                                    <button type="button" id="eza-toggle-base" class="abs-stat-tab active" style="min-width: 90px;" onclick="window.switchEzaForm('base')">BASE</button>
+                                    <button type="button" id="eza-toggle-eza" class="abs-stat-tab" style="min-width: 90px;" onclick="window.switchEzaForm('eza')">EZA</button>
+                                    <button type="button" id="eza-toggle-seza" class="abs-stat-tab" style="min-width: 90px; display: none;" onclick="window.switchEzaForm('seza')">SEZA</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 2. CARD ART BOX WITH DOCKED BOTTOM BAR -->
+                        <div class="abs-box abs-art-dock-wrapper" id="abs-art-dock-wrapper">
+                            <div class="abs-header abs-art-header-bar" id="abs-art-header-bar">
+                                <span id="abs-art-header-text">DOKKAN FESTIVAL EXCLUSIVE</span>
+                            </div>
+
+                            <div class="abs-art-box" id="abs-art-layers-container">
+                                <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="Background" onerror="this.style.display='none';">
+                                <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="Character">
+                                <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="Effect" onerror="this.style.display='none';">
+                                
+                                <canvas id="abs-tur-sticker-canvas" class="abs-sticker-canvas"></canvas>
+                                <canvas id="abs-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="display: none;"></canvas>
+                            </div>
+
+                            <div id="abs-art-toggle-bar" class="abs-docked-tab-bar bottom-dock" style="display: none;">
+                                <div class="abs-stat-tabs justify-content-center m-0" id="abs-art-toggle-container">
+                                    <button type="button" id="art-toggle-static" class="abs-stat-tab" style="min-width: 100px;" onclick="switchCardArtMode('static')">STATIC</button>
+                                    <button type="button" id="art-toggle-animated" class="abs-stat-tab active" style="min-width: 100px;" onclick="switchCardArtMode('animated')">ANIMATED</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 3. SLIDER-DRIVEN STATS BOX -->
+                        <div class="abs-box" id="abs-stats-box">
+                            <div class="abs-header text-center" style="justify-content: center;">Stats</div>
+                            <div class="abs-content p-3 text-center">
+                                
+                                <div class="abs-stat-slider-wrapper mb-3">
+                                    <div class="abs-stat-slider-header">
+                                        <span class="abs-slider-label">HIDDEN POTENTIAL</span>
+                                        <span id="abs-slider-percent-display" class="abs-slider-value">100%</span>
+                                    </div>
+                                    <div class="abs-slider-track-container">
+                                        <input type="range" id="abs-stat-range-slider" min="0" max="5" step="1" value="5" oninput="handleStatSliderChange(this.value)">
+                                        <div class="abs-slider-ticks">
+                                            <span onclick="setStatSliderIndex(0)">0%</span>
+                                            <span onclick="setStatSliderIndex(1)">55%</span>
+                                            <span onclick="setStatSliderIndex(2)">69%</span>
+                                            <span onclick="setStatSliderIndex(3)">79%</span>
+                                            <span onclick="setStatSliderIndex(4)">90%</span>
+                                            <span onclick="setStatSliderIndex(5)">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="abs-stat-cards-row">
+                                    <div class="abs-stat-card hp-card">
+                                        <span class="abs-stat-card-label hp-label">HP</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-hp-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card atk-card">
+                                        <span class="abs-stat-card-label atk-label">ATK</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-atk-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card def-card">
+                                        <span class="abs-stat-card-label def-label">DEF</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-def-val">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="abs-box" id="abs-awakenings-box">
+                            <div class="abs-header text-center" style="justify-content: center;">Awakenings</div>
+                            <div class="abs-content p-0" id="abs-awakenings-container"></div>
+                        </div>
+
+                        <div class="abs-box d-none" id="abs-transformations-box">
+                            <div class="abs-header text-center" style="justify-content: center;">Transformations</div>
+                            <div class="abs-content p-0" id="abs-transformations-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- DOKKAN DOMAIN MODAL -->
+<div id="abs-domain-modal-overlay" class="abs-domain-modal-backdrop" style="display: none;" onclick="closeDomainModal(event)">
+    <div class="abs-domain-modal-dialog" onclick="event.stopPropagation()">
+        <div class="abs-domain-modal-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="https://abscustom.github.io/assets/images/ing_label_field.png" alt="Domain" style="height: 24px; width: auto;">
+                <span id="abs-domain-modal-title" class="abs-domain-modal-title-text">Domain Animation Preview</span>
+            </div>
+            <button type="button" class="abs-domain-modal-close" onclick="closeDomainModal()">&times;</button>
+        </div>
+        <div class="abs-domain-modal-body">
+            <div class="abs-domain-canvas-viewport">
+                <canvas id="abs-art-domain-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="js-card-details/json-card-loader.js"></script>
+<script src="js-card-details/card-helpers.js"></script>
+<script src="js-card-details/card-formatters.js"></script>
+<script src="js-card-details/card-partners.js"></script>
+<script src="js-card-details/card-renderers.js"></script>
+<script src="js-card-details/card-inspector-core.js"></script>
+
+<script src="js-graphics/dokkan-sticker-shader.js"></script>
+<script src="js-graphics/lwf.js"></script>
+<script type="module" src="js-graphics/lwf-loader.js"></script>
+<script src="js/favicon.js"></script>
+<script src="js/loading-screen.js"></script>
+
+</body>
+</html>

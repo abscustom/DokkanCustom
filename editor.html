@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- META & TITLES -->
+    <meta charset="UTF-8">
+    <meta name="hub-id" content="">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>absCustom Editor</title>
+
+    <link rel="icon" type="image/png" href="assets/images/editor-favicon.png?v=1" sizes="48x48">
+    <meta name="color-scheme" content="dark">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@HarryTurney">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="abs Info">
+    <meta name="application-name" content="Dokkan Info!">
+    <meta itemprop="name" content="[Editor] abscustom">
+    <meta property="og:title" content="[Editor] abscustom">
+    <meta name="twitter:title" content="[Editor] abscustom">
+    <meta name="apple-mobile-web-app-title" content="[Editor] abscustom">
+    <meta itemprop="image" content="https://abscustom.github.io/assets/images/abs.custom.png">
+    <meta property="og:image" content="https://abscustom.github.io/assets/images/abs.custom.png">
+    <meta name="twitter:image" content="https://abscustom.github.io/assets/images/abs.custom.png">
+    <meta name="description" id="meta-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+    <meta itemprop="description" id="meta-itemprop-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+    <meta property="og:description" id="meta-og-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+    <meta property="twitter:description" id="meta-twitter-description" content="Editor Category Ki +7 and HP, ATK & DEF +77%">
+
+    <!-- EXTERNAL LIBRARIES -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+
+    <!-- STYLESHEETS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/dokkan-info.css">
+    <link rel="stylesheet" href="css/abs-style-layout.css">
+    <link rel="stylesheet" href="css/editor-ui.css">
+    <link rel="stylesheet" href="css/card-inspector.css">
+    <link rel="stylesheet" href="css/lwf.css">
+    <link rel="stylesheet" href="css/loading-screen.css">
+    <link rel="stylesheet" href="css/card-admin.css">
+
+    <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
+    <script src="js-card-details/card-image-interceptor.js"></script>
+</head>
+<body class="theme-dokkaninfo">
+    <div id="abs-loading-screen" role="status" aria-label="Loading page"><div class="abs-loader-card"><div class="abs-loader-art"></div></div></div>
+
+<!-- OVERLAYS & NOTIFICATIONS -->
+<div id="icon-picker-modal">
+    <div class="icon-picker-content">
+        <h2 class="icon-picker-header">Manual Icon Selection Needed</h2>
+        <p class="text-white small mb-2">The system detected card IDs that are far apart. Please select the correct icons manually.</p>
+        <div id="icon-picker-instruction" class="icon-picker-instruction">Please click the <b>SSR</b> Icon</div>
+        <div id="icon-picker-grid" class="icon-grid"></div>
+        <button type="button" class="btn btn-secondary mt-4 w-100 fw-bold" onclick="skipIconSelection()">Skip / Use Auto-Guesses</button>
+    </div>
+</div>
+
+<!-- CHARACTER IMPORTER MODAL -->
+<div id="character-importer-modal" class="calc-unit-picker-backdrop" style="display: none;" onclick="window.closeCharacterImporterModal(event)">
+    <div class="calc-unit-picker-dialog liquid-glass-surface" onclick="event.stopPropagation()">
+        <div class="calc-picker-header">
+            <span class="calc-picker-title-text"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:-3px; margin-right:6px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Dokkan Character Importer</span>
+            <button type="button" class="calc-picker-close-btn" onclick="window.closeCharacterImporterModal()" title="Close">&times;</button>
+        </div>
+
+        <div class="calc-picker-toolbar">
+            <div class="picker-search-wrapper">
+                <span class="picker-search-icon">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" id="importerSearchInput" placeholder="Search character by name, title, or ID..." oninput="window.handleImporterSearch(this.value)">
+            </div>
+
+            <div class="picker-controls-row">
+                <!-- Source Tabs -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-src-all" onclick="window.setImporterSource('all')">
+                        <span>All</span>
+                    </button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-src-official" onclick="window.setImporterSource('official')">
+                        <span>Official</span>
+                    </button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-src-custom" onclick="window.setImporterSource('custom')">
+                        <span>Custom</span>
+                    </button>
+                </div>
+
+                <!-- Typing Pills Filter -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-type-all" onclick="window.setImporterType('all')">All</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-agl" onclick="window.setImporterType('agl')">AGL</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-teq" onclick="window.setImporterType('teq')">TEQ</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-int" onclick="window.setImporterType('int')">INT</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-str" onclick="window.setImporterType('str')">STR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-phy" onclick="window.setImporterType('phy')">PHY</button>
+                </div>
+
+                <!-- Rarity Pills Filter -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-rarity-all" onclick="window.setImporterRarity('all')">All</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-lr" onclick="window.setImporterRarity('LR')">LR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-tur" onclick="window.setImporterRarity('TUR')">TUR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-ssr" onclick="window.setImporterRarity('SSR')">SSR</button>
+                </div>
+
+                <button type="button" id="importer-sync-btn" class="picker-sync-pill-btn" onclick="window.syncImporterDatabase()" title="Sync Database">
+                    <svg id="importer-sync-icon" class="sync-svg-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span id="importer-sync-text">Sync</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="calc-picker-grid-viewport" id="importerGridViewport">
+            <div class="calc-picker-grid" id="importerGrid"></div>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORTER FORM / AWAKENING VARIANT MODAL -->
+<div id="importer-variant-modal" class="calc-unit-picker-backdrop" style="display: none;" onclick="window.closeImporterVariantModal(event)">
+    <div class="calc-unit-picker-dialog liquid-glass-surface" style="max-width: 500px;" onclick="event.stopPropagation()">
+        <div class="calc-picker-header">
+            <span class="calc-picker-title-text" id="importer-variant-title">Choose Awakening / Form</span>
+            <button type="button" class="calc-picker-close-btn" onclick="window.closeImporterVariantModal()">&times;</button>
+        </div>
+        <div class="calc-picker-grid-viewport" style="max-height: 400px; padding: 16px;">
+            <div id="importerVariantOptions" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- FULLSCREEN LOADING SPINNER OVERLAY -->
+<div id="glass-loading-overlay" style="display: none;">
+    <div id="glass-spinner-container" class="dot-spinner">
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+    </div>
+    <div id="glass-success-container" style="display: none; align-items: center; justify-content: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" class="hud-check-svg" style="width: 75px; height: 75px;">
+            <circle class="background" cx="16.5" cy="16.5" r="15.5"></circle>
+            <circle class="stroke" cx="16.5" cy="16.5" r="15.5"></circle>
+            <polyline class="check" points="24 10.5 13.5 21 9 16.5"></polyline>
+        </svg>
+    </div>
+    <div id="glass-loading-text" class="mt-4" style="color: #38bdf8; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; font-size: 14px; text-shadow: 0 0 10px rgba(56,189,248,0.8);">Processing...</div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div id="glass-upload-modal" class="glass-modal-overlay" style="display: none;">
+    <div class="glass-modal-content">
+        <div class="glass-modal-header">
+            <h2 class="gui-title m-0 d-flex align-items-center gap-2">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                Publish New Card
+            </h2>
+            <button type="button" class="gui-close" onclick="closeUploadModal()">×</button>
+        </div>
+        <div class="glass-modal-body">
+            <div class="glass-input-group">
+                <label class="form-label">Character Folder ID / Slug</label>
+                <div class="relative-input-wrapper">
+                    <input type="text" id="upload-folder-id" class="glass-form-control" placeholder="e.g. 1025732-goku" maxlength="50" oninput="debounceIdCheck()">
+                    <div id="upload-id-status" class="input-status-icon"></div>
+                </div>
+                <div id="upload-id-msg" class="glass-status-msg text-gray-400 mt-1">Waiting for input...</div>
+            </div>
+
+            <div class="glass-input-group mt-3">
+                <label class="form-label">GitHub Access Token (Password)</label>
+                <input type="password" id="upload-github-token" class="glass-form-control font-mono" placeholder="ghp_********************************" oninput="checkUploadFormValidity()">
+                <label class="checkbox-container mt-2">
+                    <input type="checkbox" id="upload-remember-token" class="custom-checkbox" checked>
+                    <span class="checkmark"></span>
+                    Remember token locally
+                </label>
+            </div>
+            
+            <div class="glass-divider mt-4 mb-3"></div>
+
+            <div class="d-flex justify-content-between gap-3">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeUploadModal()">Cancel</button>
+                <button type="button" id="confirm-upload-btn" class="gui-preset-btn" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff;" onclick="executeGitHubUpload()" disabled>Upload to GitHub</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUICK SAVE MODAL -->
+<div id="glass-quicksave-modal" class="glass-modal-overlay" style="display: none;">
+    <div class="glass-modal-content">
+        <div class="glass-modal-header">
+            <h2 class="gui-title m-0 d-flex align-items-center gap-2" style="color: #facc15 !important;">Live Quick Save</h2>
+            <button type="button" class="gui-close" onclick="closeQuickSaveModal()">×</button>
+        </div>
+        <div class="glass-modal-body">
+            <div class="glass-input-group">
+                <label class="form-label">GitHub Access Token</label>
+                <input type="password" id="quicksave-github-token" class="glass-form-control font-mono" placeholder="ghp_********************************" oninput="checkQuickSaveValidity()">
+                <label class="checkbox-container mt-2">
+                    <input type="checkbox" id="quicksave-remember-token" class="custom-checkbox" checked>
+                    <span class="checkmark"></span>
+                    Remember token locally
+                </label>
+            </div>
+            <div class="glass-divider mt-4 mb-3"></div>
+            <div class="d-flex justify-content-between gap-3">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeQuickSaveModal()">Cancel</button>
+                <button type="button" id="confirm-quicksave-btn" class="gui-preset-btn" style="background: linear-gradient(135deg, #d97706 0%, #b45309 100%); color: #fff;" onclick="executeQuickSave()" disabled>Save Live Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOM CARD ADMIN MODAL -->
+<div id="card-admin-modal" class="glass-modal-overlay card-admin-overlay" style="display: none;">
+    <div class="glass-modal-content card-admin-dialog">
+        <div class="glass-modal-header">
+            <h2 class="gui-title m-0">Custom Card Admin</h2>
+            <button type="button" class="gui-close" onclick="window.closeCardAdminModal()">×</button>
+        </div>
+        <div class="glass-modal-body card-admin-body">
+            <div class="card-admin-auth-row">
+                <div class="glass-input-group">
+                    <label class="form-label">GitHub Access Token (Password)</label>
+                    <input type="password" id="card-admin-token" class="glass-form-control font-mono" placeholder="ghp_********************************">
+                </div>
+                <button type="button" class="gui-preset-btn card-admin-load-btn" onclick="window.loadCardAdminCards()">Unlock & Load Cards</button>
+            </div>
+
+            <div id="card-admin-status" class="card-admin-status">Enter your GitHub token to unlock the custom-card tools.</div>
+
+            <div id="card-admin-tools" style="display: none;">
+            <section class="card-admin-section mt-3">
+                <h3>Link One or More Forms</h3>
+                <p>Choose one main card, then select one or more linked forms. Every selected card receives a link back to the main card.</p>
+                <div class="card-admin-link-grid">
+                    <div>
+                        <label class="form-label">Main / Base Card</label>
+                        <input type="hidden" id="card-admin-base-select">
+                        <input id="card-admin-base-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminBaseCards(this.value)">
+                        <div id="card-admin-base-checklist" class="card-admin-form-checklist"></div>
+                        <div id="card-admin-base-preview" class="card-admin-preview"></div>
+                    </div>
+                    <div class="card-admin-link-arrow">⇄</div>
+                    <div>
+                        <label class="form-label">Linked Forms</label>
+                        <div class="card-admin-mode-toggle" role="group" aria-label="Number of linked forms">
+                            <button type="button" id="card-admin-mode-single" class="active" onclick="window.setCardAdminLinkMode('single')">One Form</button>
+                            <button type="button" id="card-admin-mode-multiple" onclick="window.setCardAdminLinkMode('multiple')">Multiple Forms</button>
+                        </div>
+                        <div id="card-admin-form-picker">
+                            <input id="card-admin-form-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminMultiForms(this.value)">
+                            <div id="card-admin-form-checklist" class="card-admin-form-checklist"></div>
+                        </div>
+                        <div id="card-admin-form-preview" class="card-admin-preview"></div>
+                    </div>
+                </div>
+                <div class="card-admin-actions">
+                    <button type="button" class="gui-preset-btn card-admin-link-btn" onclick="window.linkSelectedCustomCards()">Link Selected Cards</button>
+                    <button type="button" class="gui-preset-btn card-admin-unlink-btn" onclick="window.unlinkSelectedCustomCards()">Unlink Selected Cards</button>
+                </div>
+            </section>
+
+            <section class="card-admin-section card-admin-danger-section">
+                <h3>Delete Custom Character</h3>
+                <p>This permanently deletes the selected card folder from GitHub and removes admin-created links pointing to it.</p>
+                <label class="form-label">Character</label>
+                <select id="card-admin-delete-select" class="glass-form-control" onchange="window.updateCardAdminDeleteHint()"></select>
+                <label class="form-label mt-3">Separate delete password</label>
+                <input type="password" id="card-admin-delete-password" class="glass-form-control" autocomplete="current-password" placeholder="Delete password">
+                <label class="form-label mt-3">Type the folder name to confirm</label>
+                <input type="text" id="card-admin-delete-confirm" class="glass-form-control" autocomplete="off">
+                <button type="button" class="gui-preset-btn btn-danger card-admin-delete-btn" onclick="window.deleteSelectedCustomCard()">Delete From GitHub</button>
+            </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN UNLOCK MODAL -->
+<div id="glass-admin-unlock-modal" class="glass-modal-overlay" style="display: none;">
+    <div class="glass-modal-content" style="max-width: 360px;">
+        <div class="glass-modal-header">
+            <h2 class="gui-title m-0 d-flex align-items-center gap-2" style="color: #ef4444 !important;">Unlock Admin Mode</h2>
+            <button type="button" class="gui-close" onclick="closeAdminUnlockModal()">×</button>
+        </div>
+        <div class="glass-modal-body">
+            <p style="color: #cbd5e1; font-size: 12.5px; line-height: 1.5; margin-bottom: 16px;">
+                Enter administrator password to enable live on-page editing.
+            </p>
+            <div class="glass-input-group">
+                <label class="form-label">Password</label>
+                <input type="password" id="admin-unlock-pass" class="glass-form-control" placeholder="Password..." oninput="checkAdminUnlockValidity()" onkeydown="if(event.key === 'Enter') { document.getElementById('confirm-admin-unlock-btn').click(); }">
+            </div>
+            <div class="glass-divider mt-4 mb-3"></div>
+            <div class="d-flex justify-content-between gap-3">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeAdminUnlockModal()">Cancel</button>
+                <button type="button" id="confirm-admin-unlock-btn" class="gui-preset-btn" style="background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%); color: #fff;" onclick="executeAdminUnlock()" disabled>Unlock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- SIDEBAR EDITOR -->
+<div id="topbar-theme-switcher" class="topbar-theme-container">
+    <div id="editor">
+        <div id="editor-resizer"></div>
+        <div class="sidebar-main-title">Dokkan Card <span>Editor</span></div>
+
+        <!-- CHARACTER EXTRACTOR (HIDDEN PER USER REQUEST, LOGIC PRESERVED) -->
+        <div style="display: none;">
+            <h3 class="collapsible-header" style="border-left: 4px solid #10b981 !important;"><b>CHARACTER EXTRACTOR</b></h3>
+            <div class="collapsible-content">
+                <div class="sidebar-section" style="background: rgba(16, 185, 129, 0.1); border: 1px solid rgba(16, 185, 129, 0.4); padding: 15px; border-radius: 8px;">
+                    <button type="button" class="sidebar-btn btn-export-all mb-3" style="background: linear-gradient(135deg, #0ea5e9 0%, #0284c7 100%); margin: 0 0 12px 0; font-weight: 900; letter-spacing: 0.5px; width: 100%; box-shadow: 0 4px 14px rgba(14, 165, 233, 0.4);" onclick="window.openCharacterImporterModal()">
+                        <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:6px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>IMPORT FROM DATABASE
+                    </button>
+
+                    <label class="form-label" style="color: #10b981 !important;">Target Character URL (Optional)</label>
+                    <input type="text" id="asset-url-input" class="form-control mb-2" placeholder="https://dokkaninfo.com/cards/1031471" style="font-size: 11px; background: #111; color: #fff; border: 1px solid #10b981;">
+                    <button type="button" class="btn btn-sm w-100 mb-3" style="background: #10b981; color: #fff; font-weight: bold;" onclick="fetchAssetsOnly()">Fetch Images Only</button>
+                    
+                    <label class="form-label" style="color: #10b981 !important;">Quick Kit Extractor</label>
+                    <div id="raw-paste-input" contenteditable="true" class="form-control mb-2" style="font-size: 11px; background: #111; color: #fff; height: 100px; max-height: 100px; overflow-y: auto; text-align: left; white-space: pre-wrap; border: 1px solid #10b981;" placeholder="Paste text here..."></div>
+                    <button type="button" class="btn btn-sm w-100" style="background: #10b981; color: #fff; font-weight: bold;" onclick="analyzePastedText()">Extract Data</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- PASSIVE SKILL & BADGES (HIDDEN FROM SIDEBAR PER USER REQUEST, MANAGED VIA GUI MODAL) -->
+        <div style="display: none;">
+            <h3 class="collapsible-header"><b>PASSIVE SKILL & BADGES</b></h3>
+            <div class="collapsible-content">
+                <div class="sidebar-section">
+                    <!-- HEADER BADGES CONTAINER -->
+                    <div id="side-header-badges-box" style="background: #27272a; border: 1px solid #3f3f46; padding: 10px; margin-bottom: 12px; border-radius: 6px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+                            <b style="font-size: 12px; color: #a1a1aa; cursor: pointer;" onclick="window.togglePassiveBadgesCollapse('sidebar-passive-badges-toggle-strip', document.getElementById('side-header-badges-toggle-btn'))">HEADER BADGES</b>
+                            <div style="display: flex; gap: 6px; align-items: center;">
+                                <button type="button" class="btn-auto-detect" onclick="window.resetPassiveHeaderIconsToAuto();">Auto-Detect</button>
+                                <button id="side-header-badges-toggle-btn" class="gui-minimize-btn" onclick="window.togglePassiveBadgesCollapse('sidebar-passive-badges-toggle-strip', this)" title="Collapse Badges">−</button>
+                            </div>
+                        </div>
+                        <!-- PASSIVE SKILL NAME (ALWAYS VISIBLE ABOVE BADGES) -->
+                        <input type="text" id="input-passive-name-sidebar" class="form-control form-control-sm mb-2" placeholder="Passive Skill Name" oninput="window.updatePassiveName ? window.updatePassiveName(this.value) : null">
+                        
+                        <!-- COLLAPSIBLE BADGES PALETTE -->
+                        <div id="sidebar-passive-badges-toggle-strip" class="d-flex flex-wrap gap-1 p-1" style="background: #18181b; border: 1px solid #334155; border-radius: 6px; min-height: 80px; max-height: 500px; overflow-y: auto; resize: vertical;"></div>
+                    </div>
+
+                    <div class="section-divider" style="border-top: 1px solid rgba(255, 255, 255, 0.15); margin: 12px 0 10px 0;"></div>
+
+                    <button type="button" class="sidebar-btn btn-export-all w-100" style="background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%); margin: 0 0 10px 0;" onclick="window.addNewSection()">+ ADD PASSIVE SECTION</button>
+                    <div id="sidebar-sections-area"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- SKILLS & ACTIONS -->
+        <h3 class="collapsible-header"><b>SKILLS & ACTIONS</b></h3>
+        <div class="collapsible-content">
+            <div class="sidebar-section" style="display: flex; flex-direction: column; gap: 10px;">
+                <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); margin: 0;" onclick="window.addSuperAttackSection()">+ ADD SUPER ATTACK</button>
+                <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); margin: 0;" onclick="window.addActiveSkillSection()">+ ADD ACTIVE SKILL</button>
+                <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin: 0;" onclick="window.guiAddForm()">+ ADD FORMS</button>
+            </div>
+        </div>
+
+        <!-- SAVE DATA & BACKUP -->
+        <h3 class="collapsible-header header-danger"><b>SAVE DATA & BACKUP</b></h3>
+        <div class="collapsible-content">
+            <div class="sidebar-section">
+                <label class="form-label">Local Project Backup</label>
+                <div style="display: flex; gap: 10px; margin-bottom: 10px;">
+                    <button id="exportJsonBtn" class="sidebar-btn btn-export-all" onclick="exportProjectAsJson()" style="flex: 1;">Export JSON</button>
+                    <button id="importJsonBtn" class="sidebar-btn btn-export-all" onclick="importProjectFromJson()" style="flex: 1;">Import JSON</button>
+                </div>
+                <button type="button" class="sidebar-btn btn-reset" onclick="window.resetEditorCache()">Reset Editor</button>
+            </div>
+        </div>                             
+    </div>
+</div>
+
+<!-- CARD PREVIEW CONTENT -->
+<div class="content" id="app">
+    <!-- TOP NAVIGATION BAR -->
+    <nav class="modern-top-bar sticky-top scouter-hud-bar">
+        <div class="top-bar-container scouter-hud-container">
+           <div class="top-bar-left">
+                <div class="top-left-dock">
+                    <div class="button-wrap glass-btn-wrap">
+                        <div class="button-shadow"></div>
+                        <a href="index.html" class="glass-btn-link" title="Return to Main Hub">
+                            <button type="button" class="glass-btn">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 20 20" fill="currentColor">
+                                        <path d="M10.707 2.293a1 1 0 00-1.414 0l-7 7a1 1 0 001.414 1.414L4 10.414V17a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 011-1h2a1 1 0 011 1v2a1 1 0 001 1h2a1 1 0 001-1v-6.586l.293.293a1 1 0 001.414-1.414l-7-7z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="button-wrap glass-btn-wrap">
+                        <div class="button-shadow"></div>
+                        <a href="https://github.com/abscustom" target="_blank" rel="noopener" class="glass-btn-link" title="Visit GitHub Repository">
+                            <button type="button" class="glass-btn">
+                                <span>
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+                                    </svg>
+                                </span>
+                            </button>
+                        </a>
+                    </div>
+
+                    <div class="button-wrap glass-btn-wrap" id="topbar-importer-dock-wrap">
+                        <div class="button-shadow"></div>
+                        <button type="button" id="importUnitBtn" class="glass-btn" onclick="window.openCharacterImporterModal()" title="Import Character from Database">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM12 17l-5-5h3V8h4v4h3l-5 5z"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="button-wrap glass-btn-wrap" id="topbar-upload-dock-wrap">
+                        <div class="button-shadow"></div>
+                        <button type="button" id="uploadGithubBtn" class="glass-btn" onclick="openUploadModal()" title="Upload Card to GitHub">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="button-wrap glass-btn-wrap" id="topbar-card-admin-dock-wrap">
+                        <div class="button-shadow"></div>
+                        <button type="button" id="cardAdminBtn" class="glass-btn" onclick="window.openCardAdminModal()" title="Manage Uploaded Custom Cards">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58-1.92-3.32-2.39.96a7.2 7.2 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18c-.58.24-1.12.55-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58a7.43 7.43 0 0 0-.05.94c0 .32.02.63.05.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.7 1.62.94l.36 3.18h3.84l.36-3.18c.58-.24 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58zM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5z"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="top-bar-center">
+                <a class="nav-center-link">
+                    <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs.custom.png" alt="Custom Logo" class="nav-center-logo-img">
+                </a>
+            </div>
+
+            <div class="top-bar-right d-flex align-items-center gap-3">
+                <button id="admin-export-json-btn" onclick="window.exportProjectAsJson()" style="display: none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67l2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/></svg>Export JSON</button>
+                <button id="admin-quick-save-btn" onclick="window.saveQuickEditToGitHub()" style="display: none;"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>Save Quick Edit</button>
+
+                <div id="main-autosave-indicator" class="main-autosave-ui scouter-autosave">
+                    <span class="autosave-dot"></span>
+                    <span class="autosave-label">autosave!</span>
+                </div>
+
+                <button id="toggleBtn" class="topbar-menu-btn scouter-menu-btn" title="Toggle Sidebar Menu">
+                    <span class="icon"><svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="display:inline-block; vertical-align:middle;"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg></span>
+                </button>
+
+                <div class="hud-theme-stack">
+                    <button type="button" id="theme-btn-info" class="abs-hud-theme-btn active" onclick="switchCardTheme('dokkaninfo')" title="Switch to Dokkan Info Theme">
+                        <img src="https://abscustom.github.io/assets/images/dokkan-info-logo.png" alt="Dokkan Info" class="hud-btn-logo">
+                    </button>
+                    <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn" onclick="switchCardTheme('abs-style')" title="Switch to ABS Theme">
+                        <img src="https://abscustom.github.io/assets/images/abs.style.png" alt="ABS" class="hud-btn-logo" style="margin-left: 1px;">
+                        <span class="hud-btn-indicator">abs.style</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+        
+    <!-- MAIN CONTAINER -->
+    <div id="top-content">
+        <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
+            
+            <!-- 1. DOKKAN INFO LAYOUT (100% UNTOUCHED & AUTHENTIC) -->
+            <div id="layout-dokkaninfo">
+                <div class="row align-items-start">
+                    <div class="col-xl-4">
+                        <div class="row padding-left-right-1 margin-top-5">
+                            <div class="col">
+                                <div class="row border border-2 border-none bg-none dokkan-card" style="height: 162px;">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base">
+                                                    <img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120" alt="Card Frame">
+                                                </div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0; position: relative;">
+                                                    <img class="lr-spin-dial" src="https://abscustom.github.io/assets/images/lr_spin_dial.png" alt="spin-effect">
+                                                    <video class="lightning-overlay" autoplay muted loop playsinline><source src="https://abscustom.github.io/assets/images/lightningfx.webm" type="video/webm"></video>
+                                                    <img id="img-lr" src="https://abscustom.github.io/assets/images/LR_Icon.png" height="150" alt="icon">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb">
+                                                    <img id="main-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72" alt="rarity">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb">
+                                                    <img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" alt="type icon" height="57">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-eza-ja card-info-above-thumb">
+                                                    <div id="awakening-container" class="card-icon-item-eza-container" style="display: none;">
+                                                        <img id="awakening-img" src="" alt="Awakening Icon">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8">
+                        <div class="row padding-left-right-1 margin-top-5">
+                            <div class="col">
+                                <div class="row justify-content-center align-items-center padding-top-bottom-10 border border-2 border-none bg-none dokkan-card" style="min-height: 162px; height: auto;" data-edit="identity">
+                                    <div class="col d-flex flex-column justify-content-center align-items-center p-2">
+                                        <div class="row w-100"><p id="char-description" class="m-0 text-center"></p></div>
+                                        <div class="row w-100"><h1 id="char-name" class="m-0 text-center"></h1></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row align-items-start">
+                    <div class="col-xl-4">
+                        <div class="row padding-left-right-1">
+                            <div class="col">
+                                <div class="row border border-2 border-dark margin-top-bottom-5 border-none bg-none dokkan-card safe-centered-frame">
+                                    <div class="card-art-canvas" data-edit="art" style="position: relative; overflow: hidden;">
+                                        <canvas id="info-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto; display: none;"></canvas>
+                                        <video autoplay muted playsinline loop preload="auto" id="myOverlayVideo"><source src="" type="video/mp4"></video>
+                                        <img id="myOverlayImage" src="https://abscustom.github.io/assets/images/Card Art Template.png" alt="Card Art" style="position: relative; z-index: 2;">
+                                    </div>
+                                </div>
+                                
+                                <div id="release-dates-container" class="margin-top-bottom-5 mb-4"></div>
+
+                                <div class="row border border-2 border-dark border-none bg-none dokkan-card" id="forms-card-wrapper" style="display: none;">
+                                    <div class="col p-3">
+                                        <div id="forms-container"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row d-flex flex-wrap border border-1 border-none dokkan-card mt-1" id="awakening-progression-wrapper">
+                                    <div class="col border border-1 border-none bg-none">
+                                        <div id="ssr-row" class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base"><img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120"></div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-ssr" src="https://abscustom.github.io/assets/images/SSR_Icon.png" height="150"></div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb"><img id="ssr-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72"></div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb"><img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" height="57"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="tur-row" class="col border border-1 border-none bg-none dokkan-card">
+                                        <div class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base"><img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120"></div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-tur" src="https://abscustom.github.io/assets/images/TUR_Icon.png" height="150"></div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb"><img id="tur-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72"></div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb"><img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" height="57"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row border border-2 margin-top-bottom-5 border-none bg-none dokkan-card">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10">
+                                            <div class="col"><div class="row"><div class="col"><b>Max Lv</b>: </div></div><div class="row"><div class="col text-center" id="max-lv">0</div></div></div>
+                                            <div class="col"><div class="row"><div class="col"><b>SA Lv</b>: </div></div><div class="row"><div class="col text-center" id="sa-lv">0</div></div></div>
+                                            <div class="col"><div class="row"><div class="col"><b>Cost</b>: </div></div><div class="row"><div class="col text-center" id="cost">0</div></div></div>
+                                        </div>
+                                        <div class="row padding-top-bottom-10"><div class="col"><b>Summonable</b></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-8">
+                        <div class="row padding-left-right-1 margin-top-bottom-5">
+                            <div class="col">
+                               <div class="row font-size-1_2 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="leader">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none"><div class="col"><b>Leader Skill</b></div></div>
+                                        <div class="row padding-top-bottom-5 bg-none-2"><div class="col" id="leader-skill"></div></div>
+                                    </div>
+                                </div>
+
+                                <div id="sa-insert-spot"></div>
+
+                               <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="passive">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none dokkan-card">
+                                            <div class="col-sm-2"><b>Passive Skill</b></div>
+                                            <div class="col-sm-8"><b class="passive-name-display">passive name</b></div>
+                                        </div>
+                                        <div class="row padding-top-bottom-5 bg-none-2 dokkan-card">
+                                            <div class="col text-start padding-top-bottom-5">
+                                                <div class="passive-container-main"><div id="card-passive-container"></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="active-skill-insert-spot"></div>
+                                <div class="row font-size-1_2 margin-top-bottom-3 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="links">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none dokkan-card"><div class="col"><b>Link Skills</b></div></div>
+                                        <div id="card-link-container" class="row d-flex flex-wrap justify-content-center bg-none-2 padding-top-bottom-0 dokkan-card"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="categories">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none"><div class="col"><b>Categories</b></div></div>
+                                        <div id="card-category-container" class="row d-flex flex-wrap justify-content-center bg-none-2 padding-top-bottom-10 dokkan-card"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="stats">
+                                    <div class="col container-text-light container-text-center bg-none-2">
+                                        <div class="row">
+                                            <table class="col">
+                                                <tbody>
+                                                   <tr>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Stats</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Base Min</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Base Max</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>55%</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>100%</b></th>
+                                                    <th class="padding-top-bottom-10 eza-stat-col d-none" scope="col"><b>EZA B. Max</b></th>
+                                                    <th class="padding-top-bottom-10 eza-stat-col d-none" scope="col"><b>EZA 100%</b></th>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>HP</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-hp-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-hp-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>ATK</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-atk-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-atk-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>DEF</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-def-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-def-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. ABS.STYLE 3D LAYOUT (MATCHING CARD INSPECTOR VIEWER 1:1) -->
+            <div id="layout-abs-style" style="display: none;">
+                
+                <!-- HEADER -->
+                <div class="abs-top-header">
+                    <div class="abs-header-left">
+                        <div id="abs-composed-icon">
+                            <img id="abs-frame-img" class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png">
+                            <img id="abs-spin-dial" class="lr-spin-dial" src="https://abscustom.github.io/assets/images/lr_spin_dial.png" style="display: none;">
+                            <video id="abs-lightning" class="lightning-overlay" autoplay muted loop playsinline style="display: none;">
+                                <source src="https://abscustom.github.io/assets/images/lightningfx.webm" type="video/webm">
+                            </video>
+                            <div class="thumb-box">
+                                <img id="abs-thumb-img" class="thumb-img" src="https://abscustom.github.io/assets/images/SSR_Icon.png">
+                            </div>
+                            <img id="abs-top-rarity-icon" class="rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png">
+                            <img id="abs-top-type-icon" class="type-icon" src="https://abscustom.github.io/assets/images/type_none.png">
+                            <img id="abs-awakening-img" class="eza-icon" src="" style="display: none;">
+                        </div>
+
+                        <div class="abs-header-text text-start">
+                            <div id="abs-char-title">Character Title</div>
+                            <div id="abs-char-name">Character Name</div>
+                        </div>
+                    </div>
+
+                    <div class="abs-header-right" id="abs-header-right-slot">
+                        <img id="abs-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png">
+                        <img id="abs-type-icon" src="https://abscustom.github.io/assets/images/type_none.png">
+                        <img id="abs-top-awakening-img" src="" style="display: none; height: 48px;">
+                    </div>
+                </div>
+
+                <div class="abs-grid-container">
+                    <div class="abs-main-col">
+                        <!-- LEADER SKILL -->
+                        <div class="abs-box">
+                            <div class="abs-header">
+                                <span id="abs-leader-title">Leader Skill</span>
+                            </div>
+                            <div class="abs-content text-start" id="abs-leader-skill"></div>
+                        </div>
+
+                        <!-- PASSIVE SKILL (WITH SMART IN-GAME ABILITY ICONS STRIP) -->
+                        <div class="abs-box">
+                            <div class="abs-header" id="abs-passive-name">
+                                <div class="abs-passive-header-title">
+                                    <span>Passive Skill</span>
+                                </div>
+                            </div>
+                            <div class="abs-content text-start" id="abs-passive-container"></div>
+                        </div>
+
+                        <div id="abs-sa-container"></div>
+                        <div id="abs-active-container"></div>
+                        <div id="abs-standby-container"></div>
+                        <div id="abs-finish-container"></div>
+
+                        <!-- LINKS -->
+                        <div class="abs-box">
+                            <div class="abs-header justify-content-center">Link Skills</div>
+                            <div class="abs-content abs-links-container justify-content-center" id="abs-link-container"></div>
+                        </div>
+
+                        <!-- CATEGORIES -->
+                        <div class="abs-box">
+                            <div class="abs-header justify-content-center">Categories</div>
+                            <div class="abs-content justify-content-center" id="abs-category-container"></div>
+                        </div>
+
+                        <div class="abs-box mt-3" id="abs-partners-box" style="display: none;">
+                            <div class="abs-header text-center justify-content-center"><span>Linking Partners</span></div>
+                            <div class="abs-content p-3">
+                                <div class="d-flex justify-content-center gap-2 mb-3">
+                                    <button type="button" class="abs-stat-tab active partner-limit-btn" onclick="setPartnerLimit(10, this)">10</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(20, this)">20</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(30, this)">30</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(40, this)">40</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(50, this)">50</button>
+                                </div>
+                                <div id="abs-partners-container" class="linking-partners-grid"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="abs-side-col">
+                        <!-- CARD ART BOX WITH DOCKED BOTTOM BAR -->
+                        <div class="abs-box abs-art-dock-wrapper" id="abs-art-dock-wrapper">
+                            <div class="abs-header abs-art-header-bar" id="abs-art-header-bar">
+                                <span id="abs-art-header-text">DOKKAN FESTIVAL UNIT</span>
+                            </div>
+
+                            <div class="abs-art-box" id="abs-art-layers-container">
+                                <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="" onerror="this.style.display='none';" style="display: none;">
+                                <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="" onerror="this.style.display='none';" style="display: none;">
+                                <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="" onerror="this.style.display='none';" style="display: none;">
+                                
+                                <canvas id="abs-tur-sticker-canvas" class="abs-sticker-canvas" style="display: none;"></canvas>
+                                <canvas id="abs-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="display: none;"></canvas>
+                                <img id="abs-art-img" class="abs-art-layer" src="https://abscustom.github.io/assets/images/Card Art Template.png" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                <video id="abs-art-video" class="abs-art-layer" style="width: 100%; height: 100%; object-fit: cover; display: none;" autoplay muted loop playsinline></video>
+                            </div>
+
+                            <div id="abs-art-toggle-bar" class="abs-docked-tab-bar bottom-dock">
+                                <div class="abs-stat-tabs justify-content-center m-0" id="abs-art-toggle-container">
+                                    <button type="button" id="art-toggle-static" class="abs-stat-tab" style="min-width: 90px;" onclick="window.switchEditorArtMode('static')">STATIC / SIMPLE</button>
+                                    <button type="button" id="art-toggle-animated" class="abs-stat-tab active" style="min-width: 90px;" onclick="window.switchEditorArtMode('animated')">FX / ANIMATED</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- HIDDEN POTENTIAL STAT SLIDER BOX -->
+                        <div class="abs-box" id="abs-stats-box">
+                            <div class="abs-header text-center" style="justify-content: center;">Stats</div>
+                            <div class="abs-content p-3 text-center">
+                                
+                                <div class="abs-stat-slider-wrapper mb-3">
+                                    <div class="abs-stat-slider-header">
+                                        <span class="abs-slider-label">HIDDEN POTENTIAL</span>
+                                        <span id="abs-slider-percent-display" class="abs-slider-value">100%</span>
+                                    </div>
+                                    <div class="abs-slider-track-container">
+                                        <input type="range" id="abs-stat-range-slider" min="0" max="5" step="1" value="5" oninput="handleStatSliderChange(this.value)">
+                                        <div class="abs-slider-ticks">
+                                            <span onclick="setStatSliderIndex(0)">0%</span>
+                                            <span onclick="setStatSliderIndex(1)">55%</span>
+                                            <span onclick="setStatSliderIndex(2)">69%</span>
+                                            <span onclick="setStatSliderIndex(3)">79%</span>
+                                            <span onclick="setStatSliderIndex(4)">90%</span>
+                                            <span onclick="setStatSliderIndex(5)">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="abs-stat-cards-row">
+                                    <div class="abs-stat-card hp-card">
+                                        <span class="abs-stat-card-label hp-label">HP</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-hp-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card atk-card">
+                                        <span class="abs-stat-card-label atk-label">ATK</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-atk-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card def-card">
+                                        <span class="abs-stat-card-label def-label">DEF</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-def-val">0</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- AWAKENINGS BOX -->
+                        <div class="abs-box" id="abs-awakenings-box" data-edit="icons">
+                            <div class="abs-header text-center" style="justify-content: center;">Awakenings</div>
+                            <div class="abs-content p-0" id="abs-awakenings-container"></div>
+                        </div>
+
+                        <!-- TRANSFORMATIONS BOX -->
+                        <div class="abs-box d-none" id="abs-transformations-box" data-edit="forms">
+                            <div class="abs-header text-center" style="justify-content: center;">Transformations</div>
+                            <div class="abs-content p-0" id="abs-transformations-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATES -->
+            <template id="sa-template">
+                <div class="row sa-block font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card">
+                    <div class="col">
+                        <div class="row padding-top-bottom-10 bg-none dokkan-card">
+                            <div class="col-sm-2"><b><span class="sa-type-label">Super Attack</span></b></div>
+                            <div class="col-sm-8" style="display: flex; justify-content: center; align-items: center;">
+                                <img class="sa-display-icon" src="https://abscustom.github.io/assets/images/sp_skill_icon_01.png">
+                                <b class="sa-display-name">Super Attack</b>
+                            </div>
+                        </div>
+                        <div class="row padding-top-bottom-5 bg-none-2 dokkan-card">
+                            <div class="col padding-top-bottom-5">
+                                <div class="sa-display-effects-list"><div class="row"><div class="col"></div></div></div>
+                                <div class="activation-row d-none">
+                                    <hr class="divider py bg-secondary">
+                                    <div class="row"><div class="col text-center italic py-1"><div class="activation-text"><strong>Activation Condition</strong></div></div></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <hr class="divider py bg-secondary">
+                                        <div class="stats-container row"></div>
+                                    </div>
+                                </div>
+                                <div class="sa-lv-container">
+                                    <div class="row sa-20-bonus">
+                                        <div class="col">
+                                            <hr class="divider py bg-secondary">
+                                            <div class="text-center py-1">SA Lv 20: Super Attack +30%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template id="active-template">
+                <div class="row active-block font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card">
+                    <div class="col p-0">
+                        <div class="row padding-top-bottom-10 bg-none m-0 position-relative d-flex align-items-center">
+                            <div class="position-absolute start-0 w-auto" style="padding-left: 15px;">
+                                <b class="active-type-label">Active Skill</b>
+                            </div>
+                            <div class="col text-center px-5">
+                                <b class="active-display-name">(Enter Skill Name)</b>
+                            </div>
+                        </div>
+                        <div class="row padding-top-bottom-5 bg-none-2 m-0">
+                            <div class="col text-center">
+                                <div class="row padding-top-5">
+                                    <div class="col active-display-effect">(Enter what the Skill Does)</div>
+                                </div>
+                                <div class="row active-divider-row">
+                                    <div class="col"><hr class="divider py bg-secondary"></div>
+                                </div>
+                                <div class="row padding-bottom-5 active-condition-row">
+                                    <div class="col">
+                                        <div class="row"><div class="col"><b class="active-display-condition-title">Activation Condition(s)</b></div></div>
+                                        <div class="row"><div class="col active-display-condition">(ex.) Can be activated starting from the 5th turn...</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </div>
+</div>
+
+<!-- HIDDEN LEGACY INPUTS & DATALISTS -->
+<div style="display: none;" id="hidden-legacy-inputs">
+    <textarea id="descInput"></textarea>
+    <input type="text" id="nameInput">
+    <textarea id="dateInput"></textarea>
+    <textarea id="ezaDateInput"></textarea>
+    <textarea id="sezaDateInput"></textarea>
+    <textarea id="leaderInput"></textarea>
+    <input type="number" id="input-hp-max">
+    <input type="number" id="input-atk-max">
+    <input type="number" id="input-def-max">
+    <input type="text" id="imageInput">
+    <input type="file" id="videoUpload" accept="video/mp4">
+    <input type="file" id="imageUpload" accept="image/*">
+    <input type="file" id="upload-lr" accept="image/*">
+    <input type="file" id="upload-tur" accept="image/*">
+    <input type="file" id="upload-ssr" accept="image/*">
+    <input list="link-options" id="side-link-input">
+    <input list="category-options" id="side-category-input">
+    <select id="sa-selector"></select>
+    <select id="sa-type-dropdown"></select>
+    <input type="text" id="input-sa-type-label">
+    <input type="text" id="input-sa-name">
+    <textarea id="input-sa-effects"></textarea>
+    <textarea id="input-activation"></textarea>
+    <select id="active-selector"></select>
+    <input type="text" id="input-active-type">
+    <input type="text" id="input-active-name">
+    <textarea id="input-active-effect"></textarea>
+    <input type="text" id="input-active-condition-title">
+    <textarea id="input-active-conditions"></textarea>
+
+    <datalist id="link-options">
+        <option value="Fierce Battle"><option value="Legendary Power"><option value="Prepared for Battle"><option value="Shocking Speed">
+        <option value="Over in a Flash"><option value="Big Bad Bosses"><option value="Super Saiyan"><option value="Kamehameha">
+        <option value="Warrior Gods"><option value="Royal Lineage"><option value="Saiyan Warrior Race"><option value="The First Awakened">
+        <option value="Golden Warrior"><option value="Saiyan Roar"><option value="All in the Family"><option value="Experienced Fighters">
+        <option value="Z-Fighters"><option value="Infighter"><option value="Fear and Faith"><option value="Strongest Clan in Space">
+        <option value="Thirst for Conquest"><option value="Nightmare"><option value="Metamorphosis"><option value="Brutal Beatdown">
+        <option value="Wall Standing Tall"><option value="More Than Meets the Eye"><option value="Auto Regeneration"><option value="Tournament of Power">
+        <option value="Universe's Most Malevolent"><option value="Cold Judgment"><option value="Brainiacs"><option value="Gaze of Respect">
+        <option value="Fused Fighter"><option value="Majin"><option value="Android Assault"><option value="GT">
+        <option value="Solid Support"><option value="Patrol"><option value="Hero of Justice"><option value="Godly Power"><option value="Prodigies">
+    </datalist>
+
+    <datalist id="category-options">
+        <option value="Fusion" data-id="0001"><option value="Shadow Dragon Saga" data-id="0002"><option value="World Tournament" data-id="0003">
+        <option value="Peppy Gals" data-id="0004"><option value="Hybrid Saiyans" data-id="0005"><option value="Universe Survival Saga" data-id="0006">
+        <option value="Resurrected Warriors" data-id="0007"><option value="Realm of Gods" data-id="0008"><option value="Majin Buu Saga" data-id="0009">
+        <option value="Potara" data-id="0010"><option value="Low-Class Warrior" data-id="0011"><option value="Super Saiyan 3" data-id="0012">
+        <option value="Giant Form" data-id="0013"><option value="Planet Namek Saga" data-id="0014"><option value="Ginyu Force" data-id="0015">
+        <option value="Movie Bosses" data-id="0016"><option value="Pure Saiyans" data-id="0017"><option value="Namekians" data-id="0018">
+        <option value="Future Saga" data-id="0019"><option value="Full Power" data-id="0020"><option value="Androids" data-id="0021">
+        <option value="Representatives of Universe 7" data-id="0022"><option value="Transformation Boost" data-id="0023"><option value="Wicked Bloodline" data-id="0024">
+        <option value="Dragon Ball Seekers" data-id="0025"><option value="Time Travelers" data-id="0026"><option value="Universe 6" data-id="0027">
+        <option value="Joined Forces" data-id="0028"><option value="Movie Heroes" data-id="0029"><option value="Goku's Family" data-id="0030">
+        <option value="Vegeta's Family" data-id="0031"><option value="Artificial Life Forms" data-id="0032"><option value="Youth" data-id="0033">
+        <option value="DB Saga" data-id="0034"><option value="Siblings' Bond" data-id="0035"><option value="Super Saiyans" data-id="0036">
+        <option value="Worthy Rivals" data-id="0037"><option value="Androids/Cell Saga" data-id="0038"><option value="Kamehameha" data-id="0039">
+        <option value="Bond of Master and Disciple" data-id="0040"><option value="Terrifying Conquerors" data-id="0041"><option value="Dragon Ball Heroes" data-id="0042">
+        <option value="Target: Goku" data-id="0043"><option value="Otherworld Warriors" data-id="0044"><option value="Super Saiyan 2" data-id="0045">
+        <option value="Final Trump Card" data-id="0046"><option value="Exploding Rage" data-id="0047"><option value="Revenge" data-id="0048">
+        <option value="Team Bardock" data-id="0049"><option value="Inhuman Deeds" data-id="0050"><option value="Earthlings" data-id="0051">
+        <option value="Special Pose" data-id="0052"><option value="Majin Power" data-id="0053"><option value="Rapid Growth" data-id="0054">
+        <option value="All-Out Struggle" data-id="0055"><option value="Universe 11" data-id="0056"><option value="Saviors" data-id="0057">
+        <option value="Battle of Wits" data-id="0058"><option value="Power Absorption" data-id="0059"><option value="Giant Ape Power" data-id="0060">
+        <option value="Crossover" data-id="0061"><option value="Space-Traveling Warriors" data-id="0062"><option value="Connected Hope" data-id="0063">
+        <option value="Corroded Body and Mind" data-id="0064"><option value="Turtle School" data-id="0065"><option value="Miraculous Awakening" data-id="0066">
+        <option value="Powerful Comeback" data-id="0067"><option value="Gifted Warriors" data-id="0068"><option value="Planetary Destruction" data-id="0069">
+        <option value="Defenders of Justice" data-id="0070"><option value="Storied Figures" data-id="0071"><option value="GT Heroes" data-id="0072">
+        <option value="GT Bosses" data-id="0073"><option value="Heavenly Events" data-id="0074"><option value="Time Limit" data-id="0075">
+        <option value="Mastered Evolution" data-id="0076"><option value="Legendary Existence" data-id="0077"><option value="Sworn Enemies" data-id="0078">
+        <option value="Bond of Friendship" data-id="0079"><option value="Accelerated Battle" data-id="0080"><option value="Entrusted Will" data-id="0081">
+        <option value="Worldwide Chaos" data-id="0082"><option value="Battle of Fate" data-id="0083"><option value="Power Beyond Super Saiyan" data-id="0084">
+        <option value="Fused Fighters" data-id="0085"><option value="Saiyan Saga" data-id="0086"><option value="Bond of Parent and Child" data-id="0087">
+        <option value="Super Heroes" data-id="0088"><option value="Earth-Bred Fighters" data-id="0089"><option value="Power of Wishes" data-id="0090">
+        <option value="Tournament Participants" data-id="0091"><option value="Super Bosses" data-id="0092"><option value="Demonic Power" data-id="0093">
+        <option value="Uncontrollable Power" data-id="0094"><option value="Earth-Protecting Heroes" data-id="0095"><option value="Successors" data-id="0096">
+        <option value="Mission Execution" data-id="0097"><option value="DAIMA" data-id="0098">
+    </datalist>
+</div>
+
+<!-- JAVASCRIPT MODULES -->
+<script src="js-card-details/card-helpers.js"></script>
+<script src="js-card-details/card-formatters.js"></script>
+<script src="js-card-details/card-renderers.js"></script>
+<script src="js-card-details/card-partners.js"></script>
+<script src="js-editor/01-state.js"></script>
+<script src="js-editor/02-icon-picker.js"></script>
+<script src="js-editor/03-core.js"></script>
+<script src="js-editor/04-stats.js"></script>
+<script src="js-editor/05-passive.js"></script>
+<script src="js-editor/06-links-categories.js"></script>
+<script src="js-editor/07-ui-sync.js"></script>
+<script src="js-editor/08-forms.js"></script>
+<script src="js-editor/09-super-attacks.js"></script>
+<script src="js-editor/10-awakening.js"></script>
+<script src="js-editor/11-active-skills.js"></script>
+<script src="js-editor/12-export.js"></script>
+<script src="js-editor/13-github.js"></script>
+<script src="js-editor/14-assets.js"></script>
+<script src="js-editor/15-parser.js"></script>
+<script src="js-editor/16-cache.js"></script>
+<script src="js-editor/17-theme.js"></script>
+<script src="js-editor/18-init.js"></script>
+<script src="js-editor/19-click-to-edit.js"></script>
+<script src="js-editor/20-card-importer.js"></script>
+<script src="js-editor/21-card-admin.js"></script>
+<script src="js-graphics/lwf.js"></script>
+<script type="module" src="js-graphics/lwf-loader.js"></script>
+<script src="js/loading-screen.js"></script>
+</body>
+</html>
