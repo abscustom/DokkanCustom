@@ -1,5 +1,22 @@
 [
   {
+    "id": "1543130709017755688",
+    "title": "",
+    "desc": "",
+    "date": "Aug 29, 2026",
+    "timestamp": "2026-08-29T05:30:31.012000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543130709017755688_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543130709017755688_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1543130709017755688_0.jpg"
+  },
+  {
     "id": "1543103046391693383",
     "title": "SHOWDOWNDOKKAN",
     "desc": "",
@@ -7956,22 +7973,5 @@
       "assets/discord-news/msg_1414973702461980703_0.png"
     ],
     "banner": "assets/discord-news/msg_1414973702461980703_0.png"
-  },
-  {
-    "id": "1414115890320113704",
-    "title": "",
-    "desc": "",
-    "date": "Sep 7, 2025",
-    "timestamp": "2025-09-07T05:11:41.255000+00:00",
-    "media": [
-      {
-        "url": "assets/discord-news/msg_1414115890320113704_0.png",
-        "type": "image"
-      }
-    ],
-    "images": [
-      "assets/discord-news/msg_1414115890320113704_0.png"
-    ],
-    "banner": "assets/discord-news/msg_1414115890320113704_0.png"
   }
 ]

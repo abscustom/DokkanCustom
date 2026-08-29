@@ -1,0 +1,738 @@
+{
+  "version": 1,
+  "files": {
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/4034710.cpk": {
+      "category": "card",
+      "relativePath": "4034710.cpk",
+      "downloadedBytes": 454872,
+      "outputs": [
+        "card\\4034710\\card_4034710sp_cutin_1.png",
+        "card\\4034710\\card_4034710_bg.png",
+        "card\\4034710\\card_4034710_character.png",
+        "card\\4034710\\card_4034710_circle.png",
+        "card\\4034710\\card_4034710_cutin.png",
+        "card\\4034710\\card_4034710_effect.png",
+        "card\\4034710\\en\\card_4034710_sp_name.png",
+        "card\\4034710\\en\\card_4034710_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/4033980.cpk": {
+      "category": "card",
+      "relativePath": "4033980.cpk",
+      "downloadedBytes": 563440,
+      "outputs": [
+        "card\\4033980\\card_4033980sp_cutin_1.png",
+        "card\\4033980\\card_4033980_bg.png",
+        "card\\4033980\\card_4033980_character.png",
+        "card\\4033980\\card_4033980_circle.png",
+        "card\\4033980\\card_4033980_cutin.png",
+        "card\\4033980\\card_4033980_effect.png",
+        "card\\4033980\\en\\card_4033980_sp02_name.png",
+        "card\\4033980\\en\\card_4033980_sp02_phrase.png",
+        "card\\4033980\\en\\card_4033980_sp_name.png",
+        "card\\4033980\\en\\card_4033980_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1033950.cpk": {
+      "category": "card",
+      "relativePath": "1033950.cpk",
+      "downloadedBytes": 420056,
+      "outputs": [
+        "card\\1033950\\card_1033950sp_cutin_1.png",
+        "card\\1033950\\card_1033950_bg.png",
+        "card\\1033950\\card_1033950_character.png",
+        "card\\1033950\\card_1033950_circle.png",
+        "card\\1033950\\card_1033950_cutin.png",
+        "card\\1033950\\card_1033950_effect.png",
+        "card\\1033950\\en\\card_1033950_sp_name.png",
+        "card\\1033950\\en\\card_1033950_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1033960.cpk": {
+      "category": "card",
+      "relativePath": "1033960.cpk",
+      "downloadedBytes": 483544,
+      "outputs": [
+        "card\\1033960\\card_1033960sp_cutin_1.png",
+        "card\\1033960\\card_1033960_bg.png",
+        "card\\1033960\\card_1033960_character.png",
+        "card\\1033960\\card_1033960_circle.png",
+        "card\\1033960\\card_1033960_cutin.png",
+        "card\\1033960\\card_1033960_effect.png",
+        "card\\1033960\\en\\card_1033960_sp_name.png",
+        "card\\1033960\\en\\card_1033960_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1033970.cpk": {
+      "category": "card",
+      "relativePath": "1033970.cpk",
+      "downloadedBytes": 471280,
+      "outputs": [
+        "card\\1033970\\card_1033970sp_cutin_1.png",
+        "card\\1033970\\card_1033970_bg.png",
+        "card\\1033970\\card_1033970_character.png",
+        "card\\1033970\\card_1033970_circle.png",
+        "card\\1033970\\card_1033970_cutin.png",
+        "card\\1033970\\card_1033970_effect.png",
+        "card\\1033970\\en\\card_1033970_sp02_name.png",
+        "card\\1033970\\en\\card_1033970_sp02_phrase.png",
+        "card\\1033970\\en\\card_1033970_sp_name.png",
+        "card\\1033970\\en\\card_1033970_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034000.cpk": {
+      "category": "card",
+      "relativePath": "1034000.cpk",
+      "downloadedBytes": 551128,
+      "outputs": [
+        "card\\1034000\\card_1034000sp_cutin_1.png",
+        "card\\1034000\\card_1034000_bg.png",
+        "card\\1034000\\card_1034000_character.png",
+        "card\\1034000\\card_1034000_circle.png",
+        "card\\1034000\\card_1034000_cutin.png",
+        "card\\1034000\\card_1034000_effect.png",
+        "card\\1034000\\en\\card_1034000_sp_name.png",
+        "card\\1034000\\en\\card_1034000_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1033990.cpk": {
+      "category": "card",
+      "relativePath": "1033990.cpk",
+      "downloadedBytes": 534744,
+      "outputs": [
+        "card\\1033990\\card_1033990sp_cutin_1.png",
+        "card\\1033990\\card_1033990_bg.png",
+        "card\\1033990\\card_1033990_character.png",
+        "card\\1033990\\card_1033990_circle.png",
+        "card\\1033990\\card_1033990_cutin.png",
+        "card\\1033990\\card_1033990_effect.png",
+        "card\\1033990\\en\\card_1033990_sp_name.png",
+        "card\\1033990\\en\\card_1033990_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034010.cpk": {
+      "category": "card",
+      "relativePath": "1034010.cpk",
+      "downloadedBytes": 504024,
+      "outputs": [
+        "card\\1034010\\card_1034010sp_cutin_1.png",
+        "card\\1034010\\card_1034010_bg.png",
+        "card\\1034010\\card_1034010_character.png",
+        "card\\1034010\\card_1034010_circle.png",
+        "card\\1034010\\card_1034010_cutin.png",
+        "card\\1034010\\card_1034010_effect.png",
+        "card\\1034010\\en\\card_1034010_sp_name.png",
+        "card\\1034010\\en\\card_1034010_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034020.cpk": {
+      "category": "card",
+      "relativePath": "1034020.cpk",
+      "downloadedBytes": 516312,
+      "outputs": [
+        "card\\1034020\\card_1034020sp_cutin_1.png",
+        "card\\1034020\\card_1034020_bg.png",
+        "card\\1034020\\card_1034020_character.png",
+        "card\\1034020\\card_1034020_circle.png",
+        "card\\1034020\\card_1034020_cutin.png",
+        "card\\1034020\\card_1034020_effect.png",
+        "card\\1034020\\en\\card_1034020_sp_name.png",
+        "card\\1034020\\en\\card_1034020_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034030.cpk": {
+      "category": "card",
+      "relativePath": "1034030.cpk",
+      "downloadedBytes": 551152,
+      "outputs": [
+        "card\\1034030\\card_1034030sp_cutin_1.png",
+        "card\\1034030\\card_1034030_bg.png",
+        "card\\1034030\\card_1034030_character.png",
+        "card\\1034030\\card_1034030_circle.png",
+        "card\\1034030\\card_1034030_cutin.png",
+        "card\\1034030\\card_1034030_effect.png",
+        "card\\1034030\\en\\card_1034030_sp02_name.png",
+        "card\\1034030\\en\\card_1034030_sp02_phrase.png",
+        "card\\1034030\\en\\card_1034030_sp_name.png",
+        "card\\1034030\\en\\card_1034030_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034660.cpk": {
+      "category": "card",
+      "relativePath": "1034660.cpk",
+      "downloadedBytes": 446680,
+      "outputs": [
+        "card\\1034660\\card_1034660sp_cutin_1.png",
+        "card\\1034660\\card_1034660_bg.png",
+        "card\\1034660\\card_1034660_character.png",
+        "card\\1034660\\card_1034660_circle.png",
+        "card\\1034660\\card_1034660_cutin.png",
+        "card\\1034660\\card_1034660_effect.png",
+        "card\\1034660\\en\\card_1034660_sp_name.png",
+        "card\\1034660\\en\\card_1034660_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034690.cpk": {
+      "category": "card",
+      "relativePath": "1034690.cpk",
+      "downloadedBytes": 440536,
+      "outputs": [
+        "card\\1034690\\card_1034690sp_cutin_1.png",
+        "card\\1034690\\card_1034690_bg.png",
+        "card\\1034690\\card_1034690_character.png",
+        "card\\1034690\\card_1034690_circle.png",
+        "card\\1034690\\card_1034690_cutin.png",
+        "card\\1034690\\card_1034690_effect.png",
+        "card\\1034690\\en\\card_1034690_sp_name.png",
+        "card\\1034690\\en\\card_1034690_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/1034700.cpk": {
+      "category": "card",
+      "relativePath": "1034700.cpk",
+      "downloadedBytes": 489688,
+      "outputs": [
+        "card\\1034700\\card_1034700sp_cutin_1.png",
+        "card\\1034700\\card_1034700_bg.png",
+        "card\\1034700\\card_1034700_character.png",
+        "card\\1034700\\card_1034700_circle.png",
+        "card\\1034700\\card_1034700_cutin.png",
+        "card\\1034700\\card_1034700_effect.png",
+        "card\\1034700\\en\\card_1034700_sp_name.png",
+        "card\\1034700\\en\\card_1034700_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/4034040.cpk": {
+      "category": "card",
+      "relativePath": "4034040.cpk",
+      "downloadedBytes": 571632,
+      "outputs": [
+        "card\\4034040\\card_4034040sp_cutin_1.png",
+        "card\\4034040\\card_4034040_bg.png",
+        "card\\4034040\\card_4034040_character.png",
+        "card\\4034040\\card_4034040_circle.png",
+        "card\\4034040\\card_4034040_cutin.png",
+        "card\\4034040\\card_4034040_effect.png",
+        "card\\4034040\\en\\card_4034040_sp02_name.png",
+        "card\\4034040\\en\\card_4034040_sp02_phrase.png",
+        "card\\4034040\\en\\card_4034040_sp_name.png",
+        "card\\4034040\\en\\card_4034040_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card/4034670.cpk": {
+      "category": "card",
+      "relativePath": "4034670.cpk",
+      "downloadedBytes": 428248,
+      "outputs": [
+        "card\\4034670\\card_4034670sp_cutin_1.png",
+        "card\\4034670\\card_4034670_bg.png",
+        "card\\4034670\\card_4034670_character.png",
+        "card\\4034670\\card_4034670_circle.png",
+        "card\\4034670\\card_4034670_cutin.png",
+        "card\\4034670\\card_4034670_effect.png",
+        "card\\4034670\\en\\card_4034670_sp_name.png",
+        "card\\4034670\\en\\card_4034670_sp_phrase.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card_bg/1034030.cpk": {
+      "category": "card_bg",
+      "relativePath": "1034030.cpk",
+      "downloadedBytes": 9974328,
+      "outputs": [
+        "card_bg\\1034030\\card_1034030.lwf",
+        "card_bg\\1034030\\card_1034030_0.png",
+        "card_bg\\1034030\\card_1034030_1.png",
+        "card_bg\\1034030\\card_1034030_10.png",
+        "card_bg\\1034030\\card_1034030_11.png",
+        "card_bg\\1034030\\card_1034030_12.png",
+        "card_bg\\1034030\\card_1034030_13.png",
+        "card_bg\\1034030\\card_1034030_14.png",
+        "card_bg\\1034030\\card_1034030_15.png",
+        "card_bg\\1034030\\card_1034030_16.png",
+        "card_bg\\1034030\\card_1034030_17.png",
+        "card_bg\\1034030\\card_1034030_18.png",
+        "card_bg\\1034030\\card_1034030_19.png",
+        "card_bg\\1034030\\card_1034030_2.png",
+        "card_bg\\1034030\\card_1034030_20.png",
+        "card_bg\\1034030\\card_1034030_21.png",
+        "card_bg\\1034030\\card_1034030_22.png",
+        "card_bg\\1034030\\card_1034030_23.png",
+        "card_bg\\1034030\\card_1034030_24.png",
+        "card_bg\\1034030\\card_1034030_25.png",
+        "card_bg\\1034030\\card_1034030_26.png",
+        "card_bg\\1034030\\card_1034030_27.png",
+        "card_bg\\1034030\\card_1034030_28.png",
+        "card_bg\\1034030\\card_1034030_29.png",
+        "card_bg\\1034030\\card_1034030_3.png",
+        "card_bg\\1034030\\card_1034030_30.png",
+        "card_bg\\1034030\\card_1034030_31.png",
+        "card_bg\\1034030\\card_1034030_32.png",
+        "card_bg\\1034030\\card_1034030_323.png",
+        "card_bg\\1034030\\card_1034030_33.png",
+        "card_bg\\1034030\\card_1034030_34.png",
+        "card_bg\\1034030\\card_1034030_35.png",
+        "card_bg\\1034030\\card_1034030_36.png",
+        "card_bg\\1034030\\card_1034030_37.png",
+        "card_bg\\1034030\\card_1034030_38.png",
+        "card_bg\\1034030\\card_1034030_39.png",
+        "card_bg\\1034030\\card_1034030_4.png",
+        "card_bg\\1034030\\card_1034030_40.png",
+        "card_bg\\1034030\\card_1034030_41.png",
+        "card_bg\\1034030\\card_1034030_42.png",
+        "card_bg\\1034030\\card_1034030_43.png",
+        "card_bg\\1034030\\card_1034030_44.png",
+        "card_bg\\1034030\\card_1034030_45.png",
+        "card_bg\\1034030\\card_1034030_46.png",
+        "card_bg\\1034030\\card_1034030_47.png",
+        "card_bg\\1034030\\card_1034030_48.png",
+        "card_bg\\1034030\\card_1034030_49.png",
+        "card_bg\\1034030\\card_1034030_5.png",
+        "card_bg\\1034030\\card_1034030_50.png",
+        "card_bg\\1034030\\card_1034030_51.png",
+        "card_bg\\1034030\\card_1034030_52.png",
+        "card_bg\\1034030\\card_1034030_53.png",
+        "card_bg\\1034030\\card_1034030_6.png",
+        "card_bg\\1034030\\card_1034030_7.png",
+        "card_bg\\1034030\\card_1034030_8.png",
+        "card_bg\\1034030\\card_1034030_9.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card_bg/1033970.cpk": {
+      "category": "card_bg",
+      "relativePath": "1033970.cpk",
+      "downloadedBytes": 14234128,
+      "outputs": [
+        "card_bg\\1033970\\card_1033970.lwf",
+        "card_bg\\1033970\\card_1033970_0.png",
+        "card_bg\\1033970\\card_1033970_1.png",
+        "card_bg\\1033970\\card_1033970_10.png",
+        "card_bg\\1033970\\card_1033970_11.png",
+        "card_bg\\1033970\\card_1033970_12.png",
+        "card_bg\\1033970\\card_1033970_13.png",
+        "card_bg\\1033970\\card_1033970_14.png",
+        "card_bg\\1033970\\card_1033970_15.png",
+        "card_bg\\1033970\\card_1033970_16.png",
+        "card_bg\\1033970\\card_1033970_17.png",
+        "card_bg\\1033970\\card_1033970_18.png",
+        "card_bg\\1033970\\card_1033970_19.png",
+        "card_bg\\1033970\\card_1033970_2.png",
+        "card_bg\\1033970\\card_1033970_20.png",
+        "card_bg\\1033970\\card_1033970_21.png",
+        "card_bg\\1033970\\card_1033970_22.png",
+        "card_bg\\1033970\\card_1033970_23.png",
+        "card_bg\\1033970\\card_1033970_24.png",
+        "card_bg\\1033970\\card_1033970_25.png",
+        "card_bg\\1033970\\card_1033970_26.png",
+        "card_bg\\1033970\\card_1033970_27.png",
+        "card_bg\\1033970\\card_1033970_28.png",
+        "card_bg\\1033970\\card_1033970_29.png",
+        "card_bg\\1033970\\card_1033970_3.png",
+        "card_bg\\1033970\\card_1033970_30.png",
+        "card_bg\\1033970\\card_1033970_31.png",
+        "card_bg\\1033970\\card_1033970_32.png",
+        "card_bg\\1033970\\card_1033970_33.png",
+        "card_bg\\1033970\\card_1033970_34.png",
+        "card_bg\\1033970\\card_1033970_35.png",
+        "card_bg\\1033970\\card_1033970_36.png",
+        "card_bg\\1033970\\card_1033970_37.png",
+        "card_bg\\1033970\\card_1033970_38.png",
+        "card_bg\\1033970\\card_1033970_39.png",
+        "card_bg\\1033970\\card_1033970_4.png",
+        "card_bg\\1033970\\card_1033970_40.png",
+        "card_bg\\1033970\\card_1033970_41.png",
+        "card_bg\\1033970\\card_1033970_42.png",
+        "card_bg\\1033970\\card_1033970_43.png",
+        "card_bg\\1033970\\card_1033970_44.png",
+        "card_bg\\1033970\\card_1033970_45.png",
+        "card_bg\\1033970\\card_1033970_46.png",
+        "card_bg\\1033970\\card_1033970_47.png",
+        "card_bg\\1033970\\card_1033970_48.png",
+        "card_bg\\1033970\\card_1033970_49.png",
+        "card_bg\\1033970\\card_1033970_5.png",
+        "card_bg\\1033970\\card_1033970_6.png",
+        "card_bg\\1033970\\card_1033970_7.png",
+        "card_bg\\1033970\\card_1033970_8.png",
+        "card_bg\\1033970\\card_1033970_9.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card_bg/4033980.cpk": {
+      "category": "card_bg",
+      "relativePath": "4033980.cpk",
+      "downloadedBytes": 7135552,
+      "outputs": [
+        "card_bg\\4033980\\card_4033980.lwf",
+        "card_bg\\4033980\\card_4033980_0.png",
+        "card_bg\\4033980\\card_4033980_1.png",
+        "card_bg\\4033980\\card_4033980_10.png",
+        "card_bg\\4033980\\card_4033980_11.png",
+        "card_bg\\4033980\\card_4033980_12.png",
+        "card_bg\\4033980\\card_4033980_13.png",
+        "card_bg\\4033980\\card_4033980_14.png",
+        "card_bg\\4033980\\card_4033980_15.png",
+        "card_bg\\4033980\\card_4033980_16.png",
+        "card_bg\\4033980\\card_4033980_17.png",
+        "card_bg\\4033980\\card_4033980_18.png",
+        "card_bg\\4033980\\card_4033980_19.png",
+        "card_bg\\4033980\\card_4033980_2.png",
+        "card_bg\\4033980\\card_4033980_20.png",
+        "card_bg\\4033980\\card_4033980_21.png",
+        "card_bg\\4033980\\card_4033980_22.png",
+        "card_bg\\4033980\\card_4033980_23.png",
+        "card_bg\\4033980\\card_4033980_3.png",
+        "card_bg\\4033980\\card_4033980_4.png",
+        "card_bg\\4033980\\card_4033980_5.png",
+        "card_bg\\4033980\\card_4033980_6.png",
+        "card_bg\\4033980\\card_4033980_7.png",
+        "card_bg\\4033980\\card_4033980_8.png",
+        "card_bg\\4033980\\card_4033980_9.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/card_bg/4034040.cpk": {
+      "category": "card_bg",
+      "relativePath": "4034040.cpk",
+      "downloadedBytes": 2914568,
+      "outputs": [
+        "card_bg\\4034040\\card_4034040.lwf",
+        "card_bg\\4034040\\card_4034040_0.png",
+        "card_bg\\4034040\\card_4034040_1.png",
+        "card_bg\\4034040\\card_4034040_10.png",
+        "card_bg\\4034040\\card_4034040_11.png",
+        "card_bg\\4034040\\card_4034040_12.png",
+        "card_bg\\4034040\\card_4034040_13.png",
+        "card_bg\\4034040\\card_4034040_14.png",
+        "card_bg\\4034040\\card_4034040_15.png",
+        "card_bg\\4034040\\card_4034040_16.png",
+        "card_bg\\4034040\\card_4034040_2.png",
+        "card_bg\\4034040\\card_4034040_3.png",
+        "card_bg\\4034040\\card_4034040_4.png",
+        "card_bg\\4034040\\card_4034040_5.png",
+        "card_bg\\4034040\\card_4034040_6.png",
+        "card_bg\\4034040\\card_4034040_7.png",
+        "card_bg\\4034040\\card_4034040_8.png",
+        "card_bg\\4034040\\card_4034040_9.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1033950_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1033950_thumb.cpk",
+      "downloadedBytes": 18560,
+      "outputs": [
+        "thumb\\card_1033950_thumb\\card_1033950_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1033960_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1033960_thumb.cpk",
+      "downloadedBytes": 20608,
+      "outputs": [
+        "thumb\\card_1033960_thumb\\card_1033960_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1033970_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1033970_thumb.cpk",
+      "downloadedBytes": 20608,
+      "outputs": [
+        "thumb\\card_1033970_thumb\\card_1033970_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1033990_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1033990_thumb.cpk",
+      "downloadedBytes": 20608,
+      "outputs": [
+        "thumb\\card_1033990_thumb\\card_1033990_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034000_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034000_thumb.cpk",
+      "downloadedBytes": 20608,
+      "outputs": [
+        "thumb\\card_1034000_thumb\\card_1034000_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034010_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034010_thumb.cpk",
+      "downloadedBytes": 24704,
+      "outputs": [
+        "thumb\\card_1034010_thumb\\card_1034010_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034020_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034020_thumb.cpk",
+      "downloadedBytes": 24704,
+      "outputs": [
+        "thumb\\card_1034020_thumb\\card_1034020_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034030_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034030_thumb.cpk",
+      "downloadedBytes": 24704,
+      "outputs": [
+        "thumb\\card_1034030_thumb\\card_1034030_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_4034710_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_4034710_thumb.cpk",
+      "downloadedBytes": 18560,
+      "outputs": [
+        "thumb\\card_4034710_thumb\\card_4034710_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034660_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034660_thumb.cpk",
+      "downloadedBytes": 18560,
+      "outputs": [
+        "thumb\\card_1034660_thumb\\card_1034660_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034690_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034690_thumb.cpk",
+      "downloadedBytes": 16512,
+      "outputs": [
+        "thumb\\card_1034690_thumb\\card_1034690_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_1034700_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_1034700_thumb.cpk",
+      "downloadedBytes": 20608,
+      "outputs": [
+        "thumb\\card_1034700_thumb\\card_1034700_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_4033980_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_4033980_thumb.cpk",
+      "downloadedBytes": 18560,
+      "outputs": [
+        "thumb\\card_4033980_thumb\\card_4033980_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_4034040_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_4034040_thumb.cpk",
+      "downloadedBytes": 24704,
+      "outputs": [
+        "thumb\\card_4034040_thumb\\card_4034040_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/character/thumb/card_4034670_thumb.cpk": {
+      "category": "thumb",
+      "relativePath": "card_4034670_thumb.cpk",
+      "downloadedBytes": 16512,
+      "outputs": [
+        "thumb\\card_4034670_thumb\\card_4034670_thumb.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_a1_00542.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_a1_00542.cpk",
+      "downloadedBytes": 4475096,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\Images_kaki_doguo.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\Images_kaki_dou.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542_a0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542_a1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542_b0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542_c0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a1_00542\\en\\sp_effect_a1_00542_c1.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_a2_00278.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_a2_00278.cpk",
+      "downloadedBytes": 837864,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\Images_kaki_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\Images_kaki_3.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\Images_kaki_4.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\sp_effect_a2_00278.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\sp_effect_a2_00278_c03_l01_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\sp_effect_a2_00278_c06_l01_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\sp_effect_a2_00278_c06_l02_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a2_00278\\en\\sp_effect_a2_00278_c06_l03_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b4_00445.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b4_00445.cpk",
+      "downloadedBytes": 522408,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00445\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00445\\en\\Images_kaki_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00445\\en\\sp_effect_b4_00445.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00445\\en\\sp_effect_b4_00445_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b1_00374.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b1_00374.cpk",
+      "downloadedBytes": 3006704,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\Images_kaki_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\Images_kaki_3.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\Images_kaki_4.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\Images_kaki_5.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\sp_effect_b1_00374.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\sp_effect_b1_00374_c01_l01_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\sp_effect_b1_00374_c06_l01_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\sp_effect_b1_00374_c07_l01_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00374\\en\\sp_effect_b1_00374_c07_l01_1.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_a7_00078.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_a7_00078.cpk",
+      "downloadedBytes": 278784,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\Images_kaki_batt.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\Images_kaki_dottt.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\Images_kaki_gogogogo.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\Images_kaki_gwatt.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\Images_kaki_zutt.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078_3.png",
+        "ingame\\battle\\sp_effect\\sp_effect_a7_00078\\en\\sp_effect_a7_00078_4.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b1_00376.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b1_00376.cpk",
+      "downloadedBytes": 21907888,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_bau.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_doka.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_doutxu.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_ga.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_gyan.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_gyao.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\Images_kaki_zun.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_a0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_a1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_b0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_c0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_c1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_d0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_d1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_e0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_f0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_f1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_f2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_f3.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_g0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_g1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_h0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_h1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_h2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b1_00376\\en\\sp_effect_b1_00376_h3.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b4_00447.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b4_00447.cpk",
+      "downloadedBytes": 241848,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00447\\en\\Images_kaki_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00447\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00447\\en\\Images_kaki_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00447\\en\\sp_effect_b4_00447.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00447\\en\\sp_effect_b4_00447_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b4_00446.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b4_00446.cpk",
+      "downloadedBytes": 618688,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\Images_kaki_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\Images_kaki_2.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\Images_kaki_3.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\sp_effect_b4_00446.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00446\\en\\sp_effect_b4_00446_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b4_00444.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b4_00444.cpk",
+      "downloadedBytes": 536744,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00444\\en\\Images_kaki_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00444\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00444\\en\\sp_effect_b4_00444.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00444\\en\\sp_effect_b4_00444_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    },
+    "/data/data/com.bandainamcogames.dbzdokkanww/files/assets/ingame/battle/sp_effect/sp_effect_b4_00448.cpk": {
+      "category": "ingame/battle/sp_effect",
+      "relativePath": "sp_effect_b4_00448.cpk",
+      "downloadedBytes": 268456,
+      "outputs": [
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00448\\en\\Images_kaki_0.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00448\\en\\Images_kaki_1.png",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00448\\en\\sp_effect_b4_00448.lwf",
+        "ingame\\battle\\sp_effect\\sp_effect_b4_00448\\en\\sp_effect_b4_00448_0.png"
+      ],
+      "syncedAt": "2026-08-29T14:19:17.626Z"
+    }
+  },
+  "lastSync": "2026-08-29T14:19:17.626Z"
+}
