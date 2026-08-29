@@ -1,5 +1,739 @@
 [
   {
+    "id": "1543103046391693383",
+    "title": "SHOWDOWNDOKKAN",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:40:35.728000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1543103038544289800",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:40:33.857000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543103038544289800_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543103038544289800_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1543103038544289800_0.png"
+  },
+  {
+    "id": "1543099536388522105",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:26:38.878000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099536388522105_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099536388522105_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099536388522105_0.jpeg"
+  },
+  {
+    "id": "1543099533314101339",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:26:38.145000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099533314101339_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099533314101339_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099533314101339_0.jpeg"
+  },
+  {
+    "id": "1543099057298350090",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:44.654000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099057298350090_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099057298350090_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099057298350090_0.jpeg"
+  },
+  {
+    "id": "1543099050323353680",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:42.991000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099050323353680_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099050323353680_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099050323353680_0.jpeg"
+  },
+  {
+    "id": "1543099044841267311",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:41.684000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099044841267311_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099044841267311_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099044841267311_0.jpeg"
+  },
+  {
+    "id": "1543099039749382224",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:40.470000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099039749382224_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099039749382224_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099039749382224_0.jpeg"
+  },
+  {
+    "id": "1543099033285959710",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:38.929000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099033285959710_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099033285959710_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099033285959710_0.jpeg"
+  },
+  {
+    "id": "1543099027619455046",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:37.578000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099027619455046_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099027619455046_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099027619455046_0.jpeg"
+  },
+  {
+    "id": "1543099023802507295",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:36.668000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099023802507295_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099023802507295_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099023802507295_0.jpeg"
+  },
+  {
+    "id": "1543099019792883803",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:35.712000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099019792883803_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099019792883803_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099019792883803_0.jpeg"
+  },
+  {
+    "id": "1543099015485333545",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:34.685000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543099015485333545_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543099015485333545_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543099015485333545_0.jpeg"
+  },
+  {
+    "id": "1543098997122801714",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:30.307000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098997122801714_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098997122801714_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098997122801714_0.jpeg"
+  },
+  {
+    "id": "1543098992068534303",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:29.102000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098992068534303_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098992068534303_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098992068534303_0.jpeg"
+  },
+  {
+    "id": "1543098987467247727",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:28.005000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098987467247727_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098987467247727_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098987467247727_0.jpeg"
+  },
+  {
+    "id": "1543098981373186088",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:26.552000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098981373186088_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098981373186088_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098981373186088_0.jpeg"
+  },
+  {
+    "id": "1543098975211618355",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:25.083000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098975211618355_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098975211618355_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098975211618355_0.jpeg"
+  },
+  {
+    "id": "1543098970992279643",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:24.077000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098970992279643_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098970992279643_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098970992279643_0.jpeg"
+  },
+  {
+    "id": "1543098966663630929",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:23.045000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098966663630929_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098966663630929_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098966663630929_0.jpeg"
+  },
+  {
+    "id": "1543098959151632384",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:21.254000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098959151632384_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098959151632384_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098959151632384_0.jpeg"
+  },
+  {
+    "id": "1543098953954885682",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:20.015000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098953954885682_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098953954885682_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098953954885682_0.jpeg"
+  },
+  {
+    "id": "1543098948179468348",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:18.638000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098948179468348_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098948179468348_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098948179468348_0.jpeg"
+  },
+  {
+    "id": "1543098943444099072",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:17.509000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098943444099072_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098943444099072_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098943444099072_0.jpeg"
+  },
+  {
+    "id": "1543098936900718603",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:15.949000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098936900718603_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098936900718603_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098936900718603_0.jpeg"
+  },
+  {
+    "id": "1543098932047908864",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:14.792000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098932047908864_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098932047908864_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098932047908864_0.jpeg"
+  },
+  {
+    "id": "1543098926939381861",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:13.574000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098926939381861_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098926939381861_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098926939381861_0.jpeg"
+  },
+  {
+    "id": "1543098922245816361",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:12.455000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098922245816361_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098922245816361_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098922245816361_0.jpeg"
+  },
+  {
+    "id": "1543098916700954664",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:11.133000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098916700954664_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098916700954664_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098916700954664_0.jpeg"
+  },
+  {
+    "id": "1543098910778720308",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:09.721000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098910778720308_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098910778720308_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098910778720308_0.jpeg"
+  },
+  {
+    "id": "1543098905741492345",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:08.520000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098905741492345_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098905741492345_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098905741492345_0.jpeg"
+  },
+  {
+    "id": "1543098899861086288",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:07.118000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098899861086288_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098899861086288_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098899861086288_0.jpeg"
+  },
+  {
+    "id": "1543098893947117632",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:05.708000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098893947117632_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098893947117632_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098893947117632_0.jpeg"
+  },
+  {
+    "id": "1543098888213499944",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:04.341000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098888213499944_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098888213499944_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098888213499944_0.jpeg"
+  },
+  {
+    "id": "1543098881233915904",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:02.677000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098881233915904_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098881233915904_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098881233915904_0.jpeg"
+  },
+  {
+    "id": "1543098872551837777",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:24:00.607000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098872551837777_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098872551837777_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098872551837777_0.jpeg"
+  },
+  {
+    "id": "1543098866398793809",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:59.140000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098866398793809_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098866398793809_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098866398793809_0.jpeg"
+  },
+  {
+    "id": "1543098861504172142",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:57.973000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098861504172142_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098861504172142_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098861504172142_0.jpeg"
+  },
+  {
+    "id": "1543098851936698449",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:55.692000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098851936698449_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098851936698449_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098851936698449_0.jpeg"
+  },
+  {
+    "id": "1543098844827484242",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:53.997000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098844827484242_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098844827484242_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098844827484242_0.jpeg"
+  },
+  {
+    "id": "1543098837915144232",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:52.349000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098837915144232_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098837915144232_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098837915144232_0.jpeg"
+  },
+  {
+    "id": "1543098833259466842",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:51.239000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098833259466842_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098833259466842_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098833259466842_0.jpeg"
+  },
+  {
+    "id": "1543098825286225961",
+    "title": "",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T03:23:49.338000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543098825286225961_0.jpeg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543098825286225961_0.jpeg"
+    ],
+    "banner": "assets/discord-news/msg_1543098825286225961_0.jpeg"
+  },
+  {
+    "id": "1543084409006194738",
+    "title": "GDC 08-28-26",
+    "desc": "",
+    "date": "Aug 28, 2026",
+    "timestamp": "2026-08-29T02:26:32.229000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
     "id": "1542016459910418572",
     "title": "Dokkan Announcements",
     "desc": "",
@@ -1677,5 +2411,5567 @@
       "assets/discord-news/msg_1511640711320043650_0.png"
     ],
     "banner": "assets/discord-news/msg_1511640711320043650_0.png"
+  },
+  {
+    "id": "1509414694211944508",
+    "title": "",
+    "desc": "",
+    "date": "May 28, 2026",
+    "timestamp": "2026-05-28T04:35:06.669000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509414694211944508_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509414694211944508_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1509414694211944508_0.png"
+  },
+  {
+    "id": "1509104923537571960",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:04:11.585000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104923537571960_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104923537571960_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104923537571960_0.jpg"
+  },
+  {
+    "id": "1509104684613238795",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:03:14.621000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104684613238795_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104684613238795_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104684613238795_0.jpg"
+  },
+  {
+    "id": "1509104531756023828",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:02:38.177000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104531756023828_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104531756023828_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104531756023828_0.jpg"
+  },
+  {
+    "id": "1509104499250303007",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:02:30.427000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104499250303007_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104499250303007_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104499250303007_0.jpg"
+  },
+  {
+    "id": "1509104467474251847",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:02:22.851000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104467474251847_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104467474251847_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104467474251847_0.jpg"
+  },
+  {
+    "id": "1509104443189104640",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:02:17.061000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104443189104640_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104443189104640_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104443189104640_0.jpg"
+  },
+  {
+    "id": "1509104296078344262",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:01:41.987000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104296078344262_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104296078344262_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104296078344262_0.jpg"
+  },
+  {
+    "id": "1509104276851523647",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:01:37.403000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104276851523647_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104276851523647_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104276851523647_0.jpg"
+  },
+  {
+    "id": "1509104240138649630",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:01:28.650000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104240138649630_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104240138649630_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104240138649630_0.jpg"
+  },
+  {
+    "id": "1509104213375058020",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:01:22.269000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104213375058020_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104213375058020_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104213375058020_0.jpg"
+  },
+  {
+    "id": "1509104104922812436",
+    "title": "?",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:00:56.412000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1509104099407302778",
+    "title": "",
+    "desc": "",
+    "date": "May 27, 2026",
+    "timestamp": "2026-05-27T08:00:55.097000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1509104099407302778_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1509104099407302778_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1509104099407302778_0.jpg"
+  },
+  {
+    "id": "1505942897688576053",
+    "title": "i think they are free",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:39:25.875000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1505942882916499628",
+    "title": "alternate art god goku",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:39:22.353000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942882916499628_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942882916499628_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942882916499628_0.jpg"
+  },
+  {
+    "id": "1505942753216041085",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:38:51.430000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942753216041085_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942753216041085_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942753216041085_0.jpg"
+  },
+  {
+    "id": "1505942726829543645",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:38:45.139000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942726829543645_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942726829543645_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942726829543645_0.jpg"
+  },
+  {
+    "id": "1505942702704037938",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:38:39.387000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942702704037938_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942702704037938_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942702704037938_0.jpg"
+  },
+  {
+    "id": "1505942516506038364",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:54.994000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942516506038364_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942516506038364_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942516506038364_0.jpg"
+  },
+  {
+    "id": "1505942484075675678",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:47.262000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942484075675678_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942484075675678_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942484075675678_0.jpg"
+  },
+  {
+    "id": "1505942457454563450",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:40.915000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942457454563450_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942457454563450_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942457454563450_0.jpg"
+  },
+  {
+    "id": "1505942416799305908",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:31.222000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942416799305908_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942416799305908_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942416799305908_0.jpg"
+  },
+  {
+    "id": "1505942390110818354",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:24.859000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942390110818354_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942390110818354_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942390110818354_0.jpg"
+  },
+  {
+    "id": "1505942362570883218",
+    "title": "",
+    "desc": "",
+    "date": "May 18, 2026",
+    "timestamp": "2026-05-18T14:37:18.293000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1505942362570883218_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1505942362570883218_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1505942362570883218_0.jpg"
+  },
+  {
+    "id": "1503306379010768936",
+    "title": "",
+    "desc": "",
+    "date": "May 11, 2026",
+    "timestamp": "2026-05-11T08:02:50.838000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1503306379010768936_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1503306379010768936_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1503306379010768936_0.jpg"
+  },
+  {
+    "id": "1503306349713293522",
+    "title": "",
+    "desc": "",
+    "date": "May 11, 2026",
+    "timestamp": "2026-05-11T08:02:43.853000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1503306349713293522_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1503306349713293522_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1503306349713293522_0.jpg"
+  },
+  {
+    "id": "1503306114815492196",
+    "title": "",
+    "desc": "",
+    "date": "May 11, 2026",
+    "timestamp": "2026-05-11T08:01:47.849000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1503306114815492196_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1503306114815492196_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1503306114815492196_0.jpg"
+  },
+  {
+    "id": "1503306073652858941",
+    "title": "",
+    "desc": "",
+    "date": "May 11, 2026",
+    "timestamp": "2026-05-11T08:01:38.035000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1503306073652858941_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1503306073652858941_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1503306073652858941_0.jpg"
+  },
+  {
+    "id": "1503306067260608527",
+    "title": "",
+    "desc": "",
+    "date": "May 11, 2026",
+    "timestamp": "2026-05-11T08:01:36.511000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1503306067260608527_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1503306067260608527_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1503306067260608527_0.jpg"
+  },
+  {
+    "id": "1501061520426274836",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:22:34.844000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501061520426274836_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501061520426274836_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501061520426274836_0.png"
+  },
+  {
+    "id": "1501060855280701552",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:19:56.261000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060855280701552_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060855280701552_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060855280701552_0.png"
+  },
+  {
+    "id": "1501060664821678090",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:19:10.852000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060664821678090_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060664821678090_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060664821678090_0.png"
+  },
+  {
+    "id": "1501060549595758592",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:43.380000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060549595758592_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060549595758592_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060549595758592_0.png"
+  },
+  {
+    "id": "1501060536698142850",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:40.305000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060536698142850_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060536698142850_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060536698142850_0.png"
+  },
+  {
+    "id": "1501060462144520193",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:22.530000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060462144520193_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060462144520193_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060462144520193_0.png"
+  },
+  {
+    "id": "1501060438316683475",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:16.849000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060438316683475_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060438316683475_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060438316683475_0.png"
+  },
+  {
+    "id": "1501060413863886948",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:11.019000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060413863886948_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060413863886948_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060413863886948_0.png"
+  },
+  {
+    "id": "1501060368577986643",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:18:00.222000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060368577986643_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060368577986643_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060368577986643_0.png"
+  },
+  {
+    "id": "1501060345576296519",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:17:54.738000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501060345576296519_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501060345576296519_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501060345576296519_0.png"
+  },
+  {
+    "id": "1501059812530851943",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:15:47.650000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501059812530851943_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501059812530851943_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501059812530851943_0.png"
+  },
+  {
+    "id": "1501059028539670529",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:12:40.732000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501059028539670529_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501059028539670529_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501059028539670529_0.png"
+  },
+  {
+    "id": "1501058957119193198",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:12:23.704000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501058957119193198_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501058957119193198_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501058957119193198_0.png"
+  },
+  {
+    "id": "1501058848289591366",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:11:57.757000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501058848289591366_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501058848289591366_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501058848289591366_0.png"
+  },
+  {
+    "id": "1501058828899450880",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:11:53.134000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501058828899450880_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501058828899450880_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501058828899450880_0.png"
+  },
+  {
+    "id": "1501058357082067034",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:10:00.644000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501058357082067034_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501058357082067034_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501058357082067034_0.png"
+  },
+  {
+    "id": "1501057789060190391",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:07:45.217000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057789060190391_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057789060190391_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057789060190391_0.png"
+  },
+  {
+    "id": "1501057734945017886",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:07:32.315000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057734945017886_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057734945017886_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057734945017886_0.png"
+  },
+  {
+    "id": "1501057670109466625",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:07:16.857000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057670109466625_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057670109466625_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057670109466625_0.png"
+  },
+  {
+    "id": "1501057638325031105",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:07:09.279000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057638325031105_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057638325031105_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057638325031105_0.png"
+  },
+  {
+    "id": "1501057269255897148",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:05:41.286000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057269255897148_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057269255897148_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057269255897148_0.png"
+  },
+  {
+    "id": "1501057226763276408",
+    "title": "",
+    "desc": "",
+    "date": "May 4, 2026",
+    "timestamp": "2026-05-05T03:05:31.155000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1501057226763276408_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1501057226763276408_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1501057226763276408_0.png"
+  },
+  {
+    "id": "1497871516170326036",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:06:38.562000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871516170326036_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871516170326036_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871516170326036_0.png"
+  },
+  {
+    "id": "1497871493227348048",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:06:33.092000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871493227348048_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871493227348048_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871493227348048_0.png"
+  },
+  {
+    "id": "1497871430539542620",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:06:18.146000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871430539542620_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871430539542620_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871430539542620_0.png"
+  },
+  {
+    "id": "1497871196585459925",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:05:22.367000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871196585459925_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871196585459925_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871196585459925_0.png"
+  },
+  {
+    "id": "1497871166440865862",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:05:15.180000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871166440865862_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871166440865862_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871166440865862_0.png"
+  },
+  {
+    "id": "1497871161307172904",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:05:13.956000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497871161307172904_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497871161307172904_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497871161307172904_0.png"
+  },
+  {
+    "id": "1497870916879781978",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:04:15.680000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870916879781978_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870916879781978_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870916879781978_0.png"
+  },
+  {
+    "id": "1497870907434340435",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:04:13.428000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870907434340435_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870907434340435_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870907434340435_0.png"
+  },
+  {
+    "id": "1497870683646988400",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:03:20.073000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870683646988400_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870683646988400_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870683646988400_0.png"
+  },
+  {
+    "id": "1497870667075293294",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:03:16.122000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870667075293294_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870667075293294_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870667075293294_0.png"
+  },
+  {
+    "id": "1497870652940619907",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:03:12.752000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870652940619907_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870652940619907_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870652940619907_0.png"
+  },
+  {
+    "id": "1497870433372864662",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:02:20.403000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870433372864662_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870433372864662_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870433372864662_0.png"
+  },
+  {
+    "id": "1497870426846527550",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:02:18.847000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870426846527550_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870426846527550_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870426846527550_0.png"
+  },
+  {
+    "id": "1497870191550529566",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:01:22.748000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870191550529566_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870191550529566_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870191550529566_0.png"
+  },
+  {
+    "id": "1497870177449021490",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:01:19.386000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870177449021490_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870177449021490_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870177449021490_0.png"
+  },
+  {
+    "id": "1497870163201233008",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:01:15.989000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870163201233008_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870163201233008_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870163201233008_0.png"
+  },
+  {
+    "id": "1497870128660873316",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:01:07.754000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870128660873316_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870128660873316_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870128660873316_0.png"
+  },
+  {
+    "id": "1497870107462860921",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:01:02.700000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870107462860921_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870107462860921_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870107462860921_0.png"
+  },
+  {
+    "id": "1497870095723008071",
+    "title": "",
+    "desc": "",
+    "date": "Apr 26, 2026",
+    "timestamp": "2026-04-26T08:00:59.901000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1497870095723008071_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1497870095723008071_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1497870095723008071_0.png"
+  },
+  {
+    "id": "1495533777701699686",
+    "title": "",
+    "desc": "",
+    "date": "Apr 19, 2026",
+    "timestamp": "2026-04-19T21:17:18.278000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1495533777701699686_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1495533777701699686_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1495533777701699686_0.png"
+  },
+  {
+    "id": "1488086485209972878",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:04:25.384000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488086485209972878_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488086485209972878_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488086485209972878_0.jpg"
+  },
+  {
+    "id": "1488086453178204252",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:04:17.747000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488086453178204252_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488086453178204252_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488086453178204252_0.jpg"
+  },
+  {
+    "id": "1488086414422970479",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:04:08.507000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488086414422970479_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488086414422970479_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488086414422970479_0.jpg"
+  },
+  {
+    "id": "1488086211364126770",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:03:20.094000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488086211364126770_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488086211364126770_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488086211364126770_0.jpg"
+  },
+  {
+    "id": "1488086007956897883",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:02:31.598000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488086007956897883_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488086007956897883_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488086007956897883_0.jpg"
+  },
+  {
+    "id": "1488085974473900173",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:02:23.615000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085974473900173_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085974473900173_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085974473900173_0.jpg"
+  },
+  {
+    "id": "1488085948024492042",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:02:17.309000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085948024492042_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085948024492042_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085948024492042_0.jpg"
+  },
+  {
+    "id": "1488085914029920256",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:02:09.204000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085914029920256_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085914029920256_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085914029920256_0.jpg"
+  },
+  {
+    "id": "1488085743812481126",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:01:28.621000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085743812481126_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085743812481126_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085743812481126_0.jpg"
+  },
+  {
+    "id": "1488085713894375455",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:01:21.488000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085713894375455_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085713894375455_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085713894375455_0.jpg"
+  },
+  {
+    "id": "1488085669166317740",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:01:10.824000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085669166317740_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085669166317740_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085669166317740_0.jpg"
+  },
+  {
+    "id": "1488085590481174549",
+    "title": "",
+    "desc": "",
+    "date": "Mar 30, 2026",
+    "timestamp": "2026-03-30T08:00:52.064000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1488085590481174549_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1488085590481174549_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1488085590481174549_0.jpg"
+  },
+  {
+    "id": "1482216872848916696",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:20:40.745000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482216872848916696_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482216872848916696_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482216872848916696_0.png"
+  },
+  {
+    "id": "1482216752283914411",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:20:12+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482216752283914411_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482216752283914411_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482216752283914411_0.png"
+  },
+  {
+    "id": "1482216679529254915",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:19:54.654000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482216679529254915_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482216679529254915_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482216679529254915_0.png"
+  },
+  {
+    "id": "1482215827620106271",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:16:31.543000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482215827620106271_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482215827620106271_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482215827620106271_0.png"
+  },
+  {
+    "id": "1482215511260397589",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:15:16.117000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482215511260397589_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482215511260397589_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482215511260397589_0.png"
+  },
+  {
+    "id": "1482215256444108973",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:14:15.364000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482215256444108973_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482215256444108973_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482215256444108973_0.png"
+  },
+  {
+    "id": "1482215108695294012",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:13:40.138000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482215108695294012_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482215108695294012_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482215108695294012_0.png"
+  },
+  {
+    "id": "1482214733179256957",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:12:10.608000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214733179256957_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214733179256957_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214733179256957_0.png"
+  },
+  {
+    "id": "1482214557706354869",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:11:28.772000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214557706354869_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214557706354869_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214557706354869_0.png"
+  },
+  {
+    "id": "1482214511380398313",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:11:17.727000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214511380398313_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214511380398313_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214511380398313_0.png"
+  },
+  {
+    "id": "1482214436138913812",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:10:59.788000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214436138913812_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214436138913812_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214436138913812_0.png"
+  },
+  {
+    "id": "1482214403553235135",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:10:52.019000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214403553235135_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214403553235135_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214403553235135_0.png"
+  },
+  {
+    "id": "1482214304748011632",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:10:28.462000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214304748011632_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214304748011632_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214304748011632_0.png"
+  },
+  {
+    "id": "1482214240596135968",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:10:13.167000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214240596135968_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214240596135968_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214240596135968_0.png"
+  },
+  {
+    "id": "1482214200255451329",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:10:03.549000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482214200255451329_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482214200255451329_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482214200255451329_0.png"
+  },
+  {
+    "id": "1482213766706761883",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:08:20.183000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213766706761883_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213766706761883_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213766706761883_0.png"
+  },
+  {
+    "id": "1482213730770096321",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:08:11.615000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213730770096321_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213730770096321_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213730770096321_0.png"
+  },
+  {
+    "id": "1482213689917575349",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:08:01.875000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213689917575349_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213689917575349_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213689917575349_0.png"
+  },
+  {
+    "id": "1482213648738025503",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:07:52.057000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213648738025503_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213648738025503_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213648738025503_0.png"
+  },
+  {
+    "id": "1482213598196662463",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:07:40.007000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213598196662463_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213598196662463_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213598196662463_0.png"
+  },
+  {
+    "id": "1482213094825529487",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:05:39.994000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213094825529487_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213094825529487_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213094825529487_0.png"
+  },
+  {
+    "id": "1482213064303710241",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:05:32.717000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213064303710241_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213064303710241_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213064303710241_0.png"
+  },
+  {
+    "id": "1482213036704927776",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:05:26.137000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482213036704927776_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482213036704927776_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482213036704927776_0.png"
+  },
+  {
+    "id": "1482212918517829753",
+    "title": "i called this btw",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:04:57.959000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1482212901312925869",
+    "title": "",
+    "desc": "",
+    "date": "Mar 13, 2026",
+    "timestamp": "2026-03-14T03:04:53.857000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1482212901312925869_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1482212901312925869_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1482212901312925869_0.png"
+  },
+  {
+    "id": "1476127703211184282",
+    "title": "",
+    "desc": "",
+    "date": "Feb 25, 2026",
+    "timestamp": "2026-02-25T08:04:29.572000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1476127703211184282_0.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127703211184282_1.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127703211184282_2.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127703211184282_3.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1476127703211184282_0.png",
+      "assets/discord-news/msg_1476127703211184282_1.png",
+      "assets/discord-news/msg_1476127703211184282_2.png",
+      "assets/discord-news/msg_1476127703211184282_3.png"
+    ],
+    "banner": "assets/discord-news/msg_1476127703211184282_0.png"
+  },
+  {
+    "id": "1476127492426432532",
+    "title": "",
+    "desc": "",
+    "date": "Feb 25, 2026",
+    "timestamp": "2026-02-25T08:03:39.317000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1476127492426432532_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1476127492426432532_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1476127492426432532_0.png"
+  },
+  {
+    "id": "1476127479767761027",
+    "title": "",
+    "desc": "",
+    "date": "Feb 25, 2026",
+    "timestamp": "2026-02-25T08:03:36.299000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1476127479767761027_0.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127479767761027_1.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127479767761027_2.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127479767761027_3.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1476127479767761027_0.png",
+      "assets/discord-news/msg_1476127479767761027_1.png",
+      "assets/discord-news/msg_1476127479767761027_2.png",
+      "assets/discord-news/msg_1476127479767761027_3.png"
+    ],
+    "banner": "assets/discord-news/msg_1476127479767761027_0.png"
+  },
+  {
+    "id": "1476127167397236902",
+    "title": "",
+    "desc": "",
+    "date": "Feb 25, 2026",
+    "timestamp": "2026-02-25T08:02:21.824000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1476127167397236902_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1476127167397236902_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1476127167397236902_0.png"
+  },
+  {
+    "id": "1476127142835257487",
+    "title": "",
+    "desc": "",
+    "date": "Feb 25, 2026",
+    "timestamp": "2026-02-25T08:02:15.968000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1476127142835257487_0.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127142835257487_1.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127142835257487_2.png",
+        "type": "image"
+      },
+      {
+        "url": "assets/discord-news/msg_1476127142835257487_3.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1476127142835257487_0.png",
+      "assets/discord-news/msg_1476127142835257487_1.png",
+      "assets/discord-news/msg_1476127142835257487_2.png",
+      "assets/discord-news/msg_1476127142835257487_3.png"
+    ],
+    "banner": "assets/discord-news/msg_1476127142835257487_0.png"
+  },
+  {
+    "id": "1472093282812170495",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T04:53:08.793000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472093282812170495_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472093282812170495_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1472093282812170495_0.jpg"
+  },
+  {
+    "id": "1472072499276681393",
+    "title": "CODE",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:30:33.612000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1472072484923900036",
+    "title": "DOKKANRIVAL11TH",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:30:30.190000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1472071822894960848",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:27:52.350000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472071822894960848_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472071822894960848_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472071822894960848_0.png"
+  },
+  {
+    "id": "1472071547299823797",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:26:46.643000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472071547299823797_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472071547299823797_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472071547299823797_0.png"
+  },
+  {
+    "id": "1472067662917013736",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:11:20.534000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472067662917013736_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472067662917013736_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472067662917013736_0.png"
+  },
+  {
+    "id": "1472067357018165361",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:10:07.602000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472067357018165361_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472067357018165361_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472067357018165361_0.png"
+  },
+  {
+    "id": "1472066987760025681",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:08:39.564000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472066987760025681_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472066987760025681_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472066987760025681_0.png"
+  },
+  {
+    "id": "1472066612680200372",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:07:10.138000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472066612680200372_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472066612680200372_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472066612680200372_0.png"
+  },
+  {
+    "id": "1472066539250384977",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:06:52.631000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472066539250384977_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472066539250384977_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472066539250384977_0.png"
+  },
+  {
+    "id": "1472065353776627744",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:02:09.992000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472065353776627744_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472065353776627744_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472065353776627744_0.png"
+  },
+  {
+    "id": "1472065242388234352",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:01:43.435000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472065242388234352_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472065242388234352_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472065242388234352_0.png"
+  },
+  {
+    "id": "1472065179884982313",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:01:28.533000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472065179884982313_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472065179884982313_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472065179884982313_0.png"
+  },
+  {
+    "id": "1472065147005567192",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:01:20.694000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472065147005567192_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472065147005567192_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472065147005567192_0.png"
+  },
+  {
+    "id": "1472065124641800386",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T03:01:15.362000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472065124641800386_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472065124641800386_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472065124641800386_0.png"
+  },
+  {
+    "id": "1472063997090992158",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:56:46.533000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472063997090992158_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472063997090992158_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472063997090992158_0.png"
+  },
+  {
+    "id": "1472063607997993196",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:55:13.766000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472063607997993196_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472063607997993196_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472063607997993196_0.png"
+  },
+  {
+    "id": "1472063477530230967",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:54:42.660000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472063477530230967_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472063477530230967_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472063477530230967_0.png"
+  },
+  {
+    "id": "1472062175802818651",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:49:32.304000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472062175802818651_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472062175802818651_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472062175802818651_0.png"
+  },
+  {
+    "id": "1472062062514667520",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:49:05.294000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472062062514667520_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472062062514667520_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472062062514667520_0.png"
+  },
+  {
+    "id": "1472061990259392594",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:48:48.067000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472061990259392594_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472061990259392594_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472061990259392594_0.png"
+  },
+  {
+    "id": "1472061894406836316",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:48:25.214000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472061894406836316_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472061894406836316_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472061894406836316_0.png"
+  },
+  {
+    "id": "1472061857643888670",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:48:16.449000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472061857643888670_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472061857643888670_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472061857643888670_0.png"
+  },
+  {
+    "id": "1472060697394417818",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:43:39.824000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472060697394417818_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472060697394417818_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472060697394417818_0.png"
+  },
+  {
+    "id": "1472060289871642645",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:42:02.663000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472060289871642645_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472060289871642645_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472060289871642645_0.png"
+  },
+  {
+    "id": "1472059361013534836",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:38:21.206000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472059361013534836_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472059361013534836_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472059361013534836_0.png"
+  },
+  {
+    "id": "1472059281632264224",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:38:02.280000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472059281632264224_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472059281632264224_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472059281632264224_0.png"
+  },
+  {
+    "id": "1472058999728902207",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:36:55.069000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472058999728902207_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472058999728902207_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472058999728902207_0.png"
+  },
+  {
+    "id": "1472058850344570971",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:36:19.453000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472058850344570971_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472058850344570971_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472058850344570971_0.png"
+  },
+  {
+    "id": "1472058617707626608",
+    "title": "",
+    "desc": "",
+    "date": "Feb 13, 2026",
+    "timestamp": "2026-02-14T02:35:23.988000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1472058617707626608_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1472058617707626608_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1472058617707626608_0.png"
+  },
+  {
+    "id": "1469925622343008388",
+    "title": "",
+    "desc": "",
+    "date": "Feb 8, 2026",
+    "timestamp": "2026-02-08T05:19:38.264000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1469925622343008388_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1469925622343008388_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1469925622343008388_0.png"
+  },
+  {
+    "id": "1469924665785843794",
+    "title": "",
+    "desc": "",
+    "date": "Feb 8, 2026",
+    "timestamp": "2026-02-08T05:15:50.203000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1469924665785843794_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1469924665785843794_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1469924665785843794_0.png"
+  },
+  {
+    "id": "1469923122177376279",
+    "title": "",
+    "desc": "",
+    "date": "Feb 8, 2026",
+    "timestamp": "2026-02-08T05:09:42.178000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1469923122177376279_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1469923122177376279_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1469923122177376279_0.png"
+  },
+  {
+    "id": "1469922831604383755",
+    "title": "",
+    "desc": "",
+    "date": "Feb 8, 2026",
+    "timestamp": "2026-02-08T05:08:32.900000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1469922831604383755_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1469922831604383755_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1469922831604383755_0.png"
+  },
+  {
+    "id": "1466048392256946177",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T12:32:54.576000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466048392256946177_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466048392256946177_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1466048392256946177_0.jpg"
+  },
+  {
+    "id": "1466048363924422758",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T12:32:47.821000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466048363924422758_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466048363924422758_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1466048363924422758_0.jpg"
+  },
+  {
+    "id": "1466048318143467663",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T12:32:36.906000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466048318143467663_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466048318143467663_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1466048318143467663_0.jpg"
+  },
+  {
+    "id": "1466048311289974884",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T12:32:35.272000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466048311289974884_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466048311289974884_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1466048311289974884_0.jpg"
+  },
+  {
+    "id": "1466038934244032666",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:55:19.610000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466038934244032666_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466038934244032666_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466038934244032666_0.png"
+  },
+  {
+    "id": "1466035231633969252",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:40:36.839000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466035231633969252_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466035231633969252_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466035231633969252_0.png"
+  },
+  {
+    "id": "1466033718773809274",
+    "title": "OMFG",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:34:36.145000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1466033712180232233",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:34:34.573000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466033712180232233_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466033712180232233_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466033712180232233_0.png"
+  },
+  {
+    "id": "1466033299989205167",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:32:56.299000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466033299989205167_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466033299989205167_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466033299989205167_0.png"
+  },
+  {
+    "id": "1466032803098661006",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:30:57.831000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032803098661006_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032803098661006_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032803098661006_0.png"
+  },
+  {
+    "id": "1466032404895371489",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:29:22.892000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032404895371489_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032404895371489_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032404895371489_0.png"
+  },
+  {
+    "id": "1466032199651299506",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:28:33.958000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032199651299506_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032199651299506_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032199651299506_0.png"
+  },
+  {
+    "id": "1466032096362496111",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:28:09.332000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032096362496111_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032096362496111_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032096362496111_0.png"
+  },
+  {
+    "id": "1466032042612490374",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:27:56.517000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032042612490374_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032042612490374_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032042612490374_0.png"
+  },
+  {
+    "id": "1466032007623606315",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:27:48.175000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466032007623606315_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466032007623606315_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466032007623606315_0.png"
+  },
+  {
+    "id": "1466030930140336219",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:23:31.283000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030930140336219_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030930140336219_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030930140336219_0.png"
+  },
+  {
+    "id": "1466030743443603561",
+    "title": "lmaoo",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:22:46.771000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1466030601386852447",
+    "title": "WTF",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:22:12.902000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1466030567068930150",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:22:04.720000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030567068930150_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030567068930150_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030567068930150_0.png"
+  },
+  {
+    "id": "1466030358570078281",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:21:15.010000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030358570078281_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030358570078281_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030358570078281_0.png"
+  },
+  {
+    "id": "1466030295064121434",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:20:59.869000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030295064121434_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030295064121434_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030295064121434_0.png"
+  },
+  {
+    "id": "1466030213484773543",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:20:40.419000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030213484773543_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030213484773543_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030213484773543_0.png"
+  },
+  {
+    "id": "1466030178563129423",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:20:32.093000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466030178563129423_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466030178563129423_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466030178563129423_0.png"
+  },
+  {
+    "id": "1466028877305479300",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:15:21.849000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466028877305479300_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466028877305479300_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466028877305479300_0.png"
+  },
+  {
+    "id": "1466028867813642292",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:15:19.586000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466028867813642292_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466028867813642292_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466028867813642292_0.png"
+  },
+  {
+    "id": "1466028303356788852",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:13:05.009000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466028303356788852_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466028303356788852_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466028303356788852_0.png"
+  },
+  {
+    "id": "1466028188965797920",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:12:37.736000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466028188965797920_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466028188965797920_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466028188965797920_0.png"
+  },
+  {
+    "id": "1466028121479319695",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:12:21.646000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466028121479319695_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466028121479319695_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466028121479319695_0.png"
+  },
+  {
+    "id": "1466028106958504087",
+    "title": "Unlimited skill orb tickets",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:12:18.184000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1466027817606189097",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:11:09.197000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466027817606189097_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466027817606189097_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466027817606189097_0.png"
+  },
+  {
+    "id": "1466027725021253644",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:10:47.123000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466027725021253644_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466027725021253644_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466027725021253644_0.png"
+  },
+  {
+    "id": "1466027517994471459",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:09:57.764000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466027517994471459_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466027517994471459_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466027517994471459_0.png"
+  },
+  {
+    "id": "1466027277715374163",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:09:00.477000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466027277715374163_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466027277715374163_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466027277715374163_0.png"
+  },
+  {
+    "id": "1466027175626018867",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:08:36.137000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466027175626018867_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466027175626018867_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466027175626018867_0.png"
+  },
+  {
+    "id": "1466026850441760782",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:07:18.607000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466026850441760782_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466026850441760782_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466026850441760782_0.png"
+  },
+  {
+    "id": "1466025573292839090",
+    "title": "",
+    "desc": "",
+    "date": "Jan 28, 2026",
+    "timestamp": "2026-01-28T11:02:14.111000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1466025573292839090_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1466025573292839090_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1466025573292839090_0.png"
+  },
+  {
+    "id": "1464837910816620801",
+    "title": "",
+    "desc": "",
+    "date": "Jan 24, 2026",
+    "timestamp": "2026-01-25T04:22:53.311000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1464837910816620801_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1464837910816620801_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1464837910816620801_0.png"
+  },
+  {
+    "id": "1464834879031083068",
+    "title": "",
+    "desc": "",
+    "date": "Jan 24, 2026",
+    "timestamp": "2026-01-25T04:10:50.477000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1464834879031083068_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1464834879031083068_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1464834879031083068_0.png"
+  },
+  {
+    "id": "1463133326201196608",
+    "title": "did everything for some singles",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:29:28.669000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463133301245087930",
+    "title": "he got no stones nothing",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:29:22.719000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463133275353518174",
+    "title": "deadass",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:29:16.546000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463133236493287526",
+    "title": "Bro I went to some guys profile and was just replying to post of the new unit saying what a flop and easy skip ik bro got 3 stones",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:29:07.281000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132885623246950",
+    "title": "oh also have you seen the fucking kingsman drama",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:27:43.627000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132766676717610",
+    "title": "makes more sense",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:27:15.268000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132745164128408",
+    "title": "but its prob all daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:27:10.139000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132720292167806",
+    "title": "new horizons could mean namek",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:27:04.209000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132667615907892",
+    "title": "💀",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:26:51.650000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132614587187270",
+    "title": "istfg",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:26:39.007000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132598212755560",
+    "title": "we fucking better not get a kuu and duu lr before kid buu",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:26:35.103000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132588498751610",
+    "title": "Maybe everyone who attacked him or ss3 duu",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:26:32.787000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132456260473035",
+    "title": "duel unit maybe ?",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:26:01.259000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132410601406494",
+    "title": "kuu and duu",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:50.373000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132401189261395",
+    "title": "its cool but like what else is there",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:48.129000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132341743517750",
+    "title": "if they do all daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:33.956000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132328636321845",
+    "title": "maybe idk",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:30.831000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132283522387998",
+    "title": "What else is new horizon new dragon ball ?",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:20.075000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132230925946912",
+    "title": "Idk it could be all daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:25:07.535000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132169613480072",
+    "title": "namek ?",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:24:52.917000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132158058303600",
+    "title": "what do you think pt 2 is",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:24:50.162000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132100814311602",
+    "title": "💀 💀 💀",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:24:36.514000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132085912076481",
+    "title": "Ya",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:24:32.961000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463132001363300519",
+    "title": "and then when its possible they complain about it being daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:24:12.803000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131934468341932",
+    "title": "people want daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:23:56.854000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131917372227616",
+    "title": "oh yeah",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:23:52.778000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131878411473071",
+    "title": "Daima",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:23:43.489000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131716209086495",
+    "title": "?",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:23:04.817000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131647321964625",
+    "title": "No people were pre complaining about drama anniversary",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:22:48.393000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131542707765249",
+    "title": "truth is complaning about the redzone and bluezone revamp",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:22:23.451000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131497857810610",
+    "title": "<@200350164966178823> i called it btw",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:22:12.758000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463131128981622900",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:20:44.811000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463131128981622900_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463131128981622900_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463131128981622900_0.png"
+  },
+  {
+    "id": "1463131032718151806",
+    "title": "\"cant wait for the mini ssj3 vegeta and adult ssj3 vegeta rotation\" - goresh",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:20:21.860000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130770003591310",
+    "title": "i think they both have an entrance btw",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:19:19.224000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130646787653736",
+    "title": "on the full art",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:18:49.847000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130630484131984",
+    "title": "its swapped ur right",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:18:45.960000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130606174081139",
+    "title": "i was looking at the icons",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:18:40.164000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130582719664240",
+    "title": "oh it is",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:18:34.572000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463130279462965431",
+    "title": "It’s the gotenks and piccolo card",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:17:22.270000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463129000502235299",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:12:17.342000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463129000502235299_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463129000502235299_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463129000502235299_0.png"
+  },
+  {
+    "id": "1463128801595887740",
+    "title": "<@&1412500265642360923>",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:11:29.919000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463128778866950216",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:11:24.500000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463128778866950216_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463128778866950216_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463128778866950216_0.png"
+  },
+  {
+    "id": "1463128729919164449",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:11:12.830000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463128729919164449_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463128729919164449_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463128729919164449_0.png"
+  },
+  {
+    "id": "1463128240410329281",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:09:16.122000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463128240410329281_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463128240410329281_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463128240410329281_0.png"
+  },
+  {
+    "id": "1463128134382784522",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:08:50.843000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463128134382784522_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463128134382784522_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463128134382784522_0.png"
+  },
+  {
+    "id": "1463128109850165249",
+    "title": "is completely new",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:08:44.994000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463128075297361931",
+    "title": "this gotenks art btw",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:08:36.756000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1463127851162406975",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:07:43.318000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463127851162406975_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463127851162406975_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463127851162406975_0.png"
+  },
+  {
+    "id": "1463127699185995868",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:07:07.084000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463127699185995868_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463127699185995868_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463127699185995868_0.png"
+  },
+  {
+    "id": "1463127570601214059",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:06:36.427000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463127570601214059_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463127570601214059_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463127570601214059_0.png"
+  },
+  {
+    "id": "1463127502322012181",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:06:20.148000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463127502322012181_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463127502322012181_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463127502322012181_0.png"
+  },
+  {
+    "id": "1463127231403393241",
+    "title": "",
+    "desc": "",
+    "date": "Jan 20, 2026",
+    "timestamp": "2026-01-20T11:05:15.556000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1463127231403393241_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1463127231403393241_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1463127231403393241_0.png"
+  },
+  {
+    "id": "1460183088289288347",
+    "title": "",
+    "desc": "",
+    "date": "Jan 12, 2026",
+    "timestamp": "2026-01-12T08:06:17.138000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1460183088289288347_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1460183088289288347_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1460183088289288347_0.png"
+  },
+  {
+    "id": "1460183066352812054",
+    "title": "BEASTLESS",
+    "desc": "",
+    "date": "Jan 12, 2026",
+    "timestamp": "2026-01-12T08:06:11.908000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1460183066352812054_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1460183066352812054_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1460183066352812054_0.png"
+  },
+  {
+    "id": "1460183043317956675",
+    "title": "",
+    "desc": "",
+    "date": "Jan 12, 2026",
+    "timestamp": "2026-01-12T08:06:06.416000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1460183043317956675_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1460183043317956675_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1460183043317956675_0.png"
+  },
+  {
+    "id": "1460183021058658334",
+    "title": "",
+    "desc": "",
+    "date": "Jan 12, 2026",
+    "timestamp": "2026-01-12T08:06:01.109000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1460183021058658334_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1460183021058658334_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1460183021058658334_0.png"
+  },
+  {
+    "id": "1460182991497330813",
+    "title": "PICCOLO",
+    "desc": "",
+    "date": "Jan 12, 2026",
+    "timestamp": "2026-01-12T08:05:54.061000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1460182991497330813_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1460182991497330813_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1460182991497330813_0.png"
+  },
+  {
+    "id": "1453689964783992863",
+    "title": "1/4 to 1/9 Quiz Challenges",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:04:55.858000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1453689834169303081",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:04:24.717000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453689834169303081_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453689834169303081_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453689834169303081_0.png"
+  },
+  {
+    "id": "1453689786769604639",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:04:13.416000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453689786769604639_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453689786769604639_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453689786769604639_0.png"
+  },
+  {
+    "id": "1453689697581666315",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:03:52.152000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453689697581666315_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453689697581666315_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453689697581666315_0.png"
+  },
+  {
+    "id": "1453689598164074508",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:03:28.449000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453689598164074508_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453689598164074508_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453689598164074508_0.png"
+  },
+  {
+    "id": "1453689155879047342",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:01:43+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453689155879047342_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453689155879047342_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453689155879047342_0.png"
+  },
+  {
+    "id": "1453688869785440290",
+    "title": "https://cdn.discordapp.com/attachments/458435902348328970/1433681345082560603/4x.gif",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:00:34.790000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1453688755494850661",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T10:00:07.541000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688755494850661_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688755494850661_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688755494850661_0.png"
+  },
+  {
+    "id": "1453688695608574063",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:59:53.263000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688695608574063_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688695608574063_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688695608574063_0.png"
+  },
+  {
+    "id": "1453688412883255369",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:58:45.856000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688412883255369_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688412883255369_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688412883255369_0.png"
+  },
+  {
+    "id": "1453688345673728012",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:58:29.832000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688345673728012_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688345673728012_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688345673728012_0.png"
+  },
+  {
+    "id": "1453688075690578056",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:57:25.463000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688075690578056_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688075690578056_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688075690578056_0.png"
+  },
+  {
+    "id": "1453688035941286073",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:57:15.986000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453688035941286073_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453688035941286073_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453688035941286073_0.png"
+  },
+  {
+    "id": "1453687954106093609",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:56:56.475000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687954106093609_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687954106093609_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687954106093609_0.png"
+  },
+  {
+    "id": "1453687934711500853",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:56:51.851000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687934711500853_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687934711500853_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687934711500853_0.png"
+  },
+  {
+    "id": "1453687533346099220",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:55:16.158000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687533346099220_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687533346099220_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687533346099220_0.png"
+  },
+  {
+    "id": "1453687422998151211",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:54:49.849000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687422998151211_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687422998151211_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687422998151211_0.png"
+  },
+  {
+    "id": "1453687163681247465",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:53:48.023000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687163681247465_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687163681247465_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687163681247465_0.png"
+  },
+  {
+    "id": "1453687078578688131",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:53:27.733000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453687078578688131_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453687078578688131_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453687078578688131_0.png"
+  },
+  {
+    "id": "1453686741495054429",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:52:07.366000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453686741495054429_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453686741495054429_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453686741495054429_0.png"
+  },
+  {
+    "id": "1453686686830825512",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:51:54.333000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453686686830825512_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453686686830825512_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453686686830825512_0.png"
+  },
+  {
+    "id": "1453686606828666891",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:51:35.259000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453686606828666891_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453686606828666891_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453686606828666891_0.png"
+  },
+  {
+    "id": "1453686593583055032",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:51:32.101000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453686593583055032_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453686593583055032_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453686593583055032_0.png"
+  },
+  {
+    "id": "1453685206107295888",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:46:01.301000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453685206107295888_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453685206107295888_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453685206107295888_0.png"
+  },
+  {
+    "id": "1453685087110693047",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:45:32.930000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453685087110693047_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453685087110693047_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453685087110693047_0.png"
+  },
+  {
+    "id": "1453684979170021528",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:45:07.195000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453684979170021528_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453684979170021528_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453684979170021528_0.png"
+  },
+  {
+    "id": "1453684420132474880",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:42:53.910000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453684420132474880_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453684420132474880_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453684420132474880_0.png"
+  },
+  {
+    "id": "1453683795197690001",
+    "title": "https://cdn.discordapp.com/attachments/458435902348328970/1433681345082560603/4x.gif",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:40:24.914000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1453683592726053028",
+    "title": "comes out before 11th anni",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:39:36.641000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1453683458248544389",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:39:04.579000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453683458248544389_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453683458248544389_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453683458248544389_0.png"
+  },
+  {
+    "id": "1453683106409086976",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:37:40.694000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453683106409086976_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453683106409086976_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453683106409086976_0.png"
+  },
+  {
+    "id": "1453682582926524539",
+    "title": "",
+    "desc": "",
+    "date": "Dec 25, 2025",
+    "timestamp": "2025-12-25T09:35:35.886000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1453682582926524539_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1453682582926524539_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1453682582926524539_0.png"
+  },
+  {
+    "id": "1437715007432298529",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:06:09.225000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437715007432298529_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437715007432298529_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437715007432298529_0.png"
+  },
+  {
+    "id": "1437714988436291687",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:06:04.696000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714988436291687_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714988436291687_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714988436291687_0.png"
+  },
+  {
+    "id": "1437714969276842014",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:06:00.128000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714969276842014_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714969276842014_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714969276842014_0.png"
+  },
+  {
+    "id": "1437714943314235403",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:05:53.938000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714943314235403_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714943314235403_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714943314235403_0.png"
+  },
+  {
+    "id": "1437714921709113418",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:05:48.787000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714921709113418_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714921709113418_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714921709113418_0.png"
+  },
+  {
+    "id": "1437714902147137548",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:05:44.123000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714902147137548_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714902147137548_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714902147137548_0.png"
+  },
+  {
+    "id": "1437714881829797898",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:05:39.279000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714881829797898_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714881829797898_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714881829797898_0.png"
+  },
+  {
+    "id": "1437714864935014441",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:05:35.251000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437714864935014441_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437714864935014441_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437714864935014441_0.png"
+  },
+  {
+    "id": "1437713675866603621",
+    "title": "",
+    "desc": "",
+    "date": "Nov 11, 2025",
+    "timestamp": "2025-11-11T08:00:51.755000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1437713675866603621_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1437713675866603621_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1437713675866603621_0.png"
+  },
+  {
+    "id": "1432739109914542140",
+    "title": "every 10 pulls u are guaranteed to get one",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:33:42.809000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1432738834151378956",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:32:37.062000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738834151378956_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738834151378956_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738834151378956_0.png"
+  },
+  {
+    "id": "1432738622230102116",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:31:46.536000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738622230102116_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738622230102116_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738622230102116_0.png"
+  },
+  {
+    "id": "1432738586024870018",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:31:37.904000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738586024870018_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738586024870018_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738586024870018_0.png"
+  },
+  {
+    "id": "1432738375407763549",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:30:47.689000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738375407763549_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738375407763549_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738375407763549_0.png"
+  },
+  {
+    "id": "1432738340913811633",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:30:39.465000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738340913811633_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738340913811633_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738340913811633_0.png"
+  },
+  {
+    "id": "1432738143525666968",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:29:52.404000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738143525666968_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738143525666968_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738143525666968_0.png"
+  },
+  {
+    "id": "1432738108712947814",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:29:44.104000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432738108712947814_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432738108712947814_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432738108712947814_0.png"
+  },
+  {
+    "id": "1432737914181390497",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:28:57.724000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737914181390497_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737914181390497_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737914181390497_0.png"
+  },
+  {
+    "id": "1432737888726155437",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:28:51.655000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737888726155437_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737888726155437_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737888726155437_0.png"
+  },
+  {
+    "id": "1432737732777742548",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:28:14.474000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737732777742548_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737732777742548_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737732777742548_0.png"
+  },
+  {
+    "id": "1432737693778968577",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:28:05.176000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737693778968577_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737693778968577_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737693778968577_0.png"
+  },
+  {
+    "id": "1432737445673439374",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:27:06.023000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737445673439374_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737445673439374_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737445673439374_0.png"
+  },
+  {
+    "id": "1432737126713393293",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:25:49.977000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737126713393293_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737126713393293_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737126713393293_0.png"
+  },
+  {
+    "id": "1432737081310052402",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:25:39.152000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432737081310052402_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432737081310052402_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432737081310052402_0.png"
+  },
+  {
+    "id": "1432736313475334184",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:22:36.086000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432736313475334184_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432736313475334184_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432736313475334184_0.png"
+  },
+  {
+    "id": "1432736123947450389",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:21:50.899000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432736123947450389_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432736123947450389_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432736123947450389_0.png"
+  },
+  {
+    "id": "1432735946704551990",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:21:08.641000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432735946704551990_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432735946704551990_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432735946704551990_0.png"
+  },
+  {
+    "id": "1432735805364768858",
+    "title": "",
+    "desc": "",
+    "date": "Oct 28, 2025",
+    "timestamp": "2025-10-28T14:20:34.943000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1432735805364768858_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1432735805364768858_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1432735805364768858_0.png"
+  },
+  {
+    "id": "1432281167628861530",
+    "title": "<@&1412500265642360923> ",
+    "desc": "code: MANGA \nin the web store for 10 stones",
+    "date": "Oct 27, 2025",
+    "timestamp": "2025-10-27T08:14:00.860000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1431515555092762624",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:31:44.607000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431515555092762624_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431515555092762624_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431515555092762624_0.png"
+  },
+  {
+    "id": "1431515534381416589",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:31:39.669000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431515534381416589_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431515534381416589_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431515534381416589_0.png"
+  },
+  {
+    "id": "1431515528735752244",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:31:38.323000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431515528735752244_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431515528735752244_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431515528735752244_0.png"
+  },
+  {
+    "id": "1431512505594675344",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:19:37.550000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431512505594675344_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431512505594675344_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431512505594675344_0.png"
+  },
+  {
+    "id": "1431512444014166146",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:19:22.868000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431512444014166146_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431512444014166146_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431512444014166146_0.png"
+  },
+  {
+    "id": "1431512414859300976",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:19:15.917000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431512414859300976_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431512414859300976_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431512414859300976_0.png"
+  },
+  {
+    "id": "1431512392369700895",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:19:10.555000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431512392369700895_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431512392369700895_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431512392369700895_0.png"
+  },
+  {
+    "id": "1431512181437894656",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:18:20.265000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431512181437894656_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431512181437894656_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431512181437894656_0.png"
+  },
+  {
+    "id": "1431511886465339402",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:17:09.938000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511886465339402_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511886465339402_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511886465339402_0.png"
+  },
+  {
+    "id": "1431511845977591828",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:17:00.285000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511845977591828_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511845977591828_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511845977591828_0.png"
+  },
+  {
+    "id": "1431511772031881388",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:16:42.655000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511772031881388_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511772031881388_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511772031881388_0.png"
+  },
+  {
+    "id": "1431511737298845758",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:16:34.374000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511737298845758_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511737298845758_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511737298845758_0.png"
+  },
+  {
+    "id": "1431511099362250804",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:14:02.278000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511099362250804_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511099362250804_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511099362250804_0.png"
+  },
+  {
+    "id": "1431511000162762755",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:13:38.627000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431511000162762755_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431511000162762755_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431511000162762755_0.png"
+  },
+  {
+    "id": "1431510983079231609",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:13:34.554000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431510983079231609_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431510983079231609_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431510983079231609_0.png"
+  },
+  {
+    "id": "1431510966088241213",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:13:30.503000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431510966088241213_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431510966088241213_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431510966088241213_0.png"
+  },
+  {
+    "id": "1431510938422607924",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:13:23.907000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431510938422607924_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431510938422607924_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431510938422607924_0.png"
+  },
+  {
+    "id": "1431510604815925321",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:12:04.369000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431510604815925321_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431510604815925321_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431510604815925321_0.png"
+  },
+  {
+    "id": "1431509948306690139",
+    "title": "",
+    "desc": "",
+    "date": "Oct 25, 2025",
+    "timestamp": "2025-10-25T05:09:27.845000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1431509948306690139_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1431509948306690139_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1431509948306690139_0.png"
+  },
+  {
+    "id": "1427574569266450545",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:31:40.366000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427574569266450545_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427574569266450545_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1427574569266450545_0.jpg"
+  },
+  {
+    "id": "1427574316370890784",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:30:40.071000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427574316370890784_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427574316370890784_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1427574316370890784_0.jpg"
+  },
+  {
+    "id": "1427567665085681817",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:04:14.281000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567665085681817_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567665085681817_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567665085681817_0.png"
+  },
+  {
+    "id": "1427567644554432594",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:04:09.386000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567644554432594_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567644554432594_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567644554432594_0.png"
+  },
+  {
+    "id": "1427567359618449408",
+    "title": "◤￣￣￣￣￣￣￣￣\n　近日登場予定！\n＿＿＿＿＿＿＿＿◢\n\n新キャラクターの\nバトル演出を紹介！\n\n#ドッカンバトル #ドラゴンボール",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:03:01.452000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/twitter_vid_1427567359618449408_0.mp4",
+        "type": "video"
+      }
+    ],
+    "images": [
+      "assets/discord-news/twitter_vid_1427567359618449408_0.mp4"
+    ],
+    "banner": "assets/discord-news/twitter_vid_1427567359618449408_0.mp4"
+  },
+  {
+    "id": "1427567318401024061",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:02:51.625000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567318401024061_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567318401024061_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567318401024061_0.png"
+  },
+  {
+    "id": "1427567301154046095",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:02:47.513000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567301154046095_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567301154046095_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567301154046095_0.png"
+  },
+  {
+    "id": "1427567281780822108",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:02:42.894000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567281780822108_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567281780822108_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567281780822108_0.png"
+  },
+  {
+    "id": "1427567275808133200",
+    "title": "",
+    "desc": "",
+    "date": "Oct 14, 2025",
+    "timestamp": "2025-10-14T08:02:41.470000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1427567275808133200_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1427567275808133200_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1427567275808133200_0.png"
+  },
+  {
+    "id": "1415064944872788018",
+    "title": "",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T20:02:53.493000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1415064944872788018_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1415064944872788018_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1415064944872788018_0.png"
+  },
+  {
+    "id": "1415026354688229446",
+    "title": "Yo im a retard",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T17:29:32.876000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1415020493345394719",
+    "title": "Nvm yes i do",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T17:06:15.423000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1415020171856314499",
+    "title": "No i have the broly tho",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T17:04:58.774000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1415020139694264501",
+    "title": "Nah like deadass 100%",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T17:04:51.106000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1415007367124484117",
+    "title": "",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T16:14:05.888000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1415007367124484117_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1415007367124484117_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1415007367124484117_0.png"
+  },
+  {
+    "id": "1414988215852470367",
+    "title": "<@472605023566692382>",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:57:59.869000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414988195946303579",
+    "title": "do younhave him ?",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:57:55.123000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414988170172301405",
+    "title": "brian",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:57:48.978000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414987182631944323",
+    "title": "its actually a fun mode",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:53.530000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414987153389260891",
+    "title": "people complaining about fob",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:46.558000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414987130354143242",
+    "title": "i love dokkan",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:41.066000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414987118308229230",
+    "title": "",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:38.194000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1414987118308229230_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1414987118308229230_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1414987118308229230_0.png"
+  },
+  {
+    "id": "1414987112738197666",
+    "title": "",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:36.866000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1414987112738197666_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1414987112738197666_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1414987112738197666_0.png"
+  },
+  {
+    "id": "1414987030844412007",
+    "title": "just use the teq vegeta",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:17.341000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414987003736489994",
+    "title": "and if you dont got broly",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:10.878000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414986992168468701",
+    "title": "for the broly",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:08.120000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414986984501284996",
+    "title": "an extreme teq mission",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:06.292000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414986970484052159",
+    "title": "yeah",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:53:02.950000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414985706387804170",
+    "title": "So we are getting more missions?",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:48:01.566000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414973737979088896",
+    "title": "<@&1412500265642360923>",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:00:28.075000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414973704877641889",
+    "title": "YES",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:00:20.183000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1414973702461980703",
+    "title": "",
+    "desc": "",
+    "date": "Sep 9, 2025",
+    "timestamp": "2025-09-09T14:00:19.607000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1414973702461980703_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1414973702461980703_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1414973702461980703_0.png"
+  },
+  {
+    "id": "1414115890320113704",
+    "title": "",
+    "desc": "",
+    "date": "Sep 7, 2025",
+    "timestamp": "2025-09-07T05:11:41.255000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1414115890320113704_0.png",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1414115890320113704_0.png"
+    ],
+    "banner": "assets/discord-news/msg_1414115890320113704_0.png"
   }
 ]
