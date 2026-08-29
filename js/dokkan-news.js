@@ -40,6 +40,15 @@ function normalizeDokkanNewsUrl(u) {
     return clean;
 }
 
+function canUseLocalNewsBridge() {
+    return location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+}
+
+function staticNewsUrl(fileName) {
+    // GitHub Pages and browsers can cache JSON for longer than the site files.
+    return `json/${fileName}?v=${Date.now()}`;
+}
+
 class DokkanNewsEngine {
     constructor() {
         this.articles = [];
@@ -155,21 +164,23 @@ class DokkanNewsEngine {
         this.isLoading = true;
         let loadedData = null;
 
-        // Try local Express server first
-        try {
-            const res = await fetch('http://localhost:3001/api/dokkan-news-all', { signal: AbortSignal.timeout(1200) });
-            if (res.ok) {
-                loadedData = await res.json();
-                this.isServerConnected = true;
-                console.log(`[Dokkan News] Connected to local live bridge. Loaded ${loadedData.length} articles.`);
+        // The local bridge only exists while viewing the site from this computer.
+        if (canUseLocalNewsBridge()) {
+            try {
+                const res = await fetch('http://localhost:3001/api/dokkan-news-all', { signal: AbortSignal.timeout(1200) });
+                if (res.ok) {
+                    loadedData = await res.json();
+                    this.isServerConnected = true;
+                    console.log(`[Dokkan News] Connected to local live bridge. Loaded ${loadedData.length} articles.`);
+                }
+            } catch (e) {
+                // Server offline or timed out -> Fallback to static bundled JSON
             }
-        } catch (e) {
-            // Server offline or timed out -> Fallback to static bundled JSON
         }
 
         if (!loadedData) {
             try {
-                const res = await fetch('json/dokkan_news.json');
+                const res = await fetch(staticNewsUrl('dokkan_news.json'), { cache: 'no-store' });
                 if (res.ok) {
                     loadedData = await res.json();
                     console.log(`[Dokkan News] Loaded ${loadedData.length} articles from the static fallback.`);
@@ -230,14 +241,16 @@ class DokkanNewsEngine {
 
         // Load Discord Channel Announcements
         let loadedDiscord = null;
-        try {
-            const dRes = await fetch('http://localhost:3001/api/discord-news', { signal: AbortSignal.timeout(1000) });
-            if (dRes.ok) loadedDiscord = await dRes.json();
-        } catch (e) {}
+        if (canUseLocalNewsBridge()) {
+            try {
+                const dRes = await fetch('http://localhost:3001/api/discord-news', { signal: AbortSignal.timeout(1000) });
+                if (dRes.ok) loadedDiscord = await dRes.json();
+            } catch (e) {}
+        }
 
         if (!loadedDiscord) {
             try {
-                const dRes = await fetch('json/discord_news.json');
+                const dRes = await fetch(staticNewsUrl('discord_news.json'), { cache: 'no-store' });
                 if (dRes.ok) loadedDiscord = await dRes.json();
             } catch (e) {}
         }
