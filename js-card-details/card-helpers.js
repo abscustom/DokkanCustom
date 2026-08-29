@@ -743,7 +743,7 @@ function buildComposedIcon(c, usePlainType = false, forceAwakenedMode = null) {
     const sezaFlameCanvasHtml = isSEZA ? `<canvas class="seza-lwf-border-canvas" data-seza-type="${cType}"></canvas>` : '';
 
     return `
-        <div class="abs-composed-icon ${sezaGlowClass}" ${isSEZA ? `data-seza="true" data-type="${cType}"` : ''}>
+        <div class="abs-composed-icon ${sezaGlowClass}" data-card-type="${cType}" ${isSEZA ? `data-seza="true" data-type="${cType}"` : ''}>
             <img class="card-frame" src="${frameSrc}">
             ${lrSpinHtml}
             ${lrLightningHtml}

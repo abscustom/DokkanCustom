@@ -505,8 +505,12 @@ function getCustomCardRarityFromDoc(doc, htmlText) {
     }
 
     if (doc) {
-        const mainRarityImg = doc.querySelector('#main-rarity-icon, .rarity-icon, #abs-top-rarity-icon, #abs-rarity-icon, [src*="rarity_"]');
-        if (mainRarityImg) {
+        // Only inspect the custom unit's own rarity badges. Generic rarity
+        // selectors can accidentally pick a linking partner or a hidden LR asset.
+        const mainRaritySelectors = ['#main-rarity-icon', '#abs-top-rarity-icon', '#abs-rarity-icon'];
+        for (const selector of mainRaritySelectors) {
+            const mainRarityImg = doc.querySelector(selector);
+            if (!mainRarityImg) continue;
             const src = (mainRarityImg.getAttribute('src') || '').toLowerCase();
             if (src.includes('rarity_lr')) return 'LR';
             if (src.includes('rarity_tur')) return 'TUR';
@@ -528,14 +532,33 @@ function getCustomCardRarityFromDoc(doc, htmlText) {
         }
     }
 
-    if (textLow.includes('mega-colossal') || textLow.includes('ultra super attack') || textLow.includes('rarity_lr')) {
+    if (textLow.includes('mega-colossal') || textLow.includes('ultra super attack')) {
         return 'LR';
     }
-    if (textLow.includes('immense') || textLow.includes('supreme') || textLow.includes('rarity_tur')) {
+    if (textLow.includes('immense') || textLow.includes('supreme')) {
         return 'TUR';
     }
 
     return 'TUR';
+}
+
+function getCustomCardClassFromDoc(doc, htmlText) {
+    const source = htmlText || (doc ? doc.documentElement.innerHTML : '');
+    const classScriptMatch = source.match(/window\.currentClass\s*=\s*["'](super|extreme)["']/i);
+    if (classScriptMatch) return classScriptMatch[1].toLowerCase();
+
+    if (doc) {
+        const typeSelectors = ['#abs-top-type-icon', '#abs-type-icon', '.typing-icon'];
+        for (const selector of typeSelectors) {
+            const typeImg = doc.querySelector(selector);
+            if (!typeImg) continue;
+            const src = (typeImg.getAttribute('src') || '').toLowerCase();
+            if (src.includes('extreme_type')) return 'extreme';
+            if (src.includes('super_type')) return 'super';
+        }
+    }
+
+    return 'super';
 }
 
 async function loadCustomCardsForCalculator() {
@@ -593,6 +616,7 @@ async function loadCustomCardsForCalculator() {
                     cardUrl: cardUrl,
                     thumbUrl: thumbUrl,
                     type: cardType,
+                    cardClass: getCustomCardClassFromDoc(doc, htmlText),
                     rarity: exactRarity,
                     sortTime: Date.now(),
                     htmlText: htmlText
@@ -1519,14 +1543,9 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     }
 
     let htmlText = cardItem.htmlText || doc.documentElement.innerHTML || '';
-    let isLR = (cardItem.rarity === 'LR');
-
-    const rarityImg = doc.querySelector('.rarity-icon, #main-rarity-icon, #abs-rarity-icon, [src*="rarity_"]');
-    if (rarityImg && rarityImg.getAttribute('src').toLowerCase().includes('rarity_lr')) {
-        isLR = true;
-    } else if (doc.querySelector('#img-lr') !== null) {
-        isLR = true;
-    }
+    const exactRarity = getCustomCardRarityFromDoc(doc, htmlText);
+    const isLR = exactRarity === 'LR';
+    cardItem.rarity = exactRarity;
 
     const kiSlider = document.getElementById('calc-ki-slider');
     if (kiSlider) {
@@ -1565,7 +1584,8 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     if (titleEl) titleEl.innerText = doc.querySelector('#char-description, #abs-char-title')?.textContent || 'Custom Unit';
     
     const cardType = cardItem.type || 'agl';
-    const cardClass = doc.querySelector('.typing-icon')?.getAttribute('src')?.includes('extreme') ? 'Extreme' : 'Super';
+    const cardClassKey = cardItem.cardClass || getCustomCardClassFromDoc(doc, htmlText);
+    const cardClass = cardClassKey === 'extreme' ? 'Extreme' : 'Super';
 
     window.currentCalcType = cardType.toUpperCase();
     window.currentCalcClass = cardClass;
@@ -1587,7 +1607,7 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     if (rarityImgUi) rarityImgUi.src = `${CALC_ASSET_URL}rarity_${isLR ? 'LR' : 'TUR'}.png`;
 
     const typeImg = document.getElementById('calc-type-img');
-    if (typeImg) typeImg.src = `${CALC_ASSET_URL}${cardClass}_type_${cardType}.png`;
+    if (typeImg) typeImg.src = `${CALC_ASSET_URL}${cardClassKey}_type_${cardType}.png`;
 
     const awkImg = document.getElementById('calc-awakening-img');
     if (awkImg) awkImg.style.display = isEZA ? 'block' : 'none';
@@ -1787,12 +1807,16 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     if (tabDomain) tabDomain.style.display = (foundDomainDesc && domainWrapper) ? 'flex' : 'none';
 
 
-    let saBlocks = doc.querySelectorAll('#layout-dokkaninfo .sa-block, #abs-sa-container .abs-box, .sa-block');
+    // Published custom pages contain both their source SA blocks and mirrored
+    // display boxes. Read only one representation so each attack appears once.
+    let saBlocks = Array.from(doc.querySelectorAll('#layout-dokkaninfo .sa-block'));
+    if (saBlocks.length === 0) saBlocks = Array.from(doc.querySelectorAll('.sa-block'));
+    if (saBlocks.length === 0) saBlocks = Array.from(doc.querySelectorAll('#abs-sa-container .abs-box'));
     let saBlocksData = [];
     saBlocks.forEach((block, idx) => {
         let textContent = block.textContent || '';
         let typeLabel = block.querySelector('.sa-type-label, .abs-header')?.textContent?.trim() || '';
-        let saName = block.querySelector('.sa-display-name, .abs-sa-title')?.textContent?.trim() || `Skill ${idx + 1}`;
+        let saName = block.querySelector('.sa-display-name, .abs-sa-name-glow, .abs-sa-title-text, .abs-sa-title')?.textContent?.trim() || `Skill ${idx + 1}`;
         
         let isEX = saName.toLowerCase().includes('ex super') || textContent.toLowerCase().includes('ex super') || typeLabel.toLowerCase().includes('ex');
         let isUnitSa = typeLabel.toLowerCase().includes("unit") || saName.toLowerCase().includes("unit");

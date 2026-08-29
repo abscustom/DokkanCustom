@@ -87,6 +87,18 @@
     transform: translate(-50%, -50%) scale(1.4) !important;
 }
 
+/* The editor hover helper is also loaded by the hub. Do not let its blue
+   click-to-edit outline appear around Home or Cards database thumbnails. */
+body #homeCardGrid .char-box .card-icon,
+body #homeCardGrid .char-box .card-icon:hover,
+body #cardGrid .char-box .card-icon,
+body #cardGrid .char-box .card-icon:hover {
+    outline: none !important;
+    outline-offset: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
 /* ==========================================================================
    DOKKAN DOMAIN MODAL / POPOUT VIEWPORT
    ========================================================================== */

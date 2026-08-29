@@ -88,6 +88,7 @@ window.getProjectDataObject = function() {
     });
 
     return {
+        cardSource: window.currentCardSource === 'official' ? 'official' : 'custom',
         currentType: currentType, 
         currentClass: currentClass,
         currentRarity: currentRarity,
@@ -143,6 +144,7 @@ window.exportProjectAsJson = function() {
 
 window.loadProjectData = function(projectData, baseUrl = '') {
     if (!projectData) return;
+    window.currentCardSource = projectData.cardSource === 'official' ? 'official' : 'custom';
     const fixUrl = (src) => {
         if (!src) return "";
         const trimmed = String(src).trim();
@@ -413,18 +415,280 @@ window.importProjectFromJson = function() {
 // IMAGE BLOB & ASSET PROCESSING (REQUIRED FOR GITHUB EXPORT)
 // ============================================================
 
+// Shared app files live in the DokkanCustom GitHub Pages project. Published
+// card folders are still written to the root Pages site by the uploader.
+const PUBLISHED_REPO_ROOT = 'https://abscustom.github.io/DokkanCustom/';
+const PUBLISHED_CARD_SITE_ROOT = 'https://abscustom.github.io/';
+
+const PUBLISHED_SHARED_IMAGE_NAMES = new Set([
+    'frame_agl.png', 'frame_teq.png', 'frame_int.png', 'frame_str.png', 'frame_phy.png', 'frame_none.png',
+    'type_agl.png', 'type_teq.png', 'type_int.png', 'type_str.png', 'type_phy.png', 'type_none.png',
+    'super_type_agl.png', 'super_type_teq.png', 'super_type_int.png', 'super_type_str.png', 'super_type_phy.png',
+    'extreme_type_agl.png', 'extreme_type_teq.png', 'extreme_type_int.png', 'extreme_type_str.png', 'extreme_type_phy.png',
+    'rarity_ssr.png', 'rarity_TUR.png', 'rarity_LR.png', 'rarity_none.png',
+    'rarity_ssr_abs.png', 'rarity_TUR_abs.png', 'rarity_lr_abs.png',
+    'eza_abs.png', 'superza_abs.png', 'eza_img.png', 'supereza_img.png',
+    'z-awaken.png', 'dokkan-awaken.png', 'lr_spin_dial.png', 'lightningfx.webm',
+    'SSR_Icon.png', 'TUR_Icon.png', 'LR_Icon.png', 'default.png', 'abs.custom.png', 'abs.style.png',
+    'dokkan-info-logo.png', 'editor-favicon.png'
+]);
+
+function getPartnerFrameUrl(typeIcon, cardType) {
+    const type = String(cardType || '').toLowerCase();
+    if (!/^(agl|teq|int|str|phy)$/.test(type)) return '';
+
+    const typeUrl = typeIcon?.getAttribute('src') || typeIcon?.src || '';
+    const fromTypeIcon = typeUrl.replace(
+        /(?:super_|extreme_)?type_(agl|teq|int|str|phy)\.png(?:\?.*)?$/i,
+        `frame_${type}.png`
+    );
+    return fromTypeIcon !== typeUrl
+        ? fromTypeIcon
+        : `https://abscustom.github.io/assets/images/frame_${type}.png`;
+}
+
+function preservePublishedPartnerFrames(clone) {
+    clone.querySelectorAll('.partner-card-wrapper .abs-composed-icon').forEach(icon => {
+        const typeIcon = icon.querySelector('.type-icon');
+        const cardType = icon.getAttribute('data-card-type') ||
+            (typeIcon?.getAttribute('src') || '').match(/(?:super_|extreme_)?type_(agl|teq|int|str|phy)\.png/i)?.[1];
+        const frame = icon.querySelector('.card-frame');
+        const frameUrl = getPartnerFrameUrl(typeIcon, cardType);
+        if (frame && frameUrl) frame.setAttribute('src', frameUrl);
+    });
+}
+
+function addPublishedPartnerFrameGuard(clone) {
+    const head = clone.querySelector('head');
+    if (!head || head.querySelector('#published-partner-frame-guard')) return;
+
+    const guard = document.createElement('script');
+    guard.id = 'published-partner-frame-guard';
+    guard.textContent = `
+        (() => {
+            const restorePartnerFrames = () => {
+                document.querySelectorAll('.partner-card-wrapper .abs-composed-icon').forEach(icon => {
+                    const typeIcon = icon.querySelector('.type-icon');
+                    const src = typeIcon?.src || '';
+                    const type = (icon.dataset.cardType || (src.match(/(?:super_|extreme_)?type_(agl|teq|int|str|phy)\\.png/i) || [])[1] || '').toLowerCase();
+                    const frame = icon.querySelector('.card-frame');
+                    if (!frame || !/^(agl|teq|int|str|phy)$/.test(type)) return;
+                    frame.src = src.replace(/(?:super_|extreme_)?type_(agl|teq|int|str|phy)\\.png(?:\\?.*)?$/i, 'frame_' + type + '.png');
+                });
+            };
+            const scheduleRestore = () => {
+                restorePartnerFrames();
+                requestAnimationFrame(restorePartnerFrames);
+                window.setTimeout(restorePartnerFrames, 250);
+                window.setTimeout(restorePartnerFrames, 1000);
+            };
+            if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', scheduleRestore);
+            else scheduleRestore();
+        })();
+    `;
+    head.appendChild(guard);
+}
+
+function configurePublishedCardActions(clone, cardSource) {
+    const importerDock = clone.querySelector('#topbar-importer-dock-wrap');
+    if (!importerDock) return;
+
+    // Published cards are viewers, not editors. Official cards retain a useful
+    // download action so their finished JSON can be saved locally.
+    if (cardSource !== 'official') {
+        importerDock.remove();
+        return;
+    }
+
+    // Keep the download action inside the generated card page. This prevents
+    // a published card from depending on a newer shared editor script.
+    const head = clone.querySelector('head');
+    if (head && !head.querySelector('#published-json-export-handler')) {
+        const exportHandler = document.createElement('script');
+        exportHandler.id = 'published-json-export-handler';
+        exportHandler.textContent = `
+            window.exportPublishedCardJson = async function() {
+                const folderName = String(window.PUBLISHED_SITE_FOLDER || window.location.pathname.split('/').filter(Boolean)[0] || '').replace(/^\\/+|\\/+$/g, '');
+                if (!folderName) return;
+                try {
+                    const response = await fetch(window.location.origin + '/' + folderName + '/card.json', { cache: 'no-store' });
+                    if (!response.ok) throw new Error('Could not load card.json (' + response.status + ')');
+                    const file = await response.blob();
+                    const name = document.getElementById('char-name')?.textContent?.trim() || folderName;
+                    const link = document.createElement('a');
+                    const objectUrl = URL.createObjectURL(file);
+                    link.href = objectUrl;
+                    link.download = 'dokkan_project_' + name + '.json';
+                    document.body.appendChild(link);
+                    link.click();
+                    link.remove();
+                    URL.revokeObjectURL(objectUrl);
+                } catch (error) {
+                    console.error('Published JSON export failed:', error);
+                    alert('Unable to download this card JSON. Please try again.');
+                }
+            };
+        `;
+        head.appendChild(exportHandler);
+    }
+
+    importerDock.id = 'topbar-export-json-dock-wrap';
+    importerDock.innerHTML = `
+        <div class="button-shadow"></div>
+        <button type="button" id="published-export-json-btn" class="glass-btn" onclick="window.exportPublishedCardJson()" title="Export Card JSON" aria-label="Export Card JSON">
+            <span>
+                <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
+                    <path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67 2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"/>
+                </svg>
+            </span>
+        </button>
+    `;
+}
+
+window.exportPublishedCardJson = async function() {
+    const folderName = String(window.PUBLISHED_SITE_FOLDER || '').replace(/^\/+|\/+$/g, '');
+    if (!folderName) {
+        window.exportProjectAsJson();
+        return;
+    }
+
+    try {
+        const response = await fetch(`${PUBLISHED_CARD_SITE_ROOT}${folderName}/card.json`, { cache: 'no-store' });
+        if (!response.ok) throw new Error(`Could not load card.json (${response.status})`);
+
+        const file = await response.blob();
+        const download = document.createElement('a');
+        const name = document.getElementById('char-name')?.textContent?.trim() || folderName;
+        const objectUrl = URL.createObjectURL(file);
+        download.href = objectUrl;
+        download.download = `dokkan_project_${name}.json`;
+        document.body.appendChild(download);
+        download.click();
+        download.remove();
+        URL.revokeObjectURL(objectUrl);
+    } catch (error) {
+        console.error('Published JSON export failed:', error);
+        alert('Unable to download this card JSON. Please try again.');
+    }
+};
+
+function preparePublishedCloneResourcePointers(clone, folderName) {
+    const cleanFolder = String(folderName || '').replace(/^\/+|\/+$/g, '');
+    const cardRoot = `${PUBLISHED_CARD_SITE_ROOT}${cleanFolder}/`;
+    const head = clone.querySelector('head');
+
+    if (head) {
+        let base = head.querySelector('base[data-published-repo-root]');
+        if (!base) {
+            base = document.createElement('base');
+            base.setAttribute('data-published-repo-root', 'true');
+            head.insertBefore(base, head.firstChild);
+        }
+        base.setAttribute('href', PUBLISHED_REPO_ROOT);
+    }
+
+    const normalizeLocalDevUrl = (value) => {
+        const raw = String(value || '').trim();
+        if (!raw) return '';
+        try {
+            const parsed = new URL(raw);
+            if (parsed.hostname === '127.0.0.1' || parsed.hostname === 'localhost') {
+                return `${parsed.pathname.replace(/^\/+/, '')}${parsed.search}${parsed.hash}`;
+            }
+        } catch (e) {}
+        return raw;
+    };
+
+    const pointSharedResource = (element, attribute) => {
+        let value = normalizeLocalDevUrl(element.getAttribute(attribute));
+        if (!value || value.startsWith('#') || value.startsWith('data:') || value.startsWith('blob:')) return;
+        if (/^https?:\/\//i.test(value) || value.startsWith('//')) return;
+        value = value.replace(/^\.\//, '').replace(/^\/+/, '');
+        element.setAttribute(attribute, PUBLISHED_REPO_ROOT + value);
+    };
+
+    clone.querySelectorAll('link[href]').forEach(el => pointSharedResource(el, 'href'));
+    clone.querySelectorAll('script[src]').forEach(el => pointSharedResource(el, 'src'));
+
+    clone.querySelectorAll('a[href]').forEach(anchor => {
+        const raw = anchor.getAttribute('href') || '';
+        const value = normalizeLocalDevUrl(raw);
+        if (value !== raw && value) anchor.setAttribute('href', PUBLISHED_REPO_ROOT + value.replace(/^\/+/, ''));
+    });
+
+    clone.querySelectorAll('img[src]').forEach(img => {
+        let value = normalizeLocalDevUrl(img.getAttribute('src'));
+        if (!value || value.startsWith('data:') || value.startsWith('blob:') || /^https?:\/\//i.test(value) || value.startsWith('//')) return;
+        value = value.replace(/^\.\//, '').replace(/^\/+/, '');
+
+        if (value.startsWith('assets/')) {
+            img.setAttribute('src', PUBLISHED_REPO_ROOT + value);
+            return;
+        }
+
+        if (value.startsWith('images/')) {
+            const fileName = value.split('/').pop().split('?')[0];
+            img.setAttribute('src', PUBLISHED_SHARED_IMAGE_NAMES.has(fileName)
+                ? `${PUBLISHED_REPO_ROOT}assets/images/${fileName}`
+                : cardRoot + value);
+            return;
+        }
+
+        const bareFileName = value.split('/').pop().split('?')[0];
+        if (PUBLISHED_SHARED_IMAGE_NAMES.has(bareFileName)) {
+            img.setAttribute('src', `${PUBLISHED_REPO_ROOT}assets/images/${bareFileName}`);
+        }
+    });
+
+    clone.querySelectorAll('video[src], source[src]').forEach(media => {
+        let value = normalizeLocalDevUrl(media.getAttribute('src'));
+        if (!value || value.startsWith('data:') || value.startsWith('blob:') || /^https?:\/\//i.test(value) || value.startsWith('//')) return;
+        value = value.replace(/^\.\//, '').replace(/^\/+/, '');
+        if (value.startsWith('assets/')) media.setAttribute('src', PUBLISHED_REPO_ROOT + value);
+        else if (value === 'card_art.mp4' || value.startsWith('images/')) media.setAttribute('src', cardRoot + value);
+    });
+
+    clone.querySelectorAll('[data-thumb-src]').forEach(element => {
+        let value = normalizeLocalDevUrl(element.getAttribute('data-thumb-src'));
+        if (!value || value.startsWith('data:') || value.startsWith('blob:') || /^https?:\/\//i.test(value)) return;
+        value = value.replace(/^\.\//, '').replace(/^\/+/, '');
+        if (value.startsWith('images/')) element.setAttribute('data-thumb-src', cardRoot + value);
+        else if (value.startsWith('assets/')) element.setAttribute('data-thumb-src', PUBLISHED_REPO_ROOT + value);
+    });
+}
+
 async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap) {
     const cloneImgs = clone.querySelectorAll('img');
+    const bundledOfficialArt = new Map();
     for (let idx = 0; idx < cloneImgs.length; idx++) {
         const img = cloneImgs[idx];
         const exportName = img.getAttribute('data-export-name');
         const src = img.getAttribute('src') || '';
 
-        if (src.startsWith('blob:') || src.startsWith('data:')) {
-            const blob = await dataUrlToBlob(src);
+        const isMainCardArt = ['abs-art-bg', 'abs-art-char', 'abs-art-effect', 'myOverlayImage', 'abs-art-img', 'abs-thumb-img', 'img-lr'].includes(img.id);
+        const isOfficialCardArt = (img.dataset.officialCardArt === 'true' || isMainCardArt) &&
+            /^https:\/\/images\.weserv\.nl\/\?url=dokkaninfo\.com\/assets\/japan\/character\/(?:card|thumb)\//i.test(src);
+        if (src.startsWith('blob:') || src.startsWith('data:') || isOfficialCardArt) {
+            if (isOfficialCardArt && bundledOfficialArt.has(src)) {
+                img.setAttribute('src', bundledOfficialArt.get(src));
+                continue;
+            }
+
+            let blob = isOfficialCardArt ? null : await dataUrlToBlob(src);
+            if (isOfficialCardArt) {
+                try {
+                    const response = await fetch(src);
+                    blob = response.ok ? await response.blob() : null;
+                } catch (error) {
+                    console.warn('Could not bundle official Dokkan art:', error);
+                    blob = null;
+                }
+            }
             if (blob) {
                 const ext = blob.type.includes('png') ? 'png' : (blob.type.includes('webp') ? 'webp' : 'jpg');
-                const cleanFileName = exportName ? exportName.replace(/^images\//, '') : `img_export_${idx + 1}_${Date.now().toString(36)}.${ext}`;
+                const cleanFileName = exportName
+                    ? exportName.replace(/^images\//, '')
+                    : (isOfficialCardArt ? `official_dokkan_art_${idx + 1}.${ext}` : `img_export_${idx + 1}_${Date.now().toString(36)}.${ext}`);
                 const relPath = `images/${cleanFileName}`;
                 const fullPath = `${basePath}/${relPath}`;
 
@@ -432,12 +696,12 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
                     filesToUpload.push({ path: fullPath, blob });
                     fileMap.set(fullPath, true);
                 }
-                img.setAttribute('src', relPath);
+                const publishedUrl = `${PUBLISHED_CARD_SITE_ROOT}${fullPath}`;
+                img.setAttribute('src', publishedUrl);
+                if (isOfficialCardArt) bundledOfficialArt.set(src, publishedUrl);
             } else if (exportName) {
                 img.setAttribute('src', exportName);
             }
-        } else if (exportName) {
-            img.setAttribute('src', exportName);
         }
     }
 
@@ -457,7 +721,7 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
                     filesToUpload.push({ path: fullPath, blob });
                     fileMap.set(fullPath, true);
                 }
-                formEl.setAttribute('data-thumb-src', relPath);
+                formEl.setAttribute('data-thumb-src', `${PUBLISHED_CARD_SITE_ROOT}${fullPath}`);
             }
         }
     }
@@ -585,15 +849,17 @@ window.checkFolderAvailability = async function(id) {
 
     try {
         const res = await fetch(`https://api.github.com/repos/abscustom/abscustom.github.io/contents/${id}`);
+        const currentId = document.getElementById('upload-folder-id')?.value.trim().toLowerCase() || '';
+        if (currentId !== id) return;
         
         if (res.status === 200) {
             statusIcon.innerHTML = `
-                <svg class="status-icon-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#f59e0b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="20 6 9 17 4 12"></polyline>
+                <svg class="status-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>`;
-            statusMsg.innerText = "Existing card found — will overwrite & update on GitHub.";
-            statusMsg.style.color = "#f59e0b";
-            isFolderAvailable = true;
+            statusMsg.innerText = "A card with this ID already exists. Choose a different name or ID.";
+            statusMsg.style.color = "#ef4444";
+            isFolderAvailable = false;
         } else if (res.status === 404) {
             statusIcon.innerHTML = `
                 <svg class="status-icon-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -603,16 +869,22 @@ window.checkFolderAvailability = async function(id) {
             statusMsg.style.color = "#10b981";
             isFolderAvailable = true;
         } else {
-            statusIcon.innerHTML = `⚠️`;
-            statusMsg.innerText = "API rate limit reached. Proceed with GitHub token.";
-            statusMsg.style.color = "#f59e0b";
-            isFolderAvailable = true; 
+            statusIcon.innerHTML = `
+                <svg class="status-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>`;
+            statusMsg.innerText = "Unable to confirm that this card ID is available. Upload is disabled.";
+            statusMsg.style.color = "#ef4444";
+            isFolderAvailable = false;
         }
     } catch (e) {
-        statusIcon.innerHTML = `⚠️`;
-        statusMsg.innerText = "Network check bypassed. Ready for upload.";
-        statusMsg.style.color = "#f59e0b";
-        isFolderAvailable = true; 
+        statusIcon.innerHTML = `
+            <svg class="status-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+            </svg>`;
+        statusMsg.innerText = "Unable to check this card ID. Upload is disabled until the check succeeds.";
+        statusMsg.style.color = "#ef4444";
+        isFolderAvailable = false;
     }
     
     window.checkUploadFormValidity();
@@ -634,7 +906,10 @@ window.executeGitHubUpload = async function() {
     const githubToken = document.getElementById('upload-github-token').value.trim();
     const rememberBox = document.getElementById('upload-remember-token');
     
-    if (!rawFolderId || !githubToken) return;
+    if (!rawFolderId || !githubToken || !isFolderAvailable) {
+        window.debounceIdCheck();
+        return;
+    }
 
     // Sanitize folder path
     const folderId = rawFolderId.replace(/[^a-z0-9-]/g, '-').replace(/-+/g, '-');
@@ -670,6 +945,20 @@ window.executeGitHubUpload = async function() {
         });
 
         if (!userResponse.ok) throw new Error("Invalid GitHub token or authentication failed");
+
+        // Publishing creates new cards only. Re-check with authentication just
+        // before uploading so a stale availability result can never overwrite
+        // an existing card folder. Existing cards must use Quick Save instead.
+        const existingFolderResponse = await fetch(
+            `https://api.github.com/repos/abscustom/abscustom.github.io/contents/${encodeURIComponent(folderId)}?ref=main`,
+            { headers: { 'Authorization': `token ${githubToken}`, 'Accept': 'application/vnd.github.v3+json' } }
+        );
+        if (existingFolderResponse.status === 200) {
+            throw new Error("A card with this ID already exists. Use Quick Save to update it, or choose a different ID.");
+        }
+        if (existingFolderResponse.status !== 404) {
+            throw new Error("Could not confirm that this card ID is available. Nothing was uploaded.");
+        }
 
         savedInputs.forEach(id => {
             const el = document.getElementById(id);
@@ -710,6 +999,7 @@ window.executeGitHubUpload = async function() {
         const leaderSkill = document.getElementById("leaderInput")?.value || document.getElementById("leader-skill")?.textContent || "";
         const cleanTitle = charTitleRaw.replace(/[\[\]]/g, '').trim();
         const fullDisplayName = cleanTitle ? `[${cleanTitle}] ${charName}` : charName;
+        const cardSource = window.currentCardSource === 'official' ? 'official' : 'custom';
 
         if (clone.querySelector('title')) clone.querySelector('title').innerText = fullDisplayName;
 
@@ -722,6 +1012,7 @@ window.executeGitHubUpload = async function() {
         pubScript.textContent = `
             window.IS_PUBLISHED = true; 
             window.PUBLISHED_SITE_FOLDER = "${basePath}";
+            window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";
@@ -754,25 +1045,26 @@ window.executeGitHubUpload = async function() {
 
         if (window.uploadedArtFile) {
             const fileName = window.uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
+            const publishedArtUrl = `${PUBLISHED_CARD_SITE_ROOT}${basePath}/${fileName}`;
             if (window.uploadedArtType === 'video') {
                 const videoSource = clone.querySelector('#myOverlayVideo source');
                 const videoTag = clone.querySelector('#myOverlayVideo');
-                if (videoSource) videoSource.setAttribute('src', fileName);
-                if (videoTag) videoTag.setAttribute('src', fileName);
+                if (videoSource) videoSource.setAttribute('src', publishedArtUrl);
+                if (videoTag) videoTag.setAttribute('src', publishedArtUrl);
             } else {
                 const imageTag = clone.querySelector('#myOverlayImage');
-                if (imageTag) imageTag.setAttribute('src', fileName);
+                if (imageTag) imageTag.setAttribute('src', publishedArtUrl);
             }
         }
 
         const frameImg = clone.querySelector('.card-frame');
-        if (frameImg) frameImg.src = `images/frame_${currentType}.png`;
+        if (frameImg) frameImg.src = `${PUBLISHED_REPO_ROOT}assets/images/frame_${currentType}.png`;
 
         const rarityIcon = clone.querySelector('#main-rarity-icon');
-        if (rarityIcon) rarityIcon.src = `images/rarity_${currentRarity}.png`;
+        if (rarityIcon) rarityIcon.src = `${PUBLISHED_REPO_ROOT}assets/images/rarity_${currentRarity}.png`;
 
         const typeIcon = clone.querySelector('.typing-icon');
-        if (typeIcon) typeIcon.src = `images/${currentClass}_type_${currentType}.png`;
+        if (typeIcon) typeIcon.src = `${PUBLISHED_REPO_ROOT}assets/images/${currentClass}_type_${currentType}.png`;
 
         const dbLayoutClone = clone.querySelector('#layout-abs-style');
         if (dbLayoutClone) {
@@ -793,10 +1085,14 @@ window.executeGitHubUpload = async function() {
             dbLayoutClone.style.setProperty('--theme-glow', colors.glow);
         }
 
+        preservePublishedPartnerFrames(clone);
+        addPublishedPartnerFrameGuard(clone);
+        configurePublishedCardActions(clone, cardSource);
+
         const toRemove = [
             '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#icon-picker-modal', 
-            '#glass-upload-modal', '#card-admin-modal', '#topbar-card-admin-dock-wrap',
-            '#main-autosave-indicator', '#hud-loading-spinner', '#editor', 
+            '#glass-upload-modal', '#card-admin-modal', '#topbar-card-admin-dock-wrap', '#topbar-card-delete-dock-wrap',
+            '#admin-export-json-btn', '#main-autosave-indicator', '#hud-loading-spinner', '#editor',
             '#toggleBtn', '#topbar-theme-switcher', '.scouter-menu-btn'
         ];
         toRemove.forEach(sel => { clone.querySelectorAll(sel).forEach(el => el.remove()); });
@@ -857,8 +1153,7 @@ jobs:
         });
 
         await processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap);
-
-        await processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap);
+        preparePublishedCloneResourcePointers(clone, basePath);
 
         if (window.uploadedArtFile) {
             const fileName = window.uploadedArtType === 'video' ? "card_art.mp4" : "card_art.png";
@@ -956,6 +1251,9 @@ window.executeQuickSave = async function() {
         const owner = "abscustom";
         const repo = "abscustom.github.io";
         const folderName = window.PUBLISHED_SITE_FOLDER || window.location.pathname.split('/')[1] || "card";
+        const cardSource = window.PUBLISHED_CARD_SOURCE === 'official' || window.currentCardSource === 'official'
+            ? 'official'
+            : 'custom';
 
         savedInputs.forEach(id => {
             const el = document.getElementById(id);
@@ -989,10 +1287,14 @@ window.executeQuickSave = async function() {
         const cloneExportJson = clone.querySelector('#admin-export-json-btn');
         if (cloneExportJson) cloneExportJson.style.display = "none";
 
+        preservePublishedPartnerFrames(clone);
+        addPublishedPartnerFrameGuard(clone);
+
         const filesToUpload = [];
         const fileMap = new Map();
 
         await processCloneImagesForUpload(clone, folderName, filesToUpload, fileMap);
+        preparePublishedCloneResourcePointers(clone, folderName);
 
         const currentLetter = window.currentHubFormLetter || clone.querySelector('meta[name="hub-id"]')?.getAttribute('content') || "a";
 
@@ -1005,6 +1307,7 @@ window.executeQuickSave = async function() {
         pubScript.textContent = `
             window.IS_PUBLISHED = true; 
             window.PUBLISHED_SITE_FOLDER = "${folderName}";
+            window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";
@@ -1019,10 +1322,12 @@ window.executeQuickSave = async function() {
             cloneBody.classList.remove('admin-mode-active');
         }
 
+        configurePublishedCardActions(clone, cardSource);
+
         const toRemove = [
             '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#icon-picker-modal', 
-            '#glass-upload-modal', 
-            '#main-autosave-indicator', '#hud-loading-spinner', '#editor', 
+            '#glass-upload-modal', '#card-admin-modal', '#topbar-card-admin-dock-wrap', '#topbar-card-delete-dock-wrap',
+            '#admin-export-json-btn', '#main-autosave-indicator', '#hud-loading-spinner', '#editor',
             '#toggleBtn', '#topbar-theme-switcher', '.scouter-menu-btn'
         ];
         toRemove.forEach(sel => { clone.querySelectorAll(sel).forEach(el => el.remove()); });

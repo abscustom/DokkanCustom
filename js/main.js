@@ -1095,100 +1095,190 @@ async function updateCharacterBox() {
 }
 
 // ==========================================================================
-// DOKKAN CREATORS & STREAMERS LIVE STATUS TRACKER
+// DOKKAN STREAMERS: SINGLE SELECTABLE LIVE PREVIEW
 // ==========================================================================
 
 const DOKKAN_STREAMER_CHANNELS = [
-    { username: 'theironcane', displayName: 'Iron', platform: 'twitch' },
-    { username: 'datruthdt', displayName: 'DaTruthDT', platform: 'twitch' },
-    { username: 'toonrami', displayName: 'Toon', platform: 'twitch' },
-    { username: 'slaybix', displayName: 'Slay', platform: 'twitch' },
-    { username: 'Nanogenix', displayName: 'Nano', platform: 'twitch' },
-    { username: 'Goresh', displayName: 'Goresh', platform: 'youtube', channelUrl: 'https://www.youtube.com/@Goresh', avatar: 'https://unavatar.io/youtube/Goresh' },
+    { twitch: 'theironcane', youtube: 'ironcane', displayName: 'Iron' },
+    { twitch: 'datruthdt', youtube: 'datruthdt', displayName: 'DaTruthDT' },
+    { twitch: 'toonrami', youtube: 'ToonRami', displayName: 'Toon' },
+    { twitch: 'slaybix', youtube: 'slaybix', displayName: 'Slay' },
+    { twitch: 'nanogenix', youtube: 'Nanogenix', displayName: 'Nano' },
+    { youtube: 'Goresh', displayName: 'Goresh', youtubeOnly: true },
 ];
+
+const MAX_SELECTED_STREAMERS = 4;
+let selectedStreamerIndexes = [];
+let latestStreamerData = DOKKAN_STREAMER_CHANNELS.map((streamer, originalIndex) => ({
+    ...streamer,
+    originalIndex,
+    isLive: false,
+    avatar: streamer.youtubeOnly ? `https://unavatar.io/youtube/${streamer.youtube}` : null,
+}));
+
+function renderSelectedStreamerPreview() {
+    const preview = document.getElementById('streamersLivePreview');
+    if (!preview) return;
+
+    document.querySelectorAll('.streamer-card-pill[data-streamer-index]').forEach((pill) => {
+        const isSelected = selectedStreamerIndexes.includes(Number(pill.dataset.streamerIndex));
+        pill.classList.toggle('is-selected', isSelected);
+        pill.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
+    });
+
+    const selectedStreamers = selectedStreamerIndexes
+        .map((index) => latestStreamerData.find((item) => item.originalIndex === index))
+        .filter(Boolean);
+
+    if (selectedStreamers.length === 0) {
+        preview.innerHTML = '';
+        return;
+    }
+
+    const parent = encodeURIComponent(window.location.hostname || 'localhost');
+    preview.innerHTML = selectedStreamers.map((streamer) => {
+        const twitchUrl = streamer.twitch ? `https://www.twitch.tv/${streamer.twitch}` : '';
+        const youtubeUrl = `https://www.youtube.com/@${streamer.youtube}`;
+        const channelLinks = `
+            <span class="streamer-preview-channel-links">
+                ${twitchUrl ? `<a href="${twitchUrl}" target="_blank" rel="noopener noreferrer">Twitch ↗</a>` : ''}
+                <a href="${youtubeUrl}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
+            </span>`;
+
+        if (streamer.youtubeOnly) {
+            return `
+                <article class="streamer-live-preview is-youtube-preview">
+                    <div class="streamer-live-preview-heading">
+                        <strong>${streamer.displayName}</strong>
+                        ${channelLinks}
+                    </div>
+                    <a class="streamer-youtube-preview-link" href="${youtubeUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open ${streamer.displayName} on YouTube">
+                        <img src="${streamer.avatar || ''}" alt="${streamer.displayName}">
+                        <span>Open YouTube channel ↗</span>
+                    </a>
+                </article>`;
+        }
+
+        const liveLabel = streamer.isLive
+            ? '<span class="streamer-selected-live-label"><span class="live-dot"></span>LIVE NOW</span>'
+            : '<span class="streamer-selected-live-label is-offline">OFFLINE</span>';
+
+        return `
+            <article class="streamer-live-preview">
+                <div class="streamer-live-preview-heading">
+                    <strong>${streamer.displayName}</strong>
+                    ${liveLabel}
+                    ${channelLinks}
+                </div>
+                <div class="streamer-player-shell">
+                    <iframe src="https://player.twitch.tv/?channel=${encodeURIComponent(streamer.twitch)}&parent=${parent}&autoplay=true&muted=true" title="${streamer.displayName} Twitch stream" allow="autoplay; fullscreen" allowfullscreen loading="eager"></iframe>
+                </div>
+            </article>`;
+    }).join('');
+}
+
+function toggleStreamerPreview(index) {
+    const selectedPosition = selectedStreamerIndexes.indexOf(index);
+    if (selectedPosition >= 0) {
+        selectedStreamerIndexes.splice(selectedPosition, 1);
+    } else {
+        if (selectedStreamerIndexes.length >= MAX_SELECTED_STREAMERS) {
+            selectedStreamerIndexes.shift();
+        }
+        selectedStreamerIndexes.push(index);
+    }
+    renderSelectedStreamerPreview();
+}
+
+function renderStreamerPills(streamerData) {
+    const track = document.getElementById('streamersHorizontalTrack');
+    if (!track) return;
+
+    track.innerHTML = streamerData.map((streamer) => {
+        const initial = streamer.displayName.charAt(0).toUpperCase();
+        const avatarClass = `streamer-avatar-circle${streamer.youtubeOnly ? ' is-yt-avatar' : ''}`;
+        const avatarHtml = streamer.avatar
+            ? `<img src="${streamer.avatar}" alt="${streamer.displayName}" class="${avatarClass}" style="object-fit: cover;" onerror="this.outerHTML='<span class=\\'${avatarClass}\\'>${initial}</span>';">`
+            : `<span class="${avatarClass}">${initial}</span>`;
+
+        const statusBadge = streamer.youtubeOnly
+            ? '<span class="streamer-live-status is-youtube">YOUTUBE</span>'
+            : streamer.isLive
+                ? '<span class="streamer-live-status is-live"><span class="live-dot"></span>LIVE</span>'
+                : '<span class="streamer-live-status is-offline">OFFLINE</span>';
+        const isSelected = selectedStreamerIndexes.includes(streamer.originalIndex);
+
+        return `
+            <button type="button" class="streamer-card-pill ${streamer.youtubeOnly ? 'is-youtube-pill' : ''} ${streamer.isLive ? 'live-pill-glow' : ''} ${isSelected ? 'is-selected' : ''}" data-streamer-index="${streamer.originalIndex}" onclick="toggleStreamerPreview(${streamer.originalIndex})" aria-label="${isSelected ? 'Hide' : 'Show'} ${streamer.displayName}'s stream" aria-pressed="${isSelected}">
+                ${avatarHtml}
+                <span class="streamer-pill-name">${streamer.displayName}</span>
+                ${statusBadge}
+            </button>`;
+    }).join('');
+
+    renderSelectedStreamerPreview();
+}
+
+window.toggleStreamerPreview = toggleStreamerPreview;
 
 async function updateTwitchStreamersStatus() {
     const track = document.getElementById('streamersHorizontalTrack');
     if (!track) return;
 
+    renderStreamerPills(latestStreamerData);
+
     try {
         const results = await Promise.allSettled(
-            DOKKAN_STREAMER_CHANNELS.map(async (s, originalIndex) => {
-                if (s.platform === 'youtube') {
+            DOKKAN_STREAMER_CHANNELS.map(async (streamer, originalIndex) => {
+                if (streamer.youtubeOnly) {
                     return {
-                        ...s,
+                        ...streamer,
                         originalIndex,
                         isLive: false,
-                        isYoutube: true,
-                        link: s.channelUrl || `https://www.youtube.com/@${s.username}`,
-                        avatar: s.avatar || `https://unavatar.io/youtube/${s.username}`,
+                        avatar: `https://unavatar.io/youtube/${streamer.youtube}`,
                     };
                 }
 
                 try {
                     const [uptimeRes, avatarRes] = await Promise.allSettled([
-                        fetch(`https://decapi.me/twitch/uptime/${s.username}`).then(r => r.text()),
-                        fetch(`https://decapi.me/twitch/avatar/${s.username}`).then(r => r.text())
+                        fetch(`https://decapi.me/twitch/uptime/${streamer.twitch}`).then((response) => response.text()),
+                        fetch(`https://decapi.me/twitch/avatar/${streamer.twitch}`).then((response) => response.text()),
                     ]);
 
                     const uptimeText = (uptimeRes.status === 'fulfilled' ? uptimeRes.value : '').trim();
                     const avatarUrl = (avatarRes.status === 'fulfilled' ? avatarRes.value : '').trim();
-
-                    const isOffline = !uptimeText || uptimeText.toLowerCase().includes('offline') || uptimeText.toLowerCase().includes('not found') || uptimeText.toLowerCase().includes('error');
-                    const isLive = !isOffline;
+                    const statusText = uptimeText.toLowerCase();
+                    const isLive = Boolean(uptimeText)
+                        && !statusText.includes('offline')
+                        && !statusText.includes('not found')
+                        && !statusText.includes('error');
 
                     return {
-                        ...s,
+                        ...streamer,
                         originalIndex,
                         isLive,
-                        isYoutube: false,
-                        link: `https://twitch.tv/${s.username}`,
                         uptime: isLive ? uptimeText : null,
-                        avatar: (avatarUrl.startsWith('http')) ? avatarUrl : null,
+                        avatar: avatarUrl.startsWith('http') ? avatarUrl : null,
                     };
-                } catch (err) {
-                    return { ...s, originalIndex, isLive: false, isYoutube: false, link: `https://twitch.tv/${s.username}`, avatar: null };
+                } catch (error) {
+                    return { ...streamer, originalIndex, isLive: false, avatar: null };
                 }
-            })
+            }),
         );
 
-        const streamerData = results.map((r, i) => r.status === 'fulfilled' ? r.value : { ...DOKKAN_STREAMER_CHANNELS[i], originalIndex: i, isLive: false, avatar: null });
+        latestStreamerData = results.map((result, index) => result.status === 'fulfilled'
+            ? result.value
+            : { ...DOKKAN_STREAMER_CHANNELS[index], originalIndex: index, isLive: false, avatar: null });
 
-        // Maintain custom order, with active live streams bumped to front
-        streamerData.sort((a, b) => {
-            if (a.isLive && !b.isLive) return -1;
-            if (!a.isLive && b.isLive) return 1;
-            return a.originalIndex - b.originalIndex;
+        latestStreamerData.sort((first, second) => {
+            if (first.isLive && !second.isLive) return -1;
+            if (!first.isLive && second.isLive) return 1;
+            return first.originalIndex - second.originalIndex;
         });
 
-        track.innerHTML = streamerData.map(s => {
-            const initial = s.displayName.charAt(0).toUpperCase();
-            const avatarHtml = s.avatar 
-                ? `<img src="${s.avatar}" alt="${s.displayName}" class="streamer-avatar-circle ${s.isYoutube ? 'is-yt-avatar' : ''}" style="object-fit: cover;" onerror="this.outerHTML='<span class=\\'streamer-avatar-circle ${s.isYoutube ? 'is-yt-avatar' : ''}\\'>${initial}</span>';">`
-                : `<span class="streamer-avatar-circle ${s.isYoutube ? 'is-yt-avatar' : ''}">${initial}</span>`;
-
-            let statusBadge = '';
-            if (s.isYoutube) {
-                statusBadge = `<span class="streamer-live-status is-youtube">
-                    <svg class="yt-badge-icon" width="11" height="11" viewBox="0 0 24 24" fill="currentColor"><path d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/></svg>
-                    YOUTUBE
-                </span>`;
-            } else if (s.isLive) {
-                statusBadge = `<span class="streamer-live-status is-live"><span class="live-dot"></span>LIVE</span>`;
-            } else {
-                statusBadge = `<span class="streamer-live-status is-offline">OFFLINE</span>`;
-            }
-
-            return `
-                <a href="${s.link}" target="_blank" rel="noopener noreferrer" class="streamer-card-pill ${s.isYoutube ? 'is-youtube-pill' : ''} ${s.isLive ? 'live-pill-glow' : ''}">
-                    ${avatarHtml}
-                    <span class="streamer-pill-name">${s.displayName}</span>
-                    ${statusBadge}
-                </a>
-            `;
-        }).join('');
-    } catch (e) {
-        console.warn("Creators Status Check Failed:", e);
+        renderStreamerPills(latestStreamerData);
+    } catch (error) {
+        console.warn('Streamers status check failed:', error);
     }
 }
 

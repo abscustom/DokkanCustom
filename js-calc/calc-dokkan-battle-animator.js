@@ -2,7 +2,7 @@
    absCustom - Dokkan Super Attack Banner Engine (Direct Command Resolver)
    ========================================================================== */
 
-import { LwfPackPlayer } from '../js3/lwf-pack.js';
+import { LwfPackPlayer } from '../js-graphics/lwf-pack.js';
 
 const DUMMY_PNG_DATA_URL = 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=';
 
@@ -41,10 +41,10 @@ class DokkanBattleAnimator {
 
         return new Promise((resolve) => {
             const script = document.createElement('script');
-            script.src = 'js3/lwf.js';
+            script.src = 'js-graphics/lwf.js';
             script.onload = () => resolve(true);
             script.onerror = () => {
-                console.error("Could not load js3/lwf.js");
+                console.error("Could not load js-graphics/lwf.js");
                 resolve(false);
             };
             document.head.appendChild(script);

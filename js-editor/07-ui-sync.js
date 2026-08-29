@@ -70,7 +70,11 @@ window.updateIconImages = function() {
         img.src = typeImageUrls[currentType];
     });
 
-    document.querySelectorAll(".card-frame").forEach(f => f.src = frameMap[currentType]);
+    // Partner cards have their own types. Do not recolor those frames when
+    // the main card's theme changes.
+    document.querySelectorAll(".card-frame").forEach(f => {
+        if (!f.closest('.partner-card-wrapper')) f.src = frameMap[currentType];
+    });
 
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();

@@ -441,11 +441,13 @@ window.syncToAbsLayout = function() {
         const lrThumb = document.getElementById('img-lr');
         const turThumb = document.getElementById('img-tur');
         const ssrThumb = document.getElementById('img-ssr');
-        let thumbImg = '';
-        if (isLR) thumbImg = lrThumb ? lrThumb.src : '';
-        else if (activeRarity === 'TUR') thumbImg = turThumb ? turThumb.src : '';
-        else if (activeRarity === 'SSR') thumbImg = ssrThumb ? ssrThumb.src : '';
-        else thumbImg = (turThumb ? turThumb.src : '') || (ssrThumb ? ssrThumb.src : '') || (lrThumb ? lrThumb.src : '');
+        // Imported exchange forms retain their exact portrait here; the
+        // progression thumbnails below intentionally still represent the base route.
+        let thumbImg = window.currentCardThumbnail || '';
+        if (!thumbImg && isLR) thumbImg = lrThumb ? lrThumb.src : '';
+        else if (!thumbImg && activeRarity === 'TUR') thumbImg = turThumb ? turThumb.src : '';
+        else if (!thumbImg && activeRarity === 'SSR') thumbImg = ssrThumb ? ssrThumb.src : '';
+        else if (!thumbImg) thumbImg = (turThumb ? turThumb.src : '') || (ssrThumb ? ssrThumb.src : '') || (lrThumb ? lrThumb.src : '');
         
         const dbThumbImg = document.getElementById('abs-thumb-img');
         if (dbThumbImg && thumbImg) dbThumbImg.src = thumbImg;

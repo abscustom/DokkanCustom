@@ -136,6 +136,8 @@ window.resetEditorCache = function() {
  * Used prior to importing cards (official or custom) to guarantee a pristine slate.
  */
 window.clearEditorForCleanImport = function() {
+    window.currentCardThumbnail = '';
+
     // 1. Remove dynamic SA & Active blocks
     document.querySelectorAll(".sa-block, .active-block").forEach(el => el.remove());
 

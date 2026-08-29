@@ -19,7 +19,8 @@
         token: '',
         cards: [],
         busy: false,
-        linkMode: 'single'
+        linkMode: 'single',
+        activeTool: 'link'
     };
 
     function setStatus(message, type = '') {
@@ -141,11 +142,6 @@
         };
     }
 
-    function cardOption(card) {
-        const title = card.title ? `[${card.title}] ` : '';
-        return `<option value="${escapeHtml(card.slug)}">${escapeHtml(title + card.name)} — ${escapeHtml(card.slug)}</option>`;
-    }
-
     function selectedCard(selectId) {
         const slug = document.getElementById(selectId)?.value;
         return state.cards.find(card => card.slug === slug) || null;
@@ -204,22 +200,55 @@
     window.updateCardAdminDeleteHint = function () {
         const select = document.getElementById('card-admin-delete-select');
         const input = document.getElementById('card-admin-delete-confirm');
+        renderPreview('card-admin-delete-preview', selectedCard('card-admin-delete-select'));
         if (input) {
             input.value = '';
             input.placeholder = select?.value ? `Type ${select.value}` : 'Select a card first';
         }
     };
 
+    function renderDeletePicker() {
+        const picker = document.getElementById('card-admin-delete-picker');
+        const selectedSlug = document.getElementById('card-admin-delete-select')?.value || '';
+        if (!picker) return;
+
+        picker.innerHTML = state.cards.map(card => `
+            <button type="button" class="card-admin-delete-choice ${card.slug === selectedSlug ? 'is-selected' : ''}" data-card-admin-delete="${escapeHtml(card.slug)}" onclick="window.selectCardAdminDeleteCard(this.dataset.cardAdminDelete)" role="option" aria-selected="${card.slug === selectedSlug}">
+                <img src="${escapeHtml(card.thumb)}" alt="" onerror="this.src='https://abscustom.github.io/assets/images/default.png'">
+                <span class="card-admin-delete-choice-name" title="${escapeHtml(card.name)}">${escapeHtml(card.name)}</span>
+                <span class="card-admin-delete-choice-slug">${escapeHtml(card.slug)}</span>
+            </button>`).join('');
+
+        window.filterCardAdminDeleteCards(document.getElementById('card-admin-delete-filter')?.value || '');
+    }
+
+    window.selectCardAdminDeleteCard = function (slug) {
+        const select = document.getElementById('card-admin-delete-select');
+        if (!select || !state.cards.some(card => card.slug === slug)) return;
+        select.value = slug;
+        renderDeletePicker();
+        window.updateCardAdminDeleteHint();
+    };
+
+    window.filterCardAdminDeleteCards = function (query) {
+        const normalized = String(query || '').trim().toLowerCase();
+        document.querySelectorAll('#card-admin-delete-picker [data-card-admin-delete]').forEach(item => {
+            const card = state.cards.find(entry => entry.slug === item.dataset.cardAdminDelete);
+            const haystack = `${card?.name || ''} ${card?.title || ''} ${card?.slug || ''}`.toLowerCase();
+            item.hidden = Boolean(normalized && !haystack.includes(normalized));
+        });
+    };
+
     function populateCardSelectors() {
-        const options = state.cards.map(cardOption).join('');
         const baseSelect = document.getElementById('card-admin-base-select');
         const deleteSelect = document.getElementById('card-admin-delete-select');
 
         if (baseSelect) baseSelect.value = state.cards[0]?.slug || '';
-        if (deleteSelect) deleteSelect.innerHTML = options;
+        if (deleteSelect) deleteSelect.value = state.cards[0]?.slug || '';
 
         renderBaseChecklist();
         renderMultiFormChecklist();
+        renderDeletePicker();
         window.updateCardAdminPreviews();
         window.updateCardAdminDeleteHint();
     }
@@ -303,10 +332,18 @@
         window.updateCardAdminPreviews();
     };
 
-    window.openCardAdminModal = function () {
+    window.openCardAdminModal = function (tool = 'link') {
         const modal = document.getElementById('card-admin-modal');
         const tokenInput = document.getElementById('card-admin-token');
         const tools = document.getElementById('card-admin-tools');
+        const linkSection = document.getElementById('card-admin-link-section');
+        const deleteSection = document.getElementById('card-admin-delete-section');
+        const title = document.getElementById('card-admin-title');
+        state.activeTool = tool === 'delete' ? 'delete' : 'link';
+
+        if (linkSection) linkSection.style.display = state.activeTool === 'link' ? '' : 'none';
+        if (deleteSection) deleteSection.style.display = state.activeTool === 'delete' ? '' : 'none';
+        if (title) title.textContent = state.activeTool === 'delete' ? 'Delete Custom Card' : 'Link Custom Cards';
         if (tokenInput) tokenInput.value = localStorage.getItem('gh_token') || '';
         if (tools) tools.style.display = 'none';
         if (modal) modal.style.display = 'flex';

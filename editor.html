@@ -226,7 +226,7 @@
 <div id="card-admin-modal" class="glass-modal-overlay card-admin-overlay" style="display: none;">
     <div class="glass-modal-content card-admin-dialog">
         <div class="glass-modal-header">
-            <h2 class="gui-title m-0">Custom Card Admin</h2>
+            <h2 id="card-admin-title" class="gui-title m-0">Link Custom Cards</h2>
             <button type="button" class="gui-close" onclick="window.closeCardAdminModal()">×</button>
         </div>
         <div class="glass-modal-body card-admin-body">
@@ -241,7 +241,7 @@
             <div id="card-admin-status" class="card-admin-status">Enter your GitHub token to unlock the custom-card tools.</div>
 
             <div id="card-admin-tools" style="display: none;">
-            <section class="card-admin-section mt-3">
+            <section id="card-admin-link-section" class="card-admin-section mt-3">
                 <h3>Link One or More Forms</h3>
                 <p>Choose one main card, then select one or more linked forms. Every selected card receives a link back to the main card.</p>
                 <div class="card-admin-link-grid">
@@ -272,11 +272,14 @@
                 </div>
             </section>
 
-            <section class="card-admin-section card-admin-danger-section">
+            <section id="card-admin-delete-section" class="card-admin-section card-admin-danger-section">
                 <h3>Delete Custom Character</h3>
                 <p>This permanently deletes the selected card folder from GitHub and removes admin-created links pointing to it.</p>
                 <label class="form-label">Character</label>
-                <select id="card-admin-delete-select" class="glass-form-control" onchange="window.updateCardAdminDeleteHint()"></select>
+                <input type="hidden" id="card-admin-delete-select">
+                <input id="card-admin-delete-filter" class="glass-form-control" type="search" placeholder="Search characters to delete..." oninput="window.filterCardAdminDeleteCards(this.value)">
+                <div id="card-admin-delete-picker" class="card-admin-delete-picker" role="listbox" aria-label="Choose a character to delete"></div>
+                <div id="card-admin-delete-preview" class="card-admin-preview card-admin-delete-preview"></div>
                 <label class="form-label mt-3">Separate delete password</label>
                 <input type="password" id="card-admin-delete-password" class="glass-form-control" autocomplete="current-password" placeholder="Delete password">
                 <label class="form-label mt-3">Type the folder name to confirm</label>
@@ -449,10 +452,21 @@
 
                     <div class="button-wrap glass-btn-wrap" id="topbar-card-admin-dock-wrap">
                         <div class="button-shadow"></div>
-                        <button type="button" id="cardAdminBtn" class="glass-btn" onclick="window.openCardAdminModal()" title="Manage Uploaded Custom Cards">
+                        <button type="button" id="cardAdminBtn" class="glass-btn" onclick="window.openCardAdminModal('link')" title="Link uploaded custom cards" aria-label="Link uploaded custom cards">
                             <span>
                                 <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
                                     <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58-1.92-3.32-2.39.96a7.2 7.2 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18c-.58.24-1.12.55-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58a7.43 7.43 0 0 0-.05.94c0 .32.02.63.05.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.7 1.62.94l.36 3.18h3.84l.36-3.18c.58-.24 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58zM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5z"/>
+                                </svg>
+                            </span>
+                        </button>
+                    </div>
+
+                    <div class="button-wrap glass-btn-wrap" id="topbar-card-delete-dock-wrap">
+                        <div class="button-shadow"></div>
+                        <button type="button" id="cardDeleteBtn" class="glass-btn" onclick="window.openCardAdminModal('delete')" title="Delete uploaded custom cards" aria-label="Delete uploaded custom cards">
+                            <span>
+                                <svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor">
+                                    <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 12H7L6 9zm4 3v6h2v-6h-2zm4 0v6h2v-6h-2z"/>
                                 </svg>
                             </span>
                         </button>

@@ -170,6 +170,21 @@ function parseTitleAndName(card) {
     return { title: title || "", name: cleanName || rawName };
 }
 
+// Exchange forms do not always follow the simple 4xxxxxx -> 1xxxxxx ID
+// pattern. Their database parent is the reliable source for shared art.
+function getOfficialParentFolderId(card) {
+    const rawId = parseInt(card?.id, 10) || 0;
+    const ownFolderId = Math.floor(rawId / 10) * 10;
+    const isTransformed = rawId >= 4000000 && rawId < 5000000;
+    if (!isTransformed) return ownFolderId;
+
+    const parentId = parseInt(card?.parent_id, 10) || 0;
+    if (parentId > 0 && parentId !== rawId) return Math.floor(parentId / 10) * 10;
+
+    // Kept only for older/incomplete database entries that do not provide a parent.
+    return Math.floor((1000000 + (rawId % 1000000)) / 10) * 10;
+}
+
 /**
  * Fetch custom cards from ABS GitHub repository with caching
  */
@@ -577,7 +592,7 @@ window.renderImporterGrid = function() {
         const rawId = parseInt(c.id, 10);
         const folderId = Math.floor(rawId / 10) * 10;
         const isTrans = rawId >= 4000000 && rawId < 5000000;
-        const parentFolderId = isTrans ? Math.floor((1000000 + (rawId % 1000000)) / 10) * 10 : folderId;
+        const parentFolderId = getOfficialParentFolderId(c.rawCard || c);
 
         const frameSrc = `${window.CENTRAL_ASSET_URL}frame_${c.type || 'agl'}.png`;
         const thumbUrl = c.thumbUrl || `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
@@ -706,6 +721,9 @@ window.openVariantSelectionModal = function(cardItem) {
 window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'none') {
     if (!cardItem || !cardItem.rawCard) return;
 
+    // Keep the published-card action appropriate for cards imported from the official database.
+    window.currentCardSource = 'official';
+
     // Reset editor to pristine clean slate
     if (typeof window.clearEditorForCleanImport === 'function') {
         window.clearEditorForCleanImport();
@@ -719,7 +737,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const rawId = parseInt(raw.id, 10);
     const folderId = Math.floor(rawId / 10) * 10;
     const isTrans = rawId >= 4000000 && rawId < 5000000;
-    const parentFolderId = isTrans ? Math.floor((1000000 + (rawId % 1000000)) / 10) * 10 : folderId;
+    const parentFolderId = getOfficialParentFolderId(raw);
     const bgFolderId = isTrans ? parentFolderId : folderId;
 
     const isEZA = awakeningMode === 'eza' || awakeningMode === 'seza';
@@ -1208,6 +1226,10 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const effectUrl = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/card/${folderId}/card_${folderId}_effect.png`;
     const thumbUrl = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
 
+    // Keep the header portrait tied to this exact card. Exchange cards share
+    // an awakening route, whose base thumbnail must not replace this one.
+    window.currentCardThumbnail = thumbUrl;
+
     const imgOverlay = document.getElementById('myOverlayImage');
     const absArt = document.getElementById('abs-art-img');
     const imageInput = document.getElementById('imageInput');
@@ -1219,21 +1241,30 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     if (absArtBg) {
         delete absArtBg.dataset.failed;
         absArtBg.src = bgUrl;
+        absArtBg.dataset.officialCardArt = 'true';
         absArtBg.style.display = 'block';
     }
     if (absArtChar) {
         delete absArtChar.dataset.failed;
         absArtChar.src = charUrl;
+        absArtChar.dataset.officialCardArt = 'true';
         absArtChar.style.display = 'block';
     }
     if (absArtEffect) {
         delete absArtEffect.dataset.failed;
         absArtEffect.src = effectUrl;
+        absArtEffect.dataset.officialCardArt = 'true';
         absArtEffect.style.display = 'block';
     }
 
-    if (imgOverlay) imgOverlay.src = charUrl || bgUrl;
-    if (absArt) absArt.src = charUrl || bgUrl;
+    if (imgOverlay) {
+        imgOverlay.src = charUrl || bgUrl;
+        imgOverlay.dataset.officialCardArt = 'true';
+    }
+    if (absArt) {
+        absArt.src = charUrl || bgUrl;
+        absArt.dataset.officialCardArt = 'true';
+    }
     if (imageInput) imageInput.value = charUrl || bgUrl;
 
     // 10. SSR, TUR, LR PROGRESSION THUMBNAILS RESOLUTION (Exact Unit Network)
@@ -1242,8 +1273,14 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const imgLr = document.getElementById('img-lr');
     const absThumb = document.getElementById('abs-thumb-img');
 
-    if (absThumb) absThumb.src = thumbUrl;
-    if (imgLr) imgLr.src = thumbUrl;
+    if (absThumb) {
+        absThumb.src = thumbUrl;
+        absThumb.dataset.officialCardArt = 'true';
+    }
+    if (imgLr) {
+        imgLr.src = thumbUrl;
+        imgLr.dataset.officialCardArt = 'true';
+    }
 
     if (typeof getFullUnitNetwork === 'function') {
         const network = getFullUnitNetwork(raw);
@@ -1259,9 +1296,9 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
                 if (progRar === 'TUR' || (idx === 1 && network.baseProgression.length >= 2 && progRar !== 'SSR')) {
                     if (imgTur) imgTur.src = pThumb;
                 }
-                if (progRar === 'LR' && imgLr && isLRUnit) {
-                    if (imgLr) imgLr.src = pThumb;
-                }
+                // img-lr is the main header icon, not an awakening-row icon.
+                // It was already set to the exact selected card above; replacing
+                // it with the base route here breaks reversible-exchange LRs.
             });
         }
     }
@@ -1317,6 +1354,10 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
 window.executeCustomCardImport = async function(cardItem) {
     if (!cardItem) return;
 
+    // A card imported from the community hub should never inherit the official-card export action.
+    window.currentCardSource = 'custom';
+    window.currentCardThumbnail = '';
+
     // Reset editor to pristine clean slate
     if (typeof window.clearEditorForCleanImport === 'function') {
         window.clearEditorForCleanImport();
@@ -1367,6 +1408,7 @@ window.executeCustomCardImport = async function(cardItem) {
             const projectData = await jRes.json();
             if (window.loadProjectData) {
                 window.loadProjectData(projectData, cardItem.cardUrl);
+                window.currentCardSource = 'custom';
                 const folderInput = document.getElementById('upload-folder-id');
                 if (folderInput) folderInput.value = cardItem.id;
                 window.editorPartnerCardId = cardItem.id;
@@ -1409,6 +1451,7 @@ window.executeCustomCardImport = async function(cardItem) {
             try {
                 const projectData = JSON.parse(backupScript.textContent);
                 window.loadProjectData(projectData, cardItem.cardUrl);
+                window.currentCardSource = 'custom';
                 const folderInput = document.getElementById('upload-folder-id');
                 if (folderInput) folderInput.value = cardItem.id;
                 window.editorPartnerCardId = cardItem.id;
