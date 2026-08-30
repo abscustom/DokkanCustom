@@ -134,13 +134,34 @@ function getLinkSkillBuffs(linkName, linkObj) {
     return buffs;
 }
 
+window.normalizeLinkSkillName = function(linkName, loose = false) {
+    let normalized = String(linkName || '')
+        .normalize('NFKD')
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')
+        .replace(/[‘’`´]/g, "'")
+        .replace(/[‐‑‒–—―]/g, '-')
+        .replace(/&amp;/gi, '&')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+
+    // Older card exports sometimes differ only by punctuation (for example,
+    // “Z-Fighters” vs “Z Fighters”). Keep this as a fallback after the
+    // normal name match so every official link can still resolve its effect.
+    if (loose) normalized = normalized.replace(/[^\p{L}\p{N}]+/gu, '');
+    return normalized;
+};
+
 window.getLinkSkillLevel10Description = function(linkName, linkItem = null) {
-    const normalizedName = String(linkName || '').trim().toLowerCase();
+    const normalizedName = window.normalizeLinkSkillName(linkName);
+    const looseName = window.normalizeLinkSkillName(linkName, true);
     let linkObj = typeof linkItem === 'object' && linkItem !== null ? linkItem : null;
     if (!linkObj && window.DB?.links) {
-        linkObj = Object.values(window.DB.links).find(link =>
-            String(link?.name || '').trim().toLowerCase() === normalizedName
-        ) || null;
+        const links = Object.values(window.DB.links);
+        linkObj = window.DB.links[String(linkName)] ||
+            links.find(link => window.normalizeLinkSkillName(link?.name) === normalizedName) ||
+            links.find(link => window.normalizeLinkSkillName(link?.name, true) === looseName) ||
+            null;
     }
     return String(
         linkObj?.levels?.['10'] ||

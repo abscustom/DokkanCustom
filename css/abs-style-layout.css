@@ -783,7 +783,7 @@
 }
 
 #abs-composed-icon .rarity-icon {
-    position: absolute !important; bottom: -15px !important; left: -20px !important; height: 48px !important; width: auto !important; z-index: 5 !important;
+    position: absolute !important; bottom: -16px !important; left: -29px !important; height: 52px !important; width: auto !important; z-index: 5 !important;
 }
 
 #abs-composed-icon .type-icon {
