@@ -118,19 +118,19 @@ window.updateRarityStats = function(rarityName) {
     const canShowTur = showTurProgression && hasCustomTur && rarityName === 'LR';
 
     if (rarityName === "LR") {
-        lightningEffects.forEach(lightning => lightning.style.display = 'block');
-        spinDials.forEach(spinDial => spinDial.style.display = 'block');
+        lightningEffects.forEach(lightning => lightning.style.setProperty('display', 'block', 'important'));
+        spinDials.forEach(spinDial => spinDial.style.setProperty('display', 'block', 'important'));
         document.querySelectorAll('.sa-20-bonus').forEach(el => el.style.display = 'block');
     } else {
-        lightningEffects.forEach(lightning => lightning.style.display = 'none');
-        spinDials.forEach(spinDial => spinDial.style.display = 'none');
+        lightningEffects.forEach(lightning => lightning.style.setProperty('display', 'none', 'important'));
+        spinDials.forEach(spinDial => spinDial.style.setProperty('display', 'none', 'important'));
         document.querySelectorAll('.sa-20-bonus').forEach(el => el.style.display = 'none');
     }
 
     const ssrColumn = ssrRow?.closest('.col');
-    if (ssrColumn) ssrColumn.style.display = canShowSsr ? 'block' : 'none';
-    if (turRow) turRow.style.display = canShowTur ? 'block' : 'none';
-    if (awkWrapper) awkWrapper.style.display = (canShowSsr || canShowTur) ? 'flex' : 'none';
+    if (ssrColumn) ssrColumn.style.setProperty('display', canShowSsr ? 'block' : 'none', canShowSsr ? '' : 'important');
+    if (turRow) turRow.style.setProperty('display', canShowTur ? 'block' : 'none', canShowTur ? '' : 'important');
+    if (awkWrapper) awkWrapper.style.setProperty('display', (canShowSsr || canShowTur) ? 'flex' : 'none', (canShowSsr || canShowTur) ? '' : 'important');
 
     const stats = rarityStats[rarityName];
     if (stats) {

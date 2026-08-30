@@ -796,6 +796,140 @@ function preparePublishedCloneResourcePointers(clone, folderName) {
     });
 }
 
+function applyPublishedCardVisibility(clone, rarityName, showSsrProgression, showTurProgression) {
+    const rarity = String(rarityName || 'none').toUpperCase();
+    const hide = element => element?.style.setProperty('display', 'none', 'important');
+
+    if (rarity !== 'LR') {
+        clone.querySelectorAll('.lightning-overlay, .lr-spin-dial').forEach(hide);
+    }
+
+    const ssrColumn = clone.querySelector('#ssr-row')?.closest('.col');
+    const turRow = clone.querySelector('#tur-row');
+    const canUseSsrStage = showSsrProgression && (rarity === 'TUR' || rarity === 'LR');
+    const canUseTurStage = showTurProgression && rarity === 'LR';
+    if (!canUseSsrStage) hide(ssrColumn);
+    if (!canUseTurStage) hide(turRow);
+    if (!canUseSsrStage && !canUseTurStage) hide(clone.querySelector('#awakening-progression-wrapper'));
+
+    if (!showSsrProgression) {
+        clone.querySelectorAll('#abs-awakenings-container .abs-awaken-row:has(.rarity-icon[src*="rarity_ssr_abs"])').forEach(hide);
+    }
+    if (!showTurProgression || rarity !== 'LR') {
+        clone.querySelectorAll('#abs-awakenings-container .abs-awaken-row:has(.rarity-icon[src*="rarity_TUR_abs"])').forEach(hide);
+    }
+    if (!canUseSsrStage && !canUseTurStage) hide(clone.querySelector('#abs-awakenings-box'));
+}
+
+function addPublishedCardVisibilityGuard(clone, rarityName, showSsrProgression, showTurProgression) {
+    const head = clone.querySelector('head');
+    if (!head) return;
+    let script = head.querySelector('#published-card-visibility-guard');
+    if (!script) {
+        script = document.createElement('script');
+        script.id = 'published-card-visibility-guard';
+        head.appendChild(script);
+    }
+    const rarity = String(rarityName || 'none').toUpperCase();
+    script.textContent = `
+        (() => {
+            const rarity = ${JSON.stringify(rarity)};
+            const showSsr = ${showSsrProgression === true};
+            const showTur = ${showTurProgression === true};
+            const hide = element => element?.style.setProperty('display', 'none', 'important');
+            const applyPublishedVisibility = () => {
+                if (rarity !== 'LR') {
+                    document.querySelectorAll('.lightning-overlay, .lr-spin-dial').forEach(hide);
+                }
+                const canUseSsrStage = showSsr && (rarity === 'TUR' || rarity === 'LR');
+                const canUseTurStage = showTur && rarity === 'LR';
+                if (!canUseSsrStage) hide(document.querySelector('#ssr-row')?.closest('.col'));
+                if (!canUseTurStage) hide(document.getElementById('tur-row'));
+                if (!canUseSsrStage && !canUseTurStage) {
+                    hide(document.getElementById('awakening-progression-wrapper'));
+                    hide(document.getElementById('abs-awakenings-box'));
+                }
+                if (!showSsr) {
+                    document.querySelectorAll('#abs-awakenings-container .abs-awaken-row:has(.rarity-icon[src*="rarity_ssr_abs"])').forEach(hide);
+                }
+                if (!showTur || rarity !== 'LR') {
+                    document.querySelectorAll('#abs-awakenings-container .abs-awaken-row:has(.rarity-icon[src*="rarity_TUR_abs"])').forEach(hide);
+                }
+            };
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', applyPublishedVisibility);
+            } else {
+                applyPublishedVisibility();
+            }
+            [0, 50, 300, 1000].forEach(delay => window.setTimeout(applyPublishedVisibility, delay));
+        })();
+    `;
+}
+
+function repairPublishedSelfFormLinks(clone, cardName, folderName) {
+    const normalizedName = String(cardName || '').trim().replace(/\s+/g, ' ').toLowerCase();
+    if (!normalizedName) return;
+    const selfUrl = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(folderName)}/`;
+    const normalizeImage = value => {
+        if (!value) return '';
+        try {
+            const url = new URL(value, selfUrl);
+            url.hash = '';
+            url.search = '';
+            return decodeURIComponent(url.href).toLowerCase();
+        } catch (e) {
+            return String(value).trim().replace(/[?#].*$/, '').toLowerCase();
+        }
+    };
+    const currentThumbs = [
+        clone.querySelector('#abs-thumb-img')?.getAttribute('src'),
+        clone.querySelector('#img-lr')?.getAttribute('src')
+    ].filter(Boolean).map(normalizeImage);
+    if (!currentThumbs.length) return;
+
+    const getNodeName = (node, nameSelector) => String(node.querySelector(nameSelector)?.textContent || '').trim().replace(/\s+/g, ' ').toLowerCase();
+    const matchesCurrentThumb = (node, imageSelector) => {
+        const nodeThumbs = [
+            node.getAttribute('data-thumb-src'),
+            node.querySelector(imageSelector)?.getAttribute('src')
+        ].filter(Boolean).map(normalizeImage);
+        return nodeThumbs.some(thumb => currentThumbs.includes(thumb));
+    };
+    const repairGroup = (selector, nameSelector, imageSelector, linkSelector) => {
+        const nameMatches = Array.from(clone.querySelectorAll(selector))
+            .filter(node => getNodeName(node, nameSelector) === normalizedName);
+        const exactMatches = nameMatches.filter(node => matchesCurrentThumb(node, imageSelector));
+        const matches = exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []);
+        matches.forEach(node => {
+            const link = node.querySelector(linkSelector);
+            if (!link) return;
+            link.setAttribute('href', selfUrl);
+            link.setAttribute('target', '_self');
+        });
+    };
+
+    repairGroup('#forms-container .dokkan-card', '.form-name-display, .form-name', '.form-image', '.form-link');
+    repairGroup('#abs-transformations-container .abs-transform-row', '.abs-transform-name', '.thumb-img', '.abs-transform-link');
+}
+
+function syncPublishedFormsDataFromClone(projectData, clone) {
+    if (!projectData) return;
+    projectData.formsData = Array.from(clone.querySelectorAll('#forms-container .dokkan-card')).map(form => {
+        const image = form.querySelector('.form-image');
+        const linkedSlug = form.getAttribute('data-admin-linked-slug');
+        return {
+            imageSrc: image?.getAttribute('src') || form.getAttribute('data-thumb-src') || '',
+            imageExportName: image?.getAttribute('data-export-name') || '',
+            thumbSrc: form.getAttribute('data-thumb-src') || image?.getAttribute('src') || '',
+            name: form.querySelector('.form-name-display, .form-name')?.textContent?.trim() || '',
+            link: form.querySelector('.form-link')?.getAttribute('href') || 'javascript:void(0)',
+            ...(linkedSlug ? { adminLinkedSlug: linkedSlug } : {})
+        };
+    });
+    projectData.containers = projectData.containers || {};
+    projectData.containers.forms = clone.querySelector('#forms-container')?.innerHTML || '';
+}
+
 async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap) {
     const cloneImgs = clone.querySelectorAll('img');
     const bundledOfficialArt = new Map();
@@ -1140,6 +1274,9 @@ window.executeGitHubUpload = async function() {
         const fullDisplayName = cleanTitle ? `[${cleanTitle}] ${charName}` : charName;
         const cardSource = window.currentCardSource === 'official' ? 'official' : 'custom';
         const publishedUnitTag = window.absUnitTag ?? clone.querySelector('#abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
+        const publishedRarity = String(window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity || 'none').toUpperCase();
+        const publishedShowSsr = window.showSsrProgression !== false;
+        const publishedShowTur = window.showTurProgression !== false;
 
         if (clone.querySelector('title')) clone.querySelector('title').innerText = fullDisplayName;
 
@@ -1154,12 +1291,12 @@ window.executeGitHubUpload = async function() {
             window.PUBLISHED_SITE_FOLDER = "${basePath}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
-            window.showAwakeningProgression = ${window.showAwakeningProgression !== false};
-            window.showSsrProgression = ${window.showSsrProgression !== false};
-            window.showTurProgression = ${window.showTurProgression !== false};
+            window.showAwakeningProgression = ${publishedShowSsr || publishedShowTur};
+            window.showSsrProgression = ${publishedShowSsr};
+            window.showTurProgression = ${publishedShowTur};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
-            window.currentRarity = "${currentRarity}";
+            window.currentRarity = "${publishedRarity}";
             window.currentAwakeningMode = "${currentAwakeningMode}";
             window.currentCardThemeStyle = "${window.currentCardThemeStyle || 'dokkaninfo'}";
             window.PUBLISHED_EDITOR_ART_MODE = "${window.currentEditorArtMode || 'static'}";
@@ -1212,7 +1349,7 @@ window.executeGitHubUpload = async function() {
         if (frameImg) frameImg.src = `${PUBLISHED_SHARED_ASSET_ROOT}frame_${currentType}.png`;
 
         const rarityIcon = clone.querySelector('#main-rarity-icon');
-        if (rarityIcon) rarityIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}rarity_${currentRarity}.png`;
+        if (rarityIcon) rarityIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}rarity_${publishedRarity}.png`;
 
         const typeIcon = clone.querySelector('.typing-icon');
         if (typeIcon) typeIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}${currentClass}_type_${currentType}.png`;
@@ -1239,6 +1376,9 @@ window.executeGitHubUpload = async function() {
         preservePublishedPartnerFrames(clone);
         addPublishedPartnerFrameGuard(clone);
         configurePublishedCardActions(clone, cardSource);
+        applyPublishedCardVisibility(clone, publishedRarity, publishedShowSsr, publishedShowTur);
+        addPublishedCardVisibilityGuard(clone, publishedRarity, publishedShowSsr, publishedShowTur);
+        repairPublishedSelfFormLinks(clone, charName, basePath);
 
         const toRemove = [
             '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#icon-picker-modal', 
@@ -1305,6 +1445,7 @@ jobs:
 
         await processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap);
         preparePublishedCloneResourcePointers(clone, basePath);
+        repairPublishedSelfFormLinks(clone, charName, basePath);
         setPublishedSocialPreviewImage(clone, getPublishedCardPreviewImage(clone), Date.now());
 
         if (uploadedImageFile) {
@@ -1332,6 +1473,11 @@ jobs:
                 projectData.cardArtVideo = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(`${basePath}/card_art.mp4`)}`;
             }
             projectData.editorArtMode = window.currentEditorArtMode || (uploadedVideoFile ? 'animated' : 'static');
+            projectData.currentRarity = publishedRarity;
+            projectData.showSsrProgression = publishedShowSsr;
+            projectData.showTurProgression = publishedShowTur;
+            projectData.showAwakeningProgression = publishedShowSsr || publishedShowTur;
+            syncPublishedFormsDataFromClone(projectData, clone);
             filesToUpload.push({
                 path: `${basePath}/card.json`,
                 blob: new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' })
@@ -1420,6 +1566,10 @@ window.executeQuickSave = async function() {
             ? 'official'
             : 'custom';
         const publishedUnitTag = window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
+        const publishedRarity = String(window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity || 'none').toUpperCase();
+        const publishedShowSsr = window.showSsrProgression !== false;
+        const publishedShowTur = window.showTurProgression !== false;
+        const publishedCardName = document.getElementById('nameInput')?.value || document.getElementById('char-name')?.textContent || '';
 
         savedInputs.forEach(id => {
             const el = document.getElementById(id);
@@ -1455,12 +1605,16 @@ window.executeQuickSave = async function() {
 
         preservePublishedPartnerFrames(clone);
         addPublishedPartnerFrameGuard(clone);
+        applyPublishedCardVisibility(clone, publishedRarity, publishedShowSsr, publishedShowTur);
+        addPublishedCardVisibilityGuard(clone, publishedRarity, publishedShowSsr, publishedShowTur);
+        repairPublishedSelfFormLinks(clone, publishedCardName, folderName);
 
         const filesToUpload = [];
         const fileMap = new Map();
 
         await processCloneImagesForUpload(clone, folderName, filesToUpload, fileMap);
         preparePublishedCloneResourcePointers(clone, folderName);
+        repairPublishedSelfFormLinks(clone, publishedCardName, folderName);
         setPublishedSocialPreviewImage(clone, getPublishedCardPreviewImage(clone), Date.now());
 
         let pubScript = clone.querySelector('#pub-site-marker');
@@ -1474,12 +1628,12 @@ window.executeQuickSave = async function() {
             window.PUBLISHED_SITE_FOLDER = "${folderName}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
-            window.showAwakeningProgression = ${window.showAwakeningProgression !== false};
-            window.showSsrProgression = ${window.showSsrProgression !== false};
-            window.showTurProgression = ${window.showTurProgression !== false};
+            window.showAwakeningProgression = ${publishedShowSsr || publishedShowTur};
+            window.showSsrProgression = ${publishedShowSsr};
+            window.showTurProgression = ${publishedShowTur};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
-            window.currentRarity = "${currentRarity}";
+            window.currentRarity = "${publishedRarity}";
             window.currentAwakeningMode = "${currentAwakeningMode}";
             window.currentCardThemeStyle = "${window.currentCardThemeStyle || 'dokkaninfo'}";
             window.PUBLISHED_EDITOR_ART_MODE = "${window.currentEditorArtMode || 'static'}";
@@ -1508,6 +1662,11 @@ window.executeQuickSave = async function() {
 
         const projectData = (typeof window.getProjectDataObject === 'function') ? window.getProjectDataObject() : null;
         if (projectData) {
+            projectData.currentRarity = publishedRarity;
+            projectData.showSsrProgression = publishedShowSsr;
+            projectData.showTurProgression = publishedShowTur;
+            projectData.showAwakeningProgression = publishedShowSsr || publishedShowTur;
+            syncPublishedFormsDataFromClone(projectData, clone);
             filesToUpload.push({
                 path: `${folderName}/card.json`,
                 blob: new Blob([JSON.stringify(projectData, null, 2)], { type: 'application/json' })

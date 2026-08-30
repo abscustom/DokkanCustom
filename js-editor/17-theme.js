@@ -473,12 +473,14 @@ window.syncToAbsLayout = function() {
 
         const topLightning = document.getElementById('abs-lightning');
         if (topLightning) {
-            topLightning.style.display = (isLR || isSEZA) ? 'block' : 'none';
+            // The top-card lightning is an LR effect. SEZA keeps its own flame
+            // treatment without making a TUR look like an LR.
+            topLightning.style.setProperty('display', isLR ? 'block' : 'none', 'important');
             topLightning.style.setProperty('--lightning-color', isSEZA && !isLR ? 'rgb(255, 30, 80)' : (lightningColors[window.currentType || currentType] || 'rgb(0, 150, 255)'));
         }
 
         const spinDial = document.getElementById('abs-spin-dial');
-        if (spinDial) spinDial.style.display = isLR ? 'block' : 'none';
+        if (spinDial) spinDial.style.setProperty('display', isLR ? 'block' : 'none', 'important');
 
         const topComposedIcon = document.getElementById('abs-composed-icon');
         if (topComposedIcon) {
@@ -837,7 +839,15 @@ window.syncToAbsLayout = function() {
                 }
             });
             const awakeningsBox = document.getElementById('abs-awakenings-box');
-            const hasVisibleProgression = awakenCont.querySelector('.rarity-icon[src*="rarity_ssr_abs"], .rarity-icon[src*="rarity_TUR_abs"]');
+            // The current TUR/LR icon is the destination card, not a separate
+            // progression box. Only an uploaded lower-rarity stage keeps this
+            // section visible.
+            const hasVisibleProgression = activeRarity === 'TUR'
+                ? (hasCustomSsr && window.showSsrProgression !== false)
+                : (activeRarity === 'LR' && (
+                    (hasCustomSsr && window.showSsrProgression !== false)
+                    || (hasCustomTur && window.showTurProgression !== false)
+                ));
             if (awakeningsBox) awakeningsBox.style.display = hasVisibleProgression ? '' : 'none';
 
             if (typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachSezaFlameBorder) {

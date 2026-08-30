@@ -406,10 +406,103 @@
         }
     };
 
+    function normalizeCardIdentityText(value) {
+        return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+    }
+
+    function normalizeComparableImage(value, repoPath) {
+        if (!value) return '';
+        try {
+            const url = new URL(value, `${SITE_ROOT}${encodeRepoPath(repoPath)}/`);
+            url.hash = '';
+            url.search = '';
+            return decodeURIComponent(url.href).toLowerCase();
+        } catch (e) {
+            return String(value).trim().replace(/[?#].*$/, '').toLowerCase();
+        }
+    }
+
+    function nodeMatchesCard(node, card, kind) {
+        const nameElement = kind === 'abs'
+            ? node.querySelector('.abs-transform-name')
+            : node.querySelector('.form-name-display, .form-name');
+        const imageElement = kind === 'abs'
+            ? node.querySelector('.thumb-img')
+            : node.querySelector('.form-image');
+        const nodeName = normalizeCardIdentityText(nameElement?.textContent);
+        const cardName = normalizeCardIdentityText(card.name);
+        const possibleThumbs = [
+            node.getAttribute('data-thumb-src'),
+            imageElement?.getAttribute('src')
+        ].filter(Boolean).map(value => normalizeComparableImage(value, card.repoPath));
+        const cardThumb = normalizeComparableImage(card.thumb, card.repoPath);
+        return !!nodeName && nodeName === cardName && !!cardThumb && possibleThumbs.includes(cardThumb);
+    }
+
+    function nodeMatchesCardName(node, card, kind) {
+        const nameElement = kind === 'abs'
+            ? node.querySelector('.abs-transform-name')
+            : node.querySelector('.form-name-display, .form-name');
+        return normalizeCardIdentityText(nameElement?.textContent) === normalizeCardIdentityText(card.name);
+    }
+
+    function setNodeCardLink(node, card, kind, adopted = false) {
+        const anchor = node.querySelector(kind === 'abs' ? '.abs-transform-link' : '.form-link');
+        if (!anchor) return;
+        if (adopted && !node.hasAttribute('data-admin-previous-href')) {
+            node.setAttribute('data-admin-link-adopted', 'true');
+            node.setAttribute('data-admin-previous-href', anchor.getAttribute('href') || '');
+        }
+        anchor.setAttribute('href', card.url);
+        anchor.setAttribute('target', '_self');
+        node.setAttribute('data-admin-linked-slug', card.slug);
+    }
+
+    function repairCurrentCardLinks(doc, sourceCard) {
+        const repairNodes = (selector, kind, linkSelector) => {
+            const nodes = Array.from(doc.querySelectorAll(selector));
+            const exactMatches = nodes.filter(node => nodeMatchesCard(node, sourceCard, kind));
+            const nameMatches = exactMatches.length
+                ? exactMatches
+                : nodes.filter(node => nodeMatchesCardName(node, sourceCard, kind));
+            const matches = exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []);
+            matches.forEach(node => {
+                const anchor = node.querySelector(linkSelector);
+                if (!anchor) return;
+                anchor.setAttribute('href', sourceCard.url);
+                anchor.setAttribute('target', '_self');
+            });
+        };
+        repairNodes('#forms-container .dokkan-card', 'info', '.form-link');
+        repairNodes('#abs-transformations-container .abs-transform-row', 'abs', '.abs-transform-link');
+    }
+
+    function normalizeTransformDividers(container) {
+        if (!container) return;
+        const children = Array.from(container.children);
+        children.forEach((node, index) => {
+            if (!node.classList.contains('abs-transform-divider')) return;
+            const previous = children[index - 1];
+            const next = children[index + 1];
+            if (!previous?.classList.contains('abs-transform-row') || !next?.classList.contains('abs-transform-row')) {
+                node.remove();
+            }
+        });
+    }
+
     function removeLinkedCardNodes(doc, targetSlug) {
         let removed = false;
         Array.from(doc.querySelectorAll('[data-admin-linked-slug]')).forEach(node => {
             if (node.getAttribute('data-admin-linked-slug') !== targetSlug) return;
+            if (node.getAttribute('data-admin-link-adopted') === 'true') {
+                const anchor = node.querySelector('.form-link, .abs-transform-link');
+                if (anchor) anchor.setAttribute('href', node.getAttribute('data-admin-previous-href') || 'javascript:void(0)');
+                node.removeAttribute('data-admin-linked-slug');
+                node.removeAttribute('data-admin-link-adopted');
+                node.removeAttribute('data-admin-previous-href');
+                removed = true;
+                return;
+            }
             if (node.classList.contains('abs-transform-row')) {
                 const prev = node.previousElementSibling;
                 const next = node.nextElementSibling;
@@ -422,6 +515,7 @@
 
         const transContainer = doc.getElementById('abs-transformations-container');
         const transBox = doc.getElementById('abs-transformations-box');
+        normalizeTransformDividers(transContainer);
         if (transContainer && !transContainer.querySelector('.abs-transform-row')) {
             transContainer.innerHTML = '';
             transBox?.classList.add('d-none');
@@ -444,7 +538,11 @@
 
         const formsContainer = doc.getElementById('forms-container');
         const formsWrapper = doc.getElementById('forms-card-wrapper');
-        if (formsContainer) {
+        const matchingInfoForm = Array.from(formsContainer?.querySelectorAll('.dokkan-card') || [])
+            .find(node => nodeMatchesCard(node, targetCard, 'info'));
+        if (matchingInfoForm) {
+            setNodeCardLink(matchingInfoForm, targetCard, 'info', true);
+        } else if (formsContainer) {
             formsContainer.insertAdjacentHTML('beforeend', `
                 <div class="row bg-${sourceType} dokkan-card admin-linked-form" data-thumb-src="${targetThumb}" data-admin-linked-slug="${targetSlug}">
                     <div class="col" style="padding: 8px 0 !important;">
@@ -463,7 +561,12 @@
 
         const transContainer = doc.getElementById('abs-transformations-container');
         const transBox = doc.getElementById('abs-transformations-box');
-        if (transContainer) {
+        const matchingAbsForm = Array.from(transContainer?.querySelectorAll('.abs-transform-row') || [])
+            .find(node => nodeMatchesCard(node, targetCard, 'abs'));
+        if (matchingAbsForm) {
+            setNodeCardLink(matchingAbsForm, targetCard, 'abs', true);
+            transBox?.classList.remove('d-none');
+        } else if (transContainer) {
             if (transContainer.querySelector('.abs-transform-row')) {
                 transContainer.insertAdjacentHTML('beforeend', '<div class="abs-transform-divider" data-admin-link-divider="true"></div>');
             }
@@ -486,7 +589,9 @@
     function updateLinkedHtml(htmlText, sourceCard, targetCard, shouldLink) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         removeLinkedCardNodes(doc, targetCard.slug);
+        repairCurrentCardLinks(doc, sourceCard);
         if (shouldLink) addLinkedCardNodes(doc, sourceCard, targetCard);
+        repairCurrentCardLinks(doc, sourceCard);
         return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
     }
 
@@ -505,20 +610,20 @@
             return jsonText;
         }
 
-        const forms = Array.isArray(data.formsData) ? data.formsData : [];
-        data.formsData = forms.filter(form => form?.adminLinkedSlug !== targetCard.slug);
-        if (shouldLink) {
-            data.formsData.push({
-                imageSrc: targetCard.thumb,
-                imageExportName: '',
-                thumbSrc: targetCard.thumb,
-                name: targetCard.name,
-                link: targetCard.url,
-                adminLinkedSlug: targetCard.slug
-            });
-        }
-
         const updatedDoc = new DOMParser().parseFromString(updatedHtml, 'text/html');
+        data.formsData = Array.from(updatedDoc.querySelectorAll('#forms-container .dokkan-card')).map(form => {
+            const image = form.querySelector('.form-image');
+            return {
+                imageSrc: image?.getAttribute('src') || form.getAttribute('data-thumb-src') || '',
+                imageExportName: image?.getAttribute('data-export-name') || '',
+                thumbSrc: form.getAttribute('data-thumb-src') || image?.getAttribute('src') || '',
+                name: form.querySelector('.form-name-display, .form-name')?.textContent?.trim() || '',
+                link: form.querySelector('.form-link')?.getAttribute('href') || 'javascript:void(0)',
+                ...(form.getAttribute('data-admin-linked-slug')
+                    ? { adminLinkedSlug: form.getAttribute('data-admin-linked-slug') }
+                    : {})
+            };
+        });
         data.containers = data.containers || {};
         data.containers.forms = updatedDoc.getElementById('forms-container')?.innerHTML || '';
         return JSON.stringify(data, null, 2);
