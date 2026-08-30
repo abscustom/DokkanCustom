@@ -107,6 +107,22 @@ function filterLinkingPartners() {
     const partnersBox = document.getElementById("abs-partners-box");
     const partnersContainer = document.getElementById("abs-partners-container");
 
+    // Uploaded cards are standalone HTML snapshots. Upgrade the old button
+    // markup at runtime so existing cards adopt the 9-card row increments
+    // without needing to be uploaded again.
+    const partnerLimitButtons = Array.from(document.querySelectorAll('.partner-limit-btn'));
+    const oldLimits = [10, 20, 30, 40, 50];
+    const rowLimits = [9, 18, 27, 36, 45];
+    const hasLegacyLimits = partnerLimitButtons.length === oldLimits.length &&
+        partnerLimitButtons.every((button, index) => Number(button.textContent.trim()) === oldLimits[index]);
+    if (hasLegacyLimits) {
+        partnerLimitButtons.forEach((button, index) => {
+            const limit = rowLimits[index];
+            button.textContent = String(limit);
+            button.setAttribute('onclick', `setPartnerLimit(${limit}, this)`);
+        });
+    }
+
     // The active button is the source of truth for the initial view. This
     // keeps older published pages from rendering the former default of 10
     // when their first visible choice is now 9.
