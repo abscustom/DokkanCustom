@@ -194,7 +194,22 @@
                             <div class="abs-header text-center" style="justify-content: center;">Stats</div>
                             <div class="abs-content p-3 text-center">
                                 
-                                <div class="abs-stat-slider-wrapper mb-3">
+                                <div class="abs-stat-cards-row">
+                                    <div class="abs-stat-card hp-card">
+                                        <span class="abs-stat-card-label hp-label">HP</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-hp-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card atk-card">
+                                        <span class="abs-stat-card-label atk-label">ATK</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-atk-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card def-card">
+                                        <span class="abs-stat-card-label def-label">DEF</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-def-val">0</span>
+                                    </div>
+                                </div>
+
+                                <div class="abs-stat-slider-wrapper mt-3">
                                     <div class="abs-stat-slider-header">
                                         <span class="abs-slider-label">HIDDEN POTENTIAL</span>
                                         <span id="abs-slider-percent-display" class="abs-slider-value">100%</span>
@@ -209,21 +224,6 @@
                                             <span onclick="setStatSliderIndex(4)">90%</span>
                                             <span onclick="setStatSliderIndex(5)">100%</span>
                                         </div>
-                                    </div>
-                                </div>
-
-                                <div class="abs-stat-cards-row">
-                                    <div class="abs-stat-card hp-card">
-                                        <span class="abs-stat-card-label hp-label">HP</span>
-                                        <span class="abs-stat-card-value" id="abs-stat-hp-val">0</span>
-                                    </div>
-                                    <div class="abs-stat-card atk-card">
-                                        <span class="abs-stat-card-label atk-label">ATK</span>
-                                        <span class="abs-stat-card-value" id="abs-stat-atk-val">0</span>
-                                    </div>
-                                    <div class="abs-stat-card def-card">
-                                        <span class="abs-stat-card-label def-label">DEF</span>
-                                        <span class="abs-stat-card-value" id="abs-stat-def-val">0</span>
                                     </div>
                                 </div>
                             </div>
