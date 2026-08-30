@@ -103,6 +103,9 @@ window.autoSaveToCache = async function() {
             passiveName: passiveName,
             passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
             absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
+            showAwakeningProgression: window.showAwakeningProgression !== false,
+            showSsrProgression: window.showSsrProgression !== false,
+            showTurProgression: window.showTurProgression !== false,
             isVideoActive: isVideoActive,
             cardArtImage: cardArtImageSrc,
             cardArtVideo: cardArtVideo,
@@ -140,6 +143,10 @@ window.loadFromCache = function() {
         currentClass = data.currentClass || "super";
         currentRarity = data.currentRarity || "LR";
         currentAwakeningMode = data.currentAwakeningMode || "none";
+        const legacyProgressionVisibility = data.showAwakeningProgression !== false;
+        window.showSsrProgression = data.showSsrProgression !== undefined ? data.showSsrProgression !== false : legacyProgressionVisibility;
+        window.showTurProgression = data.showTurProgression !== undefined ? data.showTurProgression !== false : legacyProgressionVisibility;
+        window.showAwakeningProgression = window.showSsrProgression || window.showTurProgression;
         if (data.absUnitTag !== undefined) {
             if (typeof window.setAbsUnitTag === 'function') window.setAbsUnitTag(data.absUnitTag);
             else window.absUnitTag = data.absUnitTag;

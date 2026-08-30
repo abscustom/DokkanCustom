@@ -300,23 +300,18 @@ html, body {
 
 
 /* ======================================================================= */
-/* KILL ALL HOVER OUTLINES & HIGHLIGHTS ON AWAKENINGS & TRANSFORMATIONS    */
+/* Keep Awakenings/Transformations quiet on published cards. The editor adds
+   its own outline so these controls remain clearly editable. */
 /* ======================================================================= */
 
-#abs-transformations-box,
-#abs-transformations-box:hover,
-#abs-awakenings-box,
-#abs-awakenings-box:hover,
-#abs-transformations-container,
-#abs-transformations-container:hover,
-#abs-awakenings-container,
-#abs-awakenings-container:hover,
-body #abs-transformations-box:hover,
-body #abs-awakenings-box:hover,
-body:not(.is-published) #abs-transformations-box:hover,
-body:not(.is-published) #abs-awakenings-box:hover,
-body.admin-mode-active #abs-transformations-box:hover,
-body.admin-mode-active #abs-awakenings-box:hover {
+body.is-published:not(.admin-mode-active) #abs-transformations-box,
+body.is-published:not(.admin-mode-active) #abs-transformations-box:hover,
+body.is-published:not(.admin-mode-active) #abs-awakenings-box,
+body.is-published:not(.admin-mode-active) #abs-awakenings-box:hover,
+body.is-published:not(.admin-mode-active) #abs-transformations-container,
+body.is-published:not(.admin-mode-active) #abs-transformations-container:hover,
+body.is-published:not(.admin-mode-active) #abs-awakenings-container,
+body.is-published:not(.admin-mode-active) #abs-awakenings-container:hover {
     outline: none !important;
     outline-offset: 0 !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.5) !important;
@@ -352,11 +347,7 @@ body.admin-mode-active #abs-awakenings-box:hover {
 #abs-awakenings-box,
 #abs-awakenings-box:hover,
 #abs-stats-box,
-#abs-stats-box:hover,
-body #abs-transformations-box,
-body #abs-transformations-box:hover,
-body:not(.is-published) #abs-transformations-box:hover,
-body.admin-mode-active #abs-transformations-box:hover {
+#abs-stats-box:hover {
     border-radius: 12px !important;
     overflow: hidden !important;
     transition: none !important; /* Prevents visual snapping */

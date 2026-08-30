@@ -387,22 +387,39 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
 
         case 'icons':
             titleHTML = `${imageUploadSvgIcon} Card Thumbnail Uploads`;
-            const showLr = (window.currentRarity || currentRarity) === 'LR';
+            const displayedRarity = (window.getDisplayedCardRarity?.() || String(window.currentRarity || currentRarity || '')).toUpperCase();
+            const showLr = displayedRarity === 'LR';
+            const showTurToggle = displayedRarity === 'LR';
             bodyHTML = `
-                <div class="d-flex justify-content-center gap-3 p-2">
-                    <label class="uiverse-upload-btn m-0">
-                        ${cloudSvgIcon} SSR
-                        <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-ssr')">
-                    </label>
-                    <label class="uiverse-upload-btn m-0">
-                        ${cloudSvgIcon} TUR
-                        <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-tur')">
-                    </label>
+                <div class="d-flex justify-content-center align-items-start gap-3 p-2">
+                    <div class="gui-progression-column d-flex flex-column align-items-center gap-2">
+                        <label class="uiverse-upload-btn m-0">
+                            ${cloudSvgIcon} SSR
+                            <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-ssr')">
+                        </label>
+                        <div class="form-check form-switch progression-toggle d-flex align-items-center justify-content-center gap-2 m-0" data-progression-control="ssr">
+                            <input class="form-check-input m-0" type="checkbox" role="switch" id="gui-show-ssr-progression" data-progression-display="ssr" ${window.showSsrProgression !== false ? 'checked' : ''} onchange="window.setProgressionDisplay('ssr', this.checked)">
+                            <label class="form-check-label text-white" for="gui-show-ssr-progression">Show SSR Box</label>
+                        </div>
+                    </div>
+                    <div class="gui-progression-column d-flex flex-column align-items-center gap-2">
+                        <label class="uiverse-upload-btn m-0">
+                            ${cloudSvgIcon} TUR
+                            <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-tur')">
+                        </label>
+                        ${showTurToggle ? `<div class="form-check form-switch progression-toggle d-flex align-items-center justify-content-center gap-2 m-0" data-progression-control="tur">
+                            <input class="form-check-input m-0" type="checkbox" role="switch" id="gui-show-tur-progression" data-progression-display="tur" ${window.showTurProgression !== false ? 'checked' : ''} onchange="window.setProgressionDisplay('tur', this.checked)">
+                            <label class="form-check-label text-white" for="gui-show-tur-progression">Show TUR Box</label>
+                        </div>` : ''}
+                    </div>
                     ${showLr ? `
-                    <label class="uiverse-upload-btn m-0">
-                        ${cloudSvgIcon} LR
-                        <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-lr')">
-                    </label>` : ''}
+                    <div class="gui-progression-column d-flex flex-column align-items-center gap-2">
+                        <label class="uiverse-upload-btn m-0">
+                            ${cloudSvgIcon} LR
+                            <input type="file" hidden accept="image/*" onchange="uploadIcon(event, 'img-lr')">
+                        </label>
+                    </div>
+                    ` : ''}
                 </div>
             `;
             break;
@@ -771,6 +788,7 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
 
     titleEl.innerHTML = titleHTML;
     contentEl.innerHTML = bodyHTML;
+    if (editType === 'icons') window.syncProgressionDisplayControls?.();
     bindContextListeners(editType);
     if (editType === 'passive' && window.renderPassiveHeaderBadgeToggles) {
         window.renderPassiveHeaderBadgeToggles();

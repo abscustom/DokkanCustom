@@ -55,34 +55,18 @@ body.admin-mode-active .active-block:hover,
 body.admin-mode-active .card-art-canvas:hover,
 body.admin-mode-active #ssr-row:hover,
 body.admin-mode-active #tur-row:hover,
-body.admin-mode-active .row.d-flex.flex-wrap.border.dokkan-card:hover,
+body.admin-mode-active #forms-card-wrapper:hover,
 body:not(.is-published) [data-edit]:hover,
 body:not(.is-published) .sa-block:hover,
 body:not(.is-published) .active-block:hover,
 body:not(.is-published) .card-art-canvas:hover,
 body:not(.is-published) #ssr-row:hover,
 body:not(.is-published) #tur-row:hover,
-body:not(.is-published) .row.d-flex.flex-wrap.border.dokkan-card:hover {
+body:not(.is-published) #forms-card-wrapper:hover {
     cursor: pointer !important;
     outline: 2px solid #ffffff !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 12px rgba(255, 255, 255, 0.8) !important;
-}
-
-/* CUSTOM OUTWARD OFFSET ONLY FOR TRANSFORMATION / FORM BOX */
-body.admin-mode-active #forms-container:hover,
-body.admin-mode-active #abs-transformations-box:hover,
-body:not(.is-published) #forms-container:hover,
-body:not(.is-published) #abs-transformations-box:hover,
-#forms-container.active-selected-glow,
-#abs-transformations-box.active-selected-glow {
-    cursor: pointer !important;
-    outline: 2px solid #ffffff !important;
-    outline-offset: 16px !important;
-    box-shadow: inset 0 0 10px rgba(255, 255, 255, 0.0), 
-                0 0 25px rgba(255, 255, 255, 0.0) !important;
-    transition: all 0.2s ease;
-    border-radius: 0px !important;
 }
 
 /* Disable Hover Outlines when Published and Admin Mode is OFF */
@@ -1237,7 +1221,7 @@ table th b { color: #ffffff !important; }
 .card-info-thumb { position: relative; width: 150px; height: 150px; margin: 0 auto; display: block; overflow: visible; }
 .lr-spin-dial, .lightning-overlay { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none; }
 .lr-spin-dial { z-index: 1; width: 110px; height: 110px; animation: lr-dial-spin 6s linear infinite; }
-.lightning-overlay { z-index: 2; width: 240px; height: auto; mix-blend-mode: screen; display: block; filter: drop-shadow(0 0 10px var(--lightning-color, rgb(0, 200, 255))) brightness(10.5) contrast(1.2); transition: filter 0.3s ease; }
+.lightning-overlay { z-index: 2; width: 240px; height: auto; mix-blend-mode: screen; filter: drop-shadow(0 0 10px var(--lightning-color, rgb(0, 200, 255))) brightness(10.5) contrast(1.2); transition: filter 0.3s ease; }
 #img-lr { position: relative; z-index: 3; display: block; margin: 0 auto; height: 150px; width: auto; }
 @keyframes lr-dial-spin { from { transform: translate(-50%, -50%) rotate(0deg); } to { transform: translate(-50%, -50%) rotate(360deg); } }
 
@@ -2189,8 +2173,8 @@ body.admin-mode-active #abs-transformations-box,
 body:not(.is-published) #abs-transformations-box,
 body.admin-mode-active #abs-stats-box,
 body:not(.is-published) #abs-stats-box,
-body.admin-mode-active #forms-container,
-body:not(.is-published) #forms-container {
+body.admin-mode-active #forms-card-wrapper,
+body:not(.is-published) #forms-card-wrapper {
     cursor: pointer !important;
     transition: outline 0.2s ease, box-shadow 0.2s ease, transform 0.2s ease, border-color 0.2s ease !important;
 }
@@ -2213,8 +2197,8 @@ body.admin-mode-active #abs-transformations-box:hover,
 body:not(.is-published) #abs-transformations-box:hover,
 body.admin-mode-active #abs-stats-box:hover,
 body:not(.is-published) #abs-stats-box:hover,
-body.admin-mode-active #forms-container:hover,
-body:not(.is-published) #forms-container:hover {
+body.admin-mode-active #forms-card-wrapper:hover,
+body:not(.is-published) #forms-card-wrapper:hover {
     outline: 2px solid rgba(56, 189, 248, 0.8) !important;
     outline-offset: 3px !important;
     box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.12) !important;
@@ -2251,6 +2235,26 @@ body:not(.is-published) #abs-art-dock-wrapper:hover {
 #abs-stats-box.active-selected-glow,
 #abs-art-dock-wrapper.active-selected-glow {
     border-radius: 12px !important;
+}
+
+/* Keep the ABS panel outlines above neighbouring panels. Linking Partners is
+   intentionally excluded from editor hover treatment. */
+body.admin-mode-active #abs-awakenings-box:hover,
+body:not(.is-published) #abs-awakenings-box:hover,
+body.admin-mode-active #abs-transformations-box:hover,
+body:not(.is-published) #abs-transformations-box:hover {
+    position: relative !important;
+    z-index: 10 !important;
+    outline: 2px solid rgba(56, 189, 248, 0.8) !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.12) !important;
+}
+
+body.admin-mode-active #abs-partners-box:hover,
+body:not(.is-published) #abs-partners-box:hover {
+    cursor: default !important;
+    outline: none !important;
+    box-shadow: none !important;
 }
 
 /* --- PASSIVE HEADER ABILITY BADGES TOGGLE TOOLBAR --- */
@@ -2713,4 +2717,28 @@ body:not(.is-published) #abs-art-dock-wrapper:hover {
     height: 100% !important;
     z-index: 5 !important;
     pointer-events: none !important;
+}
+
+/* Keep progression switches centred beneath their matching upload button.
+   Bootstrap's default negative switch margin conflicts with these flex rows. */
+.progression-toggle {
+    min-height: 20px !important;
+    padding-left: 0 !important;
+}
+
+.progression-toggle .form-check-input {
+    float: none !important;
+    margin-left: 0 !important;
+    cursor: pointer;
+    flex: 0 0 auto;
+}
+
+.progression-toggle .form-check-label {
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.gui-progression-column {
+    width: 130px;
+    flex: 0 0 130px;
 }

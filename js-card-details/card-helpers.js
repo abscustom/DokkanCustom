@@ -1087,9 +1087,12 @@ function renderPassiveIconsStrip(passiveText, card = null) {
 
     function getOrCreateTooltip() {
         if (!tooltipEl) {
-            tooltipEl = document.createElement('div');
-            tooltipEl.id = 'abs-global-floating-tooltip';
-            document.body.appendChild(tooltipEl);
+            tooltipEl = document.getElementById('abs-global-floating-tooltip');
+            if (!tooltipEl) {
+                tooltipEl = document.createElement('div');
+                tooltipEl.id = 'abs-global-floating-tooltip';
+                document.body.appendChild(tooltipEl);
+            }
         }
         return tooltipEl;
     }

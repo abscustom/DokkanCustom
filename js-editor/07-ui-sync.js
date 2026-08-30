@@ -6,6 +6,7 @@ window.updateCardDisplay = function() {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+    window.syncProgressionDisplayControls?.();
 };
 
 window.applyCardTheme = function(newSuffix) {
@@ -82,6 +83,7 @@ window.updateIconImages = function() {
 };
 
 window.updateRarityStats = function(rarityName) {
+    rarityName = String(rarityName || 'none').toUpperCase();
     currentRarity = rarityName;
     window.currentRarity = rarityName;
 
@@ -99,42 +101,37 @@ window.updateRarityStats = function(rarityName) {
         if (turIcon) turIcon.src = "https://abscustom.github.io/assets/images/rarity_TUR.png";
     }
 
-    const lightning = document.querySelector('.lightning-overlay');
-    const spinDial = document.querySelector('.lr-spin-dial');
+    const lightningEffects = document.querySelectorAll('.lightning-overlay');
+    const spinDials = document.querySelectorAll('.lr-spin-dial');
     const turRow = document.getElementById('tur-row');
     const ssrRow = document.getElementById('ssr-row');
     const awkWrapper = document.getElementById('awakening-progression-wrapper');
+    const showSsrProgression = window.showSsrProgression !== false;
+    const showTurProgression = window.showTurProgression !== false;
 
     const ssrSrc = document.getElementById('img-ssr')?.getAttribute('src') || document.getElementById('img-ssr')?.src || "";
     const turSrc = document.getElementById('img-tur')?.getAttribute('src') || document.getElementById('img-tur')?.src || "";
     const hasCustomSsr = ssrSrc && !ssrSrc.endsWith('SSR_Icon.png') && !ssrSrc.endsWith('none.png') && !ssrSrc.endsWith('default.png') && !ssrSrc.endsWith('editor.html');
     const hasCustomTur = turSrc && !turSrc.endsWith('TUR_Icon.png') && !turSrc.endsWith('none.png') && !turSrc.endsWith('default.png') && !turSrc.endsWith('editor.html');
 
-    const hasAwakeningProgression = rarityName !== 'none' && rarityName !== 'SSR' && (hasCustomSsr || hasCustomTur || (rarityName === 'LR' && (hasCustomSsr || hasCustomTur)));
+    const canShowSsr = showSsrProgression && hasCustomSsr && (rarityName === 'TUR' || rarityName === 'LR');
+    const canShowTur = showTurProgression && hasCustomTur && rarityName === 'LR';
 
     if (rarityName === "LR") {
-        if(lightning) lightning.style.display = 'block';
-        if(spinDial) spinDial.style.display = 'block';
+        lightningEffects.forEach(lightning => lightning.style.display = 'block');
+        spinDials.forEach(spinDial => spinDial.style.display = 'block');
         document.querySelectorAll('.sa-20-bonus').forEach(el => el.style.display = 'block');
     } else {
-        if(lightning) lightning.style.display = 'none';
-        if(spinDial) spinDial.style.display = 'none';
+        lightningEffects.forEach(lightning => lightning.style.display = 'none');
+        spinDials.forEach(spinDial => spinDial.style.display = 'none');
         document.querySelectorAll('.sa-20-bonus').forEach(el => el.style.display = 'none');
     }
 
-    if (!hasAwakeningProgression || rarityName === 'none' || rarityName === 'SSR') {
-        if (awkWrapper) awkWrapper.style.display = 'none';
-    } else {
-        if (awkWrapper) awkWrapper.style.display = 'flex';
-        if (rarityName === "LR") {
-            if (ssrRow && ssrRow.closest('.col')) ssrRow.closest('.col').style.display = 'block';
-            if (turRow) turRow.style.display = 'block';
-        } else if (rarityName === "TUR") {
-            if (ssrRow && ssrRow.closest('.col')) ssrRow.closest('.col').style.display = 'block';
-            if (turRow) turRow.style.display = 'none';
-        }
-    }
-    
+    const ssrColumn = ssrRow?.closest('.col');
+    if (ssrColumn) ssrColumn.style.display = canShowSsr ? 'block' : 'none';
+    if (turRow) turRow.style.display = canShowTur ? 'block' : 'none';
+    if (awkWrapper) awkWrapper.style.display = (canShowSsr || canShowTur) ? 'flex' : 'none';
+
     const stats = rarityStats[rarityName];
     if (stats) {
         document.getElementById("max-lv").textContent = stats.max;
@@ -145,6 +142,49 @@ window.updateRarityStats = function(rarityName) {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+};
+
+window.getDisplayedCardRarity = function() {
+    const raritySource = document.getElementById('main-rarity-icon')?.getAttribute('src') || document.getElementById('main-rarity-icon')?.src || '';
+    const sourceMatch = String(raritySource).match(/rarity_(lr|tur|ssr)(?:_abs)?\.png/i);
+    if (sourceMatch) return sourceMatch[1].toUpperCase();
+    return String(window.currentRarity || currentRarity || 'none').toUpperCase();
+};
+
+window.syncProgressionDisplayControls = function() {
+    const values = {
+        ssr: window.showSsrProgression !== false,
+        tur: window.showTurProgression !== false,
+    };
+    document.querySelectorAll('[data-progression-display]').forEach(input => {
+        input.checked = values[input.dataset.progressionDisplay] !== false;
+    });
+    const rarityName = window.getDisplayedCardRarity();
+    // The editor controls follow the selected rarity. The display itself still
+    // removes a progression box when its corresponding icon has no real image.
+    const available = {
+        ssr: rarityName === 'TUR' || rarityName === 'LR',
+        tur: rarityName === 'LR'
+    };
+    document.querySelectorAll('[data-progression-control]').forEach(control => {
+        control.style.display = available[control.dataset.progressionControl] ? '' : 'none';
+    });
+};
+
+window.setProgressionDisplay = function(kind, show) {
+    const property = { ssr: 'showSsrProgression', tur: 'showTurProgression' }[kind];
+    if (!property) return;
+    window[property] = Boolean(show);
+    window.showAwakeningProgression = window.showSsrProgression !== false || window.showTurProgression !== false;
+    window.syncProgressionDisplayControls();
+    window.updateRarityStats(window.currentRarity || currentRarity || 'none');
+    window.autoSaveToCache?.();
+};
+
+// Compatibility for pages saved before the individual SSR/TUR switches existed.
+window.setAwakeningProgressionVisibility = function(show) {
+    window.setProgressionDisplay('ssr', show);
+    window.setProgressionDisplay('tur', show);
 };
 
 window.applyLeaderPreset = function(type) {

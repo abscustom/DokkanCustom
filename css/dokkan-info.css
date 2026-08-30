@@ -426,7 +426,6 @@ hr, .divider, .divider.py.bg-secondary {
   width: 240px !important;
   height: auto !important;
   mix-blend-mode: screen !important;
-  display: block !important;
   filter: drop-shadow(0 0 10px var(--lightning-color, rgb(0, 200, 255))) brightness(10.5) contrast(1.2) !important;
   transition: filter 0.3s ease !important;
   pointer-events: none !important;
@@ -579,4 +578,4 @@ img[src*="passive_skill_dialog"] {
   margin: 0 2px !important;
   transform: translateY(-1px) !important;
   display: inline-block !important;
-}
+}

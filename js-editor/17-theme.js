@@ -435,7 +435,7 @@ window.syncToAbsLayout = function() {
     } catch(e) {}
 
     try {
-        const activeRarity = window.currentRarity || currentRarity;
+        const activeRarity = window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity;
         const activeAwakening = window.currentAwakeningMode || currentAwakeningMode;
         
         const isLR = activeRarity === 'LR';
@@ -660,7 +660,7 @@ window.syncToAbsLayout = function() {
         
         const activeType = window.currentType || currentType;
         const activeClass = window.currentClass || currentClass;
-        const activeRarity = window.currentRarity || currentRarity;
+        const activeRarity = window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity;
         const activeAwakening = window.currentAwakeningMode || currentAwakeningMode;
         
         const baseTypeSrc = typeImageUrls[activeType] || "https://abscustom.github.io/assets/images/type_none.png";
@@ -817,6 +817,29 @@ window.syncToAbsLayout = function() {
             }
 
             awakenCont.innerHTML = awHTML;
+
+            // The SSR/TUR switches apply to the ABS progression as well.  Remove
+            // the matching complete row (and its now-orphaned divider) so no
+            // empty space or floating awaken arrow is left behind.
+            const removeAwakeningStage = (rarityKey) => {
+                awakenCont.querySelectorAll(`.abs-awaken-row:has(.rarity-icon[src*="${rarityKey}"])`).forEach(row => {
+                    const previous = row.previousElementSibling;
+                    row.remove();
+                    if (previous?.classList.contains('abs-awaken-divider')) previous.remove();
+                });
+            };
+            if (window.showSsrProgression === false) removeAwakeningStage('rarity_ssr_abs');
+            if (window.showTurProgression === false) removeAwakeningStage('rarity_TUR_abs');
+
+            awakenCont.querySelectorAll('.abs-awaken-divider').forEach(divider => {
+                if (!divider.previousElementSibling?.matches('.abs-awaken-row') || !divider.nextElementSibling?.matches('.abs-awaken-row')) {
+                    divider.remove();
+                }
+            });
+            const awakeningsBox = document.getElementById('abs-awakenings-box');
+            const hasVisibleProgression = awakenCont.querySelector('.rarity-icon[src*="rarity_ssr_abs"], .rarity-icon[src*="rarity_TUR_abs"]');
+            if (awakeningsBox) awakeningsBox.style.display = hasVisibleProgression ? '' : 'none';
+
             if (typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachSezaFlameBorder) {
                 awakenCont.querySelectorAll('.abs-composed-icon[data-seza="true"], .abs-composed-icon.seza-glow-card').forEach(iconEl => {
                     const cardType = (window.currentType || currentType || 'agl').toLowerCase();
@@ -1071,7 +1094,7 @@ window.renderAbsDamageMultiplier = function(text, typeLabel = '', isActive = fal
 
     if (!matchedTier) return '';
 
-    const activeRarity = window.currentRarity || currentRarity;
+    const activeRarity = window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity;
     const activeAwakening = window.currentAwakeningMode || currentAwakeningMode;
     let maxLv = 10;
     const isLR = activeRarity === 'LR';
@@ -1130,11 +1153,6 @@ window.updateAbsStyleSuperAttacks = function() {
         }
         let effectsFormatted = lines.join('<br>');
 
-        const actRow = block.querySelector('.activation-row');
-        const actText = block.querySelector('.activation-text')?.innerText || '';
-        const showAct = actRow && !actRow.classList.contains('d-none') && actText.trim();
-        let cleanActText = actText.replace(/^Activation Conditions?\(s\)?\s*/i, '').trim();
-
         let kiText = block.getAttribute('data-ki') || '';
         if (!kiText) {
             const lowLabel = typeLabel.toLowerCase().trim();
@@ -1160,10 +1178,6 @@ window.updateAbsStyleSuperAttacks = function() {
                     </div>
                 </div>
                 <div class="abs-content text-start">
-                    ${showAct ? `
-                        <div class="abs-skill-label text-warning mb-1">Condition:</div>
-                        <div class="mb-3">${cleanActText}</div>
-                    ` : ''}
                     <div class="abs-skill-label text-warning mb-1">Effect:</div>
                     <div>${effectsFormatted}</div>
                     ${specialEffectsHtml}
@@ -1202,14 +1216,6 @@ window.updateAbsStyleActiveSkills = function() {
         const hasNoIcon = !activeIconAttr || activeIconAttr === 'none' || activeIconAttr.includes('none');
         const activeIconHtml = hasNoIcon ? '' : `<img src="${activeIconAttr}" class="abs-sa-icon-left" alt="Active Icon">`;
 
-        const condRow = block.querySelector('.active-condition-row');
-        const condText = block.querySelector('.active-display-condition')?.innerText || '';
-        const showCond = condRow && !condRow.classList.contains('d-none') && condText.trim().length > 0;
-        let cleanActText = condText.trim();
-        if (window.formatCategoryQuotes) {
-            cleanActText = window.formatCategoryQuotes(cleanActText);
-        }
-
         const damageMultiplierHtml = window.renderAbsDamageMultiplier(effect, typeLabel, true, '');
 
         htmlBuffer += `
@@ -1221,10 +1227,6 @@ window.updateAbsStyleActiveSkills = function() {
                     </div>
                 </div>
                 <div class="abs-content text-start">
-                    ${showCond ? `
-                        <div class="abs-skill-label text-warning mb-1">Condition:</div>
-                        <div class="mb-3">${cleanActText}</div>
-                    ` : ''}
                     <div class="abs-skill-label text-warning mb-1">Effect:</div>
                     <div>${effect}</div>
                     ${damageMultiplierHtml}
@@ -1243,9 +1245,12 @@ window.updateAbsStyleActiveSkills = function() {
 
     function getOrCreateTooltip() {
         if (!tooltipEl) {
-            tooltipEl = document.createElement('div');
-            tooltipEl.id = 'abs-global-floating-tooltip';
-            document.body.appendChild(tooltipEl);
+            tooltipEl = document.getElementById('abs-global-floating-tooltip');
+            if (!tooltipEl) {
+                tooltipEl = document.createElement('div');
+                tooltipEl.id = 'abs-global-floating-tooltip';
+                document.body.appendChild(tooltipEl);
+            }
         }
         return tooltipEl;
     }

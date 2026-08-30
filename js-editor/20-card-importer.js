@@ -247,9 +247,14 @@ async function fetchCustomCardsList() {
                 else if (frameAttr.includes('str')) cardType = 'str';
                 else if (frameAttr.includes('phy')) cardType = 'phy';
 
-                const lrIcon = doc.querySelector('#img-lr');
-                const isLR = !!lrIcon || htmlText.toLowerCase().includes('rarity_lr');
-                const rarity = isLR ? 'LR' : 'TUR';
+                // Every editor page contains an #img-lr element as a template,
+                // so its mere presence cannot mean the card is an LR.
+                const markerText = doc.querySelector('#pub-site-marker')?.textContent || '';
+                const markerRarity = markerText.match(/window\.currentRarity\s*=\s*["']([^"']+)/i)?.[1];
+                const raritySrc = doc.querySelector('#main-rarity-icon, #abs-top-rarity-icon')?.getAttribute('src') || '';
+                const detectedRarity = markerRarity || raritySrc.match(/rarity_(lr|tur|ssr)/i)?.[1] || (htmlText.toLowerCase().includes('rarity_lr') ? 'LR' : 'TUR');
+                const rarity = String(detectedRarity).toUpperCase() === 'LR' ? 'LR' : 'TUR';
+                const isLR = rarity === 'LR';
 
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : '#img-tur') || doc.querySelector('#abs-thumb-img, .thumb-img');
                 const fixUrl = (src) => src?.startsWith('http') ? src : `${cardUrl}${src?.replace(/^\.\//, '')}`;

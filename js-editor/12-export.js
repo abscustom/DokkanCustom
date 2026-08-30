@@ -121,6 +121,9 @@ window.getProjectDataObject = function() {
         passiveName: document.getElementById('input-passive-name-sidebar')?.value || "",
         passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
         absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
+        showAwakeningProgression: window.showAwakeningProgression !== false,
+        showSsrProgression: window.showSsrProgression !== false,
+        showTurProgression: window.showTurProgression !== false,
         cardArtImage: window.isPlaceholderCardArtUrl?.(document.getElementById("myOverlayImage")?.src)
             ? ""
             : (document.getElementById("myOverlayImage")?.src || ""),
@@ -150,6 +153,10 @@ window.exportProjectAsJson = function() {
 window.loadProjectData = function(projectData, baseUrl = '') {
     if (!projectData) return;
     window.currentCardSource = projectData.cardSource === 'official' ? 'official' : 'custom';
+    const legacyProgressionVisibility = projectData.showAwakeningProgression !== false;
+    window.showSsrProgression = projectData.showSsrProgression !== undefined ? projectData.showSsrProgression !== false : legacyProgressionVisibility;
+    window.showTurProgression = projectData.showTurProgression !== undefined ? projectData.showTurProgression !== false : legacyProgressionVisibility;
+    window.showAwakeningProgression = window.showSsrProgression || window.showTurProgression;
     if (projectData.absUnitTag !== undefined) {
         if (typeof window.setAbsUnitTag === 'function') window.setAbsUnitTag(projectData.absUnitTag);
         else window.absUnitTag = projectData.absUnitTag;
@@ -1147,6 +1154,9 @@ window.executeGitHubUpload = async function() {
             window.PUBLISHED_SITE_FOLDER = "${basePath}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
+            window.showAwakeningProgression = ${window.showAwakeningProgression !== false};
+            window.showSsrProgression = ${window.showSsrProgression !== false};
+            window.showTurProgression = ${window.showTurProgression !== false};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";
@@ -1464,6 +1474,9 @@ window.executeQuickSave = async function() {
             window.PUBLISHED_SITE_FOLDER = "${folderName}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
             window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
+            window.showAwakeningProgression = ${window.showAwakeningProgression !== false};
+            window.showSsrProgression = ${window.showSsrProgression !== false};
+            window.showTurProgression = ${window.showTurProgression !== false};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";

@@ -14,6 +14,12 @@ window.currentActiveSkill = window.currentActiveSkill || null;
 window.isSwitchingActive = window.isSwitchingActive || false;
 window.currentAwakeningMode = window.currentAwakeningMode || 'none';
 window.currentPartnerLimit = window.currentPartnerLimit || 9;
+// Individual progression controls replace the old all-or-nothing switch.
+// Keep the old value as a fallback for already-published cards and old backups.
+const legacyAwakeningVisibility = window.showAwakeningProgression;
+window.showSsrProgression = window.showSsrProgression !== false && legacyAwakeningVisibility !== false;
+window.showTurProgression = window.showTurProgression !== false && legacyAwakeningVisibility !== false;
+window.showAwakeningProgression = window.showSsrProgression || window.showTurProgression;
 
 // Keep the ABS banner unit tag independent from the initial HTML fallback.
 // Published cards set this value in their page marker before the editor scripts

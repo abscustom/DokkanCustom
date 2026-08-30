@@ -1,5 +1,49 @@
 [
   {
+    "id": "1543349250337800202",
+    "title": "this gotta be like 100 stones <@&1412500265642360923>",
+    "desc": "",
+    "date": "Aug 29, 2026",
+    "timestamp": "2026-08-29T19:58:55.323000+00:00",
+    "media": [],
+    "images": [],
+    "banner": "https://abscustom.github.io/assets/images/no_news.png"
+  },
+  {
+    "id": "1543349206054469652",
+    "title": "",
+    "desc": "",
+    "date": "Aug 29, 2026",
+    "timestamp": "2026-08-29T19:58:44.765000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543349206054469652_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543349206054469652_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1543349206054469652_0.jpg"
+  },
+  {
+    "id": "1543319160111763457",
+    "title": "<@&1412500265642360923>",
+    "desc": "",
+    "date": "Aug 29, 2026",
+    "timestamp": "2026-08-29T17:59:21.254000+00:00",
+    "media": [
+      {
+        "url": "assets/discord-news/msg_1543319160111763457_0.jpg",
+        "type": "image"
+      }
+    ],
+    "images": [
+      "assets/discord-news/msg_1543319160111763457_0.jpg"
+    ],
+    "banner": "assets/discord-news/msg_1543319160111763457_0.jpg"
+  },
+  {
     "id": "1543130709017755688",
     "title": "",
     "desc": "",
@@ -7936,42 +7980,5 @@
     "media": [],
     "images": [],
     "banner": "https://abscustom.github.io/assets/images/no_news.png"
-  },
-  {
-    "id": "1414973737979088896",
-    "title": "<@&1412500265642360923>",
-    "desc": "",
-    "date": "Sep 9, 2025",
-    "timestamp": "2025-09-09T14:00:28.075000+00:00",
-    "media": [],
-    "images": [],
-    "banner": "https://abscustom.github.io/assets/images/no_news.png"
-  },
-  {
-    "id": "1414973704877641889",
-    "title": "YES",
-    "desc": "",
-    "date": "Sep 9, 2025",
-    "timestamp": "2025-09-09T14:00:20.183000+00:00",
-    "media": [],
-    "images": [],
-    "banner": "https://abscustom.github.io/assets/images/no_news.png"
-  },
-  {
-    "id": "1414973702461980703",
-    "title": "",
-    "desc": "",
-    "date": "Sep 9, 2025",
-    "timestamp": "2025-09-09T14:00:19.607000+00:00",
-    "media": [
-      {
-        "url": "assets/discord-news/msg_1414973702461980703_0.png",
-        "type": "image"
-      }
-    ],
-    "images": [
-      "assets/discord-news/msg_1414973702461980703_0.png"
-    ],
-    "banner": "assets/discord-news/msg_1414973702461980703_0.png"
   }
 ]
