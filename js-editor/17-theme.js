@@ -407,10 +407,11 @@ window.syncToAbsLayout = function() {
         const artHeader = document.getElementById('abs-art-header-text');
         if (artHeader) {
             if (window.absUnitTag === undefined) {
-                window.absUnitTag = artHeader.innerText.trim() || "DOKKAN FESTIVAL UNIT";
+                window.absUnitTag = artHeader.dataset.unitTag || artHeader.innerText.trim() || "DOKKAN FESTIVAL UNIT";
             }
-            artHeader.innerText = window.absUnitTag || "";
-            artHeader.style.display = window.absUnitTag ? 'block' : 'none';
+            // Use the shared setter so cached and published tags cannot be
+            // replaced by this page's original default header text.
+            window.setAbsUnitTag?.(window.absUnitTag);
         }
     } catch(e) {}
 

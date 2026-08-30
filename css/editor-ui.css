@@ -361,6 +361,17 @@ body.admin-mode-active #topbar-upload-dock-wrap {
   color: var(--type-text, #facc15) !important;
 }
 
+/* Keep the card-link gear aligned inside the standard nav-button size. */
+#topbar-card-admin-dock-wrap .glass-btn > span {
+  display: grid !important;
+  place-items: center !important;
+  line-height: 0 !important;
+}
+
+#topbar-card-admin-dock-wrap .nav-svg-icon {
+  display: block !important;
+}
+
 /* --- MENU BUTTON & THEME STACK --- */
 .scouter-menu-btn, .topbar-menu-btn {
     position: relative !important;

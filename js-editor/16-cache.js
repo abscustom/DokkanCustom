@@ -138,7 +138,10 @@ window.loadFromCache = function() {
         currentClass = data.currentClass || "super";
         currentRarity = data.currentRarity || "LR";
         currentAwakeningMode = data.currentAwakeningMode || "none";
-        if (data.absUnitTag !== undefined) window.absUnitTag = data.absUnitTag;
+        if (data.absUnitTag !== undefined) {
+            if (typeof window.setAbsUnitTag === 'function') window.setAbsUnitTag(data.absUnitTag);
+            else window.absUnitTag = data.absUnitTag;
+        }
 
         window.updateRarityStats(currentRarity); 
 

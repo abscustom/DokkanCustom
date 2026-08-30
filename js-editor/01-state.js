@@ -15,6 +15,35 @@ window.isSwitchingActive = window.isSwitchingActive || false;
 window.currentAwakeningMode = window.currentAwakeningMode || 'none';
 window.currentPartnerLimit = window.currentPartnerLimit || 10;
 
+// Keep the ABS banner unit tag independent from the initial HTML fallback.
+// Published cards set this value in their page marker before the editor scripts
+// load, while local cards restore it from the autosave afterwards. A dedicated
+// setter means either path updates the visible header immediately instead of a
+// later refresh reading the default "DOKKAN FESTIVAL UNIT" markup again.
+(() => {
+    let absUnitTagValue = window.absUnitTag;
+
+    const renderAbsUnitTag = () => {
+        const header = document.getElementById('abs-art-header-text');
+        if (!header || absUnitTagValue === undefined) return;
+        header.dataset.unitTag = absUnitTagValue;
+        header.textContent = absUnitTagValue;
+        header.style.display = absUnitTagValue ? 'block' : 'none';
+    };
+
+    Object.defineProperty(window, 'absUnitTag', {
+        configurable: true,
+        get: () => absUnitTagValue,
+        set: (value) => {
+            absUnitTagValue = value === undefined || value === null ? value : String(value);
+            renderAbsUnitTag();
+        }
+    });
+
+    window.setAbsUnitTag = (value) => { window.absUnitTag = value; };
+    renderAbsUnitTag();
+})();
+
 var currentClass = window.currentClass;
 var currentRarity = window.currentRarity;
 var currentType = window.currentType;

@@ -148,7 +148,10 @@ window.exportProjectAsJson = function() {
 window.loadProjectData = function(projectData, baseUrl = '') {
     if (!projectData) return;
     window.currentCardSource = projectData.cardSource === 'official' ? 'official' : 'custom';
-    if (projectData.absUnitTag !== undefined) window.absUnitTag = projectData.absUnitTag;
+    if (projectData.absUnitTag !== undefined) {
+        if (typeof window.setAbsUnitTag === 'function') window.setAbsUnitTag(projectData.absUnitTag);
+        else window.absUnitTag = projectData.absUnitTag;
+    }
     const fixUrl = (src) => {
         if (!src) return "";
         const trimmed = String(src).trim();
