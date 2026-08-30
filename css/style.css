@@ -869,21 +869,51 @@ body .hud-theme-stack .abs-hud-theme-btn.active,
 
 /* Timeline Character Row with Proportional Composed Thumbnail */
 .timeline-entry-row {
+    --timeline-accent-rgb: 16, 185, 129;
     display: flex;
     align-items: center;
     gap: 12px;
-    background: rgba(0, 0, 0, 0.4);
-    border: 1px solid rgba(255, 255, 255, 0.1);
+    background: linear-gradient(90deg,
+        rgba(0, 0, 0, 0.46) 0%,
+        rgba(0, 0, 0, 0.34) 52%,
+        rgba(var(--timeline-accent-rgb), 0.40) 100%);
+    border: 1px solid rgba(var(--timeline-accent-rgb), 0.42);
+    box-shadow: inset -3px 0 0 rgba(var(--timeline-accent-rgb), 0.92), 0 0 12px rgba(var(--timeline-accent-rgb), 0.18);
     padding: 6px 10px;
     border-radius: 8px;
     text-decoration: none !important;
     transition: all 0.2s ease;
+    animation: timeline-accent-pulse 2.4s ease-in-out infinite;
 }
 
 .timeline-entry-row:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 255, 255, 0.35);
+    background: linear-gradient(90deg,
+        rgba(0, 0, 0, 0.36) 0%,
+        rgba(0, 0, 0, 0.20) 48%,
+        rgba(var(--timeline-accent-rgb), 0.58) 100%);
+    border-color: rgba(var(--timeline-accent-rgb), 0.9);
+    box-shadow: inset -4px 0 0 rgba(var(--timeline-accent-rgb), 1), 0 0 18px rgba(var(--timeline-accent-rgb), 0.34);
     transform: translateX(2px);
+    animation-play-state: paused;
+}
+
+/* A quiet right-edge status gradient: release, EZA, SEZA, or custom card. */
+.timeline-entry-row--new { --timeline-accent-rgb: 16, 185, 129; }
+.timeline-entry-row--eza { --timeline-accent-rgb: 234, 179, 8; }
+.timeline-entry-row--seza { --timeline-accent-rgb: 239, 68, 68; }
+.timeline-entry-row--custom { --timeline-accent-rgb: 168, 85, 247; }
+
+@keyframes timeline-accent-pulse {
+    0%, 100% {
+        box-shadow: inset -3px 0 0 rgba(var(--timeline-accent-rgb), 0.84), 0 0 10px rgba(var(--timeline-accent-rgb), 0.16);
+    }
+    50% {
+        box-shadow: inset -5px 0 0 rgba(var(--timeline-accent-rgb), 1), 0 0 18px rgba(var(--timeline-accent-rgb), 0.36);
+    }
+}
+
+body.fx-static .timeline-entry-row {
+    animation: none;
 }
 
 /* Authentic Composed Dokkan Thumbnail */

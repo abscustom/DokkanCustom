@@ -12,6 +12,12 @@ window.toggleCardTheme = function(isDbTheme) {
     
     window.currentCardThemeStyle = isDbTheme ? 'abs-style' : 'dokkaninfo';
     localStorage.setItem('dokkan_selected_theme', window.currentCardThemeStyle); 
+    // Published custom cards share this preference across linked pages. Keep it
+    // separate from the editor's own saved layout so opening the editor does
+    // not unexpectedly change the public card view.
+    if (window.IS_PUBLISHED) {
+        localStorage.setItem('dokkan_published_card_theme', window.currentCardThemeStyle);
+    }
     window.updateSiteFavicon?.(window.currentCardThemeStyle);
 
     if (isDbTheme && window.syncToAbsLayout) {
@@ -57,8 +63,14 @@ window.switchCardTheme = function(themeName) {
 };
 
 window.restoreThemeOnLoad = function() {
-    if (window.IS_PUBLISHED && window.currentCardThemeStyle) {
-        window.toggleCardTheme(window.currentCardThemeStyle === 'abs-style');
+    if (window.IS_PUBLISHED) {
+        const rememberedTheme = localStorage.getItem('dokkan_published_card_theme');
+        const themeToRestore = rememberedTheme === 'abs-style' || rememberedTheme === 'dokkaninfo'
+            ? rememberedTheme
+            : window.currentCardThemeStyle;
+        if (themeToRestore) {
+            window.toggleCardTheme(themeToRestore === 'abs-style');
+        }
     }
 };
 

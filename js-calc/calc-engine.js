@@ -1428,29 +1428,43 @@ function calculateDamageTaken(playerDef) {
 function getCustomCardMediaFromDoc() {
     if (!window.currentLoadedCardMeta || !window.currentLoadedCardMeta.cardItemMeta || !window.currentLoadedCardMeta.cardItemMeta.doc) return null;
     
-    const doc = window.currentLoadedCardMeta.cardItemMeta.doc;
-    const isLocalCustom = window.currentLoadedCardMeta.cardItemMeta.cardUrl.includes('localhost') || window.currentLoadedCardMeta.cardItemMeta.cardUrl.includes('127.0.0.1');
+    const cardMeta = window.currentLoadedCardMeta.cardItemMeta;
+    const doc = cardMeta.doc;
+    const cardUrl = cardMeta.cardUrl || window.location.href;
+    const resolveMediaUrl = value => {
+        const src = String(value || '').trim();
+        if (!src) return '';
+        try {
+            return new URL(src, cardUrl).href;
+        } catch (e) {
+            return src;
+        }
+    };
 
-    // Prioritize videos first
-    const videoSource = doc.querySelector('#myOverlayVideo source');
-    if (videoSource) {
-        let src = videoSource.getAttribute('src');
-        if (src) {
-            if (!src.startsWith('http')) {
-                src = window.currentLoadedCardMeta.cardItemMeta.cardUrl + src.replace(/^\.\//, '');
-            }
-            return { type: 'video', url: src };
+    // Prefer the uploaded PNG for the stat-card preview and downloads. Videos
+    // remain the fallback for custom cards that only have animated artwork.
+    const imageSources = [
+        cardMeta.cardArtImage,
+        doc.querySelector('#myOverlayImage')?.getAttribute('src'),
+        doc.querySelector('#abs-art-img')?.getAttribute('src')
+    ];
+    for (const value of imageSources) {
+        const src = resolveMediaUrl(value);
+        if (src && !/Card(?:%20|\s)+Art(?:%20|\s)+Template\.png/i.test(src)) {
+            return { type: 'image', url: src };
         }
     }
 
-    const imgSource = doc.querySelector('#myOverlayImage');
-    if (imgSource) {
-        let src = imgSource.getAttribute('src');
+    const videoSources = [
+        cardMeta.cardArtVideo,
+        doc.querySelector('#myOverlayVideo source')?.getAttribute('src'),
+        doc.querySelector('#myOverlayVideo')?.getAttribute('src'),
+        doc.querySelector('#abs-art-video')?.getAttribute('src')
+    ];
+    for (const value of videoSources) {
+        const src = resolveMediaUrl(value);
         if (src) {
-            if (!src.startsWith('http')) {
-                src = window.currentLoadedCardMeta.cardItemMeta.cardUrl + src.replace(/^\.\//, '');
-            }
-            return { type: 'image', url: src };
+            return { type: 'video', url: src };
         }
     }
 
@@ -1476,9 +1490,8 @@ window.renderDokkanStatsCardData = function() {
         } else {
             const thumbImg = document.getElementById('calc-char-thumb');
             if (thumbImg && thumbImg.src) {
-                const charUrl = thumbImg.src.replace('_thumb.png', '_character.png').replace('_circle.png', '_character.png');
-                bgUrl = `url('${charUrl.replace('_character.png', '_bg.png')}')`;
-                charMediaHtml = `<img src="${charUrl}">`;
+                bgUrl = '#020617';
+                charMediaHtml = `<img src="${thumbImg.src}">`;
             }
         }
     } else if (window.currentLoadedCardMeta && window.currentLoadedCardMeta.rawCard) {

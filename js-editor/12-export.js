@@ -660,6 +660,30 @@ window.exportPublishedCardJson = async function() {
 window.ensurePublishedCustomCardRuntime = function() {
     if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
 
+    window.openPublishedCardInCalculator = function() {
+        const folderName = String(window.PUBLISHED_SITE_FOLDER || getPublishedPathFromLocation() || '').replace(/^\/+|\/+$/g, '');
+        if (!folderName) return;
+        window.location.assign(`${PUBLISHED_REPO_ROOT}calculator.html?custom=${encodeURIComponent(folderName)}`);
+    };
+
+    // This is added only to published custom-card viewers, never the editor.
+    let calculatorDock = document.getElementById('published-calculator-dock-wrap');
+    if (!calculatorDock) {
+        const topDock = document.querySelector('.top-left-dock');
+        if (topDock) {
+            calculatorDock = document.createElement('div');
+            calculatorDock.id = 'published-calculator-dock-wrap';
+            calculatorDock.className = 'button-wrap glass-btn-wrap';
+            calculatorDock.innerHTML = `
+                <div class="button-shadow"></div>
+                <button type="button" class="glass-btn" onclick="window.openPublishedCardInCalculator()" title="Open this character in the Calculator" aria-label="Open this character in the Calculator">
+                    <span><svg xmlns="http://www.w3.org/2000/svg" class="nav-svg-icon" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M7 2h10a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2Zm1 3v4h3V5H8Zm5 0v4h3V5h-3ZM8 12v3h3v-3H8Zm5 0v3h3v-3h-3ZM8 17v3h3v-3H8Zm5 0v3h3v-3h-3Z"></path></svg></span>
+                </button>
+            `;
+            topDock.appendChild(calculatorDock);
+        }
+    }
+
     // Older custom uploads had this control stripped from their saved HTML.
     // Recreate it at runtime so they also gain Admin-only JSON export.
     let exportButton = document.getElementById('admin-export-json-btn');

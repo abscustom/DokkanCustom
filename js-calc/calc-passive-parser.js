@@ -204,7 +204,7 @@ function parseAndRenderInteractivePassiveCard(pContainer) {
                 const isDomainActivePassive = /when the domain|when a domain|while a domain/i.test(fullContext);
                 const isOrbThresholdBuff = /\d+\s+or\s+more\s+.*ki\s+spheres?/i.test(fullContext);
 
-                const isMidBattleBuildup = /per attack received|per attack evaded|after receiving|after evading|per attack performed|per attack launched|each attack received|each attack performed|upon receiving|when receiving|for every attack received|for every attack evaded/i.test(fullContext);
+                const isMidBattleBuildup = /per attack received|per attack evaded|after receiving|after evading|per attack performed|per attack launched|each attack received|each attack performed|upon receiving|when receiving|for every attack received|for every attack evaded|for every (?:super )?attack (?:the )?enemy (?:launches|performs|makes)|for each (?:super )?attack (?:the )?enemy (?:launches|performs|makes)/i.test(fullContext);
                 const isOnAttackPhase2 = !isPerAllyTeamBuff && (
                     itemLower.includes('when performing a super attack') || 
                     itemLower.includes('when performing an ultra super attack') || 
@@ -284,6 +284,12 @@ function parseAndRenderInteractivePassiveCard(pContainer) {
                 const stepVal = Math.max(Math.abs(atkVal), Math.abs(defVal), Math.abs(drStep));
                 const maxPctMatch = fullContext.match(/\bup\s+to\s+([+-]?\d+)%/i) || fullContext.match(/no\s+more\s+than\s+([+-]?\d+)%/i);
                 const maxTimesMatch = fullContext.match(/\bup\s+to\s+(\d+)\s*(?:times|attacks|super attacks|ki|turns|events|triggers|orbs|spheres)\b/i);
+                // Repeated triggers without a one-time or "up to" limit can stack forever.
+                // Check the whole section because Dokkan text commonly puts the trigger in its header
+                // and the actual stat increase on the line below it.
+                const hasOneTimeLimit = /\b(?:only\s+)?once\b|\b(?:first|one)\s+time\b/i.test(fullContext);
+                const hasRepeatableCombatOrTurnTrigger = /\bat\s+(?:the\s+)?start\s+of\s+(?:each|every)\s+turn\b|\b(?:for|with|per)\s+(?:each|every)\s+(?:super\s+)?attack\b|\beach\s+(?:super\s+)?attack\b|\b(?:for|with|per)\s+(?:each|every)\s+turn\b|\beach\s+time\b|\bper\s+(?:super\s+)?attack\b/i.test(fullContext);
+                const isUncappedRepeatStack = hasRepeatableCombatOrTurnTrigger && !hasOneTimeLimit;
 
                 let isStacking = false; 
                 let maxSteps = 1; 
@@ -306,10 +312,11 @@ function parseAndRenderInteractivePassiveCard(pContainer) {
                     } else if (maxTimesMatch) {
                         maxSteps = Math.min(99, parseInt(maxTimesMatch[1], 10));
                         isStacking = true;
-                    } else if (!isOneTurn && !isAllySupportOnly) {
-                        if (/\b(?:with|for|at|per)\s+(?:each|every)\b/i.test(itemText) || /\beach time\b/i.test(itemText) || /\bper super attack\b/i.test(itemText)) {
-                            isStacking = true; maxSteps = 10;
-                        }
+                    } else if (!isOneTurn && !isAllySupportOnly && isUncappedRepeatStack) {
+                        // There is no in-game cap to simulate, so provide the same 0-99 selector
+                        // used elsewhere in the calculator rather than a binary on/off toggle.
+                        isStacking = true;
+                        maxSteps = 99;
                     }
                 }
 

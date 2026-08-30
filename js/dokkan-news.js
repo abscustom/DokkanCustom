@@ -275,6 +275,14 @@ class DokkanNewsEngine {
         // Render widgets on load
         this.renderHomeSnippet();
         this.renderNewsSection();
+
+        // A home-news link can be shared or refreshed without losing the exact
+        // article the visitor chose.
+        const pageParams = new URLSearchParams(window.location.search);
+        const requestedArticleId = pageParams.get('article');
+        if (pageParams.get('view') === 'news' && requestedArticleId) {
+            this.openEnlargedArticle(requestedArticleId, pageParams.get('source') === 'discord' ? 'discord' : 'game');
+        }
     }
 
     /**
@@ -1263,12 +1271,22 @@ class DokkanNewsEngine {
 window.dokkanNews = new DokkanNewsEngine();
 
 // Convenience helper to switch to news view and focus an article
-window.openDokkanNewsArticle = function(id) {
+window.openDokkanNewsArticle = function(id, source = 'game') {
+    const newsSource = source === 'discord' ? 'discord' : 'game';
     if (typeof switchHubView === 'function') {
-        switchHubView('news');
+        switchHubView('news', newsSource);
     }
     if (window.dokkanNews) {
-        window.dokkanNews.selectArticle(id);
+        window.dokkanNews.openEnlargedArticle(id, newsSource);
+    }
+    try {
+        const url = new URL(window.location.href);
+        url.search = '';
+        url.searchParams.set('view', 'news');
+        url.searchParams.set('source', newsSource);
+        url.searchParams.set('article', String(id));
+        window.history.replaceState({}, document.title, url.pathname + url.search);
+    } catch (e) {
     }
 };
 

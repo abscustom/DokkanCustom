@@ -791,12 +791,107 @@ function renderPickerGrid() {
     }).join('\n');
 }
 
+function resetCalculatorForNewCharacterSelection() {
+    window.currentLoadedCardMeta = null;
+    window.currentFamilyForms = [];
+    window.currentCalcEzaMode = 'base';
+    window.currentCalcEza = false;
+    window.currentCalcRarity = 'LR';
+    window.currentCalcType = 'AGL';
+    window.currentCalcClass = 'Super';
+    window.currentCalcTab = 'atk';
+    window.currentPassiveViewMode = 'full';
+    window.currentHpPercent = 100;
+    window.currentLinkLevel = 10;
+    window.lastParsedSaBlocksData = null;
+    window.lastCalculatedAttacks = [];
+    window.activeUnitSaBlockIdx = null;
+    window.parsedConditionals = [];
+    window.interactivePassiveLines = [];
+    window.passiveHasHpScaling = false;
+    window.exToggleState = {};
+    window.calcCritEnabled = false;
+    window.calcAdditionalEnabled = false;
+    window.calcSeEnabled = false;
+
+    activeCharacterLinks = [];
+    cardParsedStats = JSON.parse(JSON.stringify(DEFAULT_CARD_STATS));
+    currentHipoPreset = '100';
+
+    document.querySelectorAll('#calc-studio-main-layout input, #calc-studio-main-layout select, #calc-studio-main-layout textarea').forEach(control => {
+        if (control.matches('input[type="checkbox"], input[type="radio"]')) {
+            control.checked = control.defaultChecked;
+        } else if (control.tagName === 'SELECT') {
+            const defaultOption = Array.from(control.options).findIndex(option => option.defaultSelected);
+            control.selectedIndex = defaultOption >= 0 ? defaultOption : 0;
+        } else {
+            control.value = control.defaultValue;
+        }
+    });
+
+    document.querySelectorAll('[id^="hipo-pill-"]').forEach(button => button.classList.toggle('active', button.id === 'hipo-pill-100'));
+    document.querySelectorAll('[id^="lead-pill-"]').forEach(button => button.classList.toggle('active', button.id === 'lead-pill-220'));
+    document.querySelectorAll('#calc-crit-toggle, #calc-se-toggle, #calc-additional-toggle').forEach(button => button.classList.remove('active'));
+    document.getElementById('btn-tab-atk')?.classList.add('active');
+    document.getElementById('btn-tab-def')?.classList.remove('active');
+    document.querySelectorAll('.view-atk-only').forEach(element => element.style.setProperty('display', '', 'important'));
+    document.querySelectorAll('.view-def-only').forEach(element => element.style.setProperty('display', 'none', 'important'));
+    const linkLevelBadge = document.getElementById('lbl-master-link-level');
+    if (linkLevelBadge) {
+        linkLevelBadge.textContent = '10';
+        linkLevelBadge.className = 'link-level-btn-badge lvl-10';
+    }
+
+    const formSwitcher = document.getElementById('deck-form-switcher');
+    if (formSwitcher) {
+        formSwitcher.innerHTML = '';
+        formSwitcher.style.display = 'none';
+    }
+    const ezaToggleBar = document.getElementById('calc-eza-toggle-bar');
+    if (ezaToggleBar) ezaToggleBar.style.display = 'none';
+    ['calc-form-btn-base', 'calc-form-btn-eza', 'calc-form-btn-seza'].forEach((id, index) => {
+        document.getElementById(id)?.classList.toggle('active', index === 0);
+    });
+
+    const charThumb = document.getElementById('calc-char-thumb');
+    if (charThumb) {
+        charThumb.removeAttribute('src');
+        charThumb.removeAttribute('onerror');
+        charThumb.classList.remove('is-fallback-thumb');
+    }
+    const awakeningImage = document.getElementById('calc-awakening-img');
+    if (awakeningImage) awakeningImage.style.display = 'none';
+
+    ['calc-active-links-list', 'calc-passive-lines-container', 'calc-dynamic-sa-container',
+        'mini-stats-card-character-container', 'stats-card-character-container'].forEach(id => {
+        const container = document.getElementById(id);
+        if (container) container.innerHTML = '';
+    });
+    ['mini-stats-card-bg', 'stats-card-bg'].forEach(id => {
+        const background = document.getElementById(id);
+        if (background) background.style.backgroundImage = '';
+    });
+    ['panel-active', 'panel-domain', 'acc-active-skill-wrapper', 'acc-domain-wrapper'].forEach(id => {
+        const element = document.getElementById(id);
+        if (element) element.style.display = 'none';
+    });
+}
+
+window.resetCalculatorForNewCharacterSelection = resetCalculatorForNewCharacterSelection;
+
 
 async function selectUnitFromPicker(index) {
     const cardItem = filteredPickerCards[index];
     if (!cardItem) return;
 
     closeUnitPickerModal();
+    await loadPickerCardIntoCalculator(cardItem);
+}
+
+async function loadPickerCardIntoCalculator(cardItem, forcedMode = null) {
+    if (!cardItem) return;
+
+    resetCalculatorForNewCharacterSelection();
 
     const initialActionBox = document.getElementById('calc-initial-action-box');
     if (initialActionBox) initialActionBox.style.display = 'none';
@@ -807,9 +902,51 @@ async function selectUnitFromPicker(index) {
     if (cardItem.source === 'custom') {
         await loadCustomCardDocIntoCalculator(cardItem);
     } else {
-        await loadOfficialDokkanCardIntoCalculator(cardItem.id, cardItem.rawCard, cardItem);
+        await loadOfficialDokkanCardIntoCalculator(cardItem.id, cardItem.rawCard, cardItem, forcedMode);
     }
 }
+
+// Card pages link here with a card id (official) or published folder path
+// (custom). Resolve it after the picker database is ready and load it directly.
+window.loadCalculatorCardFromUrl = async function() {
+    const params = new URLSearchParams(window.location.search);
+    const customPath = String(params.get('custom') || '').trim().replace(/^\/+|\/+$/g, '');
+    const officialId = String(params.get('card') || params.get('id') || '').trim();
+    const requestedMode = String(params.get('mode') || '').toLowerCase();
+    const forcedMode = ['base', 'eza', 'seza'].includes(requestedMode) ? requestedMode : null;
+
+    let cardItem = null;
+    if (customPath) {
+        const normalizedPath = customPath.toLowerCase();
+        cardItem = allPickerCards.find(card => card.source === 'custom' && (
+            String(card.repoPath || '').replace(/^\/+|\/+$/g, '').toLowerCase() === normalizedPath ||
+            String(card.id || '').toLowerCase() === normalizedPath
+        ));
+    } else if (officialId) {
+        cardItem = allPickerCards.find(card => card.source === 'official' && String(card.id) === officialId);
+        // Some card-detail links can point to an older/unawakened record that
+        // is intentionally hidden from the normal picker. It should still be
+        // usable when arriving from that exact card page.
+        if (!cardItem && Array.isArray(window.DB?.cards)) {
+            const rawCard = window.DB.cards.find(card => String(card.id) === officialId);
+            if (rawCard) {
+                const typeInfo = getCardClassAndType(rawCard.element !== undefined ? rawCard.element : rawCard.attribute);
+                const titleInfo = parseTitleAndName(rawCard);
+                cardItem = {
+                    id: rawCard.id,
+                    name: titleInfo.name || rawCard.name || 'Dokkan Unit',
+                    source: 'official',
+                    type: typeInfo.cardType,
+                    cardClass: typeInfo.cardClass,
+                    rarity: isCardLR(rawCard) ? 'LR' : (rawCard.rarity === 4 ? 'TUR' : 'SSR'),
+                    rawCard
+                };
+            }
+        }
+    }
+
+    if (cardItem) await loadPickerCardIntoCalculator(cardItem, forcedMode);
+};
 
 function extractLinkBuffsFromDB(linkName, linkItem = null, targetLevel = (window.currentLinkLevel || 10)) {
     let atkBuff = 0, defBuff = 0, kiBuff = 0;
@@ -1593,6 +1730,23 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     }
 
     let htmlText = cardItem.htmlText || doc.documentElement.innerHTML || '';
+    if (!cardItem.cardUrl) {
+        const encodedPath = String(cardItem.repoPath || cardItem.id || '')
+            .split('/')
+            .filter(Boolean)
+            .map(encodeURIComponent)
+            .join('/');
+        cardItem.cardUrl = `https://abscustom.github.io/${encodedPath}/`;
+    }
+    cardItem.doc = doc;
+    window.currentLoadedCardMeta = {
+        cardId: cardItem.id,
+        rawCard: null,
+        cardItemMeta: cardItem,
+        siblings: null
+    };
+    window.currentFamilyForms = [];
+
     const exactRarity = getCustomCardRarityFromDoc(doc, htmlText);
     const isLR = exactRarity === 'LR';
     cardItem.rarity = exactRarity;
@@ -1647,7 +1801,11 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
 
     if (cardItem.thumbUrl) {
         const thumbImg = document.getElementById('calc-char-thumb');
-        if (thumbImg) thumbImg.src = cardItem.thumbUrl;
+        if (thumbImg) {
+            thumbImg.removeAttribute('onerror');
+            thumbImg.classList.remove('is-fallback-thumb');
+            thumbImg.src = cardItem.thumbUrl;
+        }
     }
     
     const frameImg = document.getElementById('calc-frame-img');

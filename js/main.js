@@ -333,9 +333,14 @@ function generateTimelineRowHtml(c) {
 
     const targetUrl = c.source === 'custom' ? c.cardUrl : `card.html?id=${c.id}`;
     const targetAttr = c.source === 'custom' ? 'target="_blank"' : '';
+    // The row color communicates why this exact card is on the timeline.
+    // Awakening states win over its source so a custom EZA/SEZA stays clear.
+    const timelineStatus = isSeza
+        ? 'seza'
+        : (isEza ? 'eza' : (c.source === 'custom' ? 'custom' : 'new'));
 
     return `
-    <a href="${targetUrl}" ${targetAttr} class="timeline-entry-row">
+    <a href="${targetUrl}" ${targetAttr} class="timeline-entry-row timeline-entry-row--${timelineStatus}" data-timeline-status="${timelineStatus}">
         <div class="timeline-composed-icon">
             <img class="tl-frame" src="${frameSrc}" loading="lazy">
             ${lrOverlayHtml}
@@ -1339,9 +1344,10 @@ window.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view');
     const subParam = urlParams.get('sub');
+    const newsSourceParam = urlParams.get('source');
 
     if (viewParam === 'news') {
-        switchHubView('news', subParam || 'discord');
+        switchHubView('news', newsSourceParam || subParam || 'discord');
     } else if (viewParam === 'cards' || localStorage.getItem('hub_force_cards_view') === 'true') {
         localStorage.removeItem('hub_force_cards_view');
         switchHubView('cards');

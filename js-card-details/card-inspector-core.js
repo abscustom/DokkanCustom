@@ -822,6 +822,15 @@ function renderCardDetails(card, mode = currentEzaMode) {
         const fullCardTitle = title ? `[${title}] ${name}` : (name || "Character Inspector");
         document.title = `${fullCardTitle} | absCustom`;
 
+        // Carry this exact card and its currently selected awakening state into
+        // the calculator instead of making the visitor pick it a second time.
+        const calculatorLink = document.getElementById('card-calculator-link');
+        if (calculatorLink) {
+            const calculatorParams = new URLSearchParams({ card: String(card.id) });
+            if (mode === 'eza' || mode === 'seza') calculatorParams.set('mode', mode);
+            calculatorLink.href = `calculator.html?${calculatorParams.toString()}`;
+        }
+
         let favicon = document.querySelector("link[rel*='icon']");
         if (!favicon) {
             favicon = document.createElement('link');
