@@ -3,7 +3,7 @@
    ========================================================================== */
 
 let selectedCard = null;
-let currentPartnerLimit = 10;
+let currentPartnerLimit = 9;
 let currentEzaMode = 'base';
 let currentCardArtMode = 'animated';
 let currentCardAnimType = null;

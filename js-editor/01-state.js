@@ -13,7 +13,7 @@ window.selectedListItem = window.selectedListItem || null;
 window.currentActiveSkill = window.currentActiveSkill || null;
 window.isSwitchingActive = window.isSwitchingActive || false;
 window.currentAwakeningMode = window.currentAwakeningMode || 'none';
-window.currentPartnerLimit = window.currentPartnerLimit || 10;
+window.currentPartnerLimit = window.currentPartnerLimit || 9;
 
 // Keep the ABS banner unit tag independent from the initial HTML fallback.
 // Published cards set this value in their page marker before the editor scripts
