@@ -3,7 +3,6 @@
 <head>
     <!-- META & TITLES -->
     <meta charset="UTF-8">
-    <meta name="hub-id" content="">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>absCustom Editor</title>
 
@@ -36,7 +35,7 @@
     <link rel="stylesheet" href="css/abs-style-layout.css">
     <link rel="stylesheet" href="css/editor-ui.css">
     <link rel="stylesheet" href="css/card-inspector.css">
-    <link rel="stylesheet" href="css/lwf.css">
+    <link rel="stylesheet" href="css/lwf.css?v=20260830-art-media">
     <link rel="stylesheet" href="css/loading-screen.css">
     <link rel="stylesheet" href="css/card-admin.css">
 
@@ -376,7 +375,7 @@
             <div class="sidebar-section" style="display: flex; flex-direction: column; gap: 10px;">
                 <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); margin: 0;" onclick="window.addSuperAttackSection()">+ ADD SUPER ATTACK</button>
                 <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #7c3aed 0%, #6d28d9 100%); margin: 0;" onclick="window.addActiveSkillSection()">+ ADD ACTIVE SKILL</button>
-                <button type="button" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin: 0;" onclick="window.guiAddForm()">+ ADD FORMS</button>
+                <button type="button" id="add-forms-sidebar-btn" class="sidebar-btn btn-export-all" style="background: linear-gradient(135deg, #059669 0%, #047857 100%); margin: 0;">+ ADD FORMS</button>
             </div>
         </div>
 
@@ -568,7 +567,7 @@
                                 <div class="row border border-2 border-dark margin-top-bottom-5 border-none bg-none dokkan-card safe-centered-frame">
                                     <div class="card-art-canvas" data-edit="art" style="position: relative; overflow: hidden;">
                                         <canvas id="info-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto; display: none;"></canvas>
-                                        <video autoplay muted playsinline loop preload="auto" id="myOverlayVideo"><source src="" type="video/mp4"></video>
+                                        <video autoplay muted playsinline loop preload="auto" id="myOverlayVideo" onloadeddata="delete this.dataset.failed; window.refreshInfoArtPreference?.();" onerror="this.dataset.failed='true'; window.refreshInfoArtPreference?.();"><source src="" type="video/mp4" onerror="this.parentElement.dataset.failed='true'; window.refreshInfoArtPreference?.();"></video>
                                         <img id="myOverlayImage" src="https://abscustom.github.io/assets/images/Card Art Template.png" alt="Card Art" style="position: relative; z-index: 2;">
                                     </div>
                                 </div>
@@ -805,14 +804,14 @@
                             </div>
 
                             <div class="abs-art-box" id="abs-art-layers-container">
-                                <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="" onerror="this.style.display='none';" style="display: none;">
-                                <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="" onerror="this.style.display='none';" style="display: none;">
-                                <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="" onerror="this.style.display='none';" style="display: none;">
+                                <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
+                                <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
+                                <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
                                 
                                 <canvas id="abs-tur-sticker-canvas" class="abs-sticker-canvas" style="display: none;"></canvas>
                                 <canvas id="abs-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="display: none;"></canvas>
-                                <img id="abs-art-img" class="abs-art-layer" src="https://abscustom.github.io/assets/images/Card Art Template.png" style="width: 100%; height: 100%; object-fit: cover; display: none;">
-                                <video id="abs-art-video" class="abs-art-layer" style="width: 100%; height: 100%; object-fit: cover; display: none;" autoplay muted loop playsinline></video>
+                                <img id="abs-art-img" class="abs-art-layer" src="https://abscustom.github.io/assets/images/Card Art Template.png" onerror="this.dataset.failed='true'; window.refreshEditorArtModeAvailability?.();" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                <video id="abs-art-video" class="abs-art-layer" style="width: 100%; height: 100%; object-fit: cover; display: none;" autoplay muted loop playsinline onerror="this.dataset.failed='true'; window.refreshEditorArtModeAvailability?.();"></video>
                             </div>
 
                             <div id="abs-art-toggle-bar" class="abs-docked-tab-bar bottom-dock">
@@ -1038,27 +1037,27 @@
 <script src="js-card-details/card-formatters.js"></script>
 <script src="js-card-details/card-renderers.js"></script>
 <script src="js-card-details/card-partners.js"></script>
-<script src="js-editor/01-state.js"></script>
+<script src="js-editor/01-state.js?v=20260830-asset-paths"></script>
 <script src="js-editor/02-icon-picker.js"></script>
-<script src="js-editor/03-core.js"></script>
+<script src="js-editor/03-core.js?v=20260830-info-animated"></script>
 <script src="js-editor/04-stats.js"></script>
-<script src="js-editor/05-passive.js"></script>
+<script src="js-editor/05-passive.js?v=20260830-editor-fixes"></script>
 <script src="js-editor/06-links-categories.js"></script>
 <script src="js-editor/07-ui-sync.js"></script>
-<script src="js-editor/08-forms.js"></script>
+<script src="js-editor/08-forms.js?v=20260830-editor-fixes"></script>
 <script src="js-editor/09-super-attacks.js"></script>
 <script src="js-editor/10-awakening.js"></script>
 <script src="js-editor/11-active-skills.js"></script>
-<script src="js-editor/12-export.js"></script>
+<script src="js-editor/12-export.js?v=20260830-published-admin-art"></script>
 <script src="js-editor/13-github.js"></script>
 <script src="js-editor/14-assets.js"></script>
 <script src="js-editor/15-parser.js"></script>
-<script src="js-editor/16-cache.js"></script>
+<script src="js-editor/16-cache.js?v=20260830-art-media"></script>
 <script src="js-editor/17-theme.js"></script>
-<script src="js-editor/18-init.js"></script>
-<script src="js-editor/19-click-to-edit.js"></script>
-<script src="js-editor/20-card-importer.js"></script>
-<script src="js-editor/21-card-admin.js"></script>
+<script src="js-editor/18-init.js?v=20260830-published-admin-art"></script>
+<script src="js-editor/19-click-to-edit.js?v=20260830-editor-fixes"></script>
+<script src="js-editor/20-card-importer.js?v=20260830-published-admin-art"></script>
+<script src="js-editor/21-card-admin.js?v=20260830-editor-fixes"></script>
 <script src="js-graphics/lwf.js"></script>
 <script type="module" src="js-graphics/lwf-loader.js"></script>
 <script src="js/loading-screen.js"></script>

@@ -113,12 +113,11 @@ window.resetEditorCache = function() {
     if (mainRarity) mainRarity.src = "https://abscustom.github.io/assets/images/rarity_none.png";
     if (overlayImg) overlayImg.src = "https://abscustom.github.io/assets/images/Card Art Template.png";
 
-    // 5. Reset Global Variables & Form Letter / Folder State
+    // 5. Reset Global Variables & Folder State
     window.currentType = "none";
     window.currentClass = "none";
     window.currentRarity = "none";
     window.currentAwakeningMode = "none";
-    window.currentHubFormLetter = "a";
     window.autoDetectedFolderId = null;
     window.sIdx = 0;
     window.lIdx = 0;
@@ -137,6 +136,39 @@ window.resetEditorCache = function() {
  */
 window.clearEditorForCleanImport = function() {
     window.currentCardThumbnail = '';
+
+    // Clear the previous card's animated media before resolving the next card's
+    // Info-side preference. Otherwise a stale MP4 can incorrectly take priority
+    // over the newly imported card's LWF.
+    const infoVideo = document.getElementById('myOverlayVideo');
+    const infoVideoSource = infoVideo?.querySelector('source');
+    if (infoVideo) {
+        infoVideo.pause();
+        infoVideo.removeAttribute('src');
+        infoVideo.removeAttribute('data-failed');
+        infoVideo.style.display = 'none';
+    }
+    if (infoVideoSource) infoVideoSource.removeAttribute('src');
+
+    const absVideo = document.getElementById('abs-art-video');
+    if (absVideo) {
+        absVideo.pause();
+        absVideo.removeAttribute('src');
+        absVideo.style.display = 'none';
+    }
+
+    ['info-card-bg-lwf-canvas', 'abs-card-bg-lwf-canvas'].forEach(canvasId => {
+        const canvas = document.getElementById(canvasId);
+        if (!canvas) return;
+        window.DokkanLWF?.destroy?.(canvasId);
+        canvas.classList.remove('lwf-active');
+        canvas.style.display = 'none';
+    });
+
+    window.uploadedArtFile = null;
+    window.uploadedArtType = null;
+    window.uploadedArtImageFile = null;
+    window.uploadedArtVideoFile = null;
 
     // 1. Remove dynamic SA & Active blocks
     document.querySelectorAll(".sa-block, .active-block").forEach(el => el.remove());

@@ -200,15 +200,28 @@ async function fetchCustomCardsList() {
         if (!repoRes.ok) return customCards;
 
         const contents = await repoRes.json();
-        const ignored = ['DokkanCustom', 'CardEditor', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github', 'js-calc', 'js3'];
-        const cardFolders = contents.filter(item => item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.'));
+        const ignored = ['DokkanCustom', 'CardEditor', 'Custom Cards', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github', 'js-calc', 'js3'];
+        const cardFolders = contents
+            .filter(item => item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.'))
+            .map(item => ({ name: item.name, repoPath: item.name }));
+        const groupedFolder = contents.find(item => item.type === 'dir' && item.name === 'Custom Cards');
+        if (groupedFolder) {
+            const groupedRes = await fetch(groupedFolder.url);
+            if (groupedRes.ok) {
+                const groupedItems = await groupedRes.json();
+                groupedItems
+                    .filter(item => item.type === 'dir' && !item.name.startsWith('.'))
+                    .forEach(item => cardFolders.push({ name: item.name, repoPath: `Custom Cards/${item.name}` }));
+            }
+        }
 
         const freshCards = [];
         for (const folder of cardFolders) {
             try {
                 const folderName = folder.name;
-                const cardUrl = `https://abscustom.github.io/${folderName}/`;
-                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${folderName}/index.html`;
+                const encodedPath = folder.repoPath.split('/').map(encodeURIComponent).join('/');
+                const cardUrl = `https://abscustom.github.io/${encodedPath}/`;
+                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/index.html`;
 
                 const indexRes = await fetch(rawUrl);
                 if (!indexRes.ok) continue;
@@ -240,6 +253,7 @@ async function fetchCustomCardsList() {
 
                 freshCards.push({
                     id: folderName,
+                    repoPath: folder.repoPath,
                     name: charName,
                     title: charTitle,
                     source: 'custom',
@@ -453,103 +467,180 @@ window.handleHubThumbError = function(img, folderId, parentFolderId) {
     }
 };
 
-window.currentEditorArtMode = 'animated';
+window.refreshInfoArtPreference = function() {
+    const infoImage = document.getElementById('myOverlayImage');
+    const infoVideo = document.getElementById('myOverlayVideo');
+    const infoCanvas = document.getElementById('info-card-bg-lwf-canvas');
+    const videoSource = String(
+        infoVideo?.querySelector('source')?.getAttribute('src') ||
+        infoVideo?.getAttribute('src') ||
+        ''
+    ).trim();
+    const hasVideo = Boolean(
+        videoSource &&
+        videoSource !== window.location.href &&
+        !/\/$/.test(videoSource) &&
+        !/editor\.html(?:[?#].*)?$/i.test(videoSource) &&
+        infoVideo?.dataset?.failed !== 'true'
+    );
+    const hasLwf = Boolean(infoCanvas?.classList.contains('lwf-active'));
+
+    if (hasVideo) {
+        if (infoImage) infoImage.style.display = 'none';
+        if (infoCanvas) {
+            infoCanvas.style.display = 'none';
+            window.DokkanLWF?.pause?.(infoCanvas.id || 'info-card-bg-lwf-canvas');
+        }
+        if (infoVideo) {
+            infoVideo.style.display = 'block';
+            infoVideo.play().catch(() => {});
+        }
+        return 'video';
+    }
+
+    if (infoVideo) {
+        infoVideo.style.display = 'none';
+        infoVideo.pause();
+    }
+
+    if (hasLwf) {
+        if (infoCanvas) {
+            infoCanvas.style.display = 'block';
+            window.DokkanLWF?.play?.(infoCanvas.id || 'info-card-bg-lwf-canvas');
+        }
+        // Official LWF art uses the character image above the animated canvas.
+        if (infoImage) infoImage.style.display = 'block';
+        return 'lwf';
+    }
+
+    if (infoCanvas) {
+        infoCanvas.style.display = 'none';
+        window.DokkanLWF?.pause?.(infoCanvas.id || 'info-card-bg-lwf-canvas');
+    }
+    if (infoImage) infoImage.style.display = 'block';
+    return 'static';
+};
+
+window.currentEditorArtMode = window.PUBLISHED_EDITOR_ART_MODE || window.currentEditorArtMode || 'animated';
 
 /**
  * Toggle between Static/Simple art and FX/Animated layered art
  */
 window.switchEditorArtMode = function(mode) {
-    window.currentEditorArtMode = mode;
-    const isAnim = (mode === 'animated');
-
     const btnStatic = document.getElementById('art-toggle-static');
     const btnAnim = document.getElementById('art-toggle-animated');
-    if (btnStatic) btnStatic.classList.toggle('active', !isAnim);
-    if (btnAnim) btnAnim.classList.toggle('active', isAnim);
-
+    const toggleBar = document.getElementById('abs-art-toggle-bar');
     const artBox = document.getElementById('abs-art-layers-container');
-    if (artBox) {
-        artBox.classList.toggle('static-mode', !isAnim);
-        artBox.classList.toggle('animated-mode', isAnim);
-    }
-
     const bgEl = document.getElementById('abs-art-bg');
     const charEl = document.getElementById('abs-art-char');
     const effEl = document.getElementById('abs-art-effect');
     const singleArtEl = document.getElementById('abs-art-img');
     const singleVidEl = document.getElementById('abs-art-video');
+    const mainImage = document.getElementById('myOverlayImage');
     const mainVid = document.getElementById('myOverlayVideo');
     const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
     const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
 
-    const hasMultiLayer = (bgEl && bgEl.src && !bgEl.src.endsWith('none') && !bgEl.src.endsWith('/') && !bgEl.src.endsWith('editor.html') && !bgEl.dataset.failed) ||
-                          (charEl && charEl.src && !charEl.src.endsWith('none') && !charEl.src.endsWith('/') && !charEl.src.endsWith('editor.html') && !charEl.dataset.failed);
+    const pinnedStaticSource = String(artBox?.dataset?.staticArtSrc || '').trim();
+    if (pinnedStaticSource && singleArtEl && singleArtEl.getAttribute('src') !== pinnedStaticSource) {
+        singleArtEl.src = pinnedStaticSource;
+        singleArtEl.removeAttribute('data-failed');
+        singleArtEl.removeAttribute('data-official-card-art');
+    }
 
-    const hasVideo = singleVidEl && singleVidEl.src && !singleVidEl.src.endsWith('/') && !singleVidEl.src.endsWith('editor.html') && singleVidEl.src !== window.location.href;
+    const sourceValue = element => String(element?.getAttribute?.('src') || '').trim();
+    const isUsableSource = value => Boolean(value && value !== window.location.href && !/\/$/.test(value) && !/editor\.html(?:[?#].*)?$/i.test(value));
+    const isUsableImage = image => {
+        const value = sourceValue(image);
+        if (!isUsableSource(value) || image?.dataset?.failed === 'true') return false;
+        if (/Card(?:%20| )Art(?:%20| )Template\.png/i.test(value)) return false;
+        return !(image.complete && image.naturalWidth === 0);
+    };
+    const singleVideoSource = sourceValue(singleVidEl);
+    const mainVideoSource = sourceValue(mainVid?.querySelector('source')) || sourceValue(mainVid);
+    const hasSingleVideo = isUsableSource(singleVideoSource) && singleVidEl?.dataset?.failed !== 'true';
+    const hasMainVideo = isUsableSource(mainVideoSource) && mainVid?.dataset?.failed !== 'true';
+    const videoSource = hasSingleVideo ? singleVideoSource : mainVideoSource;
+    const hasVideo = hasSingleVideo || hasMainVideo;
+    const hasLwf = Boolean(lwfCanvas?.classList.contains('lwf-active'));
+    const hasSticker = Boolean(stickerCanvas?.classList.contains('sticker-active'));
+    const hasAnimated = hasVideo || hasLwf || hasSticker;
+    const hasLayerStatic = isUsableImage(charEl) || isUsableImage(bgEl);
+    const flatImageIsOfficialLayer = singleArtEl?.dataset?.officialCardArt === 'true' || mainImage?.dataset?.officialCardArt === 'true';
+    const hasFlatStatic = (isUsableImage(singleArtEl) || isUsableImage(mainImage)) && !(hasLayerStatic && flatImageIsOfficialLayer);
+    const hasStatic = hasFlatStatic || hasLayerStatic;
+
+    let resolvedMode = mode === 'static' ? 'static' : 'animated';
+    if (resolvedMode === 'static' && !hasStatic && hasAnimated) resolvedMode = 'animated';
+    if (resolvedMode === 'animated' && !hasAnimated && hasStatic) resolvedMode = 'static';
+    if (!hasStatic && !hasAnimated) resolvedMode = 'static';
+    const isAnim = resolvedMode === 'animated';
+    window.currentEditorArtMode = resolvedMode;
+
+    if (toggleBar) {
+        const canSwitch = hasStatic && hasAnimated;
+        toggleBar.style.display = canSwitch ? '' : 'none';
+        toggleBar.setAttribute('aria-hidden', canSwitch ? 'false' : 'true');
+    }
+    if (btnStatic) btnStatic.classList.toggle('active', !isAnim);
+    if (btnAnim) btnAnim.classList.toggle('active', isAnim);
+    if (artBox) {
+        artBox.classList.toggle('static-mode', !isAnim);
+        artBox.classList.toggle('animated-mode', isAnim);
+        artBox.classList.toggle('has-flat-static-art', hasFlatStatic);
+    }
+
+    [bgEl, charEl, effEl, singleArtEl, singleVidEl, lwfCanvas, stickerCanvas].forEach(element => {
+        if (element) element.style.display = 'none';
+    });
 
     if (isAnim) {
-        if (hasMultiLayer) {
-            if (bgEl && bgEl.src && !bgEl.src.endsWith('/') && !bgEl.dataset.failed) bgEl.style.display = 'block';
-            if (charEl && charEl.src && !charEl.src.endsWith('/') && !charEl.dataset.failed) charEl.style.display = 'block';
-            if (effEl && effEl.src && !effEl.src.endsWith('/') && !effEl.dataset.failed) effEl.style.display = 'block';
-            if (lwfCanvas && lwfCanvas.classList.contains('lwf-active')) lwfCanvas.style.display = 'block';
-            if (stickerCanvas && stickerCanvas.classList.contains('sticker-active')) stickerCanvas.style.display = 'block';
-            if (singleArtEl) singleArtEl.style.display = 'none';
-            if (singleVidEl) singleVidEl.style.display = 'none';
-        } else if (hasVideo) {
-            if (bgEl) bgEl.style.display = 'none';
-            if (charEl) charEl.style.display = 'none';
-            if (effEl) effEl.style.display = 'none';
-            if (singleArtEl) singleArtEl.style.display = 'none';
+        if (hasVideo) {
+            window.DokkanLWF?.pause?.(lwfCanvas?.id || 'abs-card-bg-lwf-canvas');
             if (singleVidEl) {
+                if (!sourceValue(singleVidEl) && videoSource) singleVidEl.src = videoSource;
                 singleVidEl.style.display = 'block';
-                singleVidEl.play().catch(()=>{});
+                singleVidEl.play().catch(() => {});
             }
-            if (mainVid && mainVid.querySelector('source')?.src) {
-                mainVid.play().catch(()=>{});
-            }
-        } else {
-            if (bgEl) bgEl.style.display = 'none';
-            if (charEl) charEl.style.display = 'none';
-            if (effEl) effEl.style.display = 'none';
-            if (singleVidEl) singleVidEl.style.display = 'none';
-            if (singleArtEl) singleArtEl.style.display = 'block';
+            if (mainVid) mainVid.play().catch(() => {});
+        } else if (hasLwf) {
+            if (singleVidEl) singleVidEl.pause();
+            if (mainVid) mainVid.pause();
+            lwfCanvas.style.display = 'block';
+            window.DokkanLWF?.play?.(lwfCanvas.id || 'abs-card-bg-lwf-canvas');
+        } else if (hasSticker) {
+            if (hasFlatStatic && singleArtEl) singleArtEl.style.display = 'block';
+            stickerCanvas.style.display = 'block';
         }
+        if (hasSticker && stickerCanvas) stickerCanvas.style.display = 'block';
     } else {
-        // STATIC / SIMPLE MODE: Freeze video to first frame, or show character layer
-        if (hasMultiLayer) {
-            if (bgEl) bgEl.style.display = 'none';
-            if (effEl) effEl.style.display = 'none';
-            if (lwfCanvas) lwfCanvas.style.display = 'none';
-            if (stickerCanvas) stickerCanvas.style.display = 'none';
-            if (charEl && charEl.src && !charEl.src.endsWith('/') && !charEl.dataset.failed) {
-                charEl.style.display = 'block';
-            }
-            if (singleArtEl) singleArtEl.style.display = 'none';
-            if (singleVidEl) singleVidEl.style.display = 'none';
-        } else if (hasVideo) {
-            if (bgEl) bgEl.style.display = 'none';
-            if (charEl) charEl.style.display = 'none';
-            if (effEl) effEl.style.display = 'none';
-            if (singleArtEl) singleArtEl.style.display = 'none';
-            if (singleVidEl) {
-                singleVidEl.style.display = 'block';
-                singleVidEl.currentTime = 0;
-                singleVidEl.pause();
-            }
-            if (mainVid && mainVid.querySelector('source')?.src) {
-                mainVid.currentTime = 0;
-                mainVid.pause();
-            }
+        window.DokkanLWF?.pause?.(lwfCanvas?.id || 'abs-card-bg-lwf-canvas');
+        if (singleVidEl) singleVidEl.pause();
+        if (mainVid) mainVid.pause();
+
+        if (hasFlatStatic) {
+            if (!isUsableImage(singleArtEl) && isUsableImage(mainImage)) singleArtEl.src = sourceValue(mainImage);
+            singleArtEl.style.display = 'block';
         } else {
-            if (bgEl) bgEl.style.display = 'none';
-            if (charEl) charEl.style.display = 'none';
-            if (effEl) effEl.style.display = 'none';
-            if (singleVidEl) singleVidEl.style.display = 'none';
-            if (singleArtEl) singleArtEl.style.display = 'block';
+            if (isUsableImage(bgEl)) bgEl.style.display = 'block';
+            if (isUsableImage(charEl)) charEl.style.display = 'block';
+            if (isUsableImage(effEl)) effEl.style.display = 'block';
         }
     }
+
+    const infoMode = window.refreshInfoArtPreference ? window.refreshInfoArtPreference() : 'static';
+    return { hasStatic, hasAnimated, mode: resolvedMode, infoMode };
 };
+
+window.refreshEditorArtModeAvailability = function(preferredMode) {
+    return window.switchEditorArtMode(preferredMode || window.currentEditorArtMode || 'static');
+};
+
+if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => window.refreshEditorArtModeAvailability(), { once: true });
+} else {
+    window.refreshEditorArtModeAvailability();
+}
 
 
 /**
@@ -1329,12 +1420,10 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
             window.DokkanLWF.attachCardBgLwf(infoCanvas, raw).then(hasLwf => {
                 if (hasLwf) {
                     infoCanvas.classList.add('lwf-active');
-                    infoCanvas.style.display = 'block';
-                    if (window.DokkanLWF.play) window.DokkanLWF.play(infoCanvas.id);
                 } else {
                     infoCanvas.classList.remove('lwf-active');
-                    infoCanvas.style.display = 'none';
                 }
+                if (window.refreshInfoArtPreference) window.refreshInfoArtPreference();
             });
         }
     }
@@ -1367,13 +1456,19 @@ window.executeCustomCardImport = async function(cardItem) {
     const iconModal = document.getElementById('icon-picker-modal');
     if (iconModal) iconModal.style.display = 'none';
 
+    const cardRepoPath = cardItem.repoPath || cardItem.id;
+    const encodedCardRepoPath = String(cardRepoPath).split('/').filter(Boolean).map(encodeURIComponent).join('/');
+
     const resolveCustomAssetUrl = (src, baseUrl) => {
         if (!src) return "";
         const trimmed = String(src).trim();
         if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) return trimmed;
+        const sourceFileName = trimmed.split(/[?#]/)[0].split('/').pop();
+        const sourceIsSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(sourceFileName);
+        if (sourceIsSharedIcon) return `https://abscustom.github.io/assets/images/${sourceFileName}`;
         if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
 
-        const cleanBase = (baseUrl || `https://abscustom.github.io/${cardItem.id}/`).replace(/\/+$/, '') + '/';
+        const cleanBase = (baseUrl || `https://abscustom.github.io/${encodedCardRepoPath}/`).replace(/\/+$/, '') + '/';
         const cleanSrc = trimmed.replace(/^\.\//, '').replace(/^\//, '');
 
         const commonAssetNames = [
@@ -1390,7 +1485,8 @@ window.executeCustomCardImport = async function(cardItem) {
         ];
 
         const fileName = cleanSrc.split('/').pop();
-        if (commonAssetNames.includes(fileName)) {
+        const isSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(fileName);
+        if (commonAssetNames.includes(fileName) || isSharedIcon) {
             return `https://abscustom.github.io/assets/images/${fileName}`;
         }
 
@@ -1402,7 +1498,7 @@ window.executeCustomCardImport = async function(cardItem) {
 
     // 1. Try importing high-fidelity card.json if available
     try {
-        const jsonUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${cardItem.id}/card.json`;
+        const jsonUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedCardRepoPath}/card.json`;
         const jRes = await fetch(jsonUrl);
         if (jRes.ok) {
             const projectData = await jRes.json();
@@ -1422,7 +1518,7 @@ window.executeCustomCardImport = async function(cardItem) {
     // 2. Fallback: Parse complete HTML DOM from index.html (Live fetch first)
     let rawHtml = "";
     try {
-        const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${cardItem.id}/index.html`;
+        const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedCardRepoPath}/index.html`;
         const r = await fetch(rawUrl, { cache: "no-store" });
         if (r.ok) rawHtml = await r.text();
     } catch(e) {}
@@ -1651,6 +1747,7 @@ window.executeCustomCardImport = async function(cardItem) {
                 }
             });
         }
+        if (window.ensurePassiveEditorSections) window.ensurePassiveEditorSections();
 
         // 5. Super Attacks
         document.querySelectorAll('.sa-block').forEach(b => b.remove());
@@ -1704,10 +1801,10 @@ window.executeCustomCardImport = async function(cardItem) {
                     const rawImg = oldCard.querySelector('.form-image')?.getAttribute('src') || oldCard.querySelector('img.form-image')?.src || oldCard.querySelector('img')?.getAttribute('src') || "";
                     const oldImg = resolveCustomAssetUrl(rawImg, cardItem.cardUrl);
                     const oldExport = oldCard.querySelector('.form-image')?.getAttribute('data-export-name') || "";
+                    const rawThumb = oldCard.getAttribute('data-thumb-src') || "";
+                    const oldThumb = resolveCustomAssetUrl(rawThumb, cardItem.cardUrl);
                     const oldLink = oldCard.querySelector('.form-link')?.getAttribute('href') || "";
-                    const oldLetter = oldCard.getAttribute('data-hub-letter') || String.fromCharCode(97 + idx);
-                    
-                    if (window.addFormBlock) window.addFormBlock(oldName, oldImg, oldExport, oldLetter);
+                    if (window.addFormBlock) window.addFormBlock(oldName, oldImg, oldExport, oldThumb);
                     if (oldLink && oldLink !== "javascript:void(0)" && selectedForm) {
                         const anchor = selectedForm.querySelector(".form-link");
                         if (anchor) anchor.href = oldLink;
@@ -1718,9 +1815,8 @@ window.executeCustomCardImport = async function(cardItem) {
                     const name = row.querySelector('.abs-transform-name')?.innerText?.trim() || `Form ${idx + 1}`;
                     const rawImg = row.querySelector('.thumb-img')?.getAttribute('src') || row.querySelector('.thumb-img')?.src || "";
                     const link = row.querySelector('.abs-transform-link')?.getAttribute('href') || "";
-                    const letter = String.fromCharCode(97 + idx);
-
-                    if (window.addFormBlock) window.addFormBlock(name, resolveCustomAssetUrl(rawImg, cardItem.cardUrl), "", letter);
+                    const importedThumb = resolveCustomAssetUrl(rawImg, cardItem.cardUrl);
+                    if (window.addFormBlock) window.addFormBlock(name, importedThumb, "", importedThumb);
                     if (link && link !== "javascript:void(0)" && selectedForm) {
                         const anchor = selectedForm.querySelector(".form-link");
                         if (anchor) anchor.href = link;
@@ -1775,14 +1871,25 @@ window.executeCustomCardImport = async function(cardItem) {
             const vidSource = document.getElementById('myOverlayVideo')?.querySelector('source');
             const vidOverlay = document.getElementById('myOverlayVideo');
             if (vidSource && vidOverlay) {
+                delete vidOverlay.dataset.failed;
                 vidSource.src = cleanVid;
+                vidOverlay.removeAttribute('src');
                 vidOverlay.style.display = 'block';
                 vidOverlay.load();
                 vidOverlay.play().catch(()=>{});
             }
+            const dbArtVideo = document.getElementById('abs-art-video');
+            if (dbArtVideo) dbArtVideo.src = cleanVid;
             const artImg = document.getElementById('myOverlayImage');
             if (artImg) artImg.style.display = 'none';
         }
+
+        const importedArtMode = doc.querySelector('#art-toggle-static.active') ? 'static' : 'animated';
+        const importedMainImage = document.getElementById('myOverlayImage');
+        const importedMainVideo = document.getElementById('myOverlayVideo');
+        if (importedMainImage) importedMainImage.style.display = importedArtMode === 'static' && rawArtImg ? 'block' : 'none';
+        if (importedMainVideo) importedMainVideo.style.display = importedArtMode === 'animated' && rawArtVid ? 'block' : 'none';
+        if (window.switchEditorArtMode) window.switchEditorArtMode(importedArtMode);
 
         // 11. Pre-fill folder ID for overwrite
         const folderInput = document.getElementById('upload-folder-id');

@@ -634,17 +634,28 @@ async function loadCustomCardsForCalculator() {
         if (!repoRes.ok) return customCardsArray;
 
         const contents = await repoRes.json();
-        const ignored = ['DokkanCustom', 'CardEditor', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github', 'js-calc', 'js3'];
+        const ignored = ['DokkanCustom', 'CardEditor', 'Custom Cards', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github', 'js-calc', 'js3'];
         const cardFolders = contents.filter(item => 
             item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.')
-        );
+        ).map(item => ({ name: item.name, repoPath: item.name }));
+        const groupedFolder = contents.find(item => item.type === 'dir' && item.name === 'Custom Cards');
+        if (groupedFolder) {
+            const groupedRes = await fetch(groupedFolder.url);
+            if (groupedRes.ok) {
+                const groupedItems = await groupedRes.json();
+                groupedItems
+                    .filter(item => item.type === 'dir' && !item.name.startsWith('.'))
+                    .forEach(item => cardFolders.push({ name: item.name, repoPath: `Custom Cards/${item.name}` }));
+            }
+        }
 
         const customCards = [];
         for (const folder of cardFolders) {
             try {
                 const folderName = folder.name;
-                const cardUrl = `https://abscustom.github.io/${folderName}/`;
-                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${folderName}/index.html`;
+                const encodedPath = folder.repoPath.split('/').map(encodeURIComponent).join('/');
+                const cardUrl = `https://abscustom.github.io/${encodedPath}/`;
+                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/index.html`;
 
                 const indexRes = await fetch(rawUrl);
                 if (!indexRes.ok) continue;
@@ -672,6 +683,7 @@ async function loadCustomCardsForCalculator() {
 
                 customCards.push({
                     id: folderName,
+                    repoPath: folder.repoPath,
                     name: charName,
                     source: 'custom',
                     cardUrl: cardUrl,

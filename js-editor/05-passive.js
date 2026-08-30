@@ -65,6 +65,119 @@ window.parsePassiveIcons = function(text) {
     return out;
 };
 
+function passiveEditorTextFromNode(node) {
+    if (!node) return "";
+    const clone = node.cloneNode(true);
+    const tokenByFile = {
+        'passive_skill_dialog_arrow01.png': ':up:',
+        'passive_skill_dialog_arrow02.png': ':down:',
+        'passive_skill_dialog_arrow03.png': ':ydown:',
+        'passive_skill_dialog_icon_01.png': ':once:',
+        'passive_skill_dialog_icon_02.png': ':inf:',
+        'st_0001.png': ':atk_up:',
+        'st_0002.png': ':def_up:',
+        'st_0003.png': ':ki_up:',
+        'st_0011.png': ':atk_down:',
+        'st_0012.png': ':def_down:',
+        'st_0100.png': ':stun:',
+        'st_0102.png': ':seal:',
+        'st_1009.png': ':break:',
+        'st_critical_up.png': ':crit:',
+        'st_atk_combo.png': ':add_atk:',
+        'st_atk_super.png': ':effective:',
+        'st_always_hit.png': ':always_hit:',
+        'st_guard_all.png': ':guard:',
+        'st_resist_damage_up.png': ':dmg_red:',
+        'st_evasion.png': ':evasion:',
+        'st_disable_guard.png': ':disable_guard:',
+        'ki_change_rainbow.png': ':rainbow_ki:',
+        'st_recover.png': ':heal:',
+        'st_revive.png': ':revive:',
+        'st_invalid_ko.png': ':survive_ko:',
+        'st_target.png': ':taunt:',
+        'st_counter.png': ':counter:',
+        'st_reversible.png': ':reversible:'
+    };
+
+    clone.querySelectorAll('img').forEach(img => {
+        const fileName = (img.getAttribute('src') || '').split(/[?#]/)[0].split('/').pop();
+        img.replaceWith(document.createTextNode(tokenByFile[fileName] || img.getAttribute('alt') || ''));
+    });
+    return (clone.textContent || '').replace(/\s+/g, ' ').trim();
+}
+
+function syncPassiveSectionCounter() {
+    const ids = Array.from(document.querySelectorAll('#sidebar-sections-area [id^="side-sec-"]'))
+        .map(sec => parseInt(sec.id.replace('side-sec-', ''), 10))
+        .filter(Number.isFinite);
+    const highestId = ids.length ? Math.max(...ids) : 0;
+    sIdx = highestId;
+    window.sIdx = highestId;
+    return highestId;
+}
+
+// Older published pages remove the hidden editor sidebar. Rebuild it from the
+// visible passive sections so imported cards remain fully editable.
+window.ensurePassiveEditorSections = function() {
+    const sidebarArea = document.getElementById('sidebar-sections-area');
+    const cardArea = document.getElementById('card-passive-container');
+    if (!sidebarArea || !cardArea) return 0;
+
+    const existingSections = sidebarArea.querySelectorAll('[id^="side-sec-"]');
+    const existingHasContent = Array.from(existingSections).some(section => {
+        const textarea = section.querySelector('textarea');
+        return String(textarea?.value || textarea?.textContent || textarea?.getAttribute('value') || '').trim() !== '';
+    });
+    if (existingSections.length > 0 && existingHasContent) {
+        syncPassiveSectionCounter();
+        return existingSections.length;
+    }
+
+    const sources = [cardArea, document.getElementById('abs-passive-container')].filter(Boolean);
+    const sectionData = [];
+    for (const source of sources) {
+        source.querySelectorAll('strong').forEach(header => {
+            let list = header.nextElementSibling;
+            while (list && list.tagName !== 'UL' && list.tagName !== 'STRONG') list = list.nextElementSibling;
+            const bullets = list?.tagName === 'UL'
+                ? Array.from(list.querySelectorAll('li')).map(passiveEditorTextFromNode).filter(Boolean)
+                : [];
+            const headerText = passiveEditorTextFromNode(header) || 'Basic effect(s)';
+            if (bullets.length > 0 || headerText) sectionData.push({ header: headerText, bullets });
+        });
+        if (sectionData.length > 0) break;
+
+        const looseBullets = Array.from(source.querySelectorAll('li')).map(passiveEditorTextFromNode).filter(Boolean);
+        if (looseBullets.length > 0) {
+            sectionData.push({ header: 'Basic effect(s)', bullets: looseBullets });
+            break;
+        }
+    }
+
+    if (sectionData.length === 0) return 0;
+
+    cardArea.innerHTML = '';
+    sidebarArea.innerHTML = '';
+    sIdx = 0;
+    window.sIdx = 0;
+
+    sectionData.forEach(section => {
+        window.addNewSection();
+        const currentId = sIdx;
+        const headerInput = document.getElementById(`input-sec-hdr-${currentId}`);
+        const textInput = document.getElementById(`input-sec-${currentId}`);
+        const text = section.bullets.map(line => `- ${line}`).join('\n');
+        if (headerInput) headerInput.value = section.header;
+        if (textInput) textInput.value = text;
+        window.updateHeader(currentId, section.header);
+        window.updateSection(currentId, text);
+    });
+
+    window.sIdx = sIdx;
+    if (window.syncToAbsLayout) window.syncToAbsLayout();
+    return sectionData.length;
+};
+
 window.updatePassiveName = function(val) {
     const passiveDisplay = document.querySelector('.passive-name-display');
     if (passiveDisplay) passiveDisplay.innerText = val;

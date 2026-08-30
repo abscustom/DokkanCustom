@@ -285,7 +285,7 @@ function generateCardHtml(c) {
     const targetAttr = c.source === 'custom' ? 'target="_blank"' : '';
 
     return `
-<a href="${targetUrl}" ${targetAttr} class="char-box" data-source="${c.source}" data-tag="${c.tag || 'a'}" data-type="${cardType}" data-seza="${isSeza ? 'true' : 'false'}" data-rarity="${rarityKey.toLowerCase()}">
+<a href="${targetUrl}" ${targetAttr} class="char-box" data-source="${c.source}" data-type="${cardType}" data-seza="${isSeza ? 'true' : 'false'}" data-rarity="${rarityKey.toLowerCase()}">
     <div class="card-icon ${sezaGlowClass}">
         <img class="frame" src="${frameSrc}" loading="lazy">
         ${lrOverlayHtml}
@@ -682,9 +682,6 @@ function resetAllInlineFilters() {
     const rarSelect = document.getElementById('rarityFilter');
     if (rarSelect) rarSelect.value = 'all';
 
-    const formSelect = document.getElementById('formFilter');
-    if (formSelect) formSelect.value = 'all';
-
     document.querySelectorAll('.cards-inline-filter-bar .filter-pill-group').forEach(group => {
         group.querySelectorAll('.filter-pill-btn').forEach(btn => {
             if (btn.dataset.value === 'all') btn.classList.add('active');
@@ -736,13 +733,11 @@ function filterCards(resetPage = true) {
     if (resetPage) currentPage = 1;
 
     const selectedType = document.getElementById('typeFilter')?.value || currentInlineType || 'all';
-    const selectedForm = document.getElementById('formFilter')?.value || 'all';
     const selectedRarity = document.getElementById('rarityFilter')?.value || currentInlineRarity || 'all';
 
     filteredCardItems = allCardItems.filter(item => {
         const matchesSource = (currentSourceFilter === 'all' || item.source === currentSourceFilter);
         const matchesType = (selectedType === 'all' || item.type === selectedType);
-        const matchesForm = (selectedForm === 'all' || item.tag === selectedForm);
         const matchesRarity = (selectedRarity === 'all' || item.rarity === selectedRarity);
 
         let matchesSearch = true;
@@ -752,7 +747,7 @@ function filterCards(resetPage = true) {
             matchesSearch = nameMatch || idMatch;
         }
 
-        return matchesSource && matchesType && matchesForm && matchesRarity && matchesSearch;
+        return matchesSource && matchesType && matchesRarity && matchesSearch;
     });
 
     renderCurrentPage();
@@ -824,7 +819,6 @@ function changePage(delta) {
 
 function resetFilters() {
     if (document.getElementById('typeFilter')) document.getElementById('typeFilter').value = 'all';
-    if (document.getElementById('formFilter')) document.getElementById('formFilter').value = 'all';
     if (document.getElementById('rarityFilter')) document.getElementById('rarityFilter').value = 'all';
     if (document.getElementById('cardSearchInput')) document.getElementById('cardSearchInput').value = '';
     searchQuery = '';
@@ -928,7 +922,6 @@ async function loadOfficialDatabaseCards() {
 
         return hubCards.map(c => {
             const rawId = parseInt(c.id, 10);
-            const isTrans = rawId >= 4000000 && rawId < 5000000;
             const parentId = c.parent_id || getCardParentId(rawId);
             const parentCard = rawCards.find(p => parseInt(p.id, 10) === parentId);
             const { cardClass, cardType } = getCardClassAndType(c.element !== undefined ? c.element : 0);
@@ -963,7 +956,6 @@ async function loadOfficialDatabaseCards() {
                 parentId: parentId,
                 name: c.name,
                 source: 'official',
-                tag: isTrans ? 'b' : 'a',
                 type: cardType,
                 rarity: rarityKey,
                 element: c.element,
@@ -992,18 +984,29 @@ async function loadCustomCards() {
         if (!repoRes.ok) return customCardsArray;
 
         const contents = await repoRes.json();
-        const ignored = ['DokkanCustom', 'CardEditor', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github'];
+        const ignored = ['DokkanCustom', 'CardEditor', 'Custom Cards', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github'];
         const cardFolders = contents.filter(item => 
             item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.')
-        );
+        ).map(item => ({ name: item.name, repoPath: item.name }));
+        const groupedFolder = contents.find(item => item.type === 'dir' && item.name === 'Custom Cards');
+        if (groupedFolder) {
+            const groupedRes = await fetch(groupedFolder.url);
+            if (groupedRes.ok) {
+                const groupedItems = await groupedRes.json();
+                groupedItems
+                    .filter(item => item.type === 'dir' && !item.name.startsWith('.'))
+                    .forEach(item => cardFolders.push({ name: item.name, repoPath: `Custom Cards/${item.name}` }));
+            }
+        }
 
         const freshCards = [];
 
         for (const folder of cardFolders) {
             try {
                 const folderName = folder.name;
-                const cardUrl = `https://abscustom.github.io/${folderName}/`;
-                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${folderName}/index.html`;
+                const encodedPath = folder.repoPath.split('/').map(encodeURIComponent).join('/');
+                const cardUrl = `https://abscustom.github.io/${encodedPath}/`;
+                const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/index.html`;
                 
                 const indexRes = await fetch(rawUrl);
                 if (!indexRes.ok) continue;
@@ -1011,7 +1014,6 @@ async function loadCustomCards() {
                 const htmlText = await indexRes.text();
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
-                const tag = doc.querySelector('meta[name="hub-id"]')?.getAttribute('content') || 'a';
                 let charName = doc.querySelector('#char-name')?.textContent?.trim() || '';
                 if (!charName) {
                     const rawTitle = doc.querySelector('title')?.textContent || folderName;
@@ -1050,9 +1052,9 @@ async function loadCustomCards() {
 
                 freshCards.push({
                     id: folderName,
+                    repoPath: folder.repoPath,
                     name: charName,
                     source: 'custom',
-                    tag: tag,
                     type: cardType,
                     rarity: rarityKey,
                     cardUrl: cardUrl,

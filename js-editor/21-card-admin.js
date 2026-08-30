@@ -7,12 +7,13 @@
     const BRANCH = 'main';
     const SITE_ROOT = 'https://abscustom.github.io/';
     const API_ROOT = `https://api.github.com/repos/${OWNER}/${REPO}`;
+    const CUSTOM_CARDS_DIR = 'Custom Cards';
     // This is an extra UI confirmation only. The GitHub token remains the real permission check.
     const DELETE_PASSWORD = 'spiderman';
     const IGNORED_ROOT_FOLDERS = new Set([
         '.github', '.vscode', 'assets', 'css', 'json', 'js', 'js-calc',
         'js-card-details', 'js-editor', 'js-graphics', 'tools', 'images',
-        'DokkanCustom', 'CardEditor', 'js2', 'js3'
+        'DokkanCustom', 'CardEditor', 'Custom Cards', 'js2', 'js3'
     ]);
 
     const state = {
@@ -40,10 +41,14 @@
             .replace(/'/g, '&#039;');
     }
 
-    function resolveCardUrl(src, slug) {
+    function encodeRepoPath(path) {
+        return String(path || '').split('/').filter(Boolean).map(encodeURIComponent).join('/');
+    }
+
+    function resolveCardUrl(src, repoPath) {
         if (!src) return `${SITE_ROOT}assets/images/default.png`;
         try {
-            return new URL(src, `${SITE_ROOT}${slug}/`).href;
+            return new URL(src, `${SITE_ROOT}${encodeRepoPath(repoPath)}/`).href;
         } catch (e) {
             return src;
         }
@@ -107,27 +112,27 @@
         }
     }
 
-    function parseCard(slug, htmlText) {
+    function parseCard(slug, htmlText, repoPath = slug) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         const name = doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim()
             || doc.querySelector('title')?.textContent?.replace(/^\[.*?\]\s*/, '').trim()
             || slug;
         const title = doc.querySelector('#char-description, #abs-char-title')?.textContent?.trim() || '';
         const thumbEl = doc.querySelector('#abs-thumb-img, #img-lr, #img-tur, #img-ssr, .thumb-img');
-        const thumb = resolveCardUrl(thumbEl?.getAttribute('src'), slug);
+        const thumb = resolveCardUrl(thumbEl?.getAttribute('src'), repoPath);
         const frameEl = doc.querySelector('#abs-frame-img, .card-frame');
-        const frame = resolveCardUrl(frameEl?.getAttribute('src') || 'assets/images/frame_none.png', slug);
+        const frame = resolveCardUrl(frameEl?.getAttribute('src') || 'assets/images/frame_none.png', repoPath);
         const rarityEl = doc.querySelector('#abs-top-rarity-icon, #main-rarity-icon');
-        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || 'assets/images/rarity_none.png', slug);
+        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || 'assets/images/rarity_none.png', repoPath);
         const typeEl = doc.querySelector('#abs-top-type-icon, .typing-icon');
-        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || 'assets/images/type_none.png', slug);
+        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || 'assets/images/type_none.png', repoPath);
         const marker = doc.querySelector('#pub-site-marker')?.textContent || '';
         const typeMatch = marker.match(/currentType\s*=\s*["']([^"']+)/);
         const rarityMatch = marker.match(/currentRarity\s*=\s*["']([^"']+)/);
-        const hubId = doc.querySelector('meta[name="hub-id"]')?.getAttribute('content') || 'a';
 
         return {
             slug,
+            repoPath,
             name,
             title,
             thumb,
@@ -136,8 +141,7 @@
             typeIcon,
             type: typeMatch?.[1] || 'none',
             rarityName: rarityMatch?.[1] || 'TUR',
-            hubId,
-            url: `${SITE_ROOT}${slug}/`,
+            url: `${SITE_ROOT}${encodeRepoPath(repoPath)}/`,
             htmlText
         };
     }
@@ -369,12 +373,20 @@
             const rootItems = await githubRequest(`${API_ROOT}/contents/?ref=${BRANCH}`, token);
             const folders = rootItems.filter(item => item.type === 'dir'
                 && !item.name.startsWith('.')
-                && !IGNORED_ROOT_FOLDERS.has(item.name));
+                && !IGNORED_ROOT_FOLDERS.has(item.name))
+                .map(item => ({ name: item.name, repoPath: item.name }));
+            const groupedFolder = rootItems.find(item => item.type === 'dir' && item.name === CUSTOM_CARDS_DIR);
+            if (groupedFolder) {
+                const groupedItems = await githubRequest(`${API_ROOT}/contents/${encodeRepoPath(CUSTOM_CARDS_DIR)}?ref=${BRANCH}`, token);
+                groupedItems
+                    .filter(item => item.type === 'dir' && !item.name.startsWith('.'))
+                    .forEach(item => folders.push({ name: item.name, repoPath: `${CUSTOM_CARDS_DIR}/${item.name}` }));
+            }
 
             const loaded = await Promise.all(folders.map(async folder => {
                 try {
-                    const indexFile = await getRepoFile(`${folder.name}/index.html`, token, true);
-                    return indexFile ? parseCard(folder.name, indexFile.text) : null;
+                    const indexFile = await getRepoFile(`${folder.repoPath}/index.html`, token, true);
+                    return indexFile ? parseCard(folder.name, indexFile.text, folder.repoPath) : null;
                 } catch (e) {
                     return null;
                 }
@@ -434,7 +446,7 @@
         const formsWrapper = doc.getElementById('forms-card-wrapper');
         if (formsContainer) {
             formsContainer.insertAdjacentHTML('beforeend', `
-                <div class="row bg-${sourceType} dokkan-card admin-linked-form" data-hub-letter="${escapeHtml(targetCard.hubId || 'a')}" data-thumb-src="${targetThumb}" data-admin-linked-slug="${targetSlug}">
+                <div class="row bg-${sourceType} dokkan-card admin-linked-form" data-thumb-src="${targetThumb}" data-admin-linked-slug="${targetSlug}">
                     <div class="col" style="padding: 8px 0 !important;">
                         <div class="row align-items-center m-0 w-100">
                             <div class="col-5 d-flex justify-content-center align-items-center">
@@ -499,9 +511,9 @@
             data.formsData.push({
                 imageSrc: targetCard.thumb,
                 imageExportName: '',
+                thumbSrc: targetCard.thumb,
                 name: targetCard.name,
                 link: targetCard.url,
-                hubLetter: targetCard.hubId || 'a',
                 adminLinkedSlug: targetCard.slug
             });
         }
@@ -557,10 +569,10 @@
 
         await Promise.all(affectedCards.map(async card => {
             const [htmlFile, jsonFile] = await Promise.all([
-                getRepoFile(`${card.slug}/index.html`, state.token),
-                getRepoFile(`${card.slug}/card.json`, state.token, true)
+                getRepoFile(`${card.repoPath}/index.html`, state.token),
+                getRepoFile(`${card.repoPath}/card.json`, state.token, true)
             ]);
-            files.set(card.slug, {
+            files.set(card.repoPath, {
                 card,
                 htmlPath: htmlFile.path,
                 htmlText: htmlFile.text,
@@ -570,8 +582,8 @@
         }));
 
         formCards.forEach(formCard => {
-            const baseFile = files.get(baseCard.slug);
-            const formFile = files.get(formCard.slug);
+            const baseFile = files.get(baseCard.repoPath);
+            const formFile = files.get(formCard.repoPath);
 
             baseFile.htmlText = updateLinkedHtml(baseFile.htmlText, baseCard, formCard, shouldLink);
             formFile.htmlText = updateLinkedHtml(formFile.htmlText, formCard, baseCard, shouldLink);
@@ -660,8 +672,8 @@
                 if (other.slug === card.slug || !htmlHasAdminLink(other.htmlText, card.slug)) continue;
                 const updatedHtml = updateLinkedHtml(other.htmlText, other, card, false);
 
-                cleanupChanges.push({ path: `${other.slug}/index.html`, text: updatedHtml });
-                const otherJson = await getRepoFile(`${other.slug}/card.json`, state.token, true);
+                cleanupChanges.push({ path: `${other.repoPath}/index.html`, text: updatedHtml });
+                const otherJson = await getRepoFile(`${other.repoPath}/card.json`, state.token, true);
                 if (otherJson) {
                     cleanupChanges.push({
                         path: otherJson.path,
@@ -673,7 +685,7 @@
             await commitRepositoryChanges(
                 state.token,
                 cleanupChanges,
-                card.slug,
+                card.repoPath,
                 `Delete custom card: ${card.slug}`
             );
 

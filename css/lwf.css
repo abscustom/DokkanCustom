@@ -235,6 +235,22 @@ body #cardGrid .char-box .card-icon:hover {
     display: block !important;
 }
 
+/* When a real flat PNG is available, Static mode uses that exact image rather
+   than showing layered art or freezing an MP4/LWF frame. */
+.abs-art-box.static-mode.has-flat-static-art #abs-art-bg,
+.abs-art-box.static-mode.has-flat-static-art #abs-art-char,
+.abs-art-box.static-mode.has-flat-static-art #abs-art-effect {
+    display: none !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+}
+
+.abs-art-box.static-mode.has-flat-static-art #abs-art-img {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
 #abs-art-bg:not([src]), #abs-art-bg[src=""], #abs-art-bg[src$="editor.html"], #abs-art-bg[src$="/"],
 #abs-art-char:not([src]), #abs-art-char[src=""], #abs-art-char[src$="editor.html"], #abs-art-char[src$="/"],
 #abs-art-effect:not([src]), #abs-art-effect[src=""], #abs-art-effect[src$="editor.html"], #abs-art-effect[src$="/"] {

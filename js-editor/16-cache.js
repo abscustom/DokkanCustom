@@ -61,7 +61,7 @@ window.autoSaveToCache = async function() {
         const passiveName = document.getElementById('input-passive-name-sidebar')?.value || "";
         const vidOverlayEl = document.getElementById("myOverlayVideo");
         const isVideoActive = vidOverlayEl && vidOverlayEl.style.display !== 'none';
-        const cardArtVideo = (vidOverlayEl?.querySelector('source')?.src || vidOverlayEl?.src || "").trim();
+        const cardArtVideo = (vidOverlayEl?.querySelector('source')?.getAttribute('src') || vidOverlayEl?.getAttribute('src') || "").trim();
         const cardArtImage = document.getElementById("myOverlayImage");
         const cardArtImageSrc = cardArtImage?.src ? await blobUrlToDataUrl(cardArtImage.src) : "";
 
@@ -103,6 +103,7 @@ window.autoSaveToCache = async function() {
             isVideoActive: isVideoActive,
             cardArtImage: cardArtImageSrc,
             cardArtVideo: cardArtVideo,
+            editorArtMode: window.currentEditorArtMode || (isVideoActive ? 'animated' : 'static'),
             themeStyle: window.currentCardThemeStyle
         };
 
@@ -181,25 +182,30 @@ window.loadFromCache = function() {
 
         const vidOverlay = document.getElementById("myOverlayVideo");
         const artImg = document.getElementById("myOverlayImage");
+        const preferredArtMode = data.editorArtMode === 'animated' || (!data.editorArtMode && data.isVideoActive)
+            ? 'animated'
+            : 'static';
 
-        if (data.cardArtVideo && !data.cardArtVideo.startsWith('blob:') && (data.isVideoActive || !data.cardArtImage || data.cardArtImage.includes('Card%20Art%20Template.png') || data.cardArtImage.includes('Card Art Template.png'))) {
+        if (data.cardArtImage && artImg) {
+            artImg.src = data.cardArtImage;
+            const dbArtImg = document.getElementById("abs-art-img");
+            if (dbArtImg) dbArtImg.src = data.cardArtImage;
+        }
+        if (data.cardArtVideo && !data.cardArtVideo.startsWith('blob:')) {
             const vidSource = vidOverlay?.querySelector('source');
             if (vidSource) vidSource.src = data.cardArtVideo;
             if (vidOverlay) {
-                vidOverlay.src = data.cardArtVideo;
-                vidOverlay.style.display = 'block';
+                vidOverlay.removeAttribute('src');
                 vidOverlay.load();
-                vidOverlay.play().catch(()=>{});
             }
-            if (artImg) artImg.style.display = 'none';
-        } else if (data.cardArtImage) {
-            if (artImg) {
-                artImg.src = data.cardArtImage;
-                artImg.style.display = 'block';
-            }
-            if (vidOverlay) vidOverlay.style.display = 'none';
-            const dbArtImg = document.getElementById("abs-art-img");
-            if (dbArtImg) dbArtImg.src = data.cardArtImage;
+            const dbArtVideo = document.getElementById('abs-art-video');
+            if (dbArtVideo) dbArtVideo.src = data.cardArtVideo;
+        }
+        if (artImg) artImg.style.display = preferredArtMode === 'static' && data.cardArtImage ? 'block' : 'none';
+        if (vidOverlay) {
+            vidOverlay.style.display = preferredArtMode === 'animated' && data.cardArtVideo ? 'block' : 'none';
+            if (vidOverlay.style.display === 'block') vidOverlay.play().catch(() => {});
+            else vidOverlay.pause();
         }
 
         if (data.formsData) {
@@ -260,6 +266,7 @@ window.loadFromCache = function() {
 
         window.refreshFormList();
         window.updateCardDisplay(); 
+        window.switchEditorArtMode?.(preferredArtMode);
 
     } catch (err) {
         console.error("Cache restoration failed:", err);

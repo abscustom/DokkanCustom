@@ -12,6 +12,15 @@ function sanitizeLinksAndCategories() {
     });
 }
 
+function escapeContextHtml(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#039;');
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     const observer = new MutationObserver(() => {
         sanitizeLinksAndCategories();
@@ -400,6 +409,9 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
 
         case 'passive':
             titleHTML = `${passiveSvgIcon} Passive Skill Sections`;
+            // Published/older cards may have the visible passive content but
+            // not the hidden sidebar fields used by the editor popup.
+            if (window.ensurePassiveEditorSections) window.ensurePassiveEditorSections();
             let passiveSectionsHTML = "";
             const sidebarSections = document.querySelectorAll('#sidebar-sections-area [id^="side-sec-"]');
 
@@ -420,7 +432,7 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                         </div>
                         <button type="button" class="btn btn-danger btn-sm py-0 px-2" style="font-size:10px;" onclick="guiDeleteSpecificPassiveSection(${id})">Delete</button>
                     </div>
-                    <input type="text" id="gui-sec-header-${id}" class="form-control mb-1" value="${headerVal}" oninput="updateHeader(${id}, this.value)">
+                    <input type="text" id="gui-sec-header-${id}" class="form-control mb-1" value="${escapeContextHtml(headerVal)}" oninput="updateHeader(${id}, this.value)">
                     <div id="gui-sec-body-${id}" style="display: ${isCollapsed ? 'none' : 'block'};">
                         <div class="d-flex gap-1 mb-2 align-items-center flex-wrap">
                             <span style="font-size:9px; color:#aaa; font-weight:bold;">Header:</span>
@@ -430,7 +442,7 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                             <button type="button" class="gui-preset-btn" style="padding:2px 4px; font-size:9px; color:#c084fc;" onclick="insertShortcut('gui-sec-header-${id}', ':seal:');">Seal</button>
                             <button type="button" class="gui-preset-btn" style="padding:2px 4px; font-size:9px; color:#fb923c;" onclick="insertShortcut('gui-sec-header-${id}', ':break:');">Break</button>
                         </div>
-                        <textarea id="gui-sec-text-${id}" class="form-control mb-2" style="height:110px;" oninput="document.getElementById('input-sec-${id}').value=this.value; updateSection(${id}, this.value);">${textVal}</textarea>
+                        <textarea id="gui-sec-text-${id}" class="form-control mb-2" style="height:110px;" oninput="document.getElementById('input-sec-${id}').value=this.value; updateSection(${id}, this.value);">${escapeContextHtml(textVal)}</textarea>
                         <div class="gui-btn-grid mb-1">
                             <button type="button" class="gui-preset-btn" onclick="insertShortcut('gui-sec-text-${id}', ':up:');">↑ Up</button>
                             <button type="button" class="gui-preset-btn" onclick="insertShortcut('gui-sec-text-${id}', ':down:');">↓ Down</button>
@@ -468,7 +480,7 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                     </div>
 
                     <!-- PASSIVE SKILL NAME (ALWAYS VISIBLE ABOVE BADGES) -->
-                    <input type="text" id="gui-passive-name" class="form-control form-control-sm mb-2" placeholder="Passive Skill Name" value="${document.getElementById('input-passive-name-sidebar')?.value || document.querySelector('.passive-name-display')?.innerText || ''}">
+                    <input type="text" id="gui-passive-name" class="form-control form-control-sm mb-2" placeholder="Passive Skill Name" value="${escapeContextHtml(document.getElementById('input-passive-name-sidebar')?.value || document.querySelector('.passive-name-display')?.innerText || '')}">
                     
                     <!-- COLLAPSIBLE BADGES PALETTE -->
                     <div id="gui-passive-badges-toggle-strip" class="d-flex flex-wrap gap-1 p-1" style="background: #18181b; border: 1px solid #334155; border-radius: 6px; min-height: 80px; max-height: 500px; overflow-y: auto; resize: vertical;"></div>
@@ -477,7 +489,7 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                 <!-- PASSIVE NAME ONLY (INFO STYLE) -->
                 <div class="gui-section-box mb-2" style="background: #27272a; border: 1px solid #3f3f46;">
                     <label class="form-label mb-1" style="font-size: 10px;">Passive Skill Name</label>
-                    <input type="text" id="gui-passive-name" class="form-control form-control-sm" placeholder="Passive Skill Name" value="${document.getElementById('input-passive-name-sidebar')?.value || document.querySelector('.passive-name-display')?.innerText || ''}">
+                    <input type="text" id="gui-passive-name" class="form-control form-control-sm" placeholder="Passive Skill Name" value="${escapeContextHtml(document.getElementById('input-passive-name-sidebar')?.value || document.querySelector('.passive-name-display')?.innerText || '')}">
                 </div>
                 `}
 
@@ -652,19 +664,6 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
             titleHTML = `${formsSvgIcon} Transformations & Forms`;
             let formsListHTML = "";
             const formCards = document.querySelectorAll('#forms-container .dokkan-card');
-            const activeCardLetter = (window.currentHubFormLetter || document.querySelector('meta[name="hub-id"]')?.getAttribute('content') || 'a').toLowerCase();
-            const letters = ['a', 'b', 'c', 'd', 'e'];
-            let topLetterSelectorHTML = `
-                <div class="d-flex align-items-center justify-content-between p-2 mb-2" style="background: rgba(0,0,0,0.4); border: 1px solid rgba(255,255,255,0.18); border-radius: 6px;">
-                    <span style="font-size:11px; color:#fff; font-weight:800;">Card Hub Letter:</span>
-                    <div class="d-flex gap-1">`;
-            
-            letters.forEach(l => {
-                const isSel = (l === activeCardLetter);
-                const selStyle = isSel ? "background:#facc15 !important; color:#000 !important; font-weight:900 !important;" : "";
-                topLetterSelectorHTML += `<button type="button" class="gui-preset-btn py-0 px-2" style="font-size:11px; min-width:30px; height:24px; ${selStyle}" onclick="guiSetCardHubLetter('${l}')">${l.toUpperCase()}</button>`;
-            });
-            topLetterSelectorHTML += `</div></div>`;
 
             let customCardOptions = "";
             try {
@@ -672,7 +671,10 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                 if (cached) {
                     const parsed = JSON.parse(cached);
                     if (Array.isArray(parsed)) {
-                        customCardOptions = parsed.map(c => `<option value="https://abscustom.github.io/${c.id}/">${c.name || c.id} (${c.id})</option>`).join('');
+                        customCardOptions = parsed.map(c => {
+                            const cardUrl = c.cardUrl || `https://abscustom.github.io/${c.id}/`;
+                            return `<option value="${escapeContextHtml(cardUrl)}">${escapeContextHtml(c.name || c.id)} (${escapeContextHtml(c.id)})</option>`;
+                        }).join('');
                     }
                 }
             } catch(e) {}
@@ -680,16 +682,39 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
             formCards.forEach((formCard, idx) => {
                 const nameEl = formCard.querySelector('.form-name');
                 const linkEl = formCard.querySelector('.form-link');
+                const imageEl = formCard.querySelector('.form-image');
+                const infoImageSrc = imageEl?.getAttribute('src') || imageEl?.src || 'https://abscustom.github.io/assets/images/default.png';
+                const absThumbSrc = formCard.getAttribute('data-thumb-src') || infoImageSrc;
                 formsListHTML += `
                 <div class="gui-section-box mb-2">
                     <div class="d-flex justify-content-between align-items-center mb-1">
                         <label class="form-label m-0">Form ${idx + 1}</label>
                         <button type="button" class="btn btn-danger btn-sm py-0 px-2" style="font-size:10px;" onclick="guiDeleteSpecificForm(${idx})">Delete</button>
                     </div>
+                    <div class="gui-section-box mb-2" style="background:rgba(0,0,0,0.2);">
+                        <label class="form-label mb-1" style="font-size:10px;">Info-side Wide Image</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <img id="gui-form-image-preview-${idx}" src="${escapeContextHtml(infoImageSrc)}" alt="" style="width:112px; height:58px; object-fit:contain; border-radius:6px; background:rgba(0,0,0,0.35);">
+                            <label class="uiverse-upload-btn m-0" style="flex:1; justify-content:center;">
+                                ${cloudSvgIcon} Upload Wide Image
+                                <input type="file" hidden accept="image/*" onchange="guiUploadFormImage(${idx}, this)">
+                            </label>
+                        </div>
+                    </div>
+                    <div class="gui-section-box mb-2" style="background:rgba(0,0,0,0.2);">
+                        <label class="form-label mb-1" style="font-size:10px;">ABS-style Small Thumbnail</label>
+                        <div class="d-flex align-items-center gap-2">
+                            <img id="gui-form-thumb-preview-${idx}" src="${escapeContextHtml(absThumbSrc)}" alt="" style="width:58px; height:58px; object-fit:contain; border-radius:6px; background:rgba(0,0,0,0.35);">
+                            <label class="uiverse-upload-btn m-0" style="flex:1; justify-content:center;">
+                                ${cloudSvgIcon} Upload Small Thumbnail
+                                <input type="file" hidden accept="image/*" onchange="guiUploadFormThumbnail(${idx}, this)">
+                            </label>
+                        </div>
+                    </div>
                     <label class="form-label mb-1" style="font-size:10px;">Form Character Name</label>
-                    <input type="text" class="form-control mb-2" value="${nameEl?.textContent.trim() || ''}" oninput="guiUpdateFormName(${idx}, this.value)">
+                    <input type="text" class="form-control mb-2" value="${escapeContextHtml(nameEl?.textContent.trim() || '')}" oninput="guiUpdateFormName(${idx}, this.value)">
                     <label class="form-label mb-1" style="font-size:10px;">Redirect Link <small style="opacity:0.75;">(Choose card or type slug e.g. evil-buu)</small></label>
-                    <input type="text" list="custom-cards-form-links" class="form-control" value="${linkEl?.getAttribute('href') || ''}" placeholder="Choose card or enter slug..." oninput="guiUpdateFormLink(${idx}, this.value)">
+                    <input type="text" list="custom-cards-form-links" class="form-control" value="${escapeContextHtml(linkEl?.getAttribute('href') || '')}" placeholder="Choose card or enter slug..." oninput="guiUpdateFormLink(${idx}, this.value)">
                 </div>`;
             });
 
@@ -697,7 +722,6 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                 <datalist id="custom-cards-form-links">
                     ${customCardOptions}
                 </datalist>
-                ${topLetterSelectorHTML}
                 <div class="gui-btn-grid mb-3">
                     <button type="button" class="gui-preset-btn" style="background:#2563eb;" onclick="guiAddForm()">${addSvgIcon} Add Form</button>
                     <button type="button" class="gui-preset-btn" style="background:#15803d;" onclick="guiUndoForm()">${undoSvgIcon} Undo</button>
@@ -1042,17 +1066,6 @@ window.guiUndoPassiveSection = function() {
     openContextGUI(0, 0, 'passive');
 };
 
-window.guiSetCardHubLetter = function(letter) {
-    const cleanLetter = letter.toLowerCase();
-    window.currentHubFormLetter = cleanLetter;
-    const hubMeta = document.querySelector('meta[name="hub-id"]');
-    if (hubMeta) hubMeta.setAttribute('content', cleanLetter);
-    document.querySelectorAll('#forms-container .dokkan-card').forEach(formCard => {
-        formCard.setAttribute('data-hub-letter', cleanLetter);
-    });
-    openContextGUI(0, 0, 'forms');
-};
-
 window.guiAddForm = function() {
     window.addFormBlock();
     openContextGUI(0, 0, 'forms');
@@ -1079,6 +1092,41 @@ window.guiUpdateFormName = function(idx, val) {
     const formCards = document.querySelectorAll('#forms-container .dokkan-card');
     if (formCards[idx]) formCards[idx].querySelector('.form-name').textContent = val;
     if (window.syncToAbsLayout) window.syncToAbsLayout();
+};
+window.guiUploadFormImage = function(idx, input) {
+    const file = input?.files?.[0];
+    const formCard = document.querySelectorAll('#forms-container .dokkan-card')[idx];
+    if (!file || !formCard) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        const image = formCard.querySelector('.form-image');
+        if (!image) return;
+        if (!formCard.hasAttribute('data-thumb-src')) {
+            formCard.setAttribute('data-thumb-src', image.getAttribute('src') || image.src || '');
+        }
+        image.src = event.target.result;
+        image.removeAttribute('data-export-name');
+        const guiPreview = document.getElementById(`gui-form-image-preview-${idx}`);
+        if (guiPreview) guiPreview.src = event.target.result;
+        if (window.refreshFormList) window.refreshFormList();
+        if (window.syncToAbsLayout) window.syncToAbsLayout();
+    };
+    reader.readAsDataURL(file);
+};
+window.guiUploadFormThumbnail = function(idx, input) {
+    const file = input?.files?.[0];
+    const formCard = document.querySelectorAll('#forms-container .dokkan-card')[idx];
+    if (!file || !formCard) return;
+
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        formCard.setAttribute('data-thumb-src', event.target.result);
+        const guiPreview = document.getElementById(`gui-form-thumb-preview-${idx}`);
+        if (guiPreview) guiPreview.src = event.target.result;
+        if (window.syncToAbsLayout) window.syncToAbsLayout();
+    };
+    reader.readAsDataURL(file);
 };
 window.guiUpdateFormLink = function(idx, val) {
     const formCards = document.querySelectorAll('#forms-container .dokkan-card');

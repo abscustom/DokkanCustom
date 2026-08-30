@@ -66,6 +66,7 @@ var savedInputs = window.savedInputs;
 window.normalizeAssetUrl = function(str) {
     if (!str || typeof str !== 'string') return str || "";
     const repoBase = "https://abscustom.github.io/assets/images/";
+    const sharedIconPattern = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i;
     
     // 1. Rewrite explicit images/ and ./images/
     let out = str.replace(/(?:src|href)=["'](?:\.\/)?images\/([^"']+)["']/gi, `src="${repoBase}$1"`);
@@ -78,9 +79,20 @@ window.normalizeAssetUrl = function(str) {
     out = out.replace(/(?:src|href)=["'](passive_skill_dialog_[^"']+\.png)["']/gi, `src="${repoBase}$1"`);
     out = out.replace(/(?:src|href)=["'](default\.png|SSR_Icon\.png|TUR_Icon\.png|LR_Icon\.png|frame_none\.png|type_none\.png|rarity_none\.png|superza_abs\.png)["']/gi, `src="${repoBase}$1"`);
 
+    // Repair old editor URLs such as DokkanCustom/CardEditor/images/st_0011.png.
+    // These interface icons are shared repository assets, not card-local files.
+    out = out.replace(/(src|href)=["']([^"']+)["']/gi, (match, attribute, url) => {
+        const fileName = String(url).split(/[?#]/)[0].split('/').pop();
+        return sharedIconPattern.test(fileName)
+            ? `${attribute}="${repoBase}${fileName}"`
+            : match;
+    });
+
     // 3. Direct bare filename strings
-    if (!out.includes('<') && !out.includes('http') && !out.includes('data:') && !out.includes('blob:')) {
-        if (/^(?:(?:\.\/)?images\/)?(card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|SSR_Icon|TUR_Icon|LR_Icon|frame_none|type_none|rarity_none|superza_abs|default|Card Art Template)/i.test(out)) {
+    if (!out.includes('<') && !out.includes('data:') && !out.includes('blob:')) {
+        const directFileName = out.split(/[?#]/)[0].split('/').pop();
+        if (sharedIconPattern.test(directFileName)) return `${repoBase}${directFileName}`;
+        if (!out.includes('http') && /^(?:(?:\.\/)?images\/)?(card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|SSR_Icon|TUR_Icon|LR_Icon|frame_none|type_none|rarity_none|superza_abs|default|Card Art Template)/i.test(out)) {
             const cleanName = out.replace(/^(?:\.\/)?images\//i, '');
             return `${repoBase}${cleanName}`;
         }
@@ -88,3 +100,24 @@ window.normalizeAssetUrl = function(str) {
 
     return out;
 };
+
+window.repairLegacySharedAssetImage = function(image) {
+    if (!(image instanceof HTMLImageElement)) return false;
+    const currentSrc = image.getAttribute('src') || '';
+    const fileName = currentSrc.split(/[?#]/)[0].split('/').pop();
+    const isSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(fileName);
+    if (!isSharedIcon) return false;
+
+    const correctSrc = `https://abscustom.github.io/assets/images/${fileName}`;
+    if (currentSrc === correctSrc) return false;
+    image.removeAttribute('data-failed');
+    image.src = correctSrc;
+    return true;
+};
+
+// Repair saved/imported markup that still contains the old CardEditor/images path,
+// including elements inserted later by the editor GUI.
+document.querySelectorAll('img[src]').forEach(window.repairLegacySharedAssetImage);
+document.addEventListener('error', event => {
+    window.repairLegacySharedAssetImage(event.target);
+}, true);

@@ -45,6 +45,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     // PUBLISHED SITE ADMIN MODE & INITIALIZATION CHECK
     if (window.IS_PUBLISHED) {
+        window.ensurePublishedCustomCardRuntime?.();
+
         const sidebar = document.getElementById('editor');
         const toggleBtn = document.getElementById('toggleBtn');
         const scouterMenuBtn = document.querySelector('.scouter-menu-btn');
@@ -317,6 +319,8 @@ document.addEventListener("DOMContentLoaded", function() {
 
     window.uploadedArtFile = null;
     window.uploadedArtType = null;
+    window.uploadedArtImageFile = null;
+    window.uploadedArtVideoFile = null;
 
     const vidUpload = document.getElementById('videoUpload');
     const imgUpload = document.getElementById('imageUpload');
@@ -327,17 +331,29 @@ document.addEventListener("DOMContentLoaded", function() {
         vidUpload.addEventListener("change", function(event) {
             const f = event.target.files[0];
             if(f) {
+                window.uploadedArtVideoFile = f;
                 window.uploadedArtFile = f; 
                 window.uploadedArtType = 'video';
+                delete vidOverlay.dataset.failed;
                 vidOverlay.style.display = 'block';
                 imgOverlay.style.display = 'none';
                 vidOverlay.pause();
                 const objUrl = URL.createObjectURL(f);
-                vidOverlay.src = objUrl;
+                const source = vidOverlay.querySelector('source');
+                vidOverlay.removeAttribute('src');
+                if (source) source.src = objUrl;
                 vidOverlay.load();
-                vidOverlay.play();
+                vidOverlay.play().catch(() => {});
+
+                const dbArtVid = document.getElementById('abs-art-video');
+                if (dbArtVid) {
+                    dbArtVid.src = objUrl;
+                    delete dbArtVid.dataset.failed;
+                    dbArtVid.load();
+                }
 
                 if (window.syncToAbsLayout) window.syncToAbsLayout();
+                if (window.switchEditorArtMode) window.switchEditorArtMode('animated');
             }
         });
     }
@@ -346,6 +362,7 @@ document.addEventListener("DOMContentLoaded", function() {
         imgUpload.addEventListener("change", function(event) {
             const f = event.target.files[0];
             if(f) {
+                window.uploadedArtImageFile = f;
                 window.uploadedArtFile = f; 
                 window.uploadedArtType = 'image';
                 imgOverlay.style.display = 'block';
@@ -353,14 +370,44 @@ document.addEventListener("DOMContentLoaded", function() {
                 vidOverlay.pause(); 
                 const objUrl = URL.createObjectURL(f);
                 imgOverlay.src = objUrl;
+                delete imgOverlay.dataset.failed;
+                delete imgOverlay.dataset.officialCardArt;
 
                 const dbArtImg = document.getElementById('abs-art-img');
-                if (dbArtImg) dbArtImg.src = objUrl;
+                if (dbArtImg) {
+                    dbArtImg.src = objUrl;
+                    delete dbArtImg.dataset.failed;
+                    delete dbArtImg.dataset.officialCardArt;
+                }
 
                 if (window.syncToAbsLayout) window.syncToAbsLayout();
+                if (window.switchEditorArtMode) window.switchEditorArtMode('static');
             }
         });
     }
+
+    [vidOverlay, document.getElementById('abs-art-video')].forEach(video => {
+        if (!video) return;
+        video.addEventListener('loadedmetadata', () => {
+            delete video.dataset.failed;
+            window.refreshEditorArtModeAvailability?.();
+        });
+        video.addEventListener('error', () => {
+            video.dataset.failed = 'true';
+            window.refreshEditorArtModeAvailability?.();
+        });
+    });
+    [imgOverlay, document.getElementById('abs-art-img'), document.getElementById('abs-art-bg'), document.getElementById('abs-art-char'), document.getElementById('abs-art-effect')].forEach(image => {
+        if (!image) return;
+        image.addEventListener('load', () => {
+            delete image.dataset.failed;
+            window.refreshEditorArtModeAvailability?.();
+        });
+        image.addEventListener('error', () => {
+            image.dataset.failed = 'true';
+            window.refreshEditorArtModeAvailability?.();
+        });
+    });
 
     // ONLY RUN INITIALIZATION & CACHE LOAD IF IN EDITOR MODE (NOT PUBLISHED)
     if (!window.IS_PUBLISHED) {

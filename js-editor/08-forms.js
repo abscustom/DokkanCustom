@@ -3,28 +3,35 @@
    ============================================================ */
 
 window.addFormsSection = function() {
-    if (window.guiAddForm) window.guiAddForm();
-    else window.addFormBlock();
+    try {
+        window.addFormBlock();
+        if (typeof window.openContextGUI === 'function') window.openContextGUI(0, 0, 'forms');
+    } catch (error) {
+        console.error('Could not add transformation form:', error);
+    }
 };
 
+document.addEventListener('DOMContentLoaded', () => {
+    const addButton = document.getElementById('add-forms-sidebar-btn');
+    if (addButton && addButton.dataset.formHandlerBound !== 'true') {
+        addButton.dataset.formHandlerBound = 'true';
+        addButton.addEventListener('click', window.addFormsSection);
+    }
+});
+
 /* --- ULTIMATE FORM MANAGEMENT SYSTEM --- */
-window.addFormBlock = function(name = "New Form", blobUrl = "", exportName = "", hubLetter = "") {
+window.addFormBlock = function(name = "New Form", blobUrl = "", exportName = "", absThumbSrc = "") {
     const container = document.getElementById("forms-container");
     if (!container) return;
-
-    // Auto-assign form letters in sequence (a, b, c, d, e...) if not explicitly provided
-    const currentCount = container.querySelectorAll(".dokkan-card").length;
-    const letterPool = ['a', 'b', 'c', 'd', 'e', 'f', 'g', 'h'];
-    const defaultLetter = letterPool[currentCount] || 'a';
-    const finalLetter = (hubLetter && typeof hubLetter === 'string' && hubLetter.trim()) ? hubLetter.trim().toLowerCase() : defaultLetter;
 
     // Ensure we don't accidentally use a MouseEvent as a name
     const finalName = (typeof name === 'string' && name !== "") ? name : "New Form";
     const finalSrc = blobUrl || "https://abscustom.github.io/assets/images/default.png";
+    const finalThumbSrc = absThumbSrc || finalSrc;
     const dataExport = exportName || "images/default.png";
 
     const html = `
-    <div class="row bg-${currentType} dokkan-card" data-hub-letter="${finalLetter}">
+    <div class="row bg-${currentType} dokkan-card">
 <!-- The inline !important here defeats your global CSS forcing 15px padding -->
 <div class="col" style="padding: 8px 0 !important;">
     <div class="row align-items-center m-0 w-100">
@@ -46,6 +53,7 @@ window.addFormBlock = function(name = "New Form", blobUrl = "", exportName = "",
     container.insertAdjacentHTML('beforeend', html);
     const allForms = container.querySelectorAll(".dokkan-card");
     selectedForm = allForms[allForms.length - 1] || null;
+    if (selectedForm) selectedForm.setAttribute('data-thumb-src', finalThumbSrc);
     
     // Preset the link input box for the newly created form
     const linkInput = document.getElementById("formLinkInput");
@@ -71,8 +79,6 @@ window.refreshFormList = function() {
     const detailsContainer = document.getElementById("form-editor-details");
     const allForms = document.querySelectorAll("#forms-container .dokkan-card");
 
-    if (!list) return;
-
     const formsWrapper = document.getElementById("forms-card-wrapper");
     if (formsWrapper) formsWrapper.style.display = (allForms.length > 0) ? 'block' : 'none';
     const transBox = document.getElementById('abs-transformations-box');
@@ -81,15 +87,21 @@ window.refreshFormList = function() {
     // Show/Hide the editor panel depending on if forms exist
     if (allForms.length === 0) {
         if (detailsContainer) detailsContainer.style.display = 'none';
-        list.innerHTML = "";
+        if (list) list.innerHTML = "";
         return; 
     } else {
         if (detailsContainer) detailsContainer.style.display = 'block';
     }
 
+    // The click-to-edit UI replaced the old formList sidebar. Visibility and
+    // ABS synchronization must still work when that legacy list is absent.
+    if (!list) return;
+
     list.innerHTML = "";
 
     allForms.forEach((formRow, i) => {
+        // Hub letters are obsolete now that transformations use direct card links.
+        formRow.removeAttribute('data-hub-letter');
         // Find the preview elements inside the character card box
         const previewNameDisp = formRow.querySelector(".form-name");
         const previewImg = formRow.querySelector(".form-image");
@@ -121,10 +133,14 @@ window.refreshFormList = function() {
             const reader = new FileReader();
             reader.onload = function(e) {
                 if (previewImg) {
+                    if (!formRow.hasAttribute('data-thumb-src')) {
+                        formRow.setAttribute('data-thumb-src', previewImg.getAttribute('src') || previewImg.src || '');
+                    }
                     previewImg.src = e.target.result;
                     // Important: if we manually change the image, we remove the scrape-attribute 
                     // so the ZIP exporter knows to take the current image.
                     previewImg.removeAttribute('data-export-name');
+                    if (window.syncToAbsLayout) window.syncToAbsLayout();
                 }
             };
             reader.readAsDataURL(file);
