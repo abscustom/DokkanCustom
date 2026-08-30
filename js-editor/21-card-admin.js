@@ -407,7 +407,22 @@
     };
 
     function normalizeCardIdentityText(value) {
-        return String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
+        return String(value || '')
+            .replace(/[\[\]]/g, ' ')
+            .trim()
+            .replace(/\s+/g, ' ')
+            .toLowerCase();
+    }
+
+    function getCardIdentityNames(card) {
+        const names = new Set();
+        const name = String(card?.name || '').trim();
+        const title = String(card?.title || '').replace(/[\[\]]/g, '').trim();
+        [name, title && name ? `${title} ${name}` : ''].forEach(value => {
+            const normalized = normalizeCardIdentityText(value);
+            if (normalized) names.add(normalized);
+        });
+        return names;
     }
 
     function normalizeComparableImage(value, repoPath) {
@@ -430,20 +445,35 @@
             ? node.querySelector('.thumb-img')
             : node.querySelector('.form-image');
         const nodeName = normalizeCardIdentityText(nameElement?.textContent);
-        const cardName = normalizeCardIdentityText(card.name);
+        const cardNames = getCardIdentityNames(card);
         const possibleThumbs = [
             node.getAttribute('data-thumb-src'),
             imageElement?.getAttribute('src')
         ].filter(Boolean).map(value => normalizeComparableImage(value, card.repoPath));
         const cardThumb = normalizeComparableImage(card.thumb, card.repoPath);
-        return !!nodeName && nodeName === cardName && !!cardThumb && possibleThumbs.includes(cardThumb);
+        return !!nodeName && cardNames.has(nodeName) && !!cardThumb && possibleThumbs.includes(cardThumb);
     }
 
     function nodeMatchesCardName(node, card, kind) {
         const nameElement = kind === 'abs'
             ? node.querySelector('.abs-transform-name')
             : node.querySelector('.form-name-display, .form-name');
-        return normalizeCardIdentityText(nameElement?.textContent) === normalizeCardIdentityText(card.name);
+        return getCardIdentityNames(card).has(normalizeCardIdentityText(nameElement?.textContent));
+    }
+
+    function findReusableCardNode(nodes, card, kind, sourceCard) {
+        const candidates = Array.from(nodes || []);
+        return candidates.find(node => nodeMatchesCard(node, card, kind))
+            || candidates.find(node => nodeMatchesCardName(node, card, kind))
+            // A manually prepared forms list normally keeps the current card
+            // first and the linked form second. If its custom label does not
+            // exactly match the uploaded card, reuse that available second
+            // block rather than creating a duplicate.
+            || candidates.slice(1).find(node => (
+                !node.hasAttribute('data-admin-linked-slug')
+                && !nodeMatchesCardName(node, sourceCard, kind)
+            ))
+            || null;
     }
 
     function setNodeCardLink(node, card, kind, adopted = false) {
@@ -538,8 +568,12 @@
 
         const formsContainer = doc.getElementById('forms-container');
         const formsWrapper = doc.getElementById('forms-card-wrapper');
-        const matchingInfoForm = Array.from(formsContainer?.querySelectorAll('.dokkan-card') || [])
-            .find(node => nodeMatchesCard(node, targetCard, 'info'));
+        const matchingInfoForm = findReusableCardNode(
+            formsContainer?.querySelectorAll('.dokkan-card'),
+            targetCard,
+            'info',
+            sourceCard
+        );
         if (matchingInfoForm) {
             setNodeCardLink(matchingInfoForm, targetCard, 'info', true);
         } else if (formsContainer) {
@@ -561,8 +595,12 @@
 
         const transContainer = doc.getElementById('abs-transformations-container');
         const transBox = doc.getElementById('abs-transformations-box');
-        const matchingAbsForm = Array.from(transContainer?.querySelectorAll('.abs-transform-row') || [])
-            .find(node => nodeMatchesCard(node, targetCard, 'abs'));
+        const matchingAbsForm = findReusableCardNode(
+            transContainer?.querySelectorAll('.abs-transform-row'),
+            targetCard,
+            'abs',
+            sourceCard
+        );
         if (matchingAbsForm) {
             setNodeCardLink(matchingAbsForm, targetCard, 'abs', true);
             transBox?.classList.remove('d-none');
