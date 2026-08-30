@@ -137,6 +137,29 @@ window.resetEditorCache = function() {
 window.clearEditorForCleanImport = function() {
     window.currentCardThumbnail = '';
 
+    // A blank editor template is not card art. Clear it and any previously
+    // pinned published-card PNG so importing a custom card cannot leave an
+    // invisible/empty static layer above newly selected artwork.
+    const artBox = document.getElementById('abs-art-layers-container');
+    if (artBox) delete artBox.dataset.staticArtSrc;
+    ['abs-art-bg', 'abs-art-char', 'abs-art-effect'].forEach(id => {
+        const layer = document.getElementById(id);
+        if (!layer) return;
+        layer.removeAttribute('src');
+        layer.removeAttribute('data-failed');
+        layer.removeAttribute('data-official-card-art');
+        layer.style.display = 'none';
+    });
+    const blankArtTemplate = 'https://abscustom.github.io/assets/images/Card Art Template.png';
+    ['myOverlayImage', 'abs-art-img'].forEach(id => {
+        const image = document.getElementById(id);
+        if (!image) return;
+        image.src = blankArtTemplate;
+        image.removeAttribute('data-failed');
+        image.removeAttribute('data-official-card-art');
+        image.style.display = 'none';
+    });
+
     // Clear the previous card's animated media before resolving the next card's
     // Info-side preference. Otherwise a stale MP4 can incorrectly take priority
     // over the newly imported card's LWF.
@@ -230,5 +253,15 @@ window.clearEditorForCleanImport = function() {
 
     const formList = document.getElementById('formList');
     if (formList) formList.innerHTML = "";
+};
+
+window.isPlaceholderCardArtUrl = function(value) {
+    const source = String(value || '').trim();
+    if (!source) return true;
+    try {
+        return /(?:^|\/)Card(?:%20| )Art(?:%20| )Template\.png(?:[?#]|$)/i.test(decodeURIComponent(source));
+    } catch (e) {
+        return /Card(?:%20| )Art(?:%20| )Template\.png/i.test(source);
+    }
 };
 

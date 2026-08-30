@@ -1102,6 +1102,7 @@ function renderPassiveIconsStrip(passiveText, card = null) {
         if (!text) return;
 
         const tip = getOrCreateTooltip();
+        tip.classList.toggle('info-link-tooltip', Boolean(badge.closest('#card-link-container a')));
         tip.textContent = text;
         tip.style.display = 'block';
 

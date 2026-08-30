@@ -1855,7 +1855,11 @@ window.executeCustomCardImport = async function(cardItem) {
         }
 
         // 10. Card Art Image & Video
-        const rawArtImg = doc.querySelector('#myOverlayImage')?.getAttribute('src') || doc.querySelector('#abs-art-img')?.getAttribute('src') || doc.querySelector('.card-art-canvas img')?.getAttribute('src');
+        const rawArtImg = [
+            doc.querySelector('#myOverlayImage')?.getAttribute('src'),
+            doc.querySelector('#abs-art-img')?.getAttribute('src'),
+            doc.querySelector('.card-art-canvas img')?.getAttribute('src')
+        ].find(src => !window.isPlaceholderCardArtUrl?.(src)) || '';
         const rawArtVid = doc.querySelector('#myOverlayVideo source')?.getAttribute('src') || doc.querySelector('video.card-art-canvas source')?.getAttribute('src');
 
         if (rawArtImg) {

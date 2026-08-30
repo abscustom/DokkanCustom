@@ -121,7 +121,9 @@ window.getProjectDataObject = function() {
         passiveName: document.getElementById('input-passive-name-sidebar')?.value || "",
         passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
         absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
-        cardArtImage: document.getElementById("myOverlayImage")?.src || "",
+        cardArtImage: window.isPlaceholderCardArtUrl?.(document.getElementById("myOverlayImage")?.src)
+            ? ""
+            : (document.getElementById("myOverlayImage")?.src || ""),
         cardArtVideo: document.getElementById("myOverlayVideo")?.querySelector('source')?.getAttribute('src') || document.getElementById("myOverlayVideo")?.getAttribute('src') || "",
         editorArtMode: window.currentEditorArtMode || 'static'
     };
@@ -315,7 +317,10 @@ window.loadProjectData = function(projectData, baseUrl = '') {
     const artImg = document.getElementById("myOverlayImage");
     const vidOverlay = document.getElementById("myOverlayVideo");
     const preferredArtMode = projectData.editorArtMode === 'animated' ? 'animated' : 'static';
-    if (projectData.cardArtImage && artImg) artImg.src = fixUrl(projectData.cardArtImage);
+    const projectStaticArt = window.isPlaceholderCardArtUrl?.(projectData.cardArtImage)
+        ? ''
+        : fixUrl(projectData.cardArtImage);
+    if (projectStaticArt && artImg) artImg.src = projectStaticArt;
     if (projectData.cardArtVideo) {
         const vidSource = vidOverlay?.querySelector('source');
         if (vidSource && vidOverlay) {
@@ -325,7 +330,7 @@ window.loadProjectData = function(projectData, baseUrl = '') {
             vidOverlay.load();
         }
     }
-    if (artImg) artImg.style.display = preferredArtMode === 'static' && projectData.cardArtImage ? 'block' : 'none';
+    if (artImg) artImg.style.display = preferredArtMode === 'static' && projectStaticArt ? 'block' : 'none';
     if (vidOverlay) {
         vidOverlay.style.display = preferredArtMode === 'animated' && projectData.cardArtVideo ? 'block' : 'none';
         if (vidOverlay.style.display === 'block') vidOverlay.play().catch(() => {});

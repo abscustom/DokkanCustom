@@ -366,6 +366,8 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.uploadedArtImageFile = f;
                 window.uploadedArtFile = f; 
                 window.uploadedArtType = 'image';
+                const artBox = document.getElementById('abs-art-layers-container');
+                if (artBox) delete artBox.dataset.staticArtSrc;
                 imgOverlay.style.display = 'block';
                 vidOverlay.style.display = 'none';
                 vidOverlay.pause(); 

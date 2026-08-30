@@ -361,6 +361,38 @@ body.admin-mode-active #topbar-upload-dock-wrap {
   color: var(--type-text, #facc15) !important;
 }
 
+/* Dokkan Info link-skill hover: match the editor's clean white selection
+   treatment instead of the ABS card glow. */
+#card-link-container a[data-tooltip] {
+  position: relative !important;
+  cursor: help !important;
+  transition: background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease !important;
+}
+
+#card-link-container a[data-tooltip]:hover {
+  z-index: 2 !important;
+  color: #ffffff !important;
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: #ffffff !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.7), 0 0 9px rgba(255, 255, 255, 0.3) !important;
+}
+
+/* The shared tooltip becomes a compact Dokkan Info panel only for links on
+   the Info layout. ABS badges keep their existing themed tooltip. */
+#abs-global-floating-tooltip.info-link-tooltip {
+  background: linear-gradient(180deg, #252525 0%, #0e0e0e 100%) !important;
+  border: 1px solid #ffffff !important;
+  border-left: 4px solid var(--type-border, #facc15) !important;
+  border-radius: 0 !important;
+  color: #ffffff !important;
+  font-size: 12px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.1px !important;
+  line-height: 1.35 !important;
+  padding: 7px 10px !important;
+  box-shadow: 0 5px 16px rgba(0, 0, 0, 0.78), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
 /* Keep the card-link gear aligned inside the standard nav-button size. */
 #topbar-card-admin-dock-wrap .glass-btn > span {
   display: grid !important;

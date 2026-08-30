@@ -1221,6 +1221,8 @@ function bindContextListeners(editType) {
         if (el) el.addEventListener('input', () => {
             const target = document.getElementById('imageInput');
             if (target) target.value = el.value;
+            const artBox = document.getElementById('abs-art-layers-container');
+            if (artBox) delete artBox.dataset.staticArtSrc;
             const myOverlay = document.getElementById('myOverlayImage');
             if (myOverlay) myOverlay.src = el.value;
             const dbArtImg = document.getElementById('abs-art-img');

@@ -63,7 +63,9 @@ window.autoSaveToCache = async function() {
         const isVideoActive = vidOverlayEl && vidOverlayEl.style.display !== 'none';
         const cardArtVideo = (vidOverlayEl?.querySelector('source')?.getAttribute('src') || vidOverlayEl?.getAttribute('src') || "").trim();
         const cardArtImage = document.getElementById("myOverlayImage");
-        const cardArtImageSrc = cardArtImage?.src ? await blobUrlToDataUrl(cardArtImage.src) : "";
+        const cardArtImageSrc = cardArtImage?.src && !window.isPlaceholderCardArtUrl?.(cardArtImage.src)
+            ? await blobUrlToDataUrl(cardArtImage.src)
+            : "";
 
         const lrEl = document.getElementById("img-lr");
         const turEl = document.getElementById("img-tur");
@@ -191,10 +193,11 @@ window.loadFromCache = function() {
             ? 'animated'
             : 'static';
 
-        if (data.cardArtImage && artImg) {
-            artImg.src = data.cardArtImage;
+        const cachedStaticArt = window.isPlaceholderCardArtUrl?.(data.cardArtImage) ? '' : data.cardArtImage;
+        if (cachedStaticArt && artImg) {
+            artImg.src = cachedStaticArt;
             const dbArtImg = document.getElementById("abs-art-img");
-            if (dbArtImg) dbArtImg.src = data.cardArtImage;
+            if (dbArtImg) dbArtImg.src = cachedStaticArt;
         }
         if (data.cardArtVideo && !data.cardArtVideo.startsWith('blob:')) {
             const vidSource = vidOverlay?.querySelector('source');
@@ -206,7 +209,7 @@ window.loadFromCache = function() {
             const dbArtVideo = document.getElementById('abs-art-video');
             if (dbArtVideo) dbArtVideo.src = data.cardArtVideo;
         }
-        if (artImg) artImg.style.display = preferredArtMode === 'static' && data.cardArtImage ? 'block' : 'none';
+        if (artImg) artImg.style.display = preferredArtMode === 'static' && cachedStaticArt ? 'block' : 'none';
         if (vidOverlay) {
             vidOverlay.style.display = preferredArtMode === 'animated' && data.cardArtVideo ? 'block' : 'none';
             if (vidOverlay.style.display === 'block') vidOverlay.play().catch(() => {});
