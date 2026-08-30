@@ -8,7 +8,9 @@ window.addLinkSkill = function() {
     if (linkName === "") return;
 
     // NO inline onclick="this.remove()" - WILL NEVER AUTO-DELETE
-    const html = `<a class="col-4 border border-1 border-${currentType} padding-top-bottom-10 text-center">${linkName}</a>`;
+    const level10Effect = window.getLinkSkillLevel10Description?.(linkName) || '';
+    const tooltipAttr = level10Effect ? ` data-tooltip="${window.escapeLinkTooltipAttribute?.(level10Effect) || level10Effect}"` : '';
+    const html = `<a class="col-4 border border-1 border-${currentType} padding-top-bottom-10 text-center"${tooltipAttr}>${linkName}</a>`;
     document.getElementById('card-link-container').insertAdjacentHTML('beforeend', html);
 
     if (window.currentCardThemeStyle === 'abs-style') {
@@ -19,7 +21,20 @@ window.addLinkSkill = function() {
     input.focus();
 };
 
-window.refreshEditorLinkingPartners = function() {
+window.refreshLinkSkillHoverDetails = function() {
+    document.querySelectorAll('#card-link-container a').forEach(link => {
+        const effect = window.getLinkSkillLevel10Description?.(link.textContent.trim()) || '';
+        if (effect) link.setAttribute('data-tooltip', effect);
+        else link.removeAttribute('data-tooltip');
+    });
+    document.querySelectorAll('#abs-link-container .abs-link-badge').forEach(badge => {
+        const effect = window.getLinkSkillLevel10Description?.(badge.querySelector('.abs-link-name')?.textContent.trim()) || '';
+        if (effect) badge.setAttribute('data-tooltip', effect);
+        else badge.removeAttribute('data-tooltip');
+    });
+};
+
+window.refreshEditorLinkingPartners = async function() {
     const partnersBox = document.getElementById('abs-partners-box');
     const partnersContainer = document.getElementById('abs-partners-container');
     if (!partnersBox || !partnersContainer) return;
@@ -28,11 +43,33 @@ window.refreshEditorLinkingPartners = function() {
         .map(link => link.textContent.trim())
         .filter(Boolean);
 
-    if (!links.length || !window.DB || !Array.isArray(window.DB.cards) || typeof renderLinkingPartners !== 'function') {
+    if (!links.length) {
         partnersBox.style.display = 'none';
         partnersContainer.innerHTML = '';
         return;
     }
+
+    const databaseReady = () => Boolean(
+        window.DB &&
+        Array.isArray(window.DB.cards) &&
+        window.DB.cards.length &&
+        window.DB.links &&
+        Object.keys(window.DB.links).length
+    );
+    if (!databaseReady() && typeof window.ensureDokkanDatabase === 'function') {
+        if (!window.editorDokkanDatabasePromise) {
+            window.editorDokkanDatabasePromise = Promise.resolve(window.ensureDokkanDatabase())
+                .finally(() => { window.editorDokkanDatabasePromise = null; });
+        }
+        await window.editorDokkanDatabasePromise;
+    }
+    if (!databaseReady() || typeof renderLinkingPartners !== 'function') {
+        partnersBox.style.display = 'none';
+        partnersContainer.innerHTML = '';
+        return;
+    }
+
+    window.refreshLinkSkillHoverDetails?.();
 
     const importedId = Number(window.editorPartnerCardId || document.getElementById('upload-folder-id')?.value);
     renderLinkingPartners({

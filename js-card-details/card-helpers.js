@@ -134,6 +134,31 @@ function getLinkSkillBuffs(linkName, linkObj) {
     return buffs;
 }
 
+window.getLinkSkillLevel10Description = function(linkName, linkItem = null) {
+    const normalizedName = String(linkName || '').trim().toLowerCase();
+    let linkObj = typeof linkItem === 'object' && linkItem !== null ? linkItem : null;
+    if (!linkObj && window.DB?.links) {
+        linkObj = Object.values(window.DB.links).find(link =>
+            String(link?.name || '').trim().toLowerCase() === normalizedName
+        ) || null;
+    }
+    return String(
+        linkObj?.levels?.['10'] ||
+        linkObj?.level_10_description ||
+        linkObj?.description ||
+        linkObj?.effect ||
+        ''
+    ).trim();
+};
+
+window.escapeLinkTooltipAttribute = function(value) {
+    return String(value || '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+};
+
 function getCardFolderId(card) {
     if (!card) return 0;
     let rawId = typeof card === 'number' ? card : parseInt(card.id, 10) || 0;

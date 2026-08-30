@@ -30,7 +30,9 @@ async function fetchJsonSafely(filename) {
  * Loads the core Dokkan JSON database into window.DB
  */
 async function ensureDokkanDatabase() {
-    if (window.DB && window.DB.cards && window.DB.cards.length > 0 && window.DB.fields && Object.keys(window.DB.fields).length > 0) {
+    if (window.DB && window.DB.cards && window.DB.cards.length > 0 &&
+        window.DB.fields && Object.keys(window.DB.fields).length > 0 &&
+        window.DB.links && Object.keys(window.DB.links).length > 0) {
         return window.DB;
     }
 
@@ -127,6 +129,8 @@ async function ensureDokkanDatabase() {
         return window.DB;
     }
 }
+
+window.ensureDokkanDatabase = ensureDokkanDatabase;
 
 /**
  * Helper to get class (super/extreme) and type (agl/teq/int/str/phy) from element ID

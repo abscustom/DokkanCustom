@@ -7,11 +7,13 @@ function renderLinkingPartners(card) {
     const partnersContainer = document.getElementById("abs-partners-container");
     if (!partnersBox || !partnersContainer || !DB.cards) return;
 
+    const normalizeLinkName = value => String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
     const cardLinks = (card.links || card.link_skill_ids || []).map(l => {
         if (typeof l === 'object') return l.name;
         if (DB.links && DB.links[l]) return DB.links[l].name;
         return l;
-    });
+    }).map(link => String(link || '').trim()).filter(Boolean);
+    const cardLinksByKey = new Map(cardLinks.map(link => [normalizeLinkName(link), link]));
 
     if (!cardLinks || cardLinks.length === 0) {
         partnersBox.style.display = "none";
@@ -23,7 +25,7 @@ function renderLinkingPartners(card) {
     const mainCardName = (card.name || '').trim().toLowerCase();
 
     DB.cards.forEach(otherCard => {
-        if (otherCard.id === card.id || otherCard.rarity === 3) return;
+        if (otherCard.id === card.id || Number(otherCard.rarity) === 3) return;
 
         const otherCardName = (otherCard.name || '').trim().toLowerCase();
         if (mainCardName && otherCardName && mainCardName === otherCardName) return;
@@ -35,13 +37,14 @@ function renderLinkingPartners(card) {
             if (typeof l === 'object') return l.name;
             if (DB.links && DB.links[l]) return DB.links[l].name;
             return l;
-        });
+        }).map(link => normalizeLinkName(link)).filter(Boolean);
+        const otherLinkKeys = new Set(otherLinks);
 
         if (!otherLinks || otherLinks.length === 0) return;
 
-        let sharedLinks = [];
-        cardLinks.forEach(link => {
-            if (otherLinks.includes(link)) sharedLinks.push(link);
+        const sharedLinks = [];
+        cardLinksByKey.forEach((displayName, key) => {
+            if (otherLinkKeys.has(key)) sharedLinks.push(displayName);
         });
 
         if (sharedLinks.length >= 4) {

@@ -876,9 +876,11 @@ function renderCardDetails(card, mode = currentEzaMode) {
         const linksHtml = (card.links || card.link_skill_ids || []).map(linkItem => {
             let linkName = typeof linkItem === 'object' ? linkItem.name : (DB.links && DB.links[linkItem] ? DB.links[linkItem].name : "Link");
             let linkObj = DB.links ? Object.values(DB.links).find(l => l.name === linkName) : null;
-            let lv10Desc = linkObj ? (linkObj.description || linkObj.level_10_description || linkObj.effect || '') : '';
+            let lv10Desc = window.getLinkSkillLevel10Description?.(linkName, linkObj) || '';
+            let tooltip = window.escapeLinkTooltipAttribute?.(lv10Desc) || lv10Desc;
+            let tooltipAttr = lv10Desc ? ` data-tooltip="${tooltip}"` : '';
             return `
-                <div class="abs-link-badge" data-tooltip="${lv10Desc || 'Max Level Effect'}">
+                <div class="abs-link-badge"${tooltipAttr}>
                     <div class="abs-link-lv">
                         <span class="lv-text">Lv</span>
                         <span class="num-text">10</span>

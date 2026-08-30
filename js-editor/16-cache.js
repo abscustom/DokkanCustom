@@ -100,6 +100,7 @@ window.autoSaveToCache = async function() {
             formsData: formsData,
             passiveName: passiveName,
             passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
+            absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
             isVideoActive: isVideoActive,
             cardArtImage: cardArtImageSrc,
             cardArtVideo: cardArtVideo,
@@ -137,6 +138,7 @@ window.loadFromCache = function() {
         currentClass = data.currentClass || "super";
         currentRarity = data.currentRarity || "LR";
         currentAwakeningMode = data.currentAwakeningMode || "none";
+        if (data.absUnitTag !== undefined) window.absUnitTag = data.absUnitTag;
 
         window.updateRarityStats(currentRarity); 
 

@@ -406,7 +406,9 @@ window.syncToAbsLayout = function() {
     try {
         const artHeader = document.getElementById('abs-art-header-text');
         if (artHeader) {
-            if (window.absUnitTag === undefined) window.absUnitTag = "DOKKAN FESTIVAL UNIT";
+            if (window.absUnitTag === undefined) {
+                window.absUnitTag = artHeader.innerText.trim() || "DOKKAN FESTIVAL UNIT";
+            }
             artHeader.innerText = window.absUnitTag || "";
             artHeader.style.display = window.absUnitTag ? 'block' : 'none';
         }
@@ -613,8 +615,13 @@ window.syncToAbsLayout = function() {
             document.querySelectorAll('#card-link-container a').forEach(a => {
                 const linkName = a.innerText.trim();
                 if (linkName) {
+                    const level10Effect = window.getLinkSkillLevel10Description?.(linkName) || '';
+                    const tooltip = window.escapeLinkTooltipAttribute?.(level10Effect) || level10Effect;
+                    const tooltipAttr = level10Effect ? ` data-tooltip="${tooltip}"` : '';
+                    if (level10Effect) a.setAttribute('data-tooltip', level10Effect);
+                    else a.removeAttribute('data-tooltip');
                     dbLinkCont.insertAdjacentHTML('beforeend', `
-                    <div class="abs-link-badge">
+                    <div class="abs-link-badge"${tooltipAttr}>
                         <div class="abs-link-lv">
                             <span class="lv-text">Lv</span>
                             <span class="num-text">10</span>

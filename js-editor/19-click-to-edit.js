@@ -638,8 +638,8 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
             titleHTML = "⚙️ Card Art & Media";
             bodyHTML = `
                 <label class="form-label mb-1">Banner Unit Tag (ABS Mode)</label>
-                <select id="gui-abs-unit-tag" class="form-control mb-3" onchange="window.absUnitTag=this.value; if(window.syncToAbsLayout) window.syncToAbsLayout();">
-                    <option value="DOKKAN FESTIVAL UNIT" ${(window.absUnitTag === 'DOKKAN FESTIVAL UNIT' || !window.absUnitTag) ? 'selected' : ''}>DOKKAN FESTIVAL UNIT</option>
+                <select id="gui-abs-unit-tag" class="form-control mb-3" onchange="window.absUnitTag=this.value; window.syncToAbsLayout?.(); window.autoSaveToCache?.();">
+                    <option value="DOKKAN FESTIVAL UNIT" ${(window.absUnitTag === 'DOKKAN FESTIVAL UNIT' || window.absUnitTag === undefined) ? 'selected' : ''}>DOKKAN FESTIVAL UNIT</option>
                     <option value="CARNIVAL UNIT" ${window.absUnitTag === 'CARNIVAL UNIT' ? 'selected' : ''}>CARNIVAL UNIT</option>
                     <option value="LEGENDARY SUMMON UNIT" ${window.absUnitTag === 'LEGENDARY SUMMON UNIT' ? 'selected' : ''}>LEGENDARY SUMMON UNIT</option>
                     <option value="" ${window.absUnitTag === '' ? 'selected' : ''}>Hidden / None</option>

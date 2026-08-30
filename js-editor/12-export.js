@@ -120,6 +120,7 @@ window.getProjectDataObject = function() {
         formsData: formsData,
         passiveName: document.getElementById('input-passive-name-sidebar')?.value || "",
         passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
+        absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
         cardArtImage: document.getElementById("myOverlayImage")?.src || "",
         cardArtVideo: document.getElementById("myOverlayVideo")?.querySelector('source')?.getAttribute('src') || document.getElementById("myOverlayVideo")?.getAttribute('src') || "",
         editorArtMode: window.currentEditorArtMode || 'static'
@@ -147,6 +148,7 @@ window.exportProjectAsJson = function() {
 window.loadProjectData = function(projectData, baseUrl = '') {
     if (!projectData) return;
     window.currentCardSource = projectData.cardSource === 'official' ? 'official' : 'custom';
+    if (projectData.absUnitTag !== undefined) window.absUnitTag = projectData.absUnitTag;
     const fixUrl = (src) => {
         if (!src) return "";
         const trimmed = String(src).trim();
@@ -1122,6 +1124,7 @@ window.executeGitHubUpload = async function() {
         const cleanTitle = charTitleRaw.replace(/[\[\]]/g, '').trim();
         const fullDisplayName = cleanTitle ? `[${cleanTitle}] ${charName}` : charName;
         const cardSource = window.currentCardSource === 'official' ? 'official' : 'custom';
+        const publishedUnitTag = window.absUnitTag ?? clone.querySelector('#abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
 
         if (clone.querySelector('title')) clone.querySelector('title').innerText = fullDisplayName;
 
@@ -1135,6 +1138,7 @@ window.executeGitHubUpload = async function() {
             window.IS_PUBLISHED = true; 
             window.PUBLISHED_SITE_FOLDER = "${basePath}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
+            window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";
@@ -1397,6 +1401,7 @@ window.executeQuickSave = async function() {
         const cardSource = window.PUBLISHED_CARD_SOURCE === 'official' || window.currentCardSource === 'official'
             ? 'official'
             : 'custom';
+        const publishedUnitTag = window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
 
         savedInputs.forEach(id => {
             const el = document.getElementById(id);
@@ -1450,6 +1455,7 @@ window.executeQuickSave = async function() {
             window.IS_PUBLISHED = true; 
             window.PUBLISHED_SITE_FOLDER = "${folderName}";
             window.PUBLISHED_CARD_SOURCE = "${cardSource}";
+            window.absUnitTag = ${JSON.stringify(publishedUnitTag)};
             window.currentType = "${currentType}";
             window.currentClass = "${currentClass}";
             window.currentRarity = "${currentRarity}";

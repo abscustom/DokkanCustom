@@ -78,6 +78,7 @@ document.addEventListener("DOMContentLoaded", function() {
         setTimeout(() => {
             if (window.syncToAbsLayout) window.syncToAbsLayout();
             if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
+            window.refreshEditorLinkingPartners?.();
         }, 200);
 
         console.log("Card loaded in Published View. Press Ctrl+Shift+A to unlock Admin Mode.");
@@ -444,6 +445,15 @@ document.addEventListener("DOMContentLoaded", function() {
         if (window.toggleCardTheme) {
             window.toggleCardTheme(savedTheme === 'abs-style');
         }
+
+        // Cached links render before the Dokkan database is available. Load it
+        // once on startup so their level 10 hover effects and linking partners
+        // are refreshed without requiring the user to add another link first.
+        setTimeout(() => {
+            if (document.querySelector('#card-link-container a')) {
+                window.refreshEditorLinkingPartners?.();
+            }
+        }, 200);
 
         // Right-click on card art canvas to pause / resume LWF animation
         const cardArtWrappers = document.querySelectorAll('.card-art-canvas, .abs-card-art-container');

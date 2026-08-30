@@ -430,7 +430,8 @@
     font-weight: 900 !important;
     color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8) !important;
-    white-space: nowrap !important;
+    white-space: pre-line !important;
+    max-width: min(360px, calc(100vw - 20px)) !important;
 }
 
 /* ======================================================================= */
@@ -562,7 +563,8 @@
     font-weight: 800 !important;
     padding: 5px 10px !important;
     border-radius: 6px !important;
-    white-space: nowrap !important;
+    white-space: pre-line !important;
+    max-width: min(360px, calc(100vw - 20px)) !important;
     z-index: 99999999 !important;
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.95), 0 0 12px var(--theme-glow) !important;
     transition: opacity 0.12s ease !important;
