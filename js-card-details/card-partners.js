@@ -107,6 +107,15 @@ function filterLinkingPartners() {
     const partnersBox = document.getElementById("abs-partners-box");
     const partnersContainer = document.getElementById("abs-partners-container");
 
+    // The active button is the source of truth for the initial view. This
+    // keeps older published pages from rendering the former default of 10
+    // when their first visible choice is now 9.
+    const activeLimitButton = document.querySelector('.partner-limit-btn.active');
+    const activeLimit = Number(activeLimitButton?.textContent?.trim());
+    if (Number.isFinite(activeLimit) && activeLimit > 0) {
+        currentPartnerLimit = activeLimit;
+    }
+
     if (!window.allPartnerScores || window.allPartnerScores.length === 0) {
         if (partnersBox) partnersBox.style.display = "none";
         return;
