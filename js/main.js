@@ -13,6 +13,26 @@ let filteredCardItems = [];
 let currentPage = 1;
 const CARDS_PER_PAGE = 60;
 
+function syncFxModeControls(fxMode) {
+    document.querySelectorAll('[data-fx-mode]').forEach((button) => {
+        const isActive = button.dataset.fxMode === fxMode;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+}
+
+function syncAutoScrollForFxMode() {
+    document.querySelectorAll('[data-h-scroll-attached="true"]').forEach((element) => {
+        if (element._hAutoScrollId) cancelAnimationFrame(element._hAutoScrollId);
+        element._hAutoScrollId = null;
+
+        if (currentFxMode !== 'static' && window.attachSmoothHorizontalScroll) {
+            const speed = Number(element.dataset.autoScrollSpeed) || 0.28;
+            window.attachSmoothHorizontalScroll(element, speed);
+        }
+    });
+}
+
 window.handleHubThumbError = function(img, folderId, parentFolderId) {
     img.onerror = null;
     img.src = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
@@ -48,6 +68,8 @@ function setAppStyle(styleKey) {
 }
 
 function setFxAnimationMode(fxMode) {
+    const allowedModes = new Set(['all', 'no-lightning', 'no-seza', 'static']);
+    fxMode = allowedModes.has(fxMode) ? fxMode : 'all';
     currentFxMode = fxMode;
     localStorage.setItem('hub_card_fx_mode', fxMode);
 
@@ -61,12 +83,29 @@ function setFxAnimationMode(fxMode) {
     }
     
     if (fxMode === 'no-seza' || fxMode === 'static') {
-        document.querySelectorAll('.seza-lwf-border-canvas').forEach(c => c.style.display = 'none');
+        document.querySelectorAll('.seza-lwf-border-canvas').forEach((canvas) => {
+            window.DokkanLWF?.destroy?.(canvas.id);
+            canvas.remove();
+        });
     } else {
-        document.querySelectorAll('.seza-lwf-border-canvas').forEach(c => c.style.display = 'block');
         mountGridSezaFlames();
     }
+
+    const backgroundVideo = document.getElementById('bg-video');
+    if (backgroundVideo) {
+        if (fxMode === 'static') {
+            backgroundVideo.pause();
+        } else if (backgroundVideo.paused) {
+            backgroundVideo.play().catch(() => {});
+        }
+    }
+
+    syncFxModeControls(fxMode);
+    syncAutoScrollForFxMode();
+    window.dispatchEvent(new CustomEvent('abs-fx-mode-change', { detail: { mode: fxMode } }));
 }
+
+window.setFxAnimationMode = setFxAnimationMode;
 
 function handleSourceChange(source) {
     currentSourceFilter = source;
@@ -455,6 +494,7 @@ function renderTimelineView() {
 
 window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
     if (!el) return;
+    el.dataset.autoScrollSpeed = String(autoScrollSpeed);
     
     // Stop any existing animation on this element
     if (el._hAutoScrollId) {
@@ -550,6 +590,11 @@ window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
     // Continuous Smooth Infinite Auto-Scroll Loop
     let subPixelAcc = 0;
     function autoScrollTick() {
+        if (currentFxMode === 'static' || document.body.classList.contains('fx-static')) {
+            el._hAutoScrollId = null;
+            return;
+        }
+
         const isPaused = el._checkInteracting ? el._checkInteracting() : false;
         const maxScroll = el.scrollWidth - el.clientWidth;
 
@@ -583,7 +628,9 @@ window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
         }
         el._hAutoScrollId = requestAnimationFrame(autoScrollTick);
     }
-    el._hAutoScrollId = requestAnimationFrame(autoScrollTick);
+    if (currentFxMode !== 'static' && !document.body.classList.contains('fx-static')) {
+        el._hAutoScrollId = requestAnimationFrame(autoScrollTick);
+    }
 };
 
 let currentInlineType = 'all';
@@ -1285,8 +1332,6 @@ async function updateTwitchStreamersStatus() {
 window.addEventListener('DOMContentLoaded', async () => {
     setAppStyle(currentAppStyle);
     
-    const fxSelect = document.getElementById('fxToggleSelect');
-    if (fxSelect) fxSelect.value = currentFxMode;
     setFxAnimationMode(currentFxMode);
 
     const urlParams = new URLSearchParams(window.location.search);

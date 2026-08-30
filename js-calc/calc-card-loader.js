@@ -10,6 +10,67 @@ let pickerSearchQuery = '';
 window.currentLoadedCardMeta = null;
 window.currentCalcEzaMode = 'base';
 
+/**
+ * Active Skills use two separate Dokkan calculation brackets:
+ * - "raises ATK temporarily" increases only the Active Skill attack multiplier.
+ * - direct ATK/DEF buffs (for a turn, several turns, or in battle) modify stats.
+ */
+function parseActiveSkillBuffValues(effectText = '') {
+    const source = String(effectText || '').replace(/<[^>]*>/g, ' ').replace(/\r/g, ' ').replace(/\s+/g, ' ').trim();
+    const lower = source.toLowerCase();
+    let tempAtk = 0;
+
+    const numericTempAtk = source.match(/raises?\s+ATK\s+by\s+(\d+)%\s+temporarily/i)
+        || source.match(/raises?\s+ATK[^\d%]*(\d+)%\s+temporarily/i);
+    if (numericTempAtk) tempAtk = parseInt(numericTempAtk[1], 10) || 0;
+    else if (/massively raises?\s+ATK\s+temporarily/i.test(source)) tempAtk = 100;
+    else if (/greatly raises?\s+ATK\s+temporarily/i.test(source)) tempAtk = 50;
+    else if (/raises?\s+ATK\s+temporarily/i.test(source)) tempAtk = 30;
+
+    // Remove the Active-attack-only raise before looking for lasting stat buffs.
+    const lastingSource = source
+        .replace(/(?:massively|greatly)?\s*raises?\s+ATK(?:\s+by\s+\d+%)?\s+temporarily/gi, ' ')
+        .replace(/\s+/g, ' ');
+
+    let activeAtk = 0;
+    let activeDef = 0;
+    const clauses = lastingSource.split(/(?:;|,|\.(?:\s|$))/);
+
+    for (const rawClause of clauses) {
+        const clause = rawClause.trim();
+        if (!clause) continue;
+        if (/self excluded/i.test(clause) || /Category allies/i.test(clause)) continue;
+        if (/all enemies['’]?\s+(?:ATK|DEF)|(?:attacked\s+)?enemy['’]s\s+(?:ATK|DEF)|lowers?\s+(?:the\s+)?(?:enemy['’]s\s+)?(?:ATK|DEF)/i.test(clause)) continue;
+
+        const combined = clause.match(/ATK\s*&\s*DEF\s*([+-])\s*(\d+)%/i);
+        if (combined) {
+            const value = (combined[1] === '-' ? -1 : 1) * parseInt(combined[2], 10);
+            if (activeAtk === 0) activeAtk = value;
+            if (activeDef === 0) activeDef = value;
+        }
+
+        const atkMatch = clause.match(/(?:^|[^A-Z])ATK\s*([+-])\s*(\d+)%/i)
+            || clause.match(/raises?\s+(?:all\s+allies['’]\s+)?ATK\s+by\s+(\d+)%/i);
+        if (atkMatch && activeAtk === 0) {
+            const hasSign = atkMatch[2] !== undefined;
+            const magnitude = parseInt(hasSign ? atkMatch[2] : atkMatch[1], 10) || 0;
+            activeAtk = hasSign && atkMatch[1] === '-' ? -magnitude : magnitude;
+        }
+
+        const defMatch = clause.match(/(?:^|[^A-Z])DEF\s*([+-])\s*(\d+)%/i)
+            || clause.match(/raises?\s+(?:all\s+allies['’]\s+)?DEF\s+by\s+(\d+)%/i);
+        if (defMatch && activeDef === 0) {
+            const hasSign = defMatch[2] !== undefined;
+            const magnitude = parseInt(hasSign ? defMatch[2] : defMatch[1], 10) || 0;
+            activeDef = hasSign && defMatch[1] === '-' ? -magnitude : magnitude;
+        }
+    }
+
+    return { tempAtk, activeAtk, activeDef, hasTemporaryAttackRaise: lower.includes('temporarily') };
+}
+
+window.parseActiveSkillBuffValues = parseActiveSkillBuffValues;
+
 /* NOTE: this restores the STUDIO dock sync button (#update-box-btn), which
    in the original HTML sizes its icon directly on the <svg> itself
    (width="11" height="11") rather than via a .dock-svg-icon wrapper. This
@@ -1107,28 +1168,11 @@ async function loadOfficialDokkanCardIntoCalculator(cardId, rawCard, cardItemMet
             const isAttackChk = document.getElementById('calc-active-is-attack');
             if (isAttackChk) isAttackChk.checked = isAttackActive;
 
-            let tempAtk = 0;
-            let tempDef = 0;
-            if (lowActive.includes('massively raises atk temporarily')) tempAtk = 100;
-            else if (lowActive.includes('greatly raises atk temporarily')) tempAtk = 50;
-            else if (lowActive.includes('raises atk temporarily')) tempAtk = 30;
-            else {
-                const tempMatch = lowActive.match(/raises\s+atk[^\d%]*(\d+)%\s+temporarily/i);
-                if (tempMatch) tempAtk = parseInt(tempMatch[1], 10);
-            }
-
-            if (lowActive.includes('massively raises def temporarily')) tempDef = 100;
-            else if (lowActive.includes('greatly raises def temporarily')) tempDef = 50;
-            else if (lowActive.includes('raises def temporarily')) tempDef = 30;
-            else {
-                const tempDefMatch = lowActive.match(/raises\s+def[^\d%]*(\d+)%\s+temporarily/i);
-                if (tempDefMatch) tempDef = parseInt(tempDefMatch[1], 10);
-            }
+            const parsedActiveBuffs = parseActiveSkillBuffValues(activeEff);
+            const tempAtk = parsedActiveBuffs.tempAtk;
             
             const tempAtkInput = document.getElementById('calc-active-temp-atk');
-            const tempDefInput = document.getElementById('calc-active-temp-def');
             if (tempAtkInput) tempAtkInput.value = tempAtk;
-            if (tempDefInput) tempDefInput.value = tempDef;
 
             const activeSaTypeSel = document.getElementById('calc-active-sa-type');
             if (activeSaTypeSel) {
@@ -1150,14 +1194,8 @@ async function loadOfficialDokkanCardIntoCalculator(cardId, rawCard, cardItemMet
                 }
             }
 
-            let activeAtkVal = 0;
-            let activeDefVal = 0;
-            if (!lowActive.includes('domain')) {
-                const activeAtkMatch = activeEff.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*\+\s*(\d+)%/i) || activeEff.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*&\s*DEF\s*\+\s*(\d+)%/i);
-                const activeDefMatch = activeEff.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*DEF\s*\+\s*(\d+)%/i) || activeEff.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*&\s*DEF\s*\+\s*(\d+)%/i);
-                if (activeAtkMatch) activeAtkVal = parseInt(activeAtkMatch[1], 10);
-                if (activeDefMatch) activeDefVal = parseInt(activeDefMatch[1], 10);
-            }
+            const activeAtkVal = lowActive.includes('domain') ? 0 : parsedActiveBuffs.activeAtk;
+            const activeDefVal = lowActive.includes('domain') ? 0 : parsedActiveBuffs.activeDef;
 
             const aAtkIn = document.getElementById('calc-active-atk');
             const aDefIn = document.getElementById('calc-active-def');
@@ -1710,28 +1748,11 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
         const isAttackChk = document.getElementById('calc-active-is-attack');
         if (isAttackChk) isAttackChk.checked = isAttackActive;
 
-        let tempAtk = 0;
-        let tempDef = 0;
-        if (lowActive.includes('massively raises atk temporarily')) tempAtk = 100;
-        else if (lowActive.includes('greatly raises atk temporarily')) tempAtk = 50;
-        else if (lowActive.includes('raises atk temporarily')) tempAtk = 30;
-        else {
-            const tempMatch = lowActive.match(/raises\s+atk[^\d%]*(\d+)%\s+temporarily/i);
-            if (tempMatch) tempAtk = parseInt(tempMatch[1], 10);
-        }
-
-        if (lowActive.includes('massively raises def temporarily')) tempDef = 100;
-        else if (lowActive.includes('greatly raises def temporarily')) tempDef = 50;
-        else if (lowActive.includes('raises def temporarily')) tempDef = 30;
-        else {
-            const tempDefMatch = lowActive.match(/raises\s+def[^\d%]*(\d+)%\s+temporarily/i);
-            if (tempDefMatch) tempDef = parseInt(tempDefMatch[1], 10);
-        }
+        const parsedActiveBuffs = parseActiveSkillBuffValues(foundActiveDesc);
+        const tempAtk = parsedActiveBuffs.tempAtk;
         
         const tempAtkInput = document.getElementById('calc-active-temp-atk');
-        const tempDefInput = document.getElementById('calc-active-temp-def');
         if (tempAtkInput) tempAtkInput.value = tempAtk;
-        if (tempDefInput) tempDefInput.value = tempDef;
 
         const activeSaTypeSel = document.getElementById('calc-active-sa-type');
         if (activeSaTypeSel) {
@@ -1741,14 +1762,8 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
             else activeSaTypeSel.value = "550";
         }
 
-        let activeAtkVal = 0;
-        let activeDefVal = 0;
-        if (!lowActive.includes('domain')) {
-            const activeAtkMatch = foundActiveDesc.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*\+\s*(\d+)%/i) || foundActiveDesc.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*&\s*DEF\s*\+\s*(\d+)%/i);
-            const activeDefMatch = foundActiveDesc.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*DEF\s*\+\s*(\d+)%/i) || foundActiveDesc.match(/(?:for\s+\d+\s+turns|in\b)[^%\n]*ATK\s*&\s*DEF\s*\+\s*(\d+)%/i);
-            if (activeAtkMatch) activeAtkVal = parseInt(activeAtkMatch[1], 10);
-            if (activeDefMatch) activeDefVal = parseInt(activeDefMatch[1], 10);
-        }
+        const activeAtkVal = lowActive.includes('domain') ? 0 : parsedActiveBuffs.activeAtk;
+        const activeDefVal = lowActive.includes('domain') ? 0 : parsedActiveBuffs.activeDef;
 
         const aAtkIn = document.getElementById('calc-active-atk');
         const aDefIn = document.getElementById('calc-active-def');

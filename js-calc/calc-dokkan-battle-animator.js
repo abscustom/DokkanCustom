@@ -32,8 +32,10 @@ class DokkanBattleAnimator {
         this.additionalPlayers = new Map();
         this.bannerFiles = null;
         this.isLoaded = false;
+        this.isLoading = false;
         this.activeBannerMovie = '';
         this.playbackSpeed = 0.65;
+        this.additionalRenderGeneration = 0;
     }
 
     async ensureLwfLoaded() {
@@ -149,13 +151,21 @@ class DokkanBattleAnimator {
     }
 
     async init() {
+        if (this.isLoaded || this.isLoading) return;
+        if (document.body.classList.contains('fx-static')) {
+            this.stopAllAnimations();
+            return;
+        }
+
         const bannerCanvas = document.getElementById('res-main-sa-lwf-canvas');
         if (!bannerCanvas) return;
 
-        await this.ensureLwfLoaded();
-        if (typeof window.LWF === 'undefined') return;
+        this.isLoading = true;
 
         try {
+            await this.ensureLwfLoaded();
+            if (typeof window.LWF === 'undefined') return;
+
             this.bannerFiles = await this.loadPackFiles('assets/battle/battle_140000/', 'battle_140000.lwf', MANIFEST_140000);
             if (this.bannerFiles) {
                 this.bannerPlayer = this.setupPlayer(bannerCanvas);
@@ -175,6 +185,8 @@ class DokkanBattleAnimator {
 
         } catch (err) {
             console.error("❌ [Dokkan Banner Error]:", err);
+        } finally {
+            this.isLoading = false;
         }
     }
 
@@ -253,13 +265,19 @@ class DokkanBattleAnimator {
         }
     }
 
-    async attachAdditionalBanner(canvasId, saType) {
+    async attachAdditionalBanner(canvasId, saType, expectedGeneration = this.additionalRenderGeneration) {
+        if (expectedGeneration !== this.additionalRenderGeneration) return;
         const isStatic = document.body.classList.contains('fx-static');
         const canvas = document.getElementById(canvasId);
         const imgId = canvasId.replace('lwf-canvas', 'img');
         const img = document.getElementById(imgId);
 
         if (isStatic) {
+            const activePlayer = this.additionalPlayers.get(canvasId);
+            if (activePlayer) {
+                try { activePlayer.pause(); activePlayer.clear(); } catch(e) {}
+                this.additionalPlayers.delete(canvasId);
+            }
             if (canvas) canvas.style.setProperty('display', 'none', 'important');
             if (img) {
                 img.style.setProperty('display', 'block', 'important');
@@ -270,6 +288,7 @@ class DokkanBattleAnimator {
         }
 
         if (!canvas || !this.bannerFiles) return;
+        const renderGeneration = expectedGeneration;
 
         if (img) img.style.setProperty('display', 'none', 'important');
         if (canvas) canvas.style.setProperty('display', 'block', 'important');
@@ -285,6 +304,10 @@ class DokkanBattleAnimator {
             if (ingested.lwfFile) {
                 await player.prepare(ingested.lwfFile);
                 await player.load();
+                if (renderGeneration !== this.additionalRenderGeneration || !canvas.isConnected) {
+                    try { player.pause(); player.clear(); } catch(e) {}
+                    return;
+                }
                 this.additionalPlayers.set(canvasId, player);
             }
         }
@@ -296,6 +319,22 @@ class DokkanBattleAnimator {
         }
     }
 
+    clearAdditionalBanners() {
+        this.additionalRenderGeneration++;
+        this.additionalPlayers.forEach((player) => {
+            try { player.pause(); player.clear(); } catch(e) {}
+        });
+        this.additionalPlayers.clear();
+        return this.additionalRenderGeneration;
+    }
+
+    stopAllAnimations() {
+        if (this.bannerPlayer) {
+            try { this.bannerPlayer.pause(); } catch(e) {}
+        }
+        this.clearAdditionalBanners();
+    }
+
     syncWithCalculator() {
         if (typeof calculateDokkanStats === 'function') {
             calculateDokkanStats();
@@ -305,6 +344,14 @@ class DokkanBattleAnimator {
 
 const battleAnimator = new DokkanBattleAnimator();
 window.DokkanBattleAnimator = battleAnimator;
+
+window.addEventListener('abs-fx-mode-change', (event) => {
+    if (event.detail?.mode === 'static') {
+        battleAnimator.stopAllAnimations();
+    } else if (!battleAnimator.isLoaded) {
+        battleAnimator.init();
+    }
+});
 
 window.addEventListener('DOMContentLoaded', () => {
     setTimeout(() => {

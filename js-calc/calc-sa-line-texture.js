@@ -5,6 +5,10 @@
     const textures = new Map();
     let rafId = 0;
 
+    function motionDisabled() {
+        return reduceMotion.matches || document.body.classList.contains('fx-static');
+    }
+
     function cardColor(card) {
         return getComputedStyle(card).getPropertyValue('--sa-hot').trim() || 'rgba(253, 224, 71, 0.55)';
     }
@@ -33,10 +37,16 @@
     }
 
     function collect() {
+        if (motionDisabled()) return;
         document.querySelectorAll('.sa-card-ultra, .sa-card-ex, .sa-card-unit, .sa-card-standard, .sa-card-active, .sa-card-sa-counter, .sa-card-norm-counter').forEach(addTexture);
     }
 
     function draw(now) {
+        if (motionDisabled()) {
+            rafId = 0;
+            return;
+        }
+
         collect();
         const time = now * 0.00055;
         textures.forEach((texture, card) => {
@@ -61,15 +71,19 @@
                 path.setAttribute('d', d);
             });
         });
-        if (!reduceMotion.matches) rafId = requestAnimationFrame(draw);
+        if (!motionDisabled()) rafId = requestAnimationFrame(draw);
+    }
+
+    function syncAnimationState() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = 0;
+        if (!motionDisabled()) rafId = requestAnimationFrame(draw);
     }
 
     const observer = new MutationObserver(collect);
     observer.observe(document.body, { childList: true, subtree: true });
     collect();
-    if (!reduceMotion.matches) rafId = requestAnimationFrame(draw);
-    reduceMotion.addEventListener('change', () => {
-        cancelAnimationFrame(rafId);
-        if (!reduceMotion.matches) rafId = requestAnimationFrame(draw);
-    });
+    syncAnimationState();
+    reduceMotion.addEventListener('change', syncAnimationState);
+    window.addEventListener('abs-fx-mode-change', syncAnimationState);
 })();

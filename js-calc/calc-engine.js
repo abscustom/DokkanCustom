@@ -551,21 +551,18 @@ function calculateDokkanStats() {
     const activeIsAttack = activeSaBaseInput >= 100;
     
     const rawActiveTempAtk = parseFloat(document.getElementById('calc-active-temp-atk')?.value) || 0;
-    const rawActiveTempDef = parseFloat(document.getElementById('calc-active-temp-def')?.value) || 0;
-    const rawActiveTurnAtk = parseFloat(document.getElementById('calc-active-atk')?.value) || 0;
-    const rawActiveTurnDef = parseFloat(document.getElementById('calc-active-def')?.value) || 0;
+    const rawActiveAtkBuff = parseFloat(document.getElementById('calc-active-atk')?.value) || 0;
+    const rawActiveDefBuff = parseFloat(document.getElementById('calc-active-def')?.value) || 0;
 
     const aTempAtkYield = document.getElementById('active-temp-atk-yield');
-    const aTempDefYield = document.getElementById('active-temp-def-yield');
     const aTurnAtkYield = document.getElementById('active-turn-atk-yield');
     const aTurnDefYield = document.getElementById('active-turn-def-yield');
-    if (aTempAtkYield) aTempAtkYield.innerText = `+${rawActiveTempAtk}% ATK`;
-    if (aTempDefYield) aTempDefYield.innerText = `+${rawActiveTempDef}% DEF`;
-    if (aTurnAtkYield) aTurnAtkYield.innerText = `+${rawActiveTurnAtk}% ATK`;
-    if (aTurnDefYield) aTurnDefYield.innerText = `+${rawActiveTurnDef}% DEF`;
+    if (aTempAtkYield) aTempAtkYield.innerText = `+${rawActiveTempAtk}% Active multiplier`;
+    if (aTurnAtkYield) aTurnAtkYield.innerText = `${rawActiveAtkBuff >= 0 ? '+' : ''}${rawActiveAtkBuff}% ATK`;
+    if (aTurnDefYield) aTurnDefYield.innerText = `${rawActiveDefBuff >= 0 ? '+' : ''}${rawActiveDefBuff}% DEF`;
 
-    const activeAtkVal = activeSkillActive ? rawActiveTurnAtk : 0;
-    const activeDefVal = activeSkillActive ? rawActiveTurnDef : 0;
+    const activeAtkVal = activeSkillActive ? rawActiveAtkBuff : 0;
+    const activeDefVal = activeSkillActive ? rawActiveDefBuff : 0;
 
     const activeAtkMult = 1 + (activeAtkVal / 100);
     const activeDefMult = 1 + (activeDefVal / 100);
@@ -966,7 +963,11 @@ function calculateDokkanStats() {
 
     // Clean up any old dynamic cards or dividers
     const dynamicAddContainer = document.getElementById('res-dynamic-additional-sas');
-    if (dynamicAddContainer) dynamicAddContainer.innerHTML = '';
+    let additionalRenderGeneration = null;
+    if (dynamicAddContainer) {
+        additionalRenderGeneration = window.DokkanBattleAnimator?.clearAdditionalBanners?.() ?? null;
+        dynamicAddContainer.innerHTML = '';
+    }
     document.querySelectorAll('.dynamic-dash-divider').forEach(el => el.remove());
 
     const activeDashCard = document.getElementById('res-active-skill-dash-card');
@@ -1139,7 +1140,7 @@ function calculateDokkanStats() {
 
                 setTimeout(() => {
                     if (window.DokkanBattleAnimator && typeof window.DokkanBattleAnimator.attachAdditionalBanner === 'function') {
-                        window.DokkanBattleAnimator.attachAdditionalBanner(`res-add-sa-lwf-canvas-${addObj.idx}`, addSaType);
+                        window.DokkanBattleAnimator.attachAdditionalBanner(`res-add-sa-lwf-canvas-${addObj.idx}`, addSaType, additionalRenderGeneration);
                     }
                 }, 50);
             });

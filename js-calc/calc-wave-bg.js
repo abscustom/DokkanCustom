@@ -13,6 +13,11 @@
     let paths = [];
     let lines = [];
     let rafId = null;
+    const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
+
+    function motionDisabled() {
+        return reduceMotion.matches || document.body.classList.contains('fx-static');
+    }
 
     const mouse = {
         x: -10, y: 0,
@@ -67,7 +72,14 @@
         }
     }
 
+    function clearLines() {
+        paths.forEach((path) => path.remove());
+        paths = [];
+        lines = [];
+    }
+
     function onMouseMove(e) {
+        if (motionDisabled()) return;
         mouse.x = e.clientX;
         mouse.y = e.clientY;
         if (!mouse.set) {
@@ -127,6 +139,11 @@
     }
 
     function tick(time) {
+        if (motionDisabled()) {
+            rafId = null;
+            return;
+        }
+
         mouse.sx += (mouse.x - mouse.sx) * 0.12;
         mouse.sy += (mouse.y - mouse.sy) * 0.12;
 
@@ -145,10 +162,26 @@
         rafId = requestAnimationFrame(tick);
     }
 
-    window.addEventListener('resize', () => { setSize(); setupLines(); });
+    function syncAnimationState() {
+        if (rafId) cancelAnimationFrame(rafId);
+        rafId = null;
+        if (motionDisabled()) {
+            clearLines();
+            return;
+        }
+        if (!lines.length) setupLines();
+        rafId = requestAnimationFrame(tick);
+    }
+
+    window.addEventListener('resize', () => {
+        setSize();
+        if (!motionDisabled()) setupLines();
+    });
     window.addEventListener('mousemove', onMouseMove);
+    window.addEventListener('abs-fx-mode-change', syncAnimationState);
+    reduceMotion.addEventListener('change', syncAnimationState);
 
     setSize();
-    setupLines();
-    rafId = requestAnimationFrame(tick);
+    if (!motionDisabled()) setupLines();
+    syncAnimationState();
 })();

@@ -3211,6 +3211,68 @@ body.fx-static #res-main-sa-unit-img {
     height: 100% !important;
     object-fit: contain !important;
 }
+
+body.fx-static *,
+body.fx-static *::before,
+body.fx-static *::after {
+    animation: none !important;
+    transition-duration: 0s !important;
+    scroll-behavior: auto !important;
+}
+
+body.fx-static .wave-svg-canvas,
+body.fx-static .sa-card-lines {
+    display: none !important;
+}
+
+body.fx-static .wave-bg-viewport,
+body.fx-static.type-theme-agl .wave-bg-viewport,
+body.fx-static.type-theme-teq .wave-bg-viewport,
+body.fx-static.type-theme-int .wave-bg-viewport,
+body.fx-static.type-theme-str .wave-bg-viewport,
+body.fx-static.type-theme-phy .wave-bg-viewport {
+    background: #070b14 !important;
+    pointer-events: none !important;
+}
+
+@media (max-width: 780px) {
+    .calc-wrapper {
+        width: 100%;
+        padding-inline: 8px;
+        box-sizing: border-box;
+    }
+
+    .apple-glass-character-deck { padding: 12px !important; }
+    .deck-top-row { align-items: flex-start; gap: 12px; }
+    .deck-left-slot {
+        width: 100%;
+        min-width: 0;
+        flex-wrap: wrap;
+    }
+    .deck-center-slot {
+        flex: 1 1 220px;
+        width: auto;
+        min-width: 0;
+    }
+    .deck-stacked-actions { width: 100%; }
+    .deck-stacked-actions .waffle-unit-picker-btn { justify-content: center; }
+    .calc-studio-layout { min-width: 0; gap: 10px !important; }
+    .calc-left-dock-column {
+        position: static !important;
+        top: auto !important;
+        width: 100%;
+    }
+    .calc-masonry-2col,
+    .calc-col-stack { min-width: 0 !important; }
+    .boss-defense-grid-5 { grid-template-columns: repeat(3, minmax(0, 1fr)) !important; }
+}
+
+@media (max-width: 520px) {
+    .deck-left-slot { align-items: flex-start; }
+    .deck-center-slot { flex-basis: calc(100% - 90px); }
+    .deck-char-name { font-size: 1rem; overflow-wrap: anywhere; }
+    .boss-defense-grid-5 { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; }
+}
 body.fx-static #res-main-sa-unit-img {
     display: block !important;
     visibility: visible !important;
