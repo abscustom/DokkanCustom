@@ -461,7 +461,12 @@ function renderTimelineView() {
     });
 
     const timelineGroups = Array.from(groupsMap.values()).sort((a, b) => b.sortTime - a.sortTime);
-    const renderBatches = timelineGroups.slice(0, 35);
+    // Keep the entire current year visible on the Home timeline. If that is
+    // shorter than 60 release batches, continue into the previous year so the
+    // panel still feels populated.
+    const currentYearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
+    const currentYearBatchCount = timelineGroups.filter(batch => batch.sortTime >= currentYearStart).length;
+    const renderBatches = timelineGroups.slice(0, Math.max(60, currentYearBatchCount));
 
     let timelineHtml = '';
 
@@ -1049,8 +1054,27 @@ async function loadCustomCards() {
                 else if (frameAttr.includes('str')) cardType = 'str';
                 else if (frameAttr.includes('phy')) cardType = 'phy';
 
-                const dateText = doc.querySelector('#dateInput')?.getAttribute('value') || doc.querySelector('#dateInput')?.value || '';
-                const parsedTime = parseReleaseTime(dateText);
+                // card.json contains the exact Release Date entered in the
+                // editor. It is the source of truth for a custom card's place
+                // on the timeline; a GitHub upload date is never used here.
+                let dateText = '';
+                try {
+                    const cardDataRes = await fetch(`https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/card.json`, { cache: 'no-store' });
+                    if (cardDataRes.ok) {
+                        const cardData = await cardDataRes.json();
+                        dateText = cardData?.inputs?.dateInput || cardData?.releaseDate || cardData?.release_date || '';
+                    }
+                } catch (e) {}
+
+                if (!dateText) {
+                    dateText = doc.querySelector('#dateInput')?.getAttribute('value') || doc.querySelector('#dateInput')?.value || '';
+                }
+                if (!dateText) {
+                    const releasePanelText = doc.querySelector('#release-dates-container')?.textContent || '';
+                    const releaseDateMatch = releasePanelText.match(/release\s+date\s*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{4}[./-]\d{1,2}[./-]\d{1,2})/i);
+                    if (releaseDateMatch) dateText = releaseDateMatch[1];
+                }
+                const parsedTime = parseReleaseTime(String(dateText));
 
                 const isEzaCustom = htmlText.includes('eza_abs.png') || htmlText.includes('eza_img.png');
                 const isSezaCustom = htmlText.includes('superza_abs.png') || htmlText.includes('supereza_img.png');

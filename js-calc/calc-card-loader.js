@@ -813,6 +813,7 @@ function resetCalculatorForNewCharacterSelection() {
     window.calcCritEnabled = false;
     window.calcAdditionalEnabled = false;
     window.calcSeEnabled = false;
+    window.currentCalcAutoSuperEffective = false;
 
     activeCharacterLinks = [];
     cardParsedStats = JSON.parse(JSON.stringify(DEFAULT_CARD_STATS));
@@ -831,7 +832,7 @@ function resetCalculatorForNewCharacterSelection() {
 
     document.querySelectorAll('[id^="hipo-pill-"]').forEach(button => button.classList.toggle('active', button.id === 'hipo-pill-100'));
     document.querySelectorAll('[id^="lead-pill-"]').forEach(button => button.classList.toggle('active', button.id === 'lead-pill-220'));
-    document.querySelectorAll('#calc-crit-toggle, #calc-se-toggle, #calc-additional-toggle').forEach(button => button.classList.remove('active'));
+    document.querySelectorAll('#calc-crit-toggle, #calc-se-toggle, #calc-additional-toggle').forEach(button => button.classList.remove('active', 'auto-active'));
     document.getElementById('btn-tab-atk')?.classList.add('active');
     document.getElementById('btn-tab-def')?.classList.remove('active');
     document.querySelectorAll('.view-atk-only').forEach(element => element.style.setProperty('display', '', 'important'));

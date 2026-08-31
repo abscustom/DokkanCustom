@@ -6,6 +6,12 @@ window.DAMAGE_DEALT_SVG = window.DAMAGE_DEALT_SVG || `<svg class="dmg-dealt-icon
 
 window.activeUnitSaBlockIdx = null;
 
+function getDefaultExToggleEnabled() {
+    // Custom cards can contain optional EX attacks, so let their creator or
+    // viewer opt in manually. Official records retain the current EX-on default.
+    return window.currentLoadedCardMeta?.cardItemMeta?.source !== 'custom';
+}
+
 function getHighestEligibleSaIndex(saBlocksData, currentKi, isLR) {
     if (!saBlocksData || saBlocksData.length === 0) return 0;
     
@@ -257,7 +263,7 @@ function getOnSaWithinTurnAtkForSeq(saSeq) {
 
 window.togglePerAttackEx = function(idx) {
     window.exToggleState = window.exToggleState || {};
-    const cur = window.exToggleState[idx] !== undefined ? window.exToggleState[idx] : true;
+    const cur = window.exToggleState[idx] !== undefined ? window.exToggleState[idx] : getDefaultExToggleEnabled();
     window.exToggleState[idx] = !cur;
 
     // Recalculate stats and trigger banner sync immediately
@@ -287,10 +293,24 @@ window.toggleCalcAdditional = function() {
 };
 
 window.calcSeEnabled = false;
+window.syncCalcSuperEffectiveButton = function(isTypeAdvantage = false) {
+    const btn = document.getElementById('calc-se-toggle');
+    if (!btn) return;
+
+    // Type advantage is already an automatic effective matchup. Show the
+    // control as selected so the damage result is easy to read, while keeping
+    // calcSeEnabled false so it does not replace the normal type multiplier.
+    const isShownActive = window.calcSeEnabled || isTypeAdvantage;
+    btn.classList.toggle('active', isShownActive);
+    btn.classList.toggle('auto-active', isTypeAdvantage && !window.calcSeEnabled);
+    btn.setAttribute('aria-pressed', String(isShownActive));
+    btn.title = isTypeAdvantage && !window.calcSeEnabled
+        ? 'Automatically effective from type advantage'
+        : 'Toggle Super Effective damage';
+};
+
 window.toggleCalcSE = function() {
     window.calcSeEnabled = !window.calcSeEnabled;
-    const btn = document.getElementById('calc-se-toggle');
-    if (btn) btn.classList.toggle('active', window.calcSeEnabled);
     if (typeof calculateDokkanStats === 'function') calculateDokkanStats();
 };
 
@@ -363,6 +383,14 @@ window.getDokkanTypeAndClassMultiplier = function(playerType, playerClass, bossT
     };
 };
 
+window.getAutomaticSuperEffectiveMatchup = function() {
+    const bossType = (document.getElementById('calc-boss-type')?.value || 'AGL').toUpperCase();
+    const bossClass = document.getElementById('calc-boss-class')?.value || 'Extreme';
+    const cardType = (window.currentCalcType || 'AGL').toUpperCase();
+    const cardClass = window.currentCalcClass || 'Super';
+    return window.getDokkanTypeAndClassMultiplier(cardType, cardClass, bossType, bossClass, false, false).isAdvantage;
+};
+
 window.calcEnemyDamage = function(atkStat, isCrit, isSE) {
     const rawDef = parseFloat(document.getElementById('calc-boss-def')?.value) || 0;
     const defMult = parseFloat(document.getElementById('calc-boss-def-mult')?.value) || 0;
@@ -421,6 +449,12 @@ window.stepOrb = function(type, tier, delta) {
    CORE CALCULATION ENGINE
    ========================================================================== */
 function calculateDokkanStats() {
+    // In this calculator, type advantage is an automatic Super Effective hit.
+    // Keep it separate from the manual button so clicking the button cannot
+    // apply the multiplier a second time.
+    window.currentCalcAutoSuperEffective = window.getAutomaticSuperEffectiveMatchup?.() || false;
+    window.syncCalcSuperEffectiveButton?.(window.currentCalcAutoSuperEffective);
+
     const orbsActive = document.getElementById('calc-orbs-master-toggle')?.checked ?? true;
     
     const totalOrbAtk = orbsActive ? (parseFloat(document.getElementById('calc-orb-atk')?.value) || 0) : 0;
@@ -618,7 +652,7 @@ function calculateDokkanStats() {
 
     const exCaps = detectExCapabilities();
     const canBeExMain = exCaps.hasExMain;
-    const isExMain = canBeExMain && (window.exToggleState[0] !== undefined ? window.exToggleState[0] : true);
+    const isExMain = canBeExMain && (window.exToggleState[0] !== undefined ? window.exToggleState[0] : getDefaultExToggleEnabled());
 
     const unitCaps = detectUnitSaCapabilities();
     const isUnitSaActive = window.activeUnitSaBlockIdx !== null;
@@ -673,7 +707,7 @@ function calculateDokkanStats() {
         globalAtkIdx++;
 
         const canBeExUltra = exCaps.hasExAdd;
-        const isExUltra = canBeExUltra && (window.exToggleState[globalAtkIdx] !== undefined ? window.exToggleState[globalAtkIdx] : true);
+        const isExUltra = canBeExUltra && (window.exToggleState[globalAtkIdx] !== undefined ? window.exToggleState[globalAtkIdx] : getDefaultExToggleEnabled());
         
         let targetUltraIdx = ultraSaIdx;
         let saMultUltra = getDynamicSaVal(ultraSaIdx);
@@ -722,7 +756,7 @@ function calculateDokkanStats() {
         globalAtkIdx++;
 
         const canBeExThisAtk = exCaps.hasExAdd;
-        const isExThisAtk = canBeExThisAtk && (window.exToggleState[globalAtkIdx] !== undefined ? window.exToggleState[globalAtkIdx] : true);
+        const isExThisAtk = canBeExThisAtk && (window.exToggleState[globalAtkIdx] !== undefined ? window.exToggleState[globalAtkIdx] : getDefaultExToggleEnabled());
         
         let targetExIdx = lowestKiSaIdx;
         let curSaMult = getDynamicSaVal(lowestKiSaIdx);
@@ -995,11 +1029,12 @@ function calculateDokkanStats() {
             const actDmgVal = document.getElementById('res-act-effective-dmg');
             const actDmgLbl = document.getElementById('res-act-dmg-label');
             if (actDmgCol && actDmgVal && actDmgLbl) {
-                if (window.calcCritEnabled || window.calcSeEnabled) {
+                const activeIsSuperEffective = window.calcSeEnabled || window.currentCalcAutoSuperEffective;
+                if (window.calcCritEnabled || activeIsSuperEffective) {
                     actDmgCol.style.display = 'flex';
                     actDmgVal.className = `ds-dash-value num-active ${window.calcCritEnabled ? 'crit-fx' : 'se-fx'}`;
-                    actDmgVal.innerText = window.calcEnemyDamage(finalActiveAtkStat, window.calcCritEnabled, window.calcSeEnabled).toLocaleString();
-                    if (window.calcCritEnabled && window.calcSeEnabled) {
+                    actDmgVal.innerText = window.calcEnemyDamage(finalActiveAtkStat, window.calcCritEnabled, activeIsSuperEffective).toLocaleString();
+                    if (window.calcCritEnabled && activeIsSuperEffective) {
                         actDmgLbl.innerText = 'CRIT + EFF. DMG';
                         actDmgLbl.style.color = '#facc15';
                     } else if (window.calcCritEnabled) {
@@ -1149,7 +1184,7 @@ function calculateDokkanStats() {
     }
 
     const activeIsCrit = window.calcCritEnabled || document.getElementById('calc-is-crit')?.checked || false;
-    const activeIsSeat = window.calcSeEnabled || document.getElementById('calc-is-seat')?.checked || false;
+    const activeIsSeat = window.calcSeEnabled || window.currentCalcAutoSuperEffective || document.getElementById('calc-is-seat')?.checked || false;
 
     renderMultiAttackDamageDealtTable(
         atkStepBeforeKi, totalP2Atk, targetMainSaIdx, lowestKiSaIdx, 
@@ -1193,14 +1228,17 @@ function renderMultiAttackDamageDealtTable(
     if (!tableContainer) return;
 
     const isCritActive = isCrit || window.calcCritEnabled || false;
-    const isSeActive = isSEAT || window.calcSeEnabled || false;
 
     const bossType = (document.getElementById('calc-boss-type')?.value || 'AGL').toUpperCase();
     const bossClass = (document.getElementById('calc-boss-class')?.value || 'Extreme');
     const cardType = (window.currentCalcType || 'AGL').toUpperCase();
     const cardClass = (window.currentCalcClass || 'Super');
 
+    const baseMatchup = window.getDokkanTypeAndClassMultiplier(cardType, cardClass, bossType, bossClass, false, false);
+    const isAutoSuperEffective = baseMatchup.isAdvantage;
+    const isSeActive = isSEAT || window.calcSeEnabled || isAutoSuperEffective || false;
     const modObj = window.getDokkanTypeAndClassMultiplier(cardType, cardClass, bossType, bossClass, isCritActive, isSeActive);
+    window.syncCalcSuperEffectiveButton?.(isAutoSuperEffective);
     let finalTypeMod = modObj.typeModifier;
 
     const isLR = (window.currentCalcRarity === 'LR');
@@ -1378,7 +1416,7 @@ function renderMultiAttackDamageDealtTable(
             `;
         } else if (isCritActive) {
             statusPillHtml = `<div class="boss-status-pill crit"><img src="https://abscustom.github.io/assets/images/st_critical_up.png" class="boss-pill-icon" alt="Crit"><span>CRIT</span></div>`;
-        } else if (isSeActive || modObj.isAdvantage || modObj.typeModifier >= 1.25) {
+        } else if (isSeActive) {
             statusPillHtml = `<div class="boss-status-pill se"><img src="https://abscustom.github.io/assets/images/st_atk_super.png" class="boss-pill-icon" alt="Super Eff"><span>SUPER EFF</span></div>`;
         }
 
@@ -1562,7 +1600,7 @@ window.renderDokkanStatsCardData = function() {
                 if (atk.idx < -1) return; 
                 
                 const count = atk.count || 1;
-                const dmg = window.calcEnemyDamage ? window.calcEnemyDamage(atk.atkStat, window.calcCritEnabled, window.calcSeEnabled) : atk.atkStat;
+                const dmg = window.calcEnemyDamage ? window.calcEnemyDamage(atk.atkStat, window.calcCritEnabled, window.calcSeEnabled || window.currentCalcAutoSuperEffective) : atk.atkStat;
                 totalDmg += (dmg * count);
                 
                 let cleanLabel = atk.label.replace(/\[.*?\]|\(.*?\)/g, '').trim();

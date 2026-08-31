@@ -205,13 +205,11 @@ function parseAndRenderInteractivePassiveCard(pContainer) {
                 const isOrbThresholdBuff = /\d+\s+or\s+more\s+.*ki\s+spheres?/i.test(fullContext);
 
                 const isMidBattleBuildup = /per attack received|per attack evaded|after receiving|after evading|per attack performed|per attack launched|each attack received|each attack performed|upon receiving|when receiving|for every attack received|for every attack evaded|for every (?:super )?attack (?:the )?enemy (?:launches|performs|makes)|for each (?:super )?attack (?:the )?enemy (?:launches|performs|makes)/i.test(fullContext);
-                const isOnAttackPhase2 = !isPerAllyTeamBuff && (
-                    itemLower.includes('when performing a super attack') || 
-                    itemLower.includes('when performing an ultra super attack') || 
-                    itemLower.includes('when attacking') || 
-                    headerText.toLowerCase().includes('when performing') ||
-                    headerText.toLowerCase().includes('when attacking')
-                );
+                // Conditions such as "When attacking with 12 or more Ki" are
+                // section headers, so every stat line in that section belongs
+                // to the attacking (Phase 2) calculation.
+                const isAttackTriggered = /\bwhen\s+(?:performing\s+(?:an?\s+)?(?:ultra\s+)?super\s+attack|attacking)\b/i.test(fullContext);
+                const isOnAttackPhase2 = !isPerAllyTeamBuff && isAttackTriggered;
 
                 const isPhase2 = !isPerAllyTeamBuff && !isAllySupportOnly && !isDomainActivePassive && !isOrbThresholdBuff && (isMidBattleBuildup || isOnAttackPhase2);
                 const isConditional = condRegexFilter.test(headerText + " " + itemText);
