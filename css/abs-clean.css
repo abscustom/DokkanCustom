@@ -18650,8 +18650,8 @@ body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
     }
 
     body.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-category-links-column > #abs-stats-box.abs-clean-stats-above-categories #abs-stat-range-slider {
-        appearance: slider-vertical !important;
-        -webkit-appearance: slider-vertical !important;
+        appearance: auto !important;
+        -webkit-appearance: auto !important;
         writing-mode: vertical-lr !important;
         direction: rtl !important;
         width: 7px !important;

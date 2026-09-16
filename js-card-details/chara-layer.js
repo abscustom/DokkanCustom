@@ -124,7 +124,7 @@ function defaultBridgeUrl() {
             || !window.location.hostname;
         if (isLocal) return 'http://127.0.0.1:3137';
     }
-    return 'https://mollusk-fanfare-although.ngrok-free.dev';
+    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
 }
 
 export class CharaLayer {
@@ -295,7 +295,7 @@ export class CharaLayer {
     }
 
     async preloadCharacter(id, cardId) {
-        const headers = this.serverUrl && this.serverUrl.includes('ngrok')
+        const headers = this.serverUrl && false
             ? { 'ngrok-skip-browser-warning': 'true' }
             : {};
         const response = await fetch(`${this.serverUrl}/api/card/${Number(cardId) || 0}`, {

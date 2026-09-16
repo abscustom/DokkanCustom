@@ -1,42 +1,3 @@
-// Localtunnel CORS bypass
-if (!window._locaLtPatched) {
-    window._locaLtPatched = true;
-    
-    // Patch fetch
-    const originalFetch = window.fetch;
-    window.fetch = async function(...args) {
-        let [resource, config] = args;
-        const urlStr = typeof resource === 'string' ? resource : (resource?.url || '');
-        if (urlStr.includes('loca.lt')) {
-            config = config || {};
-            config.headers = config.headers || {};
-            if (config.headers instanceof Headers) {
-                config.headers.set('Bypass-Tunnel-Reminder', 'true');
-            } else {
-                config.headers['Bypass-Tunnel-Reminder'] = 'true';
-            }
-            if (resource instanceof Request) {
-                resource = new Request(resource, config);
-            }
-        }
-        return originalFetch(resource, config);
-    };
-
-    // Patch XHR
-    const originalOpen = XMLHttpRequest.prototype.open;
-    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
-        this._reqUrl = url;
-        return originalOpen.call(this, method, url, ...rest);
-    };
-    const originalSend = XMLHttpRequest.prototype.send;
-    XMLHttpRequest.prototype.send = function(...args) {
-        if (this._reqUrl && this._reqUrl.includes('loca.lt')) {
-            this.setRequestHeader('Bypass-Tunnel-Reminder', 'true');
-        }
-        return originalSend.apply(this, args);
-    };
-}
-
 /* ==========================================================================
    Published viewer character idle motion
 
@@ -49,7 +10,9 @@ if (!window._locaLtPatched) {
     'use strict';
 
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
-    const REMOTE_SERVER = 'https://abscustom-dokkan.loca.lt';
+    const GITHUB_RELEASE_BASE = 'https://github.com/abscustom/DokkanCustom/releases/download/assets-latest';
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
+    const REMOTE_SERVER = GITHUB_RAW_BASE;
     // Card rendering normalizes the viewer URL with replaceState. Capture
     // motion-only debug overrides before that happens so a selected authored
     // movie can still be tested without changing the published URL format.
@@ -141,7 +104,7 @@ if (!window._locaLtPatched) {
                 if (!isLocalEnvironment() && /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::|\/|$)/i.test(normalized)) {
                     return REMOTE_SERVER;
                 }
-                if (!(isLocalEnvironment() && normalized.includes('ngrok'))) {
+                if (!isLocalEnvironment() || !normalized.includes('ngrok')) {
                     return normalized;
                 }
             }
@@ -157,7 +120,7 @@ if (!window._locaLtPatched) {
     }
 
     function bridgeHeaders(server) {
-        return server.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {};
+        return {};
     }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = BRIDGE_REQUEST_TIMEOUT_MS) {
@@ -197,6 +160,19 @@ if (!window._locaLtPatched) {
             }));
         }
         return payload;
+    }
+
+        async function fetchWithBackoff(endpoint, maxRetries = 2, initialDelayMs = 250) {
+        let delay = initialDelayMs;
+        for (let attempt = 0; attempt <= maxRetries; attempt++) {
+            try {
+                return await fetchFromBridge(endpoint);
+            } catch (error) {
+                if (attempt === maxRetries) throw error;
+                await new Promise(r => setTimeout(r, delay));
+                delay *= 2;
+            }
+        }
     }
 
     async function fetchFromBridge(endpoint) {
@@ -1159,7 +1135,7 @@ if (!window._locaLtPatched) {
         const files = [];
         const lwfResponse = await fetchWithTimeout(pack.url, {
             cache: 'no-store',
-            headers: pack.url.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {}
+            headers: {}
         });
         if (!lwfResponse.ok) throw new Error('Missing ' + fallbackName);
         files.push(new File([await lwfResponse.blob()], fallbackName));
@@ -1170,7 +1146,7 @@ if (!window._locaLtPatched) {
                 try {
                     const response = await fetchWithTimeout(file.url, {
                         cache: 'no-store',
-                        headers: file.url.includes('ngrok') ? { 'ngrok-skip-browser-warning': 'true' } : {}
+                        headers: {}
                     });
                     if (response.ok) {
                         const rawBlob = await response.blob();
@@ -1345,21 +1321,50 @@ if (!window._locaLtPatched) {
         setStatus('', 'loading');
 
         try {
-            let result = await fetchFromBridge('/api/card/' + encodeURIComponent(String(cardId)));
-            let payload = await result.response.json().catch(() => ({}));
-            payload = normalizeMotionPayload(payload, result.server);
-
-            // EZA/SEZA site IDs can be represented as an 8-digit ID. If the
-            // bridge only has the seven-digit base row, retry that row so the
-            // character_id lookup still resolves the correct idle rig.
-            if (!result.response.ok && String(cardId).length >= 8) {
-                const baseId = String(cardId).slice(0, 7);
-                result = await fetchFromBridge('/api/card/' + encodeURIComponent(baseId));
+            let result = null;
+            try {
+                result = await fetchWithBackoff('/api/card/' + encodeURIComponent(String(cardId)));
+            } catch (err) {
+                // Local bridge offline; will failover to CDN below
+            }
+            let payload = null;
+            if (result && result.response && result.response.ok) {
                 payload = await result.response.json().catch(() => ({}));
                 payload = normalizeMotionPayload(payload, result.server);
             }
-            if (!result.response.ok || !payload.found) {
-                throw new Error(payload.error || ('Character data for card ' + cardId + ' was not found.'));
+
+            if ((!payload || !payload.found) && String(cardId).length >= 8) {
+                const baseId = String(cardId).slice(0, 7);
+                try {
+                    result = await fetchWithBackoff('/api/card/' + encodeURIComponent(baseId));
+                    if (result && result.response && result.response.ok) {
+                        payload = await result.response.json().catch(() => ({}));
+                        payload = normalizeMotionPayload(payload, result.server);
+                    }
+                } catch {}
+            }
+
+            // Client-side CDN failover if local server unavailable
+            if (!payload || !payload.found) {
+                const charNum = card?.character_id || (cardId ? (cardId % 100000) : 1);
+                const charaIdStr = String(charNum).padStart(5, '0');
+                const relPath = `ingame/battle/character/${charaIdStr}/idle`;
+                const lwfName = `idle_character_${charaIdStr}.lwf`;
+                const cdnBase = `${GITHUB_RAW_BASE}/${relPath}`;
+                payload = {
+                    found: true,
+                    character_id: charNum,
+                    idle: {
+                        rel: relPath,
+                        url: `${cdnBase}/${lwfName}`,
+                        files: [
+                            { name: lwfName, url: `${cdnBase}/${lwfName}` },
+                            { name: 'lwf_image0.png', url: `${cdnBase}/lwf_image0.png` },
+                            { name: 'lwf_image1.png', url: `${cdnBase}/lwf_image1.png` },
+                            { name: 'lwf_image2.png', url: `${cdnBase}/lwf_image2.png` }
+                        ]
+                    }
+                };
             }
 
             const characterId = String(payload.character_id || '').padStart(5, '0');

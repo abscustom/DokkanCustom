@@ -731,7 +731,7 @@ const DokkanLWF = {
                 if (parsed && parsed.length) textureNames = parsed.map(t => t.filename).filter(Boolean);
             }
             if (!textureNames.length) {
-                textureNames = [1, 2, 3, 4, 5, 6, 7, 8].map(i => `card_bg_${matchedId}-${i}.png`);
+                textureNames = Array.from({ length: 64 }, (_, i) => `card_${matchedId}_${i}.png`);
             }
 
             const sheetFiles = [];

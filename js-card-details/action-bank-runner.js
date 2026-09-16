@@ -34,7 +34,7 @@ function defaultBridgeUrl() {
             || !window.location.hostname;
         if (isLocal) return 'http://127.0.0.1:3137';
     }
-    return 'https://mollusk-fanfare-although.ngrok-free.dev';
+    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
 }
 
 function makeHost(className, zIndex) {
@@ -254,7 +254,7 @@ export class ActionBankRunner {
     }
 
     _getHeaders() {
-        return this.serverUrl && this.serverUrl.includes('ngrok')
+        return this.serverUrl && false
             ? { 'ngrok-skip-browser-warning': 'true' }
             : {};
     }

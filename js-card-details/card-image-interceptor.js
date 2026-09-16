@@ -38,7 +38,7 @@ document.addEventListener('error', function(e) {
         return;
     }
 
-    const match = src.match(/card_(\d+)/) || src.match(/(\d{7,8})/);
+    const match = src.match(/card_bg_(\d+)/) || src.match(/card_(\d+)/) || src.match(/(\d{7,8})/);
     if (!match) {
         img.dataset.failed = 'true';
         return;
@@ -54,7 +54,7 @@ document.addEventListener('error', function(e) {
     }
 
     const isThumb = src.includes('thumb') || img.classList.contains('thumb-img') || img.id === 'abs-thumb-img';
-    const isBg = img.id === 'abs-art-bg' || src.includes('_bg.png');
+    const isBg = img.id === 'abs-art-bg' || src.includes('_bg.png') || src.includes('card_bg_');
     
     let retries = parseInt(img.dataset.retries || '0', 10) + 1;
     img.dataset.retries = String(retries);

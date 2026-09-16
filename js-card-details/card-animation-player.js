@@ -4,7 +4,10 @@
 
 (function initializeDokkanAnimationPlayer() {
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
-    const NGROK_SERVER = 'https://abscustom-dokkan.loca.lt';
+    const GITHUB_RELEASE_BASE = 'https://github.com/abscustom/DokkanCustom/releases/download/assets-latest';
+    const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
+    const REMOTE_SERVER = GITHUB_RAW_BASE;
+    const NGROK_SERVER = REMOTE_SERVER;
 
     function isLocalEnvironment() {
         return window.location.protocol === 'file:'
@@ -112,11 +115,7 @@
     async function fetchFromAnimationBridge(endpoint, options = {}) {
         let server = getServerUrl();
         const buildHeaders = (targetServer) => {
-            const h = { ...(options.headers || {}) };
-            if (targetServer && targetServer.includes('ngrok')) {
-                h['ngrok-skip-browser-warning'] = 'true';
-            }
-            return h;
+            return { ...(options.headers || {}) };
         };
         try {
             const res = await fetchWithTimeout(`${server}${endpoint}`, { ...options, headers: buildHeaders(server) });
