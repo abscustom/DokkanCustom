@@ -1,3 +1,42 @@
+// Localtunnel CORS bypass
+if (!window._locaLtPatched) {
+    window._locaLtPatched = true;
+    
+    // Patch fetch
+    const originalFetch = window.fetch;
+    window.fetch = async function(...args) {
+        let [resource, config] = args;
+        const urlStr = typeof resource === 'string' ? resource : (resource?.url || '');
+        if (urlStr.includes('loca.lt')) {
+            config = config || {};
+            config.headers = config.headers || {};
+            if (config.headers instanceof Headers) {
+                config.headers.set('Bypass-Tunnel-Reminder', 'true');
+            } else {
+                config.headers['Bypass-Tunnel-Reminder'] = 'true';
+            }
+            if (resource instanceof Request) {
+                resource = new Request(resource, config);
+            }
+        }
+        return originalFetch(resource, config);
+    };
+
+    // Patch XHR
+    const originalOpen = XMLHttpRequest.prototype.open;
+    XMLHttpRequest.prototype.open = function(method, url, ...rest) {
+        this._reqUrl = url;
+        return originalOpen.call(this, method, url, ...rest);
+    };
+    const originalSend = XMLHttpRequest.prototype.send;
+    XMLHttpRequest.prototype.send = function(...args) {
+        if (this._reqUrl && this._reqUrl.includes('loca.lt')) {
+            this.setRequestHeader('Bypass-Tunnel-Reminder', 'true');
+        }
+        return originalSend.apply(this, args);
+    };
+}
+
 /* ==========================================================================
    Published viewer character idle motion
 
@@ -10,7 +49,7 @@
     'use strict';
 
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
-    const REMOTE_SERVER = 'https://mollusk-fanfare-although.ngrok-free.dev';
+    const REMOTE_SERVER = 'https://abscustom-dokkan.loca.lt';
     // Card rendering normalizes the viewer URL with replaceState. Capture
     // motion-only debug overrides before that happens so a selected authored
     // movie can still be tested without changing the published URL format.

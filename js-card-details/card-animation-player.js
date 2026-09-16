@@ -4,7 +4,7 @@
 
 (function initializeDokkanAnimationPlayer() {
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
-    const NGROK_SERVER = 'https://mollusk-fanfare-although.ngrok-free.dev';
+    const NGROK_SERVER = 'https://abscustom-dokkan.loca.lt';
 
     function isLocalEnvironment() {
         return window.location.protocol === 'file:'
