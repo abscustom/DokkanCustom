@@ -6,8 +6,10 @@
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
     const GITHUB_RELEASE_BASE = 'https://github.com/abscustom/DokkanCustom/releases/download/assets-latest';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
-    const REMOTE_SERVER = GITHUB_RAW_BASE;
+    const REMOTE_SERVER = 'https://abscustom-dokkan.loca.lt';
     const NGROK_SERVER = REMOTE_SERVER;
+    // Track cache state per connection (0 = unknown, 1 = connected, 2 = failed)
+    const serverState = new Map();
 
     function isLocalEnvironment() {
         return window.location.protocol === 'file:'
@@ -115,7 +117,11 @@
     async function fetchFromAnimationBridge(endpoint, options = {}) {
         let server = getServerUrl();
         const buildHeaders = (targetServer) => {
-            return { ...(options.headers || {}) };
+            const h = { ...(options.headers || {}) };
+            if (targetServer && (targetServer.includes('ngrok') || targetServer.includes('loca.lt'))) {
+                h['ngrok-skip-browser-warning'] = 'true';
+            }
+            return h;
         };
         try {
             const res = await fetchWithTimeout(`${server}${endpoint}`, { ...options, headers: buildHeaders(server) });

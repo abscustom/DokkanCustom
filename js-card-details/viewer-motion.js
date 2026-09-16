@@ -12,7 +12,7 @@
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
     const GITHUB_RELEASE_BASE = 'https://github.com/abscustom/DokkanCustom/releases/download/assets-latest';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
-    const REMOTE_SERVER = GITHUB_RAW_BASE;
+    const REMOTE_SERVER = 'https://abscustom-dokkan.loca.lt';
     // Card rendering normalizes the viewer URL with replaceState. Capture
     // motion-only debug overrides before that happens so a selected authored
     // movie can still be tested without changing the published URL format.
@@ -120,7 +120,7 @@
     }
 
     function bridgeHeaders(server) {
-        return {};
+        return server.includes('ngrok') || server.includes('loca.lt') ? { 'ngrok-skip-browser-warning': 'true' } : {};
     }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = BRIDGE_REQUEST_TIMEOUT_MS) {
@@ -141,6 +141,10 @@
             const resolved = new URL(raw, server);
             if (!/^https?:$/i.test(resolved.protocol) || !/^\/(?:assets|api)\//i.test(resolved.pathname)) {
                 return value;
+            }
+            if (resolved.pathname.startsWith('/assets/')) {
+                const rel = resolved.pathname.replace('/assets/', '');
+                return `${GITHUB_RAW_BASE}/${rel}`;
             }
             const origin = new URL(server).origin;
             return `${origin}${resolved.pathname}${resolved.search}${resolved.hash}`;

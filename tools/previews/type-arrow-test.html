@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>Type Arrow & Glow LWF Inspector</title>
+    <style>
+        body {
+            background: #0b0f19;
+            color: #fff;
+            font-family: sans-serif;
+            padding: 24px;
+        }
+        .container {
+            display: flex;
+            gap: 24px;
+        }
+        .canvas-box {
+            background: #182234;
+            border: 2px solid #38bdf8;
+            border-radius: 12px;
+            padding: 20px;
+            display: inline-block;
+        }
+        canvas {
+            border: 1px dashed rgba(255,255,255,0.3);
+            background: transparent;
+        }
+        .controls {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            max-width: 450px;
+        }
+        button, select {
+            padding: 8px 12px;
+            font-size: 14px;
+            border-radius: 6px;
+            background: #1e293b;
+            color: #fff;
+            border: 1px solid #475569;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #334155;
+        }
+        pre {
+            background: #030712;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: 12px;
+            max-height: 350px;
+            overflow: auto;
+        }
+        .preview-strip {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 16px;
+        }
+        .preview-strip img {
+            width: 50px;
+            height: 50px;
+            border: 1px solid #475569;
+            background: #111;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dokkan Type Glow / Arrow LWF Inspector</h1>
+    <div class="container">
+        <div class="canvas-box">
+            <canvas id="testCanvas" width="200" height="200"></canvas>
+            <div style="margin-top: 12px;">
+                <label>Movie Frame Scrub:</label>
+                <input type="range" id="frameScrub" min="1" max="10" value="1" style="width: 100%;">
+                <span id="frameNum">Frame: 1</span>
+            </div>
+        </div>
+        <div class="controls">
+            <label>Select Movie / Clip:</label>
+            <select id="movieSelect"></select>
+            <div style="display: flex; gap: 8px;">
+                <button id="playBtn">Play</button>
+                <button id="pauseBtn">Pause</button>
+            </div>
+            <div>
+                <label>Playback Speed:</label>
+                <input type="range" id="speedRange" min="0.1" max="2" step="0.1" value="1">
+                <span id="speedVal">1x</span>
+            </div>
+            <div>
+                <label>Swap Texture Sheet:</label>
+                <select id="texSelect">
+                    <option value="default">Default (cha_type_up_icon_ef_01.png)</option>
+                    <option value="cha_type_up_icon_ef_02.png">cha_type_up_icon_ef_02.png</option>
+                    <option value="cha_type_up_icon_ef_03.png">cha_type_up_icon_ef_03.png</option>
+                    <option value="cha_type_up_icon_ef_en_00.png">cha_type_up_icon_ef_en_00.png (AGL 0)</option>
+                    <option value="cha_type_up_icon_ef_en_01.png">cha_type_up_icon_ef_en_01.png (AGL 1)</option>
+                    <option value="cha_type_up_icon_ef_en_02.png">cha_type_up_icon_ef_en_02.png (AGL 2)</option>
+                    <option value="cha_type_up_icon_ef_en_03.png">cha_type_up_icon_ef_en_03.png (AGL 3)</option>
+                    <option value="cha_type_up_icon_ef_en_04.png">cha_type_up_icon_ef_en_04.png (AGL 4)</option>
+                </select>
+            </div>
+            <pre id="log"></pre>
+        </div>
+    </div>
+
+    <h3>Available 02 / 03 / EF Frames:</h3>
+    <div class="preview-strip" id="strip"></div>
+
+    <script src="../../js-graphics/lwf.js"></script>
+    <script type="module">
+        import { LwfPackPlayer } from '../../js-graphics/lwf-pack.js';
+
+        const logEl = document.getElementById('log');
+        const log = (msg) => {
+            console.log(msg);
+            logEl.textContent += msg + '\n';
+        };
+
+        const canvas = document.getElementById('testCanvas');
+        const player = new LwfPackPlayer(canvas, log);
+        player.loopMovie = true;
+
+        const imageNames = [
+            'cha_type_down_icon_ef_01.png',
+            'cha_type_icon.png',
+            'type_arrow_icon.png',
+            'cha_type_up_icon_ef_01.png',
+            'cha_type_up_icon_ef_02.png',
+            'cha_type_up_icon_ef_03.png',
+            'cha_type_up_icon_ef_en_00.png',
+            'cha_type_up_icon_ef_en_01.png',
+            'cha_type_up_icon_ef_en_02.png',
+            'cha_type_up_icon_ef_en_03.png',
+            'cha_type_up_icon_ef_en_04.png'
+        ];
+
+        const strip = document.getElementById('strip');
+        imageNames.forEach(name => {
+            const img = document.createElement('img');
+            img.src = `assets/ui/type-arrows/${name}`;
+            img.title = name;
+            strip.appendChild(img);
+        });
+
+        async function init() {
+            try {
+                log('Fetching files...');
+                const lwfRes = await fetch('../../assets/ui/type-arrows/type_arrow_icon.lwf');
+                const lwfBlob = await lwfRes.blob();
+                const lwfFile = new File([lwfBlob], 'type_arrow_icon.lwf');
+
+                const imageFiles = await Promise.all(imageNames.map(async name => {
+                    const res = await fetch(`../../assets/ui/type-arrows/${name}`);
+                    const blob = await res.blob();
+                    return new File([blob], name);
+                }));
+
+                const allFiles = [lwfFile, ...imageFiles];
+                const ingest = player.ingestFiles(allFiles);
+                log(`Ingested: ${allFiles.length} files.`);
+
+                const prep = await player.prepare(ingest.lwfFile);
+                log(`Prepared ok: ${prep.ok}. Required textures: ${prep.requiredTextures.join(', ')}`);
+
+                await player.load();
+                log(`Loaded LWF! Dimensions: ${player.header?.width}x${player.header?.height}`);
+
+                const sel = document.getElementById('movieSelect');
+                sel.innerHTML = '<option value="">(Root)</option>';
+                
+                // Add all named movies from LWF
+                const allClips = ['ef_003', 'ef_002', 'ef_001', 'ef_004', 'symbol_cha_type_icon', 'symbol_cha_type_icon_ef_down', 'symbol_cha_type_icon_ef_up', 'symbol_type_icon_up_back_ef', 'symbol_up_icon'];
+                allClips.forEach(m => {
+                    const opt = document.createElement('option');
+                    opt.value = m;
+                    opt.textContent = m;
+                    sel.appendChild(opt);
+                });
+
+                sel.value = 'ef_003';
+                player.setMovie('ef_003', { play: true });
+
+                sel.onchange = () => {
+                    if (sel.value) {
+                        player.setMovie(sel.value, { play: true });
+                        const frames = player.getMovieFrameCount();
+                        document.getElementById('frameScrub').max = frames;
+                        document.getElementById('frameNum').textContent = `Frame: 1 / ${frames}`;
+                    }
+                };
+
+                document.getElementById('texSelect').onchange = async (e) => {
+                    const chosen = e.target.value;
+                    log('Switching texture to: ' + chosen);
+                    if (chosen !== 'default') {
+                        const url = player.blobUrls.get(chosen.toLowerCase());
+                        if (url) {
+                            player.blobUrls.set('cha_type_up_icon_ef_01.png', url);
+                            player.blobUrls.set('cha_type_up_icon_ef_01', url);
+                        }
+                    }
+                    player.setMovie(sel.value || 'ef_003', { play: true });
+                };
+
+                document.getElementById('frameScrub').oninput = (e) => {
+                    const f = parseInt(e.target.value, 10);
+                    player.seekFrame(f, { play: false });
+                    document.getElementById('frameNum').textContent = `Frame: ${f} / ${player.getMovieFrameCount()}`;
+                };
+
+                document.getElementById('playBtn').onclick = () => player.play();
+                document.getElementById('pauseBtn').onclick = () => player.pause();
+                document.getElementById('speedRange').oninput = (e) => {
+                    player.playbackRate = parseFloat(e.target.value);
+                    document.getElementById('speedVal').textContent = e.target.value + 'x';
+                };
+
+                player.play();
+            } catch (err) {
+                log('Error: ' + err.message + '\n' + err.stack);
+            }
+        }
+
+        init();
+    </script>
+</body>
+</html>
