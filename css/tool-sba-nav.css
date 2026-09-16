@@ -1,0 +1,2287 @@
+/* SBA calculator navigation uses the shared bottom-nav and mobile styles.
+   Tool-specific navigation below remains for the editor and alternate themes. */
+/* ==========================================================================
+   SBA TOOL NAVIGATION — Preserves 1:1 Apple HUD Navbar from Home/Cards
+   ========================================================================== */
+
+/* Ensure the 1:1 Apple HUD navbar is displayed and properly layer-stacked */
+body.theme-sba .apple-hud-wrapper,
+body.editor-tool-page .apple-hud-wrapper,
+body.calc-liquid-body .apple-hud-wrapper {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    z-index: 10020 !important;
+    display: block !important;
+}
+
+body.editor-tool-page .liquid-metal-frame,
+body.editor-tool-page .apple-hud-bar,
+body.calc-liquid-body .liquid-metal-frame,
+body.calc-liquid-body .apple-hud-bar,
+body.theme-sba .liquid-metal-frame,
+body.theme-sba .apple-hud-bar {
+    width: 100vw !important;
+    height: 100% !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+/* Fixed top-left logo across SBA - hidden on Editor page since it's now inside the Settings Drawer */
+body.editor-tool-page .apple-nav-center {
+    display: none !important;
+}
+body.theme-sba:not(.editor-tool-page) .apple-nav-center {
+    position: fixed !important;
+    inset: 10px auto auto 14px !important;
+    z-index: 1003 !important;
+    display: flex !important;
+    width: 42px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    pointer-events: auto !important;
+}
+
+/* Floating bottom navigation dock base layout */
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 16px !important;
+    left: 50% !important;
+    z-index: 10051 !important;
+    display: flex !important;
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px) !important;
+    height: 64px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 5px 10px !important;
+    gap: 7px !important;
+    box-sizing: border-box !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(18px) !important;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease !important;
+}
+
+body.editor-tool-page .apple-hud-wrapper,
+body.calc-liquid-body .apple-hud-wrapper {
+    z-index: 10050 !important;
+}
+
+/* Revealed state on hover proximity, while settings drawer is open, or while editor sidebar is active */
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page.sba-bottom-nav-visible .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page.sba-side-settings-open .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page.editor-sidebar-open .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-sidebar-open .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page:has(#editor.open) .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page:has(#editor.is-open) .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page:has(#toggleBtn.active) .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.sba-bottom-nav-visible .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.sba-side-settings-open .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+/* Base nav links in dock for Editor & Calculator - Generous vertical & horizontal space */
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 4px 10px !important;
+    gap: 3px !important;
+    min-width: 68px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    line-height: normal !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group .hud-nav-link[aria-label="Calculator"],
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link[aria-label="Calculator"] {
+    min-width: 86px !important;
+    padding: 4px 12px !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group .hud-nav-link .hud-nav-svg,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link .hud-nav-svg {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group .hud-nav-link > span,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link > span {
+    display: block !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+    margin-top: 1px !important;
+}
+
+/* ==========================================================================
+   THEME 1: DOKKAN INFO (Clean, squared-off dark layout with ample spacing)
+   ========================================================================== */
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+    height: 64px !important;
+    border-radius: 0px !important;
+    background: #18181b !important;
+    border: 1.5px solid #3f3f46 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    gap: 5px !important;
+    padding: 5px 8px !important;
+    box-sizing: border-box !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link {
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 0px !important;
+    background: #222226 !important;
+    border: 1px solid #27272a !important;
+    color: #a1a1aa !important;
+    box-shadow: none !important;
+    transform: none !important;
+    padding: 4px 10px !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link:focus-visible {
+    background: #2e2e34 !important;
+    border-color: #52525b !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-dokkaninfo.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover {
+    border-radius: 0px !important;
+    background: #3f3f46 !important;
+    border: 1.5px solid #71717a !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    min-width: 78px !important;
+    padding: 4px 12px !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo #settingsDrawer,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer {
+    border-radius: 0px !important;
+    background: #18181b !important;
+    border: 1.5px solid #3f3f46 !important;
+    box-shadow: 0 16px 48px rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-dokkaninfo #settingsDrawer .sidebar-header,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .sidebar-header {
+    border-bottom: 1px solid #3f3f46 !important;
+}
+
+body.theme-dokkaninfo #settingsDrawer .sba-gui-btn,
+body.theme-dokkaninfo #settingsDrawer .sba-settings-close-btn,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .sba-gui-btn,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .sba-settings-close-btn {
+    border-radius: 0px !important;
+    background: #222226 !important;
+    border: 1px solid #3f3f46 !important;
+    color: #d4d4d8 !important;
+    box-shadow: none !important;
+}
+
+body.theme-dokkaninfo #settingsDrawer .sba-gui-btn:hover,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .sba-gui-btn:hover {
+    background: #2e2e34 !important;
+    border-color: #52525b !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo #settingsDrawer .sba-gui-btn.active,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .sba-gui-btn.active {
+    background: #3f3f46 !important;
+    border-color: #38bdf8 !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+/* Dokkan Info: Sidebar Editor (#editor) Theming */
+body.theme-dokkaninfo #editor,
+body.theme-dokkaninfo.editor-tool-page #editor {
+    background: #18181b !important;
+    border-left: 2px solid #3f3f46 !important;
+    box-shadow: -12px 0 40px rgba(0, 0, 0, 0.95) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    border-radius: 0px !important;
+    padding-bottom: 100px !important;
+}
+
+body.theme-dokkaninfo #editor .sidebar-main-title,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-main-title {
+    color: #ffffff !important;
+    border-bottom: 1px solid #3f3f46 !important;
+    text-shadow: none !important;
+    position: relative !important;
+}
+
+body.theme-dokkaninfo #editor .sidebar-main-title span,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-main-title span {
+    color: #e2802b !important;
+    text-shadow: none !important;
+}
+
+body.theme-dokkaninfo #editor .editor-sidebar-close-btn,
+body.theme-dokkaninfo.editor-tool-page #editor .editor-sidebar-close-btn {
+    border-radius: 0px !important;
+    background: #27272a !important;
+    border: 1px solid #3f3f46 !important;
+    color: #a1a1aa !important;
+}
+
+body.theme-dokkaninfo #editor .editor-sidebar-close-btn:hover,
+body.theme-dokkaninfo.editor-tool-page #editor .editor-sidebar-close-btn:hover {
+    background: #e2802b !important;
+    color: #ffffff !important;
+    border-color: #e2802b !important;
+}
+
+body.theme-dokkaninfo #editor .collapsible-header,
+body.theme-dokkaninfo.editor-tool-page #editor .collapsible-header {
+    background: #27272a !important;
+    border: 1px solid #3f3f46 !important;
+    border-left: 4px solid #e2802b !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-dokkaninfo #editor .collapsible-header:hover,
+body.theme-dokkaninfo.editor-tool-page #editor .collapsible-header:hover {
+    background: #323238 !important;
+    border-left-color: #f97316 !important;
+    border-color: #52525b !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo #editor label,
+body.theme-dokkaninfo #editor .form-label,
+body.theme-dokkaninfo.editor-tool-page #editor label,
+body.theme-dokkaninfo.editor-tool-page #editor .form-label {
+    color: #a1a1aa !important;
+    text-shadow: none !important;
+}
+
+body.theme-dokkaninfo #editor input[type="text"],
+body.theme-dokkaninfo #editor input[type="number"],
+body.theme-dokkaninfo #editor textarea,
+body.theme-dokkaninfo #editor .form-control,
+body.theme-dokkaninfo.editor-tool-page #editor input[type="text"],
+body.theme-dokkaninfo.editor-tool-page #editor input[type="number"],
+body.theme-dokkaninfo.editor-tool-page #editor textarea,
+body.theme-dokkaninfo.editor-tool-page #editor .form-control {
+    background: #121215 !important;
+    border: 1px solid #3f3f46 !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+}
+
+body.theme-dokkaninfo #editor input:focus,
+body.theme-dokkaninfo #editor textarea:focus,
+body.theme-dokkaninfo #editor .form-control:focus,
+body.theme-dokkaninfo.editor-tool-page #editor input:focus,
+body.theme-dokkaninfo.editor-tool-page #editor textarea:focus,
+body.theme-dokkaninfo.editor-tool-page #editor .form-control:focus {
+    border-color: #e2802b !important;
+    background: #18181b !important;
+    box-shadow: 0 0 0 1px #e2802b !important;
+}
+
+body.theme-dokkaninfo #editor button,
+body.theme-dokkaninfo #editor .sidebar-btn,
+body.theme-dokkaninfo #editor .btn-export-all,
+body.theme-dokkaninfo #editor .btn-reset,
+body.theme-dokkaninfo #editor .gui-preset-btn,
+body.theme-dokkaninfo #editor .sidebar-section button,
+body.theme-dokkaninfo.editor-tool-page #editor button,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-btn,
+body.theme-dokkaninfo.editor-tool-page #editor .btn-export-all,
+body.theme-dokkaninfo.editor-tool-page #editor .btn-reset,
+body.theme-dokkaninfo.editor-tool-page #editor .gui-preset-btn,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-section button {
+    border-radius: 0px !important;
+    background: #27272a !important;
+    border: 1px solid #3f3f46 !important;
+    color: #e4e4e7 !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo #editor button:hover,
+body.theme-dokkaninfo #editor .sidebar-btn:hover,
+body.theme-dokkaninfo #editor .btn-export-all:hover,
+body.theme-dokkaninfo #editor .sidebar-section button:hover,
+body.theme-dokkaninfo.editor-tool-page #editor button:hover,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-btn:hover,
+body.theme-dokkaninfo.editor-tool-page #editor .btn-export-all:hover,
+body.theme-dokkaninfo.editor-tool-page #editor .sidebar-section button:hover {
+    background: #3f3f46 !important;
+    border-color: #52525b !important;
+    color: #ffffff !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo #editor #side-header-badges-box,
+body.theme-dokkaninfo.editor-tool-page #editor #side-header-badges-box {
+    border-radius: 0px !important;
+    background: #18181b !important;
+    border: 1px solid #3f3f46 !important;
+}
+
+/* ==========================================================================
+   THEME 2: ABS STYLE (Authentic Glassy Topbar Buttons & HUD Dock)
+   ========================================================================== */
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+    height: 64px !important;
+    border-radius: 20px !important;
+    background: linear-gradient(180deg, rgba(20, 26, 42, 0.94), rgba(10, 14, 24, 0.98)) !important;
+    border: 1.5px solid rgba(113, 162, 219, 0.4) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 16px rgba(56, 189, 248, 0.2) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    gap: 6px !important;
+    padding: 5px 8px !important;
+    box-sizing: border-box !important;
+}
+
+/* Glassy buttons matching previous topbar .glass-btn styling */
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link {
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.22),
+        rgba(255, 255, 255, 0.08)
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.2),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.38),
+        0 3px 8px rgba(0, 0, 0, 0.35),
+        inset 0 0 3px rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(10px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+    color: #cbd5e1 !important;
+    padding: 4px 10px !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link:focus-visible {
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(255, 255, 255, 0.28),
+        rgba(255, 255, 255, 0.14)
+    ) !important;
+    border-color: rgba(56, 189, 248, 0.65) !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.55),
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 0 14px rgba(56, 189, 248, 0.4) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-abs-style.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover {
+    height: 52px !important;
+    min-height: 52px !important;
+    border-radius: 16px !important;
+    background: linear-gradient(
+        -75deg,
+        rgba(56, 189, 248, 0.28),
+        rgba(255, 255, 255, 0.26),
+        rgba(14, 116, 144, 0.35)
+    ) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.85) !important;
+    color: #38bdf8 !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.15),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.5),
+        0 0 16px rgba(56, 189, 248, 0.45),
+        0 4px 12px rgba(0, 0, 0, 0.45) !important;
+    min-width: 78px !important;
+    padding: 4px 12px !important;
+    transform: none !important;
+}
+
+body.theme-abs-style #settingsDrawer,
+body.theme-abs-style.editor-tool-page #settingsDrawer {
+    border-radius: 18px !important;
+    background: linear-gradient(180deg, rgba(16, 22, 38, 0.97), rgba(8, 12, 22, 0.99)) !important;
+    border: 1.5px solid rgba(113, 162, 219, 0.38) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), 0 0 24px rgba(56, 189, 248, 0.2) !important;
+    backdrop-filter: blur(24px) !important;
+    -webkit-backdrop-filter: blur(24px) !important;
+}
+
+body.theme-abs-style #settingsDrawer .sba-gui-btn,
+body.theme-abs-style #settingsDrawer .sba-settings-close-btn,
+body.theme-abs-style.editor-tool-page #settingsDrawer .sba-gui-btn,
+body.theme-abs-style.editor-tool-page #settingsDrawer .sba-settings-close-btn {
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important;
+}
+
+body.theme-abs-style #settingsDrawer .sba-gui-btn:hover,
+body.theme-abs-style.editor-tool-page #settingsDrawer .sba-gui-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.6) !important;
+    color: #ffffff !important;
+}
+
+body.theme-abs-style #settingsDrawer .sba-gui-btn.active,
+body.theme-abs-style.editor-tool-page #settingsDrawer .sba-gui-btn.active {
+    background: rgba(56, 189, 248, 0.25) !important;
+    border-color: rgba(56, 189, 248, 0.85) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+}
+
+/* ABS Style: Sidebar Editor (#editor) Theming */
+body.theme-abs-style #editor,
+body.theme-abs-style.editor-tool-page #editor {
+    background: linear-gradient(180deg, rgba(16, 22, 38, 0.97), rgba(8, 12, 22, 0.99)) !important;
+    border-left: 1.5px solid rgba(113, 162, 219, 0.4) !important;
+    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.85), 0 0 24px rgba(56, 189, 248, 0.2) !important;
+    backdrop-filter: blur(24px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(160%) !important;
+    padding-bottom: 100px !important;
+}
+
+body.theme-abs-style #editor .sidebar-main-title,
+body.theme-abs-style.editor-tool-page #editor .sidebar-main-title {
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(113, 162, 219, 0.25) !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8), 0 0 12px rgba(56, 189, 248, 0.3) !important;
+    position: relative !important;
+}
+
+body.theme-abs-style #editor .sidebar-main-title span,
+body.theme-abs-style.editor-tool-page #editor .sidebar-main-title span {
+    color: #38bdf8 !important;
+    text-shadow: 0 0 14px rgba(56, 189, 248, 0.6) !important;
+}
+
+body.theme-abs-style #editor .editor-sidebar-close-btn,
+body.theme-abs-style.editor-tool-page #editor .editor-sidebar-close-btn {
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important;
+}
+
+body.theme-abs-style #editor .editor-sidebar-close-btn:hover,
+body.theme-abs-style.editor-tool-page #editor .editor-sidebar-close-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3) !important;
+}
+
+body.theme-abs-style #editor .collapsible-header,
+body.theme-abs-style.editor-tool-page #editor .collapsible-header {
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.18),
+        rgba(255, 255, 255, 0.08)
+    ) !important;
+    border: 1px solid rgba(113, 162, 219, 0.35) !important;
+    border-left: 4px solid #38bdf8 !important;
+    border-radius: 12px !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.25), 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+}
+
+body.theme-abs-style #editor .collapsible-header:hover,
+body.theme-abs-style.editor-tool-page #editor .collapsible-header:hover {
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(255, 255, 255, 0.26),
+        rgba(255, 255, 255, 0.14)
+    ) !important;
+    border-left-color: #38bdf8 !important;
+    border-color: rgba(56, 189, 248, 0.65) !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    transform: translateX(3px) !important;
+}
+
+body.theme-abs-style #editor label,
+body.theme-abs-style #editor .form-label,
+body.theme-abs-style.editor-tool-page #editor label,
+body.theme-abs-style.editor-tool-page #editor .form-label {
+    color: #94a3b8 !important;
+}
+
+body.theme-abs-style #editor input[type="text"],
+body.theme-abs-style #editor input[type="number"],
+body.theme-abs-style #editor textarea,
+body.theme-abs-style #editor .form-control,
+body.theme-abs-style.editor-tool-page #editor input[type="text"],
+body.theme-abs-style.editor-tool-page #editor input[type="number"],
+body.theme-abs-style.editor-tool-page #editor textarea,
+body.theme-abs-style.editor-tool-page #editor .form-control {
+    background: rgba(10, 14, 26, 0.7) !important;
+    border: 1px solid rgba(113, 162, 219, 0.3) !important;
+    border-radius: 10px !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.theme-abs-style #editor input:focus,
+body.theme-abs-style #editor textarea:focus,
+body.theme-abs-style #editor .form-control:focus,
+body.theme-abs-style.editor-tool-page #editor input:focus,
+body.theme-abs-style.editor-tool-page #editor textarea:focus,
+body.theme-abs-style.editor-tool-page #editor .form-control:focus {
+    border-color: #38bdf8 !important;
+    background: rgba(14, 20, 36, 0.85) !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.4), inset 0 2px 4px rgba(0, 0, 0, 0.6) !important;
+}
+
+body.theme-abs-style #editor button,
+body.theme-abs-style #editor .sidebar-btn,
+body.theme-abs-style #editor .btn-export-all,
+body.theme-abs-style #editor .btn-reset,
+body.theme-abs-style #editor .gui-preset-btn,
+body.theme-abs-style #editor .sidebar-section button,
+body.theme-abs-style.editor-tool-page #editor button,
+body.theme-abs-style.editor-tool-page #editor .sidebar-btn,
+body.theme-abs-style.editor-tool-page #editor .btn-export-all,
+body.theme-abs-style.editor-tool-page #editor .btn-reset,
+body.theme-abs-style.editor-tool-page #editor .gui-preset-btn,
+body.theme-abs-style.editor-tool-page #editor .sidebar-section button {
+    border-radius: 12px !important;
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.08),
+        rgba(255, 255, 255, 0.22),
+        rgba(255, 255, 255, 0.08)
+    ) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.2),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.38),
+        0 3px 8px rgba(0, 0, 0, 0.35),
+        inset 0 0 3px rgba(255, 255, 255, 0.12) !important;
+    backdrop-filter: blur(10px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(130%) !important;
+    color: #cbd5e1 !important;
+}
+
+body.theme-abs-style #editor button:hover,
+body.theme-abs-style #editor .sidebar-btn:hover,
+body.theme-abs-style #editor .btn-export-all:hover,
+body.theme-abs-style #editor .sidebar-section button:hover,
+body.theme-abs-style.editor-tool-page #editor button:hover,
+body.theme-abs-style.editor-tool-page #editor .sidebar-btn:hover,
+body.theme-abs-style.editor-tool-page #editor .btn-export-all:hover,
+body.theme-abs-style.editor-tool-page #editor .sidebar-section button:hover {
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.14),
+        rgba(255, 255, 255, 0.28),
+        rgba(255, 255, 255, 0.14)
+    ) !important;
+    border-color: rgba(56, 189, 248, 0.65) !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.1),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.55),
+        0 4px 12px rgba(0, 0, 0, 0.4),
+        0 0 14px rgba(56, 189, 248, 0.4) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+}
+
+body.theme-abs-style #editor #side-header-badges-box,
+body.theme-abs-style.editor-tool-page #editor #side-header-badges-box {
+    border-radius: 12px !important;
+    background: rgba(10, 14, 26, 0.7) !important;
+    border: 1px solid rgba(113, 162, 219, 0.3) !important;
+}
+
+/* ==========================================================================
+   THEME 3: SBA / ABS.CLEAN (Semi-Grid Glassy Dock & Sharp Squared Edges)
+   ========================================================================== */
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group,
+body.theme-abs-clean .hud-nav-group,
+body.theme-abs-clean .hud-nav-group:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-abs-clean .apple-hud-wrapper:focus-within .hud-nav-group,
+body.theme-abs-clean.editor-tool-page .hud-nav-group,
+body.theme-abs-clean.editor-tool-page .hud-nav-group:hover,
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group {
+    height: 56px !important;
+    max-height: 56px !important;
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+    gap: 8px !important;
+    padding: 4px 8px !important;
+    box-sizing: border-box !important;
+}
+
+body.theme-sba .hud-nav-group::before,
+body.theme-sba .hud-nav-group::after,
+body.theme-abs-clean .hud-nav-group::before,
+body.theme-abs-clean .hud-nav-group::after,
+body.theme-sba .hud-nav-group .hud-nav-link::before,
+body.theme-sba .hud-nav-group .hud-nav-link::after,
+body.theme-abs-clean .hud-nav-group .hud-nav-link::before,
+body.theme-abs-clean .hud-nav-group .hud-nav-link::after {
+    border-radius: 0px !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body.theme-abs-clean .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]) {
+    height: 46px !important;
+    min-height: 46px !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    min-width: 72px !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    border-radius: 0px !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    padding: 4px 12px !important;
+    transition: all 0.16s ease !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body.theme-abs-clean .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover {
+    transform: none !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-label="Calculator"],
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link[aria-label="Calculator"] {
+    min-width: 96px !important;
+    padding: 4px 10px !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-label="Editor"],
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link[aria-label="Editor"] {
+    min-width: 80px !important;
+    padding: 4px 10px !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link.active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link.active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba.calc-liquid-body .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body.theme-abs-clean .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean.editor-tool-page .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean.editor-tool-page .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    min-width: 80px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin-inline: 0 !important;
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.48) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    padding: 4px 12px !important;
+    transform: none !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link .hud-nav-svg {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    flex: 0 0 17px !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link > span {
+    display: inline-block !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    color: currentColor !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+/* SBA / ABS Clean: Sidebar Editor (#editor) Theming */
+body.theme-sba #editor,
+body.theme-sba.editor-tool-page #editor,
+body.theme-abs-clean #editor,
+body.theme-abs-clean.editor-tool-page #editor {
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.88) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.88) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-size: 20px 20px, 20px 20px, auto auto !important;
+    border-left: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: -15px 0 45px rgba(0, 0, 0, 0.75), inset 1px 0 0 rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: blur(28px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(140%) !important;
+    border-radius: 0px !important;
+    padding-bottom: 100px !important;
+}
+
+body.theme-sba #editor .sidebar-main-title,
+body.theme-sba.editor-tool-page #editor .sidebar-main-title,
+body.theme-abs-clean #editor .sidebar-main-title,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-main-title {
+    color: #ffffff !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 0px !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.4) !important;
+    position: relative !important;
+}
+
+body.theme-sba #editor .sidebar-main-title span,
+body.theme-sba.editor-tool-page #editor .sidebar-main-title span,
+body.theme-abs-clean #editor .sidebar-main-title span,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-main-title span {
+    color: rgba(255, 255, 255, 0.88) !important;
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.35) !important;
+}
+
+body.theme-sba #editor .editor-sidebar-close-btn,
+body.theme-sba.editor-tool-page #editor .editor-sidebar-close-btn,
+body.theme-abs-clean #editor .editor-sidebar-close-btn,
+body.theme-abs-clean.editor-tool-page #editor .editor-sidebar-close-btn {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.theme-sba #editor .editor-sidebar-close-btn:hover,
+body.theme-sba.editor-tool-page #editor .editor-sidebar-close-btn:hover,
+body.theme-abs-clean #editor .editor-sidebar-close-btn:hover,
+body.theme-abs-clean.editor-tool-page #editor .editor-sidebar-close-btn:hover {
+    background: rgba(239, 68, 68, 0.3) !important;
+    color: #ffffff !important;
+    border-color: rgba(239, 68, 68, 0.6) !important;
+}
+
+body.theme-sba #editor .collapsible-header,
+body.theme-sba.editor-tool-page #editor .collapsible-header,
+body.theme-abs-clean #editor .collapsible-header,
+body.theme-abs-clean.editor-tool-page #editor .collapsible-header {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-left: 3px solid rgba(255, 255, 255, 0.85) !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+}
+
+body.theme-sba #editor .collapsible-header:hover,
+body.theme-sba.editor-tool-page #editor .collapsible-header:hover,
+body.theme-abs-clean #editor .collapsible-header:hover,
+body.theme-abs-clean.editor-tool-page #editor .collapsible-header:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-left-color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    transform: translateX(2px) !important;
+}
+
+body.theme-sba #editor label,
+body.theme-sba #editor .form-label,
+body.theme-sba.editor-tool-page #editor label,
+body.theme-sba.editor-tool-page #editor .form-label,
+body.theme-abs-clean #editor label,
+body.theme-abs-clean #editor .form-label,
+body.theme-abs-clean.editor-tool-page #editor label,
+body.theme-abs-clean.editor-tool-page #editor .form-label {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.theme-sba #editor input[type="text"],
+body.theme-sba #editor input[type="number"],
+body.theme-sba #editor textarea,
+body.theme-sba #editor .form-control,
+body.theme-sba.editor-tool-page #editor input[type="text"],
+body.theme-sba.editor-tool-page #editor input[type="number"],
+body.theme-sba.editor-tool-page #editor textarea,
+body.theme-sba.editor-tool-page #editor .form-control,
+body.theme-abs-clean #editor input[type="text"],
+body.theme-abs-clean #editor input[type="number"],
+body.theme-abs-clean #editor textarea,
+body.theme-abs-clean #editor .form-control,
+body.theme-abs-clean.editor-tool-page #editor input[type="text"],
+body.theme-abs-clean.editor-tool-page #editor input[type="number"],
+body.theme-abs-clean.editor-tool-page #editor textarea,
+body.theme-abs-clean.editor-tool-page #editor .form-control {
+    background: rgba(0, 0, 0, 0.45) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+}
+
+body.theme-sba #editor input:focus,
+body.theme-sba #editor textarea:focus,
+body.theme-sba #editor .form-control:focus,
+body.theme-sba.editor-tool-page #editor input:focus,
+body.theme-sba.editor-tool-page #editor textarea:focus,
+body.theme-sba.editor-tool-page #editor .form-control:focus,
+body.theme-abs-clean #editor input:focus,
+body.theme-abs-clean #editor textarea:focus,
+body.theme-abs-clean #editor .form-control:focus,
+body.theme-abs-clean.editor-tool-page #editor input:focus,
+body.theme-abs-clean.editor-tool-page #editor textarea:focus,
+body.theme-abs-clean.editor-tool-page #editor .form-control:focus {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    background: rgba(0, 0, 0, 0.55) !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 0.25) !important;
+}
+
+body.theme-sba #editor button,
+body.theme-sba #editor .sidebar-btn,
+body.theme-sba #editor .btn-export-all,
+body.theme-sba #editor .btn-reset,
+body.theme-sba #editor .gui-preset-btn,
+body.theme-sba #editor .sidebar-section button,
+body.theme-sba.editor-tool-page #editor button,
+body.theme-sba.editor-tool-page #editor .sidebar-btn,
+body.theme-sba.editor-tool-page #editor .btn-export-all,
+body.theme-sba.editor-tool-page #editor .btn-reset,
+body.theme-sba.editor-tool-page #editor .gui-preset-btn,
+body.theme-sba.editor-tool-page #editor .sidebar-section button,
+body.theme-abs-clean #editor button,
+body.theme-abs-clean #editor .sidebar-btn,
+body.theme-abs-clean #editor .btn-export-all,
+body.theme-abs-clean #editor .btn-reset,
+body.theme-abs-clean #editor .gui-preset-btn,
+body.theme-abs-clean #editor .sidebar-section button,
+body.theme-abs-clean.editor-tool-page #editor button,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-btn,
+body.theme-abs-clean.editor-tool-page #editor .btn-export-all,
+body.theme-abs-clean.editor-tool-page #editor .btn-reset,
+body.theme-abs-clean.editor-tool-page #editor .gui-preset-btn,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-section button {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.2), 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+    color: rgba(255, 255, 255, 0.95) !important;
+}
+
+body.theme-sba #editor button:hover,
+body.theme-sba #editor .sidebar-btn:hover,
+body.theme-sba #editor .btn-export-all:hover,
+body.theme-sba #editor .sidebar-section button:hover,
+body.theme-sba.editor-tool-page #editor button:hover,
+body.theme-sba.editor-tool-page #editor .sidebar-btn:hover,
+body.theme-sba.editor-tool-page #editor .btn-export-all:hover,
+body.theme-sba.editor-tool-page #editor .sidebar-section button:hover,
+body.theme-abs-clean #editor button:hover,
+body.theme-abs-clean #editor .sidebar-btn:hover,
+body.theme-abs-clean #editor .btn-export-all:hover,
+body.theme-abs-clean #editor .sidebar-section button:hover,
+body.theme-abs-clean.editor-tool-page #editor button:hover,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-btn:hover,
+body.theme-abs-clean.editor-tool-page #editor .btn-export-all:hover,
+body.theme-abs-clean.editor-tool-page #editor .sidebar-section button:hover {
+    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+    color: #ffffff !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.35), 0 6px 16px rgba(0, 0, 0, 0.28) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.theme-sba #editor #side-header-badges-box,
+body.theme-sba.editor-tool-page #editor #side-header-badges-box,
+body.theme-abs-clean #editor #side-header-badges-box,
+body.theme-abs-clean.editor-tool-page #editor #side-header-badges-box {
+    border-radius: 0px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Universal Editor Sidebar Close Button Layout */
+#editor .sidebar-main-title {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+#editor .editor-sidebar-close-btn {
+    position: absolute !important;
+    top: 10px !important;
+    right: 10px !important;
+    width: 32px !important;
+    height: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 15px !important;
+    cursor: pointer !important;
+    line-height: 1 !important;
+    padding: 0 !important;
+    transition: all 0.2s ease !important;
+    z-index: 2 !important;
+}
+
+/* ==========================================================================
+   FIX DISCOLORATION & TOP GAP ON ABS STYLE & UNIFY BODY BACKGROUND
+   ========================================================================== */
+html:has(body.theme-abs-style),
+body.theme-abs-style,
+body.theme-abs-style.editor-tool-page,
+body.theme-abs-style #app {
+    background-color: #0b0f19 !important;
+    background: #0b0f19 !important;
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+body.theme-abs-style #top-content {
+    margin-top: 0 !important;
+    padding-top: 14px !important;
+    background-color: #0b0f19 !important;
+    background: #0b0f19 !important;
+}
+
+body.theme-abs-style #top-content .container-1220 {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+
+body.theme-dokkaninfo #top-content {
+    margin-top: 0 !important;
+    padding-top: 14px !important;
+}
+
+/* ==========================================================================
+   EXPAND CARD THEME STYLER BOX ACROSS FULL SETTINGS PANE
+   ========================================================================== */
+#settingsDrawer .settings-theme-section {
+    width: 100% !important;
+    box-sizing: border-box !important;
+    margin-bottom: 16px !important;
+}
+
+#settingsDrawer .hud-theme-stack {
+    width: 100% !important;
+    max-width: 100% !important;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 8px !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 14px !important;
+    flex-shrink: 0 !important;
+}
+
+#settingsDrawer .hud-theme-stack .abs-hud-theme-btn {
+    min-width: 0 !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 54px !important;
+    padding: 8px 6px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    box-sizing: border-box !important;
+    border-radius: 10px !important;
+}
+
+#settingsDrawer .hud-theme-stack .abs-hud-theme-btn .hud-btn-logo {
+    max-height: 22px !important;
+    width: auto !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+}
+
+#settingsDrawer .hud-theme-stack .abs-hud-theme-btn .hud-btn-indicator {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    line-height: 1.15 !important;
+    text-align: center !important;
+}
+
+/* Dedicated position for autosave badge in Editor */
+body.editor-tool-page #main-autosave-indicator {
+    position: fixed !important;
+    top: 14px !important;
+    right: 16px !important;
+    z-index: 10030 !important;
+}
+
+/* Hide legacy floating settings circle button if still present in DOM */
+body.calc-liquid-body .liquid-settings-bar,
+body.calc-liquid-body .liquid-settings-circle-btn {
+    display: none !important;
+}
+
+/* ── Cancel side-dock rail width on tool pages ─────────────────────────── */
+body.calc-liquid-body.theme-sba,
+body.editor-tool-page {
+    --sba-rail-width: 0px !important;
+}
+
+/* ── Content bottom padding to avoid overlap with bottom dock ──────────── */
+body.theme-sba #top-content,
+body.editor-tool-page #top-content,
+body.theme-sba .calc-wrapper,
+body.theme-sba #calc-container {
+    padding-bottom: 120px !important;
+}
+
+/* ── Calculator wrapper spacing (news ticker is above it) ──────────────── */
+body.theme-sba .calc-wrapper,
+body.calc-liquid-body .calc-wrapper {
+    margin-top: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+}
+
+/* ── News ticker: shared Home/Cards treatment ───────────────────────────── */
+body.theme-sba .calc-news-snippet {
+    position: relative !important;
+    z-index: 90 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    height: 74px !important;
+    min-height: 74px !important;
+    max-height: 74px !important;
+    margin: 0 !important;
+    padding: 8px 12px !important;
+    border-radius: 0 !important;
+    background: rgba(12, 18, 31, 0.28) !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    flex-shrink: 0 !important;
+}
+
+/* Home fixes its ticker to the top edge on desktop. Do the same here and
+   reserve its space so the calculator's command deck never sits under it. */
+@media (min-width: 991px) {
+    body.theme-sba .calc-news-snippet,
+    body.calc-liquid-body .calc-news-snippet {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        z-index: 1001 !important;
+        width: 100vw !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        pointer-events: auto !important;
+    }
+
+    body.theme-sba .calc-wrapper,
+    body.calc-liquid-body .calc-wrapper,
+    body.calc-liquid-body #calculator-view {
+        padding-top: 96px !important;
+    }
+}
+
+/* Inherit and enforce all SBA ticker styles that apply to Home/Cards */
+body.theme-sba .calc-news-snippet .sba-news-ticker-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-direction: column !important;
+    flex: 0 0 auto !important;
+    gap: 0 !important;
+    height: 58px !important;
+    min-width: 46px !important;
+    padding: 2px 10px 2px 2px !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background: transparent !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+    cursor: pointer !important;
+    font-size: 8px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.12em !important;
+}
+
+body.theme-sba .calc-news-snippet .sba-news-ticker-logo {
+    display: block !important;
+    width: 27px !important;
+    height: 27px !important;
+    margin-bottom: 1px !important;
+    object-fit: contain !important;
+}
+
+body.theme-sba .calc-news-snippet .sba-news-ticker-brand > span {
+    display: block !important;
+    width: 30px !important;
+    padding-top: 2px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.26) !important;
+    text-align: center !important;
+}
+
+body.theme-sba .calc-news-snippet .sba-news-ticker-viewport {
+    display: flex !important;
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+}
+
+body.theme-sba .calc-news-snippet .sba-news-ticker-track {
+    display: flex !important;
+    align-items: center !important;
+    gap: 9px !important;
+    width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: none !important;
+    cursor: grab !important;
+}
+
+body.theme-sba .calc-news-snippet .sba-news-ticker-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    flex: 0 0 290px !important;
+    min-width: 290px !important;
+    min-height: 48px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.13) !important;
+    background: rgba(15, 20, 35, 0.14) !important;
+}
+
+/* ── Calculator wrapper spacing & dock alignment ─────────────────────────── */
+body.calc-liquid-body .calc-wrapper,
+body.calc-liquid-body #calculator-view,
+body.theme-sba .calc-wrapper {
+    margin-top: 0 !important;
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+    padding-bottom: 120px !important;
+}
+
+@media (min-width: 991px) {
+    body.calc-liquid-body .calc-wrapper,
+    body.calc-liquid-body #calculator-view,
+    body.theme-sba .calc-wrapper {
+        padding-top: 96px !important;
+    }
+}
+
+@media (max-width: 990px) {
+    body.calc-liquid-body .calc-wrapper,
+    body.calc-liquid-body #calculator-view,
+    body.theme-sba .calc-wrapper {
+        padding-top: 14px !important;
+    }
+}
+
+/* Ensure #sec-deck ("Click to Select a Unit") is cleanly pushed down below the news ticker */
+body.calc-liquid-body #sec-deck {
+    position: relative !important;
+    z-index: 10 !important;
+    margin-top: 16px !important;
+}
+
+/* Active Calculator pill in dock: generous width prevents text clipping & stays solid on hover */
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link[aria-label="Calculator"].active,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:focus-visible,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:hover,
+body:where(:not(.calc-liquid-body.theme-sba)).theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"].active:focus-visible {
+    width: auto !important;
+    min-width: 90px !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 4px 14px !important;
+    margin-inline: -2px !important;
+    border-radius: 26px !important;
+    background: rgba(255, 255, 255, 0.24) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.62), inset 0 -1px 0 rgba(21, 27, 38, 0.14), 0 5px 12px rgba(0, 0, 0, 0.12) !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.theme-sba .hud-nav-group .hud-nav-link {
+    box-sizing: border-box !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+}
+
+/* ── Settings Mini GUI Drawer & Buttons: 1:1 matching Home & Cards ─────── */
+#settingsDrawer.sba-settings-popover,
+.sba-settings-popover,
+body.editor-tool-page #settingsDrawer,
+body.theme-sba #settingsDrawer,
+body.theme-sba .sba-settings-popover {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 76px !important;
+    width: min(480px, calc(100vw - 28px)) !important;
+    max-width: calc(100vw - 24px) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 100px) !important;
+    padding: 20px 22px !important;
+    border-radius: 22px !important;
+    border: 1px solid rgba(255, 255, 255, 0.38) !important;
+    background:
+        radial-gradient(circle at 10% 10%, rgba(56, 189, 248, 0.22), transparent 45%),
+        radial-gradient(circle at 90% 90%, rgba(192, 132, 252, 0.24), transparent 50%),
+        linear-gradient(180deg, rgba(16, 22, 38, 0.96), rgba(6, 9, 18, 0.98)) !important;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.78),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(36px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(36px) saturate(160%) !important;
+    z-index: 20000 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(12px) scale(0.94) !important;
+    transform-origin: bottom center !important;
+    transition: opacity 180ms ease, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 180ms ease !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    box-sizing: border-box !important;
+}
+
+#settingsDrawer.open,
+.sba-settings-popover.open,
+body.sba-side-settings-open #settingsDrawer,
+body.sba-side-settings-open .sba-settings-popover,
+body.theme-sba.sba-side-settings-open #settingsDrawer,
+body.theme-sba #settingsDrawer.open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+.sba-settings-overlay {
+    position: fixed !important;
+    inset: 0 !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    backdrop-filter: blur(4px) !important;
+    -webkit-backdrop-filter: blur(4px) !important;
+    z-index: 19999 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transition: opacity 200ms ease, visibility 200ms ease !important;
+}
+
+.sba-settings-overlay.open,
+body.sba-side-settings-open .sba-settings-overlay {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+#settingsDrawer .sidebar-header,
+.sba-settings-header {
+    display: flex !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+#settingsDrawer .sidebar-header h2,
+.sba-settings-header h2 {
+    font-size: 13px !important;
+    font-weight: 800 !important;
+    color: #f8fafc !important;
+    margin: 0 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+}
+
+#settingsDrawer .close-btn,
+.sba-settings-close-btn {
+    all: unset !important;
+    width: 26px !important;
+    height: 26px !important;
+    border-radius: 50% !important;
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: #cbd5e1 !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: all 0.2s ease !important;
+}
+
+#settingsDrawer .close-btn:hover,
+.sba-settings-close-btn:hover {
+    background: rgba(239, 68, 68, 0.4) !important;
+    color: #fff !important;
+    border-color: #ef4444 !important;
+}
+
+#settingsDrawer .sba-settings-section,
+#settingsDrawer .filter-group,
+#settingsDrawer .settings-theme-section {
+    margin-bottom: 14px !important;
+}
+
+#settingsDrawer .filter-group-title {
+    display: block !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.8px !important;
+    color: #94a3b8 !important;
+    margin-bottom: 8px !important;
+}
+
+#settingsDrawer .sba-gui-btn,
+#settingsDrawer .fx-mode-btn,
+.sba-gui-btn {
+    appearance: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    padding: 8px 6px !important;
+    min-height: 48px !important;
+    border-radius: 13px !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.14), transparent 50%),
+        linear-gradient(180deg, rgba(229, 238, 248, 0.07), rgba(91, 102, 98, 0.03)) !important;
+    border: 1px solid rgba(246, 250, 255, 0.32) !important;
+    box-shadow:
+        0 4px 12px rgba(2, 5, 12, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 0 rgba(26, 32, 30, 0.10) !important;
+    box-sizing: border-box !important;
+    width: 100% !important;
+    text-decoration: none !important;
+}
+
+#settingsDrawer .sba-gui-btn:hover,
+#settingsDrawer .fx-mode-btn:hover,
+.sba-gui-btn:hover {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.58) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.24), transparent 50%),
+        linear-gradient(180deg, rgba(231, 241, 255, 0.13), rgba(96, 109, 103, 0.06)) !important;
+    box-shadow:
+        0 6px 16px rgba(2, 5, 12, 0.22),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.48) !important;
+    transform: translateY(-1px) !important;
+}
+
+#settingsDrawer .sba-gui-btn.active,
+#settingsDrawer .fx-mode-btn.active,
+.sba-gui-btn.active {
+    color: #ffffff !important;
+    border-color: rgba(56, 189, 248, 0.85) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.35), transparent 50%),
+        linear-gradient(180deg, rgba(14, 116, 144, 0.38), rgba(6, 40, 60, 0.3)) !important;
+    box-shadow:
+        0 0 16px rgba(56, 189, 248, 0.42),
+        inset 0 0 0 1px rgba(56, 189, 248, 0.35),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.55) !important;
+    transform: translateY(0) !important;
+}
+
+#topbar-upload-dock-wrap,
+#topbar-importer-dock-wrap,
+#topbar-card-admin-dock-wrap,
+#topbar-card-delete-dock-wrap {
+    width: 100% !important;
+    display: contents;
+}
+
+#settingsDrawer #btn-tab-atk.active {
+    border-color: rgba(239, 68, 68, 0.85) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(239, 68, 68, 0.35), transparent 50%),
+        linear-gradient(180deg, rgba(185, 28, 28, 0.38), rgba(60, 10, 10, 0.3)) !important;
+    box-shadow:
+        0 0 16px rgba(239, 68, 68, 0.42),
+        inset 0 0 0 1px rgba(239, 68, 68, 0.35),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+#settingsDrawer #btn-tab-def.active {
+    border-color: rgba(59, 130, 246, 0.85) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.35), transparent 50%),
+        linear-gradient(180deg, rgba(29, 78, 216, 0.38), rgba(10, 30, 60, 0.3)) !important;
+    box-shadow:
+        0 0 16px rgba(59, 130, 246, 0.42),
+        inset 0 0 0 1px rgba(59, 130, 246, 0.35),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.55) !important;
+}
+
+/* SBA / ABS Clean: Mini GUI Settings Drawer (Sharp Squared Edges & Semi-Grid Glass) */
+body.theme-sba #settingsDrawer,
+body.theme-sba.editor-tool-page #settingsDrawer,
+body.theme-abs-clean #settingsDrawer,
+body.theme-abs-clean.editor-tool-page #settingsDrawer {
+    border-radius: 4px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.90) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.90) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(32px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
+}
+
+body.theme-sba #settingsDrawer .sidebar-header,
+body.theme-sba.editor-tool-page #settingsDrawer .sidebar-header,
+body.theme-abs-clean #settingsDrawer .sidebar-header,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sidebar-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn,
+body.theme-sba #settingsDrawer .sba-settings-close-btn,
+body.theme-sba #settingsDrawer .close-btn,
+body.theme-sba #settingsDrawer .fx-mode-btn,
+body.theme-sba.editor-tool-page #settingsDrawer .sba-gui-btn,
+body.theme-sba.editor-tool-page #settingsDrawer .sba-settings-close-btn,
+body.theme-sba.editor-tool-page #settingsDrawer .close-btn,
+body.theme-sba.editor-tool-page #settingsDrawer .fx-mode-btn,
+body.theme-abs-clean #settingsDrawer .sba-gui-btn,
+body.theme-abs-clean #settingsDrawer .sba-settings-close-btn,
+body.theme-abs-clean #settingsDrawer .close-btn,
+body.theme-abs-clean #settingsDrawer .fx-mode-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sba-gui-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sba-settings-close-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .close-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .fx-mode-btn {
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    color: #cbd5e1 !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transform: none !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn:hover,
+body.theme-sba #settingsDrawer .sba-settings-close-btn:hover,
+body.theme-sba #settingsDrawer .close-btn:hover,
+body.theme-sba #settingsDrawer .fx-mode-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer .sba-gui-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer .sba-settings-close-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer .close-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer .fx-mode-btn:hover,
+body.theme-abs-clean #settingsDrawer .sba-gui-btn:hover,
+body.theme-abs-clean #settingsDrawer .sba-settings-close-btn:hover,
+body.theme-abs-clean #settingsDrawer .close-btn:hover,
+body.theme-abs-clean #settingsDrawer .fx-mode-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sba-gui-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sba-settings-close-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .close-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .fx-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.28) !important;
+    transform: none !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn.active,
+body.theme-sba #settingsDrawer .fx-mode-btn.active,
+body.theme-sba.editor-tool-page #settingsDrawer .sba-gui-btn.active,
+body.theme-sba.editor-tool-page #settingsDrawer .fx-mode-btn.active,
+body.theme-abs-clean #settingsDrawer .sba-gui-btn.active,
+body.theme-abs-clean #settingsDrawer .fx-mode-btn.active,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .sba-gui-btn.active,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .fx-mode-btn.active {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    color: #ffffff !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.55), 0 0 12px rgba(255, 255, 255, 0.18) !important;
+}
+
+body.theme-sba #settingsDrawer .hud-theme-stack,
+body.theme-sba.editor-tool-page #settingsDrawer .hud-theme-stack,
+body.theme-abs-clean #settingsDrawer .hud-theme-stack,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .hud-theme-stack,
+body.theme-sba #settingsDrawer .hud-theme-stack .abs-hud-theme-btn,
+body.theme-sba.editor-tool-page #settingsDrawer .hud-theme-stack .abs-hud-theme-btn,
+body.theme-abs-clean #settingsDrawer .hud-theme-stack .abs-hud-theme-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer .hud-theme-stack .abs-hud-theme-btn {
+    border-radius: 4px !important;
+}
+
+/* Settings Drawer: 3 in a line Theme Stack (no 4th empty slot) across all themes */
+#settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-sba #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-sba.editor-tool-page #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-abs-clean #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-abs-clean.editor-tool-page #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-dokkaninfo #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-abs-style #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options),
+body.theme-abs-style.editor-tool-page #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+}
+
+#settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) .abs-hud-theme-btn {
+    min-width: 0 !important;
+    width: 100% !important;
+    padding: 8px 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    box-sizing: border-box !important;
+}
+
+#settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) .abs-hud-theme-btn .hud-btn-logo {
+    max-height: 20px !important;
+    max-width: 100% !important;
+    object-fit: contain !important;
+}
+
+#settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) .abs-hud-theme-btn .hud-btn-indicator {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    white-space: nowrap !important;
+    letter-spacing: 0.2px !important;
+}
+
+/* Settings Drawer: Match Export JSON & Import JSON layout and sizing */
+#settingsDrawer #admin-export-json-btn,
+#settingsDrawer .sba-settings-btn-grid #admin-export-json-btn,
+#settingsDrawer #admin-import-json-btn,
+#settingsDrawer .sba-settings-btn-grid #admin-import-json-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    padding: 9px 6px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 52px !important;
+    box-sizing: border-box !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
+    cursor: pointer !important;
+    text-transform: none !important;
+    margin: 0 !important;
+}
+
+#settingsDrawer #admin-export-json-btn .btn-main-text,
+#settingsDrawer #admin-import-json-btn .btn-main-text {
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.5px !important;
+    color: inherit !important;
+}
+
+/* Settings Drawer Export JSON: 100% Theme Sync Across All 3 Themes */
+/* 1. Theme DokkanInfo */
+body.theme-dokkaninfo #settingsDrawer #admin-export-json-btn,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer #admin-export-json-btn {
+    border-radius: 0px !important;
+    background: #222226 !important;
+    border: 1px solid #3f3f46 !important;
+    color: #d4d4d8 !important;
+    box-shadow: none !important;
+    transform: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+body.theme-dokkaninfo #settingsDrawer #admin-export-json-btn:hover,
+body.theme-dokkaninfo.editor-tool-page #settingsDrawer #admin-export-json-btn:hover {
+    background: #2e2e34 !important;
+    border-color: #52525b !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+/* 2. Theme ABS Style */
+body.theme-abs-style #settingsDrawer #admin-export-json-btn,
+body.theme-abs-style.editor-tool-page #settingsDrawer #admin-export-json-btn {
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    color: #cbd5e1 !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.15) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    transform: none !important;
+}
+body.theme-abs-style #settingsDrawer #admin-export-json-btn:hover,
+body.theme-abs-style.editor-tool-page #settingsDrawer #admin-export-json-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(56, 189, 248, 0.6) !important;
+    color: #ffffff !important;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    transform: none !important;
+}
+
+/* 3. Theme Clean / SBA */
+body.theme-sba #settingsDrawer #admin-export-json-btn,
+body.theme-sba #settingsDrawer #admin-import-json-btn,
+body.theme-sba.editor-tool-page #settingsDrawer #admin-export-json-btn,
+body.theme-sba.editor-tool-page #settingsDrawer #admin-import-json-btn,
+body.theme-abs-clean #settingsDrawer #admin-export-json-btn,
+body.theme-abs-clean #settingsDrawer #admin-import-json-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer #admin-export-json-btn,
+body.theme-abs-clean.editor-tool-page #settingsDrawer #admin-import-json-btn {
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.15), 0 4px 10px rgba(0, 0, 0, 0.2) !important;
+    color: #cbd5e1 !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+    transform: none !important;
+}
+body.theme-sba #settingsDrawer #admin-export-json-btn:hover,
+body.theme-sba #settingsDrawer #admin-import-json-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer #admin-export-json-btn:hover,
+body.theme-sba.editor-tool-page #settingsDrawer #admin-import-json-btn:hover,
+body.theme-abs-clean #settingsDrawer #admin-export-json-btn:hover,
+body.theme-abs-clean #settingsDrawer #admin-import-json-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer #admin-export-json-btn:hover,
+body.theme-abs-clean.editor-tool-page #settingsDrawer #admin-import-json-btn:hover {
+    background: rgba(255, 255, 255, 0.14) !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+    color: #ffffff !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.3), 0 6px 16px rgba(0, 0, 0, 0.28) !important;
+    transform: none !important;
+}
+
+/* Settings Drawer: Bottom Reset Editor Cache Button */
+#settingsDrawer .sba-reset-editor-drawer-btn {
+    border-color: rgba(239, 68, 68, 0.35) !important;
+    color: #fca5a5 !important;
+    transition: all 0.2s ease !important;
+}
+
+#settingsDrawer .sba-reset-editor-drawer-btn:hover {
+    border-color: rgba(239, 68, 68, 0.7) !important;
+    background: rgba(239, 68, 68, 0.15) !important;
+    color: #ffffff !important;
+}
+
+
+/* ==========================================================================
+   /* GLOBAL DOKKAN CHARACTER IMPORTER & UNIT PICKER GUI (ABS.CLEAN STYLE) */
+   ========================================================================== */
+body .calc-unit-picker-dialog {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+}
+
+body .calc-unit-picker-dialog .calc-picker-close-btn,
+body .calc-unit-picker-dialog .picker-search-wrapper input,
+body .calc-unit-picker-dialog .picker-source-tabs,
+body .calc-unit-picker-dialog .picker-source-tab,
+body .calc-unit-picker-dialog .picker-sync-pill-btn,
+body .calc-unit-picker-dialog .picker-unit-card,
+body .calc-unit-picker-dialog .importer-variant-btn,
+body .calc-unit-picker-dialog .unit-sa-picker-item {
+    border-radius: 0px !important;
+}
+
+body .calc-unit-picker-dialog .picker-frame {
+    display: none !important;
+}
+
+body .calc-unit-picker-dialog .picker-thumb-wrapper {
+    border-radius: 50% !important;
+    overflow: visible !important;
+}
+
+body .calc-unit-picker-dialog .picker-thumb { 
+    position: absolute !important;
+    top: -2px !important;
+    left: -2px !important;
+    bottom: auto !important;
+    width: calc(100% + 4px) !important;
+    height: calc(100% + 4px) !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+.picker-thumb.is-fallback-thumb {
+    clip-path: circle(50% at 50% 50%) !important;
+    transform: scale(1.15) !important;
+}
+
+
+/* Badges always above portrait */
+body .calc-unit-picker-dialog .picker-thumb-wrapper > span {
+    z-index: 15 !important;
+}
+body .calc-unit-picker-dialog .picker-thumb-wrapper span {
+    border-radius: 4px !important;
+    font-size: 6.5px !important;
+    padding: 1px 3.5px !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6) !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    line-height: 1.1 !important;
+}
+
+/* ==========================================================================
+   EDITOR TOP AUTO-REVEALING ACTION HUD DOCK
+   Matches 1:1 with the Apple HUD navbar / .hud-nav-group / .hud-nav-link
+   ========================================================================== */
+
+/* Invisible trigger zone at the very top of the window */
+.editor-top-bar-trigger {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 32px !important;
+    z-index: 10045 !important;
+    pointer-events: auto !important;
+    background: transparent !important;
+}
+
+/* Floating top dock wrapper - hidden above screen by default */
+.editor-top-hud-bar,
+header#editor-top-bar {
+    position: fixed !important;
+    top: 12px !important;
+    bottom: auto !important;
+    left: 50% !important;
+    right: auto !important;
+    transform: translateX(-50%) translateY(-140%) !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: 10050 !important;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease !important;
+    max-width: calc(100vw - 24px) !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+/* Revealed states: trigger hover, self hover, focus within, or JS is-revealed class */
+.editor-top-bar-trigger:hover + header#editor-top-bar,
+.editor-top-hud-bar:hover,
+.editor-top-hud-bar:focus-within,
+.editor-top-hud-bar.is-revealed,
+header#editor-top-bar:hover,
+header#editor-top-bar:focus-within,
+header#editor-top-bar.is-revealed {
+    transform: translateX(-50%) translateY(0) !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+}
+
+/* Position override for .hud-nav-group when inside the top dock */
+.editor-top-hud-bar .hud-nav-group.editor-top-hud-group,
+header#editor-top-bar .hud-nav-group.editor-top-hud-group {
+    position: relative !important;
+    top: auto !important;
+    bottom: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    margin: 0 !important;
+    height: 64px !important;
+    max-height: none !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 5px 10px !important;
+    gap: 6px !important;
+    box-sizing: border-box !important;
+    width: auto !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    scrollbar-width: none !important;
+}
+
+.editor-top-hud-bar .hud-nav-group.editor-top-hud-group::-webkit-scrollbar,
+header#editor-top-bar .hud-nav-group.editor-top-hud-group::-webkit-scrollbar {
+    display: none !important;
+}
+
+/* Top bar buttons */
+.editor-top-hud-group .hud-nav-link.top-hud-btn {
+    box-sizing: border-box !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 52px !important;
+    min-height: 52px !important;
+    padding: 4px 10px !important;
+    gap: 3px !important;
+    min-width: 64px !important;
+    letter-spacing: 0.5px !important;
+    text-transform: uppercase !important;
+    line-height: normal !important;
+    transition: all 0.2s ease !important;
+    cursor: pointer !important;
+    text-decoration: none !important;
+    user-select: none !important;
+    outline: none !important;
+}
+
+.editor-top-hud-group .hud-nav-link.top-hud-btn .hud-nav-svg {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+}
+
+.editor-top-hud-group .hud-nav-link.top-hud-btn > span {
+    display: block !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    line-height: 1.15 !important;
+    letter-spacing: 0.5px !important;
+    text-align: center !important;
+    white-space: nowrap !important;
+    max-width: 100% !important;
+    margin-top: 1px !important;
+}
+
+/* Subtle group dividers inside the dock */
+.editor-top-hud-group .top-hud-divider {
+    width: 1px !important;
+    height: 30px !important;
+    margin: 0 4px !important;
+    flex-shrink: 0 !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+}
+
+body.theme-dokkaninfo .editor-top-hud-group .top-hud-divider {
+    background: #3f3f46 !important;
+}
+
+body.theme-abs-style .editor-top-hud-group .top-hud-divider {
+    background: rgba(113, 162, 219, 0.35) !important;
+}
+
+/* Theme 1: Dokkan Info Top Dock Overrides */
+body.theme-dokkaninfo .editor-top-hud-bar .hud-nav-group.editor-top-hud-group,
+body.theme-dokkaninfo.editor-tool-page .editor-top-hud-bar .hud-nav-group.editor-top-hud-group {
+    border-radius: 0px !important;
+    background: #18181b !important;
+    border: 1.5px solid #3f3f46 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.9) !important;
+}
+
+body.theme-dokkaninfo .editor-top-hud-group .hud-nav-link.top-hud-btn,
+body.theme-dokkaninfo.editor-tool-page .editor-top-hud-group .hud-nav-link.top-hud-btn {
+    border-radius: 0px !important;
+    background: #222226 !important;
+    border: 1px solid #27272a !important;
+    color: #a1a1aa !important;
+}
+
+body.theme-dokkaninfo .editor-top-hud-group .hud-nav-link.top-hud-btn:hover,
+body.theme-dokkaninfo .editor-top-hud-group .hud-nav-link.top-hud-btn:focus-visible,
+body.theme-dokkaninfo.editor-tool-page .editor-top-hud-group .hud-nav-link.top-hud-btn:hover,
+body.theme-dokkaninfo.editor-tool-page .editor-top-hud-group .hud-nav-link.top-hud-btn:focus-visible {
+    background: #2e2e34 !important;
+    border-color: #52525b !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body.theme-dokkaninfo .editor-top-hud-group .hud-nav-link.top-hud-btn.active,
+body.theme-dokkaninfo.editor-tool-page .editor-top-hud-group .hud-nav-link.top-hud-btn.active {
+    background: #3f3f46 !important;
+    border: 1.5px solid #71717a !important;
+    color: #ffffff !important;
+}
+
+/* Theme 2A: SBA (Round Liquid Glass Pill) Top Dock Overrides */
+body.theme-sba:not(.theme-abs-clean) .editor-top-hud-bar .hud-nav-group.editor-top-hud-group,
+body.theme-sba:not(.theme-abs-clean) header#editor-top-bar .hud-nav-group.editor-top-hud-group {
+    border-radius: 29px !important;
+    background: rgba(11, 16, 28, 0.55) !important;
+    backdrop-filter: blur(14px) saturate(125%) brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(125%) brightness(1.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+}
+
+body.theme-sba:not(.theme-abs-clean) .editor-top-hud-group .hud-nav-link.top-hud-btn {
+    border-radius: 26px !important;
+    background: transparent !important;
+    color: var(--sba-dock-text, #cbd5e1) !important;
+    border: 0 !important;
+}
+
+body.theme-sba:not(.theme-abs-clean) .editor-top-hud-group .hud-nav-link.top-hud-btn:hover,
+body.theme-sba:not(.theme-abs-clean) .editor-top-hud-group .hud-nav-link.top-hud-btn:focus-visible {
+    color: #ffffff !important;
+    transform: translateY(-2px) scale(1.04) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+}
+
+body.theme-sba:not(.theme-abs-clean) .editor-top-hud-group .hud-nav-link.top-hud-btn.active {
+    background: rgba(255, 255, 255, 0.24) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.62), 0 5px 12px rgba(0, 0, 0, 0.14) !important;
+    color: #ffffff !important;
+}
+
+/* Theme 2B: ABS.CLEAN (Squared Tech Glass Dock) Top Dock Overrides */
+body.theme-abs-clean .editor-top-hud-bar .hud-nav-group.editor-top-hud-group,
+body.theme-abs-clean header#editor-top-bar .hud-nav-group.editor-top-hud-group {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+}
+
+body.theme-abs-clean .editor-top-hud-bar .hud-nav-group.editor-top-hud-group::before,
+body.theme-abs-clean .editor-top-hud-bar .hud-nav-group.editor-top-hud-group::after,
+body.theme-abs-clean header#editor-top-bar .hud-nav-group.editor-top-hud-group::before,
+body.theme-abs-clean header#editor-top-bar .hud-nav-group.editor-top-hud-group::after {
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn {
+    border-radius: 0px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    transition: all 0.16s ease !important;
+}
+
+body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn:hover,
+body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn:focus-visible {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn.active {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.20) !important;
+    border: 1px solid rgba(255, 255, 255, 0.45) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 4px 12px rgba(0, 0, 0, 0.25) !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn-reset:hover {
+    border-color: rgba(248, 113, 113, 0.45) !important;
+    background: rgba(239, 68, 68, 0.14) !important;
+    color: #fca5a5 !important;
+}
+
+/* Theme 3: Abs Style Top Dock Overrides */
+body.theme-abs-style .editor-top-hud-bar .hud-nav-group.editor-top-hud-group {
+    border-radius: 16px !important;
+    background: linear-gradient(135deg, rgba(16, 24, 40, 0.7), rgba(8, 14, 26, 0.85)) !important;
+    border: 1.5px solid rgba(113, 162, 219, 0.4) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.7), 0 0 16px rgba(56, 189, 248, 0.2) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+}
+
+body.theme-abs-style .editor-top-hud-group .hud-nav-link.top-hud-btn {
+    border-radius: 14px !important;
+    background: linear-gradient(-75deg, rgba(255,255,255,0.08), rgba(255,255,255,0.22), rgba(255,255,255,0.08)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    color: #cbd5e1 !important;
+}
+
+body.theme-abs-style .editor-top-hud-group .hud-nav-link.top-hud-btn:hover {
+    border-color: rgba(56, 189, 248, 0.65) !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+}
+
+body.theme-abs-style .editor-top-hud-group .hud-nav-link.top-hud-btn.active {
+    background: linear-gradient(-75deg, rgba(56, 189, 248, 0.28), rgba(255, 255, 255, 0.26), rgba(14, 116, 144, 0.35)) !important;
+    border: 1.5px solid rgba(56, 189, 248, 0.85) !important;
+    color: #38bdf8 !important;
+}
+
+/* Reset button special hover nuance */
+.editor-top-hud-group .hud-nav-link.top-hud-btn-reset:hover {
+    color: #fca5a5 !important;
+}
+
+/* Responsive adjustment for narrow screens */
+@media (max-width: 768px) {
+    .editor-top-hud-bar,
+    header#editor-top-bar {
+        max-width: calc(100vw - 12px) !important;
+    }
+    .editor-top-hud-bar .hud-nav-group.editor-top-hud-group,
+    header#editor-top-bar .hud-nav-group.editor-top-hud-group {
+        padding: 4px 6px !important;
+        gap: 4px !important;
+    }
+    .editor-top-hud-group .hud-nav-link.top-hud-btn {
+        min-width: 56px !important;
+        padding: 4px 6px !important;
+    }
+}
+
+

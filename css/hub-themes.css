@@ -1,0 +1,3536 @@
+/* ========================================================================== 
+   Hub Theme Split
+
+   The unscoped rules in style.css are the preserved SBA appearance. This file
+   is loaded last and contains the redesigned ABS experience plus an intentionally
+   neutral Placeholder foundation for a future design.
+   ========================================================================== */
+
+#homeCardGrid .hub-circle-img,
+#cardGrid .hub-circle-img,
+.grid .hub-circle-img {
+    display: none;
+}
+
+.hud-theme-stack .placeholder-theme-icon {
+    width: 17px !important;
+    height: 17px !important;
+    flex: 0 0 17px;
+    color: currentColor;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+}
+
+body.theme-abs-style {
+    --abs-gold: #facc15;
+    --abs-gold-soft: #fde68a;
+    --abs-cyan: #38bdf8;
+    --abs-panel: rgba(7, 11, 20, 0.94);
+    --abs-panel-high: rgba(22, 29, 43, 0.92);
+    --abs-line: rgba(250, 204, 21, 0.42);
+    --abs-line-soft: rgba(255, 255, 255, 0.12);
+    --abs-shadow: 0 14px 34px rgba(0, 0, 0, 0.66);
+    background: #05070d;
+    color: #f8fafc;
+}
+
+body.theme-abs-style #bg-video {
+    opacity: 0.34;
+    filter: saturate(0.68) contrast(1.12) brightness(0.7);
+}
+
+body.theme-abs-style .glass-overlay {
+    background:
+        radial-gradient(circle at 18% 10%, rgba(250, 204, 21, 0.09), transparent 34%),
+        radial-gradient(circle at 84% 18%, rgba(56, 189, 248, 0.07), transparent 30%),
+        linear-gradient(180deg, rgba(4, 7, 14, 0.91), rgba(8, 12, 21, 0.97));
+    backdrop-filter: blur(8px) saturate(120%);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* Editor/Card Viewer inspired full-width scouter header. */
+body.theme-abs-style .apple-hud-wrapper,
+body.theme-abs-style.hub-cards-nav-static .apple-hud-wrapper {
+    position: sticky !important;
+    top: 0 !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    z-index: 9999 !important;
+}
+
+body.theme-abs-style .liquid-metal-frame {
+    width: 100% !important;
+    max-width: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    animation: none !important;
+    box-shadow: 0 7px 22px rgba(0, 0, 0, 0.72), 0 0 18px rgba(250, 204, 21, 0.12) !important;
+}
+
+body.theme-abs-style .apple-hud-bar {
+    min-height: 68px !important;
+    padding: 8px 24px !important;
+    border-radius: 0 !important;
+    border: 0 !important;
+    border-bottom: 2px solid var(--abs-gold) !important;
+    background:
+        linear-gradient(90deg, rgba(250, 204, 21, 0.05), transparent 23%, transparent 77%, rgba(56, 189, 248, 0.04)),
+        linear-gradient(180deg, rgba(16, 21, 32, 0.98), rgba(3, 6, 13, 0.98)) !important;
+    backdrop-filter: blur(14px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(145%) !important;
+}
+
+body.theme-abs-style .apple-hud-bar::before {
+    content: '';
+    position: absolute;
+    inset: 0 0 auto;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.34), transparent);
+    pointer-events: none;
+}
+
+body.theme-abs-style .hud-nav-group {
+    gap: 8px;
+}
+
+body.theme-abs-style .hud-nav-link {
+    --hub-glass-border: rgba(255, 255, 255, 0.42);
+    min-height: 38px;
+    padding: 7px 13px;
+    position: relative;
+    isolation: isolate;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 20px;
+    color: #cbd5e1;
+    background: linear-gradient(
+        -75deg,
+        rgba(255, 255, 255, 0.075),
+        rgba(255, 255, 255, 0.2),
+        rgba(255, 255, 255, 0.07)
+    );
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.2),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.32),
+        0 4px 2px -2px rgba(0, 0, 0, 0.42),
+        inset 0 0 2px 4px rgba(255, 255, 255, 0.07);
+    backdrop-filter: blur(8px) saturate(135%);
+    -webkit-backdrop-filter: blur(8px) saturate(135%);
+    box-sizing: border-box;
+    transition: transform 400ms cubic-bezier(0.25, 1, 0.5, 1),
+        box-shadow 400ms cubic-bezier(0.25, 1, 0.5, 1),
+        color 250ms ease,
+        background 250ms ease;
+}
+
+body.theme-abs-style .hud-nav-link > * {
+    position: relative;
+    z-index: 3;
+}
+
+/* Reflective sweep inside the glass, matching the Editor/Card Viewer dock. */
+body.theme-abs-style .hud-nav-link::before {
+    content: '';
+    position: absolute;
+    z-index: 2;
+    inset: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background: linear-gradient(
+        -45deg,
+        transparent 5%,
+        rgba(255, 255, 255, 0.04) 30%,
+        rgba(255, 255, 255, 0.5) 44% 51%,
+        rgba(255, 255, 255, 0.04) 62%,
+        transparent 82%
+    );
+    background-size: 230% 230%;
+    background-position: 0 55%;
+    mix-blend-mode: screen;
+    opacity: 0.42;
+    transition: background-position 500ms cubic-bezier(0.25, 1, 0.5, 1), opacity 250ms ease;
+}
+
+/* A masked conic edge gives the buttons the same layered liquid-glass rim as
+   the shared .glass-btn component without changing Hub navigation markup. */
+body.theme-abs-style .hud-nav-link::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    pointer-events: none;
+    background:
+        conic-gradient(
+            from -75deg at 50% 50%,
+            rgba(0, 0, 0, 0.72),
+            transparent 7% 39%,
+            rgba(255, 255, 255, 0.72) 49%,
+            transparent 60% 93%,
+            rgba(0, 0, 0, 0.72)
+        ),
+        linear-gradient(180deg, var(--hub-glass-border), rgba(255, 255, 255, 0.12));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    box-shadow: inset 0 0 0 0.5px rgba(255, 255, 255, 0.32);
+    transition: filter 350ms ease, opacity 350ms ease;
+}
+
+body.theme-abs-style .hud-nav-link:hover {
+    color: var(--abs-gold-soft);
+    border-color: rgba(250, 204, 21, 0.55);
+    background: linear-gradient(-75deg, rgba(250, 204, 21, 0.08), rgba(255, 255, 255, 0.24), rgba(250, 204, 21, 0.07));
+    backdrop-filter: blur(12px) saturate(150%);
+    -webkit-backdrop-filter: blur(12px) saturate(150%);
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.12),
+        inset 0 -2px 2px rgba(255, 255, 255, 0.56),
+        0 3px 2px -2px rgba(0, 0, 0, 0.34),
+        inset 0 0 1px 2px rgba(255, 255, 255, 0.32),
+        0 0 12px rgba(250, 204, 21, 0.3);
+    transform: scale(0.975);
+}
+
+body.theme-abs-style .hud-nav-link:hover::before {
+    background-position: 34% 48%;
+    opacity: 0.72;
+}
+
+body.theme-abs-style .hud-nav-link:hover::after {
+    filter: brightness(1.22);
+}
+
+body.theme-abs-style .hud-nav-link:active {
+    transform: scale(0.95);
+}
+
+body.theme-abs-style .hud-nav-link.active {
+    --hub-glass-border: rgba(250, 204, 21, 0.9);
+    color: var(--abs-gold-soft) !important;
+    border-color: var(--abs-gold) !important;
+    background: linear-gradient(-75deg, rgba(250, 204, 21, 0.13), rgba(255, 255, 255, 0.22), rgba(111, 72, 4, 0.18)) !important;
+    box-shadow:
+        inset 0 2px 2px rgba(0, 0, 0, 0.15),
+        inset 0 -2px 2px rgba(255, 244, 170, 0.48),
+        inset 0 0 2px 3px rgba(250, 204, 21, 0.12),
+        0 0 14px rgba(250, 204, 21, 0.34) !important;
+}
+
+body.theme-abs-style .hud-nav-link.active .hud-nav-svg {
+    color: var(--abs-gold) !important;
+    filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.65));
+}
+
+body.theme-abs-style .nav-center-logo-img,
+body.theme-abs-style #nav-center-logo,
+body.theme-abs-style .apple-nav-center .nav-center-logo-img {
+    height: 82px !important;
+    max-height: 86px !important;
+    filter: drop-shadow(0 4px 13px rgba(0, 0, 0, 0.95)) drop-shadow(0 0 5px rgba(250, 204, 21, 0.12)) !important;
+}
+
+body.theme-abs-style .apple-hud-bar .hud-theme-stack,
+body.theme-abs-style .hud-theme-stack {
+    padding: 4px !important;
+    gap: 4px !important;
+    border-radius: 8px !important;
+    border-color: rgba(250, 204, 21, 0.28) !important;
+    background: rgba(0, 0, 0, 0.56) !important;
+}
+
+body.theme-abs-style .apple-hud-bar .abs-hud-theme-btn,
+body.theme-abs-style .hud-theme-stack .abs-hud-theme-btn {
+    min-height: 32px !important;
+    padding: 5px 11px !important;
+    border-radius: 6px !important;
+}
+
+body.theme-abs-style .apple-hud-bar .abs-hud-theme-btn.active,
+body.theme-abs-style .hud-theme-stack .abs-hud-theme-btn.active {
+    color: var(--abs-gold-soft) !important;
+    border-color: var(--abs-gold) !important;
+    background: linear-gradient(135deg, rgba(250, 204, 21, 0.21), rgba(15, 20, 31, 0.92)) !important;
+    box-shadow: 0 0 12px rgba(250, 204, 21, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+body.theme-abs-style .placeholder-theme-icon {
+    width: 17px !important;
+    height: 17px !important;
+    color: currentColor !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    filter: none !important;
+}
+
+/* The settings control becomes a small fixed scouter dock instead of sitting
+   over the left side of the full-width header. */
+body.theme-abs-style .liquid-settings-circle-wrapper,
+body.theme-abs-style .liquid-settings-bar {
+    top: auto !important;
+    left: auto !important;
+    right: 18px !important;
+    bottom: 18px !important;
+    z-index: 10020 !important;
+    border-color: rgba(250, 204, 21, 0.42) !important;
+    background: rgba(6, 9, 16, 0.94) !important;
+    box-shadow: 0 9px 24px rgba(0, 0, 0, 0.68), 0 0 14px rgba(250, 204, 21, 0.14) !important;
+}
+
+body.theme-abs-style .liquid-settings-circle-btn {
+    background: linear-gradient(135deg, #fff7c2, var(--abs-gold) 34%, #6b4a05 70%, #fef3c7) !important;
+    animation: none !important;
+}
+
+body.theme-abs-style .liquid-settings-circle-btn .settings-svg {
+    color: var(--abs-gold-soft) !important;
+    background: linear-gradient(180deg, #141a27, #050811) !important;
+}
+
+/* Shared ABS panels: compact corners, branded top edge, editor-like depth. */
+body.theme-abs-style .dokkan-news-snippet,
+body.theme-abs-style .dokkan-timeline-panel,
+body.theme-abs-style .dokkan-streamers-longitudinal-panel,
+body.theme-abs-style #homeCardGrid,
+body.theme-abs-style #cardGrid,
+body.theme-abs-style .grid,
+body.theme-abs-style .cards-inline-filter-bar,
+body.theme-abs-style .hub-pagination-control {
+    border-radius: 12px !important;
+    border: 1px solid var(--abs-line) !important;
+    background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.045), transparent 30%),
+        linear-gradient(180deg, var(--abs-panel-high), var(--abs-panel)) !important;
+    box-shadow: var(--abs-shadow), inset 0 1px 0 rgba(255, 255, 255, 0.13) !important;
+}
+
+body.theme-abs-style .dokkan-news-snippet,
+body.theme-abs-style .dokkan-timeline-panel,
+body.theme-abs-style .dokkan-streamers-longitudinal-panel {
+    position: relative;
+}
+
+body.theme-abs-style .dokkan-news-snippet::before,
+body.theme-abs-style .dokkan-timeline-panel::after,
+body.theme-abs-style .dokkan-streamers-longitudinal-panel::after {
+    content: '';
+    position: absolute;
+    top: -1px;
+    left: 18px;
+    width: 88px;
+    height: 2px;
+    background: linear-gradient(90deg, var(--abs-gold), transparent);
+    box-shadow: 0 0 9px rgba(250, 204, 21, 0.45);
+    pointer-events: none;
+}
+
+body.theme-abs-style .hub-main-container {
+    max-width: 1540px;
+    margin-top: 28px;
+}
+
+body.theme-abs-style .hub-section-title {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    color: #ffffff;
+    font-size: 19px;
+    letter-spacing: 1.15px;
+    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.75);
+}
+
+body.theme-abs-style .hub-section-title::before {
+    content: '';
+    width: 4px;
+    height: 20px;
+    border-radius: 2px;
+    background: linear-gradient(180deg, #fff4a8, var(--abs-gold), #8a5b04);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.42);
+}
+
+body.theme-abs-style .hub-section-subtitle {
+    color: #aab4c4;
+    margin-left: 13px;
+}
+
+body.theme-abs-style .news-snippet-badge,
+body.theme-abs-style .timeline-badge-count,
+body.theme-abs-style .streamers-badge-tag {
+    color: var(--abs-gold-soft);
+    border-color: rgba(250, 204, 21, 0.5);
+    background: rgba(250, 204, 21, 0.1);
+    border-radius: 5px;
+}
+
+body.theme-abs-style .timeline-panel-header,
+body.theme-abs-style .streamers-panel-header {
+    border-color: rgba(250, 204, 21, 0.2);
+}
+
+body.theme-abs-style .timeline-title-svg,
+body.theme-abs-style .twitch-header-svg {
+    color: var(--abs-gold);
+    filter: drop-shadow(0 0 5px rgba(250, 204, 21, 0.38));
+}
+
+body.theme-abs-style .timeline-nodes-stream::before {
+    background: linear-gradient(180deg, #fff7bf, var(--abs-gold) 48%, #64430a);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.4);
+}
+
+body.theme-abs-style .timeline-node-marker {
+    background: #0b0f18;
+    border-color: var(--abs-gold);
+    box-shadow: 0 0 8px rgba(250, 204, 21, 0.52);
+}
+
+body.theme-abs-style .timeline-node-card {
+    background: rgba(4, 7, 13, 0.62);
+    border-color: rgba(250, 204, 21, 0.14);
+    border-radius: 7px;
+}
+
+body.theme-abs-style .news-link-btn,
+body.theme-abs-style .liquid-search-btn,
+body.theme-abs-style .liquid-toolbar-filter-btn {
+    color: #f8fafc !important;
+    border-color: rgba(250, 204, 21, 0.38) !important;
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.13), rgba(8, 12, 20, 0.92)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 4px 11px rgba(0, 0, 0, 0.38) !important;
+}
+
+body.theme-abs-style .news-link-btn:hover,
+body.theme-abs-style .liquid-search-btn:hover,
+body.theme-abs-style .liquid-toolbar-filter-btn:hover,
+body.theme-abs-style .liquid-toolbar-filter-btn.active {
+    color: var(--abs-gold-soft) !important;
+    border-color: var(--abs-gold) !important;
+    background: linear-gradient(145deg, rgba(250, 204, 21, 0.24), rgba(11, 15, 24, 0.96)) !important;
+    box-shadow: 0 0 13px rgba(250, 204, 21, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+body.theme-abs-style .liquid-search-border-container {
+    padding: 1px;
+    border-radius: 9px;
+    background: linear-gradient(105deg, var(--abs-gold), rgba(255, 255, 255, 0.32) 46%, #5d440d);
+    animation: none;
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.52), 0 0 11px rgba(250, 204, 21, 0.12);
+}
+
+body.theme-abs-style .liquid-search-box {
+    min-height: 42px;
+    border-radius: 8px;
+    background: linear-gradient(180deg, #111722, #070a11);
+}
+
+body.theme-abs-style .cards-inline-filter-bar {
+    padding: 7px 12px;
+    border-radius: 9px !important;
+}
+
+body.theme-abs-style .filter-pill-btn {
+    border-radius: 5px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+body.theme-abs-style .filter-pill-btn.active,
+body.theme-abs-style .filter-pill-btn.type-all.active,
+body.theme-abs-style .filter-pill-btn.rarity-all.active {
+    color: var(--abs-gold-soft);
+    border-color: var(--abs-gold);
+    background: rgba(250, 204, 21, 0.15);
+    box-shadow: 0 0 9px rgba(250, 204, 21, 0.2);
+}
+
+body.theme-abs-style #homeCardGrid,
+body.theme-abs-style #cardGrid,
+body.theme-abs-style .grid {
+    border-top-width: 2px !important;
+    border-top-color: rgba(250, 204, 21, 0.58) !important;
+}
+
+body.theme-abs-style #homeCardGrid {
+    scrollbar-color: rgba(250, 204, 21, 0.48) rgba(0, 0, 0, 0.25);
+}
+
+body.theme-abs-style .name-container {
+    border-color: rgba(250, 204, 21, 0.36) !important;
+    background: linear-gradient(180deg, rgba(20, 26, 38, 0.96), rgba(4, 7, 13, 0.98)) !important;
+}
+
+.sba-ring-effect,
+.sba-lr-lwf-canvas {
+    display: none;
+}
+
+/* ABS badge controls deliberately stay theme-local.  Dokkan's EZA artwork
+   contains transparent padding, so ABS uses a larger footprint and separate
+   inner-art scales instead of inheriting SBA's circular badge treatment. */
+body.theme-abs-style {
+    --abs-eza-badge-size: 70px;
+    --abs-eza-art-scale: 1.24;
+    --abs-seza-art-scale: 1.42;
+    --abs-seza-art-x: 0.42;
+}
+
+/* ABS theme clean text boxes and clean backgrounds for EZA and Super EZA */
+body.theme-abs-style #homeCardGrid .hub-eza-badge,
+body.theme-abs-style #cardGrid .hub-eza-badge,
+body.theme-abs-style .grid .hub-eza-badge {
+    position: absolute !important;
+    z-index: 25 !important;
+    top: -6px !important;
+    left: 50% !important;
+    bottom: auto !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    height: 20px !important;
+    min-width: 38px !important;
+    padding: 0 8px !important;
+    border-radius: 4px !important;
+    box-sizing: border-box !important;
+    font-family: 'Cinzel', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif !important;
+    font-size: 10px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, 0.8), inset 0 1px 0 rgba(255, 255, 255, 0.35) !important;
+    filter: none !important;
+    pointer-events: none !important;
+}
+
+body.theme-abs-style #homeCardGrid .hub-eza-badge > img,
+body.theme-abs-style #cardGrid .hub-eza-badge > img,
+body.theme-abs-style .grid .hub-eza-badge > img {
+    display: none !important;
+}
+
+body.theme-abs-style .hub-eza-badge-text {
+    display: inline !important;
+}
+
+body.theme-abs-style .hub-eza-badge--eza {
+    background: linear-gradient(135deg, #f59e0b 0%, #d97706 50%, #92400e 100%) !important;
+    border: 1px solid rgba(254, 240, 138, 0.85) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+}
+
+body.theme-abs-style .hub-eza-badge--seza {
+    background: linear-gradient(135deg, #9333ea 0%, #c026d3 45%, #e11d48 100%) !important;
+    border: 1px solid rgba(244, 114, 182, 0.85) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+}
+
+body.theme-abs-style .hub-eza-badge--eza:not(:has(.hub-eza-badge-text))::after {
+    content: 'EZA';
+}
+
+body.theme-abs-style .hub-eza-badge--seza:not(:has(.hub-eza-badge-text))::after {
+    content: 'SUPER EZA';
+}
+
+/* Calculator-style character portraits belong only to the SBA theme.
+   Portrait tuning: these are the main values to edit when adjusting size.
+   Keep the corresponding crop-centre percentages below unchanged so the
+   visible circle remains centered while the artwork shifts underneath it. */
+body.theme-sba {
+    /* Character Circle Portrait Controls (Official & Custom):
+       Adjust these to scale and position the character artwork inside the circle */
+    --sba-portrait-size: 162px;        /* Official card image size */
+    --sba-portrait-scale: 1.0;         /* Official card zoom scale (>1.0 zooms in so art reaches the ring edges) */
+    --sba-portrait-top: -6px;          /* Official card vertical offset */
+    --sba-portrait-left: -7px;         /* Official card horizontal offset */
+    --sba-portrait-clip: 45%;          /* Circle crop radius (increase to 45%-47% if edges are clipped) */
+
+    --sba-custom-portrait-size: 174px; /* Custom card image size */
+    --sba-custom-portrait-scale: 1.0;  /* Custom card zoom scale */
+    --sba-custom-portrait-top: -12px;  /* Custom card vertical offset */
+    --sba-custom-portrait-left: -14px; /* Custom card horizontal offset */
+    --sba-custom-portrait-clip: 39%;   /* Custom circle crop radius */
+
+    /* Reversible Exchange Character Portrait & Ring Controls:
+       Adjust these to size and position reversible primary & popup portraits */
+    --sba-reversible-ring-size: 128px;         /* Primary ring diameter */
+    --sba-reversible-portrait-size: 128px;     /* Primary character image size */
+    --sba-reversible-portrait-scale: 1.0;      /* Primary character zoom (>1.0 zooms in) */
+    --sba-reversible-portrait-top: 25px;       /* Primary portrait vertical offset */
+    --sba-reversible-portrait-left: 4px;       /* Primary portrait horizontal offset */
+    --sba-reversible-portrait-clip: 50%;       /* Primary portrait circle crop radius */
+
+    --sba-reversible-popup-size: 86px;         /* Secondary partner popup badge diameter */
+    --sba-reversible-popup-scale: 1.0;         /* Secondary partner zoom */
+    --sba-reversible-popup-top: 0px;           /* Secondary popup badge vertical offset */
+    --sba-reversible-popup-left: 80px;         /* Secondary popup badge horizontal offset */
+
+    --sba-reversible-custom-size: 160px;       /* Custom reversible primary image size */
+    --sba-reversible-popup-custom-size: 110px; /* Custom reversible popup badge image size */
+    --sba-mini-badge-size: 32px;
+    --sba-lr-fx-hue: 0deg;
+
+    /* LR LWF Aura & Foreground Lightning Controls (edit here for easy fine-tuning): */
+    --sba-lr-aura-top: 55%;            /* Vertical center of aura flames (lower % moves aura UP) */
+    --sba-lr-aura-left: 52%;           /* Horizontal center of aura (higher % moves aura RIGHT) */
+    --sba-lr-aura-width: 236px;        /* Canvas width (aspect ratio 1 : 1.775) */
+    --sba-lr-aura-height: 420px;       /* Canvas height */
+    --sba-lr-aura-mask-x: 96px;        /* Horizontal spread of aura glow (portrait ring radius is ~68px) */
+    --sba-lr-aura-mask-y: 114px;       /* Vertical spread of aura glow */
+    --sba-lr-aura-opacity: 1;          /* Aura brightness / opacity (behind character) */
+    --sba-lr-lightning-opacity: 1;     /* Foreground lightning opacity (in front of character) */
+    --sba-lr-lightning-brightness: 1.5; /* Foreground lightning brightness */
+    --sba-lr-lightning-contrast: 1.2;   /* Foreground lightning contrast */
+    /* SBA lower-chip layout. X moves left/right; a more-negative Y moves
+       the chip farther downward because these use the CSS bottom property. */
+    --sba-rarity-chip-x: 42px;
+    --sba-rarity-chip-y: -8px;
+    --sba-type-chip-x: 78px;
+    --sba-type-chip-y: -8px;
+    /* Fine tune only the LR/SSR/TUR or type artwork inside its circle. */
+    --sba-rarity-art-x: 0px;
+    --sba-rarity-art-y: 2px;
+    /* Per-rarity overrides. Adjust one rarity without moving the others. */
+    --sba-lr-chip-x: 42px;
+    --sba-lr-chip-y: -8px;
+    --sba-lr-art-x: 0px;
+    --sba-lr-art-y: 1px;
+    --sba-ssr-chip-x: 42px;
+    --sba-ssr-chip-y: -8px;
+    --sba-ssr-art-x: 0px;
+    --sba-ssr-art-y: 2px;
+    --sba-tur-chip-x: 42px;
+    --sba-tur-chip-y: -8px;
+    --sba-tur-art-scale: 20px;
+    --sba-tur-art-x: 0px;
+    --sba-tur-art-y: 0px;
+    --sba-type-art-x: .8px;
+    --sba-type-art-y: 0px;
+    /* SBA badge artwork tuning: move an asset inside its fixed circle without
+       changing the circle itself. Negative Y moves the image upward. */
+    --sba-eza-art-scale: 1.22;
+    --sba-eza-art-x: -.2px;
+    --sba-eza-art-y: -1px;
+    --sba-seza-art-scale: 1.33;
+    --sba-seza-art-x: 1.5px;
+    --sba-seza-art-y: -3px;
+    --sba-festival-art-scale: 2.22;
+    --sba-festival-art-x: -1px;
+    --sba-festival-art-y: -12px;
+    --sba-carnival-art-scale: 2.5;
+    --sba-carnival-art-x: -3px;
+    --sba-carnival-art-y: -8px;
+}
+
+body.theme-sba #homeCardGrid .char-box,
+body.theme-sba #cardGrid .char-box,
+body.theme-sba .grid .char-box {
+    --hub-portrait-type: #38bdf8;
+    --hub-ring-color: var(--hub-portrait-type);
+}
+
+body.theme-sba .char-box[data-type="agl"] { --hub-portrait-type: #38bdf8 !important; }
+body.theme-sba .char-box[data-type="teq"] { --hub-portrait-type: #34d399 !important; }
+body.theme-sba .char-box[data-type="int"] { --hub-portrait-type: #c084fc !important; }
+body.theme-sba .char-box[data-type="str"] { --hub-portrait-type: #ef4444 !important; }
+body.theme-sba .char-box[data-type="phy"] { --hub-portrait-type: #facc15 !important; }
+
+body.theme-sba .char-box[data-type="agl"] { --sba-lr-fx-hue: 165deg; }
+body.theme-sba .char-box[data-type="teq"] { --sba-lr-fx-hue: 75deg; }
+body.theme-sba .char-box[data-type="int"] { --sba-lr-fx-hue: 225deg; }
+body.theme-sba .char-box[data-type="str"] { --sba-lr-fx-hue: 310deg; }
+body.theme-sba .char-box[data-type="phy"] { --sba-lr-fx-hue: 0deg; }
+
+/* Bind each card's data-rarity to its independent SBA position and art
+   controls. The generic rarity values above remain a safe fallback. */
+body.theme-sba .char-box[data-rarity="lr"] {
+    --sba-rarity-chip-x: var(--sba-lr-chip-x);
+    --sba-rarity-chip-y: var(--sba-lr-chip-y);
+    --sba-rarity-art-x: var(--sba-lr-art-x);
+    --sba-rarity-art-y: var(--sba-lr-art-y);
+}
+
+body.theme-sba .char-box[data-rarity="ssr"] {
+    --sba-rarity-chip-x: var(--sba-ssr-chip-x);
+    --sba-rarity-chip-y: var(--sba-ssr-chip-y);
+    --sba-rarity-art-x: var(--sba-ssr-art-x);
+    --sba-rarity-art-y: var(--sba-ssr-art-y);
+}
+
+body.theme-sba .char-box[data-rarity="tur"] {
+    --sba-rarity-chip-x: var(--sba-tur-chip-x);
+    --sba-rarity-chip-y: var(--sba-tur-chip-y);
+    --sba-rarity-art-x: var(--sba-tur-art-x);
+    --sba-rarity-art-y: var(--sba-tur-art-y);
+}
+
+body.theme-sba #homeCardGrid .card-icon,
+body.theme-sba #cardGrid .card-icon,
+body.theme-sba .grid .card-icon {
+    isolation: isolate;
+    background: transparent !important;
+}
+
+body.theme-sba #homeCardGrid .card-icon::before,
+body.theme-sba #cardGrid .card-icon::before,
+body.theme-sba .grid .card-icon::before {
+    content: '';
+    position: absolute;
+    z-index: 9;
+    top: 7px;
+    left: 7px;
+    width: 136px;
+    height: 136px;
+    box-sizing: border-box;
+    border: 4px solid var(--hub-ring-color);
+    border-radius: 50%;
+    pointer-events: none;
+    box-shadow:
+        0 0 0 3px rgba(2, 6, 23, 0.94),
+        0 0 15px color-mix(in srgb, var(--hub-ring-color) 72%, transparent),
+        inset 0 -12px 20px rgba(2, 6, 23, 0.36);
+}
+
+body.theme-sba #homeCardGrid .card-icon::after,
+body.theme-sba #cardGrid .card-icon::after,
+body.theme-sba .grid .card-icon::after {
+    content: '' !important;
+    display: block !important;
+    position: absolute !important;
+    z-index: 0 !important;
+    top: 7px !important;
+    left: 7px !important;
+    width: 136px !important;
+    height: 136px !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle at 50% 40%, rgba(15, 23, 42, 0.96), #020617 80%) !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba #homeCardGrid .frame,
+body.theme-sba #cardGrid .frame,
+body.theme-sba .grid .frame,
+body.theme-sba #homeCardGrid .char-img,
+body.theme-sba #cardGrid .char-img,
+body.theme-sba .grid .char-img,
+body.theme-sba #homeCardGrid .lr-dial,
+body.theme-sba #cardGrid .lr-dial,
+body.theme-sba .grid .lr-dial,
+body.theme-sba #homeCardGrid .lr-lightning,
+body.theme-sba #cardGrid .lr-lightning,
+body.theme-sba .grid .lr-lightning {
+    display: none !important;
+}
+
+/* SBA keeps LR's Dokkan LWF aura behind the portrait. Awakening-marked cards
+   use the dedicated electric ring canvas layered over the type ring. */
+body.theme-sba #homeCardGrid .card-icon .seza-lwf-border-canvas,
+body.theme-sba #cardGrid .card-icon .seza-lwf-border-canvas,
+body.theme-sba .grid .card-icon .seza-lwf-border-canvas {
+    display: none !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #homeCardGrid .sba-ring-effect,
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .sba-ring-effect,
+body.theme-sba:not(.cards-layout-dokkan) .grid .sba-ring-effect {
+    display: block;
+    position: absolute;
+    z-index: 8 !important;
+    top: 7px !important;
+    left: 7px !important;
+    width: 136px !important;
+    height: 136px !important;
+    border-radius: 50% !important;
+    clip-path: circle(64.5px at 50% 50%) !important;
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 22px, rgba(255, 255, 255, 0.20) 32px, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0.95) 54px, #ffffff 63px, transparent 64.5px) !important;
+    mask-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 22px, rgba(255, 255, 255, 0.20) 32px, rgba(255, 255, 255, 0.55) 44px, rgba(255, 255, 255, 0.95) 54px, #ffffff 63px, transparent 64.5px) !important;
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+    pointer-events: none;
+    transform-origin: 50% 50%;
+    mix-blend-mode: screen !important;
+    opacity: 0.92 !important;
+}
+
+body.theme-sba #homeCardGrid .sba-lr-lwf-canvas,
+body.theme-sba #cardGrid .sba-lr-lwf-canvas,
+body.theme-sba .grid .sba-lr-lwf-canvas {
+    display: block !important;
+    position: absolute !important;
+    z-index: 1 !important;
+    top: var(--sba-lr-aura-top, 58%) !important;
+    left: var(--sba-lr-aura-left, 50%) !important;
+    width: var(--sba-lr-aura-width, 236px) !important;
+    height: var(--sba-lr-aura-height, 420px) !important;
+    max-width: none !important;
+    max-height: none !important;
+    transform: translate(-50%, -50%) !important;
+    transform-origin: 50% 50% !important;
+    pointer-events: none !important;
+    background: transparent !important;
+    opacity: var(--sba-lr-aura-opacity, 1) !important;
+    mix-blend-mode: screen !important;
+    filter: grayscale(1) sepia(1) saturate(5) hue-rotate(var(--sba-lr-fx-hue)) brightness(1.24) contrast(1.06) drop-shadow(0 0 16px color-mix(in srgb, var(--hub-ring-color, #ffaa00) 65%, transparent)) drop-shadow(0 0 28px color-mix(in srgb, var(--hub-ring-color, #ffaa00) 45%, transparent)) !important;
+    -webkit-mask: radial-gradient(ellipse var(--sba-lr-aura-mask-x, 96px) var(--sba-lr-aura-mask-y, 114px) at 50% 50%, #000 0 55%, rgba(0, 0, 0, 0.92) 70%, rgba(0, 0, 0, 0.65) 85%, rgba(0, 0, 0, 0.2) 95%, transparent 100%) !important;
+    mask: radial-gradient(ellipse var(--sba-lr-aura-mask-x, 96px) var(--sba-lr-aura-mask-y, 114px) at 50% 50%, #000 0 55%, rgba(0, 0, 0, 0.92) 70%, rgba(0, 0, 0, 0.65) 85%, rgba(0, 0, 0, 0.2) 95%, transparent 100%) !important;
+}
+
+/* Foreground Lightning: Layered cleanly over the character at z-index: 3 with soft electric feathered glow */
+body.theme-sba #homeCardGrid .sba-lr-lwf-lightning-canvas,
+body.theme-sba #cardGrid .sba-lr-lwf-lightning-canvas,
+body.theme-sba .grid .sba-lr-lwf-lightning-canvas {
+    z-index: 3 !important;
+    mix-blend-mode: screen !important;
+    opacity: var(--sba-lr-lightning-opacity, 1) !important;
+    filter: grayscale(1) sepia(1) saturate(6) hue-rotate(var(--sba-lr-fx-hue)) brightness(var(--sba-lr-lightning-brightness, 1.5)) contrast(var(--sba-lr-lightning-contrast, 1.2)) drop-shadow(0 0 8px color-mix(in srgb, var(--hub-ring-color, #ffaa00) 75%, white 25%)) drop-shadow(0 0 18px color-mix(in srgb, var(--hub-ring-color, #ffaa00) 50%, transparent)) !important;
+}
+
+body.theme-sba #homeCardGrid .char-box[data-type="str"] .sba-lr-lwf-canvas,
+body.theme-sba #cardGrid .char-box[data-type="str"] .sba-lr-lwf-canvas,
+body.theme-sba .grid .char-box[data-type="str"] .sba-lr-lwf-canvas {
+    mix-blend-mode: screen !important;
+    filter: grayscale(1) sepia(1) saturate(12) hue-rotate(312deg) brightness(1.1) contrast(1.2) drop-shadow(0 0 16px rgba(239, 68, 68, 0.75)) drop-shadow(0 0 28px rgba(239, 68, 68, 0.5)) !important;
+    opacity: var(--sba-lr-aura-opacity, 1) !important;
+}
+
+body.theme-sba #homeCardGrid .char-box[data-type="str"] .sba-lr-lwf-lightning-canvas,
+body.theme-sba #cardGrid .char-box[data-type="str"] .sba-lr-lwf-lightning-canvas,
+body.theme-sba .grid .char-box[data-type="str"] .sba-lr-lwf-lightning-canvas {
+    z-index: 3 !important;
+    mix-blend-mode: screen !important;
+    filter: grayscale(1) sepia(1) saturate(16) hue-rotate(312deg) brightness(1.35) contrast(1.4) drop-shadow(0 0 8px rgba(255, 90, 90, 0.85)) drop-shadow(0 0 18px rgba(239, 68, 68, 0.55)) !important;
+    opacity: var(--sba-lr-lightning-opacity, 1) !important;
+}
+
+/* Electric awakening rings. SEZA gets the full purple/gold/rainbow spectrum;
+   EZA stays within the warm gold/amber family. Both are clipped strictly inside
+   the 64px inner border with zero drop-shadow bleed. */
+body.theme-sba .sba-seza-ring-effect,
+body.theme-sba #homeCardGrid .sba-seza-ring-effect,
+body.theme-sba #cardGrid .sba-seza-ring-effect,
+body.theme-sba .grid .sba-seza-ring-effect {
+    z-index: 8 !important;
+    background: conic-gradient(from 12deg, #c26bff, #ffca42, #5edfff, #ff69d6, #8aff87, #ffe869, #c26bff) !important;
+    animation: sba-electric-ring-spin 8s linear infinite !important;
+    filter: saturate(1.40) brightness(1.15) contrast(1.15) !important;
+    clip-path: circle(64.5px at 50% 50%) !important;
+    opacity: 0.92 !important;
+}
+
+body.theme-sba .sba-eza-ring-effect,
+body.theme-sba #homeCardGrid .sba-eza-ring-effect,
+body.theme-sba #cardGrid .sba-eza-ring-effect,
+body.theme-sba .grid .sba-eza-ring-effect {
+    z-index: 8 !important;
+    background: conic-gradient(from 12deg, #ffe033, #ff7700, #00d0ff, #ffea47, #ff6200, #00bfff, #ffe033) !important;
+    animation: sba-electric-ring-spin 8s linear infinite !important;
+    filter: saturate(1.45) brightness(1.20) contrast(1.15) !important;
+    clip-path: circle(64.5px at 50% 50%) !important;
+    opacity: 0.92 !important;
+}
+
+@keyframes sba-electric-ring-spin {
+    to { transform: rotate(360deg); }
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-ring-effect,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-seza-ring-effect,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-eza-ring-effect,
+body.cards-layout-dokkan #cardGrid .sba-ring-effect,
+body.cards-layout-dokkan #cardGrid .sba-seza-ring-effect,
+body.cards-layout-dokkan #cardGrid .sba-eza-ring-effect,
+body.cards-layout-dokkan .grid .sba-ring-effect,
+body.cards-layout-dokkan .grid .sba-seza-ring-effect,
+body.cards-layout-dokkan .grid .sba-eza-ring-effect {
+    display: none !important;
+}
+
+body.theme-sba.fx-no-lightning #homeCardGrid .sba-lr-lwf-canvas,
+body.theme-sba.fx-no-lightning #cardGrid .sba-lr-lwf-canvas,
+body.theme-sba.fx-no-lightning .grid .sba-lr-lwf-canvas,
+body.theme-sba.fx-no-seza #homeCardGrid .sba-seza-ring-effect,
+body.theme-sba.fx-no-seza #cardGrid .sba-seza-ring-effect,
+body.theme-sba.fx-no-seza .grid .sba-seza-ring-effect,
+body.theme-sba.fx-static #homeCardGrid .sba-ring-effect,
+body.theme-sba.fx-static #cardGrid .sba-ring-effect,
+body.theme-sba.fx-static .grid .sba-ring-effect,
+body.theme-sba.fx-static #homeCardGrid .sba-lr-lwf-canvas,
+body.theme-sba.fx-static #cardGrid .sba-lr-lwf-canvas,
+body.theme-sba.fx-static .grid .sba-lr-lwf-canvas {
+    display: none !important;
+}
+
+body.theme-sba #homeCardGrid .hub-circle-img,
+body.theme-sba #cardGrid .hub-circle-img,
+body.theme-sba .grid .hub-circle-img {
+    display: block !important;
+    position: absolute !important;
+    z-index: 2 !important;
+    top: var(--sba-portrait-top, -1px) !important;
+    left: var(--sba-portrait-left, -2px) !important;
+    width: var(--sba-portrait-size, 152px) !important;
+    height: var(--sba-portrait-size, 152px) !important;
+    transform: scale(var(--sba-portrait-scale, 1.0)) !important;
+    transform-origin: 50% 50% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    border-radius: 50% !important;
+    clip-path: circle(var(--sba-portrait-clip, 45%) at 50.7% 50%);
+    background: transparent !important;
+    filter: saturate(1.05) contrast(1.03);
+}
+
+body.theme-sba #homeCardGrid .hub-circle-img.is-fallback-thumb,
+body.theme-sba #cardGrid .hub-circle-img.is-fallback-thumb,
+body.theme-sba .grid .hub-circle-img.is-fallback-thumb {
+    top: var(--sba-custom-portrait-top, -12px) !important;
+    left: var(--sba-custom-portrait-left, -14px) !important;
+    width: var(--sba-custom-portrait-size, 174px) !important;
+    height: var(--sba-custom-portrait-size, 174px) !important;
+    transform: scale(var(--sba-custom-portrait-scale, 1.0)) !important;
+    transform-origin: 50% 50% !important;
+    clip-path: circle(var(--sba-custom-portrait-clip, 39%) at 51.15% 50%);
+    object-position: center !important;
+}
+
+/* SBA relationship families collapse into one grid item. Regular forms fade
+   into the first alternate portrait on hover; a reversible exchange keeps its
+   partner visible as a compact popup badge over the main portrait. */
+body.theme-sba #homeCardGrid .sba-linked-secondary,
+body.theme-sba #cardGrid .sba-linked-secondary,
+body.theme-sba .grid .sba-linked-secondary {
+    display: none !important;
+}
+
+body.theme-sba #homeCardGrid .char-box.has-linked-neighbor::before,
+body.theme-sba #homeCardGrid .char-box.has-linked-neighbor::after,
+body.theme-sba #cardGrid .char-box.has-linked-neighbor::before,
+body.theme-sba #cardGrid .char-box.has-linked-neighbor::after {
+    display: none !important;
+}
+
+body.theme-sba .sba-transform-cycle .sba-cycle-portrait {
+    opacity: 0;
+    will-change: opacity;
+    animation: none;
+    transition: opacity 600ms ease-in-out !important;
+}
+
+body.theme-sba .sba-transform-cycle .sba-cycle-index-0 {
+    opacity: 1;
+}
+
+body.theme-sba .sba-transform-cycle:hover .sba-cycle-index-0,
+body.theme-sba .sba-transform-cycle:focus-within .sba-cycle-index-0 {
+    opacity: 0;
+}
+
+body.theme-sba .sba-transform-cycle:hover .sba-cycle-index-1,
+body.theme-sba .sba-transform-cycle:focus-within .sba-cycle-index-1 {
+    opacity: 1;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .card-icon::before,
+body.theme-sba #cardGrid .sba-reversible-stack .card-icon::before,
+body.theme-sba .grid .sba-reversible-stack .card-icon::before,
+body.theme-sba #homeCardGrid .sba-reversible-stack .card-icon::after,
+body.theme-sba #cardGrid .sba-reversible-stack .card-icon::after,
+body.theme-sba .grid .sba-reversible-stack .card-icon::after {
+    top: var(--sba-reversible-portrait-top, 25px) !important;
+    left: var(--sba-reversible-portrait-left, 4px) !important;
+    width: var(--sba-reversible-ring-size, 128px) !important;
+    height: var(--sba-reversible-ring-size, 128px) !important;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .card-icon::before,
+body.theme-sba #cardGrid .sba-reversible-stack .card-icon::before,
+body.theme-sba .grid .sba-reversible-stack .card-icon::before {
+    box-shadow:
+        0 0 0 3px rgba(2, 6, 23, 0.94),
+        0 0 15px color-mix(in srgb, var(--hub-ring-color) 72%, transparent);
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .sba-ring-effect,
+body.theme-sba #cardGrid .sba-reversible-stack .sba-ring-effect,
+body.theme-sba .grid .sba-reversible-stack .sba-ring-effect {
+    top: 14px !important;
+    left: -7px !important;
+    width: 150px !important;
+    height: 150px !important;
+    clip-path: circle(58px at 50% 50%) !important;
+    -webkit-mask-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 44px, #fff 48px, #fff 58px, transparent 58.5px);
+    mask-image: radial-gradient(circle at 50% 50%, transparent 0, transparent 44px, #fff 48px, #fff 58px, transparent 58.5px);
+    -webkit-mask-repeat: no-repeat;
+    mask-repeat: no-repeat;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .sba-lr-lwf-canvas,
+body.theme-sba #cardGrid .sba-reversible-stack .sba-lr-lwf-canvas,
+body.theme-sba .grid .sba-reversible-stack .sba-lr-lwf-canvas {
+    top: calc(var(--sba-lr-aura-top, 55%) + 2%) !important;
+    left: calc(var(--sba-lr-aura-left, 52%) - 7px) !important;
+    width: calc(var(--sba-lr-aura-width, 236px) * 0.92) !important;
+    height: calc(var(--sba-lr-aura-height, 420px) * 0.92) !important;
+    -webkit-mask: radial-gradient(ellipse calc(var(--sba-lr-aura-mask-x, 96px) * 0.92) calc(var(--sba-lr-aura-mask-y, 114px) * 0.92) at 50% 50%, #000 0 68%, rgba(0, 0, 0, 0.75) 82%, rgba(0, 0, 0, 0.2) 93%, transparent 100%) !important;
+    mask: radial-gradient(ellipse calc(var(--sba-lr-aura-mask-x, 96px) * 0.92) calc(var(--sba-lr-aura-mask-y, 114px) * 0.92) at 50% 50%, #000 0 68%, rgba(0, 0, 0, 0.75) 82%, rgba(0, 0, 0, 0.2) 93%, transparent 100%) !important;
+}
+
+/* Custom exchange artwork is square rather than native circle art.  Keep it
+   separate from official cards: enlarge the source image, crop it at the
+   circular ring, and deliberately fill the visible portrait area. */
+body.theme-sba #homeCardGrid .sba-custom-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait),
+body.theme-sba #cardGrid .sba-custom-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait),
+body.theme-sba .grid .sba-custom-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait) {
+    top: 1px !important;
+    left: -21px !important;
+    width: 178px !important;
+    height: 176px !important;
+    object-fit: fill !important;
+    object-position: 50% 50% !important;
+    clip-path: circle(35.75% at 50% 50%) !important;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .sba-cycle-portrait,
+body.theme-sba #cardGrid .sba-reversible-stack .sba-cycle-portrait,
+body.theme-sba .grid .sba-reversible-stack .sba-cycle-portrait,
+body.theme-sba #homeCardGrid .sba-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait),
+body.theme-sba #cardGrid .sba-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait),
+body.theme-sba .grid .sba-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait) {
+    top: var(--sba-reversible-portrait-top, 25px) !important;
+    left: var(--sba-reversible-portrait-left, 4px) !important;
+    width: var(--sba-reversible-portrait-size, 128px) !important;
+    height: var(--sba-reversible-portrait-size, 128px) !important;
+    transform: scale(var(--sba-reversible-portrait-scale, 1.0)) !important;
+    transform-origin: 50% 50% !important;
+    clip-path: circle(var(--sba-reversible-portrait-clip, 50%) at 50% 50%) !important;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait),
+body.theme-sba #cardGrid .sba-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait),
+body.theme-sba .grid .sba-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait) {
+    top: 9px !important;
+    left: -15px !important;
+    width: var(--sba-reversible-custom-size, 160px) !important;
+    height: var(--sba-reversible-custom-size, 160px) !important;
+    clip-path: circle(42% at 52% 50%) !important;
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-stack .sba-reversible-popup,
+body.theme-sba #cardGrid .sba-reversible-stack .sba-reversible-popup,
+body.theme-sba .grid .sba-reversible-stack .sba-reversible-popup {
+    display: block;
+    position: absolute;
+    top: var(--sba-reversible-popup-top, 0px) !important;
+    left: var(--sba-reversible-popup-left, 80px) !important;
+    width: var(--sba-reversible-popup-size, 86px) !important;
+    height: var(--sba-reversible-popup-size, 86px) !important;
+    z-index: 12 !important;
+    box-sizing: border-box;
+    --sba-linked-ring-color: var(--sba-linked-type, #7dd3fc);
+    border: 4px solid var(--sba-linked-ring-color);
+    border-radius: 50%;
+    overflow: hidden;
+    pointer-events: none;
+    box-shadow:
+        0 0 0 3px rgba(2, 6, 23, 0.94),
+        0 0 12px color-mix(in srgb, var(--sba-linked-ring-color) 72%, transparent);
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-popup .sba-reversible-portrait,
+body.theme-sba #cardGrid .sba-reversible-popup .sba-reversible-portrait,
+body.theme-sba .grid .sba-reversible-popup .sba-reversible-portrait {
+    display: block !important;
+    position: absolute !important;
+    top: -7px !important;
+    left: -7px !important;
+    width: calc(var(--sba-reversible-popup-size, 86px) + 8px) !important;
+    height: calc(var(--sba-reversible-popup-size, 86px) + 8px) !important;
+    transform: scale(var(--sba-reversible-popup-scale, 1.0)) !important;
+    transform-origin: 50% 50% !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    object-position: 50% 50% !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    clip-path: none !important;
+    opacity: 1 !important;
+    animation: none !important;
+    filter: saturate(1.05) contrast(1.03);
+}
+
+body.theme-sba #homeCardGrid .sba-reversible-popup .sba-reversible-portrait.is-fallback-thumb,
+body.theme-sba #cardGrid .sba-reversible-popup .sba-reversible-portrait.is-fallback-thumb,
+body.theme-sba .grid .sba-reversible-popup .sba-reversible-portrait.is-fallback-thumb {
+    top: -14px !important;
+    left: -14px !important;
+    width: var(--sba-reversible-popup-custom-size) !important;
+    height: var(--sba-reversible-popup-custom-size) !important;
+    object-position: center !important;
+}
+
+/* The compact partner portrait on a custom reversible exchange gets its own
+   enlarged crop as well. Its wrapper remains the circular clipping boundary. */
+body.theme-sba #homeCardGrid .sba-custom-reversible-popup .sba-reversible-portrait,
+body.theme-sba #cardGrid .sba-custom-reversible-popup .sba-reversible-portrait,
+body.theme-sba .grid .sba-custom-reversible-popup .sba-reversible-portrait {
+    top: -29px !important;
+    left: -29px !important;
+    width: 138px !important;
+    height: 138px !important;
+    object-fit: fill !important;
+    object-position: 50% 50% !important;
+}
+
+/* These must remain after the shared fallback-thumbnail selectors above.
+   Every custom hub portrait has that fallback class, but it is deliberate here:
+   it means the uploaded square art gets this dedicated SBA crop. */
+body.theme-sba #homeCardGrid .sba-custom-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait),
+body.theme-sba #cardGrid .sba-custom-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait),
+body.theme-sba .grid .sba-custom-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait) {
+    top: 1px !important;
+    left: -21px !important;
+    width: 178px !important;
+    height: 176px !important;
+    object-fit: fill !important;
+    object-position: 50% 50% !important;
+    clip-path: circle(35.75% at 50% 50%) !important;
+}
+
+body.theme-sba #homeCardGrid .sba-custom-reversible-popup .sba-reversible-portrait.is-fallback-thumb,
+body.theme-sba #cardGrid .sba-custom-reversible-popup .sba-reversible-portrait.is-fallback-thumb,
+body.theme-sba .grid .sba-custom-reversible-popup .sba-reversible-portrait.is-fallback-thumb {
+    top: -29px !important;
+    left: -29px !important;
+    width: 138px !important;
+    height: 138px !important;
+    object-fit: fill !important;
+    object-position: 50% 50% !important;
+}
+
+body.theme-sba.fx-static .sba-transform-cycle .sba-cycle-portrait {
+    animation: none !important;
+    opacity: 0;
+}
+
+body.theme-sba.fx-static .sba-transform-cycle .sba-cycle-index-0 {
+    opacity: 1 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.theme-sba .sba-transform-cycle .sba-cycle-index-0 { opacity: 1 !important; }
+    body.theme-sba .sba-transform-cycle .sba-cycle-portrait { animation: none !important; }
+    body.theme-sba .sba-ring-effect { animation: none !important; }
+}
+
+body.theme-sba #cardGrid .custom-badge.rarity-badge,
+body.theme-sba #cardGrid .custom-badge.type-badge {
+    top: auto !important;
+    bottom: -8px !important;
+    width: var(--sba-mini-badge-size) !important;
+    height: var(--sba-mini-badge-size) !important;
+    box-sizing: border-box !important;
+    display: inline-grid !important;
+    place-items: center !important;
+    padding: 2px !important;
+    overflow: hidden !important;
+    border: 2px solid color-mix(in srgb, var(--hub-ring-color) 60%, #ffffff 40%) !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle at 36% 28%, #ffffff, #f1f5f9 68%, #cbd5e1 100%) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 3px 8px rgba(0, 0, 0, 0.6),
+        0 0 8px color-mix(in srgb, var(--hub-ring-color) 45%, transparent),
+        inset 0 1px 1px #ffffff !important;
+    filter: none !important;
+    z-index: 20 !important;
+    color: transparent !important;
+    font-family: "Arial Narrow", "Segoe UI", sans-serif !important;
+    font-weight: 950 !important;
+    font-style: italic !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: uppercase !important;
+}
+
+body.theme-sba #cardGrid .custom-badge.rarity-badge {
+    left: var(--sba-rarity-chip-x) !important;
+    bottom: var(--sba-rarity-chip-y) !important;
+    transform: translate(var(--sba-rarity-art-x), var(--sba-rarity-art-y)) !important;
+}
+
+body.theme-sba #cardGrid .custom-badge.type-badge {
+    left: var(--sba-type-chip-x) !important;
+    bottom: var(--sba-type-chip-y) !important;
+    right: auto !important;
+    transform: translate(var(--sba-type-art-x), var(--sba-type-art-y)) !important;
+}
+
+body.theme-sba #cardGrid .custom-badge .custom-badge-text {
+    display: block !important;
+    max-width: 100% !important;
+    background: var(--grid-badge-ink, linear-gradient(180deg, #f8fafc 0%, #94a3b8 100%)) !important;
+    -webkit-background-clip: text !important;
+    background-clip: text !important;
+    color: transparent !important;
+    filter: drop-shadow(0 1px 0 rgba(255,255,255,.35)) drop-shadow(0 1px 1px rgba(0,0,0,.62)) !important;
+    transform: translateY(-.02em) scaleX(.92) !important;
+    white-space: nowrap !important;
+    font-size: 41% !important;
+    letter-spacing: -0.08em !important;
+}
+
+body.theme-sba #cardGrid .rarity-badge[data-rarity="lr"] { --grid-badge-ink: linear-gradient(180deg, #fff6a6 0%, #fbbf24 45%, #a16207 100%); }
+body.theme-sba #cardGrid .rarity-badge[data-rarity="tur"] { --grid-badge-ink: linear-gradient(180deg, #dff9ff 0%, #38bdf8 48%, #075985 100%); }
+body.theme-sba #cardGrid .rarity-badge[data-rarity="ssr"] { --grid-badge-ink: linear-gradient(180deg, #f8e8ff 0%, #d946ef 48%, #701a75 100%); }
+body.theme-sba #cardGrid .type-badge[data-type="agl"] { --grid-badge-ink: linear-gradient(180deg, #dff7ff 0%, #38bdf8 50%, #075985 100%); }
+body.theme-sba #cardGrid .type-badge[data-type="teq"] { --grid-badge-ink: linear-gradient(180deg, #e8ffe8 0%, #4ade80 50%, #166534 100%); }
+body.theme-sba #cardGrid .type-badge[data-type="int"] { --grid-badge-ink: linear-gradient(180deg, #f5eaff 0%, #c084fc 50%, #6b21a8 100%); }
+body.theme-sba #cardGrid .type-badge[data-type="str"] { --grid-badge-ink: linear-gradient(180deg, #ffe7e7 0%, #f87171 50%, #991b1b 100%); }
+body.theme-sba #cardGrid .type-badge[data-type="phy"] { --grid-badge-ink: linear-gradient(180deg, #fff9d8 0%, #facc15 50%, #a16207 100%); }
+
+/* Awakening marks sit centered in the middle top line from the center of the card at the top (SBA circular layout) */
+body.theme-sba:not(.cards-layout-dokkan) #homeCardGrid .hub-eza-badge,
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .hub-eza-badge,
+body.theme-sba:not(.cards-layout-dokkan) .grid .hub-eza-badge {
+    position: absolute !important;
+    top: -6px !important;
+    left: 50% !important;
+    bottom: auto !important;
+    right: auto !important;
+    transform: translateX(-50%) !important;
+    width: auto !important;
+    height: 32px !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    object-fit: contain !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    overflow: visible !important;
+    background: transparent !important;
+    z-index: 25 !important;
+    box-shadow: none !important;
+    filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.95)) !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #homeCardGrid .hub-eza-badge.custom-awakening-badge,
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .hub-eza-badge.custom-awakening-badge,
+body.theme-sba:not(.cards-layout-dokkan) .grid .hub-eza-badge.custom-awakening-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 34px !important;
+    height: 19px !important;
+    padding: 0 7px !important;
+    border-radius: 5px !important;
+    font-family: "Arial Narrow", "Segoe UI", sans-serif !important;
+    font-size: 8px !important;
+    font-style: italic !important;
+    font-weight: 950 !important;
+    letter-spacing: .05em !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 1px rgba(0,0,0,.7) !important;
+}
+
+body.theme-sba .hub-eza-badge.custom-awakening-badge.hub-eza-badge--eza {
+    background: linear-gradient(135deg, #fff3a4 0%, #f59e0b 48%, #92400e 100%) !important;
+    border: 1px solid rgba(254, 240, 138, .95) !important;
+    color: #fff !important;
+}
+
+body.theme-sba .hub-eza-badge.custom-awakening-badge.hub-eza-badge--seza {
+    background: linear-gradient(135deg, #efd0ff 0%, #a855f7 38%, #f59e0b 70%, #f8fafc 100%) !important;
+    border: 1px solid rgba(255,255,255,.9) !important;
+    color: #fff !important;
+}
+
+body.theme-sba .hub-eza-badge-text {
+    display: inline !important;
+}
+
+body.theme-sba .hub-summon-badge > img {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    max-width: none !important;
+    object-fit: contain !important;
+    transform: translate(var(--sba-badge-art-x, 0px), var(--sba-badge-art-y, 0px)) scale(var(--sba-badge-art-scale, 1.12)) !important;
+    transform-origin: center !important;
+}
+
+.sba-status-badge[data-sba-status="transformation"] {
+    display: none !important;
+}
+
+body.theme-sba .hub-summon-badge--festival {
+    --sba-badge-art-scale: var(--sba-festival-art-scale);
+    --sba-badge-art-x: var(--sba-festival-art-x);
+    --sba-badge-art-y: var(--sba-festival-art-y);
+}
+
+body.theme-sba .hub-summon-badge--carnival {
+    --sba-badge-art-scale: var(--sba-carnival-art-scale);
+    --sba-badge-art-x: var(--sba-carnival-art-x);
+    --sba-badge-art-y: var(--sba-carnival-art-y);
+}
+
+body.theme-sba #homeCardGrid .sba-status-badge,
+body.theme-sba #cardGrid .sba-status-badge,
+body.theme-sba .grid .sba-status-badge {
+    top: auto !important;
+    bottom: -8px !important;
+    width: var(--sba-mini-badge-size) !important;
+    height: var(--sba-mini-badge-size) !important;
+    box-sizing: border-box !important;
+    padding: 4px !important;
+    object-fit: contain !important;
+    z-index: 20 !important;
+    pointer-events: none;
+    border: 2px solid color-mix(in srgb, var(--hub-ring-color) 60%, #ffffff 40%) !important;
+    border-radius: 50% !important;
+    background: radial-gradient(circle at 36% 28%, #ffffff, #f1f5f9 68%, #cbd5e1 100%) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 3px 8px rgba(0, 0, 0, 0.6),
+        0 0 8px color-mix(in srgb, var(--hub-ring-color) 45%, transparent),
+        inset 0 1px 1px #ffffff !important;
+    filter: none !important;
+}
+
+/* Festival and Carnival are sourced from each card's own unit tag. */
+.hub-summon-badge { display: none; }
+
+body.theme-sba #homeCardGrid .hub-summon-badge,
+body.theme-sba #cardGrid .hub-summon-badge,
+body.theme-sba .grid .hub-summon-badge {
+    position: absolute !important;
+    display: block !important;
+    top: -5px !important;
+    bottom: auto !important;
+    left: -5px !important;
+    right: auto !important;
+    width: 46px !important;
+    height: 46px !important;
+    box-sizing: border-box !important;
+    padding: 2px !important;
+    object-fit: contain !important;
+    border: 2px solid color-mix(in srgb, var(--hub-ring-color) 60%, #ffffff 40%) !important;
+    border-radius: 50% !important;
+    overflow: hidden !important;
+    background: radial-gradient(circle at 36% 28%, #ffffff, #f1f5f9 68%, #cbd5e1 100%) !important;
+    box-shadow:
+        0 0 0 2px rgba(255, 255, 255, 0.9),
+        0 3px 8px rgba(0, 0, 0, 0.6),
+        0 0 8px color-mix(in srgb, var(--hub-ring-color) 45%, transparent),
+        inset 0 1px 1px #ffffff !important;
+    z-index: 25 !important;
+    filter: none !important;
+}
+
+/* EZA/SEZA keeps the upper-left corner; the unit badge moves across only
+   when both marks are present. */
+body.theme-sba #homeCardGrid .has-awakening-badge .hub-summon-badge,
+body.theme-sba #cardGrid .has-awakening-badge .hub-summon-badge,
+body.theme-sba .grid .has-awakening-badge .hub-summon-badge {
+    left: auto !important;
+    right: -5px !important;
+}
+
+/* EZA/SEZA floats above the portrait. Rarity, typing, and transformation
+   states remain individually separated as circular chips underneath it. */
+body.theme-sba #homeCardGrid .sba-special-count-1 .card-icon .rarity-badge,
+body.theme-sba #cardGrid .sba-special-count-1 .card-icon .rarity-badge,
+body.theme-sba .grid .sba-special-count-1 .card-icon .rarity-badge { left: 24px !important; }
+body.theme-sba #homeCardGrid .sba-special-count-1 .card-icon .type-badge,
+body.theme-sba #cardGrid .sba-special-count-1 .card-icon .type-badge,
+body.theme-sba .grid .sba-special-count-1 .card-icon .type-badge { left: 60px !important; }
+body.theme-sba #homeCardGrid .sba-special-count-1 .card-icon .sba-status-badge-1,
+body.theme-sba #cardGrid .sba-special-count-1 .card-icon .sba-status-badge-1,
+body.theme-sba .grid .sba-special-count-1 .card-icon .sba-status-badge-1 { left: 96px !important; }
+
+body.theme-sba .sba-special-count-2 .card-icon .rarity-badge { left: 11px !important; }
+body.theme-sba .sba-special-count-2 .card-icon .type-badge { left: 43px !important; }
+body.theme-sba .sba-special-count-2 .card-icon .sba-status-badge-1 { left: 75px !important; }
+body.theme-sba .sba-special-count-2 .card-icon .sba-status-badge-2 { left: 107px !important; }
+
+
+body.theme-sba #homeCardGrid .name-container,
+body.theme-sba #cardGrid .name-container,
+body.theme-sba .grid .name-container {
+    bottom: -37px !important;
+}
+
+/* Intentionally sparse third style: a functional, neutral canvas with no
+   background video or branded panel treatment, ready for future SBA-adjacent
+   experiments without changing either completed theme. */
+body.theme-placeholder {
+    background: #080a0f;
+    color: #e5e7eb;
+}
+
+body.theme-placeholder #bg-video {
+    display: none !important;
+}
+
+body.theme-placeholder .glass-overlay {
+    background: #080a0f !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-placeholder .liquid-metal-frame,
+body.theme-placeholder .apple-hud-bar,
+body.theme-placeholder .hub-main-container,
+body.theme-placeholder .dokkan-news-snippet,
+body.theme-placeholder .dokkan-timeline-panel,
+body.theme-placeholder .dokkan-streamers-longitudinal-panel,
+body.theme-placeholder #homeCardGrid,
+body.theme-placeholder #cardGrid,
+body.theme-placeholder .grid {
+    animation: none !important;
+    background: #0d1017 !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-abs-style .hub-pagination-control {
+    max-width: 380px;
+    border-radius: 9px !important;
+}
+
+body.theme-abs-style .hub-page-nav-btn {
+    border-radius: 6px;
+}
+
+body.theme-abs-style .hub-page-nav-btn:hover:not(:disabled) {
+    color: var(--abs-gold-soft);
+    border-color: var(--abs-gold);
+    background: rgba(250, 204, 21, 0.14);
+    box-shadow: 0 0 10px rgba(250, 204, 21, 0.2);
+}
+
+/* Streamers retain their platform colors inside the unified ABS shell. */
+body.theme-abs-style .streamer-card-pill {
+    border-radius: 7px;
+    background: rgba(255, 255, 255, 0.035);
+}
+
+body.theme-abs-style .streamer-card-pill:hover,
+body.theme-abs-style .streamer-card-pill.is-selected {
+    border-color: var(--abs-gold);
+    background: rgba(250, 204, 21, 0.11);
+    box-shadow: 0 6px 16px rgba(0, 0, 0, 0.38), 0 0 10px rgba(250, 204, 21, 0.14);
+}
+
+body.theme-abs-style .streamer-live-preview {
+    border-radius: 8px;
+    border-color: rgba(250, 204, 21, 0.33);
+    background: rgba(4, 7, 13, 0.9);
+}
+
+/* News cards use the same compact framed modules as the Editor panels. */
+body.theme-abs-style .news-timeline-card,
+body.theme-abs-style .mini-card {
+    border-radius: 8px;
+    border-color: rgba(250, 204, 21, 0.25);
+    background: linear-gradient(145deg, rgba(22, 29, 43, 0.94), rgba(5, 8, 15, 0.98));
+    box-shadow: 0 7px 18px rgba(0, 0, 0, 0.48), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+}
+
+body.theme-abs-style .news-timeline-card:hover,
+body.theme-abs-style .mini-card:hover {
+    border-color: var(--abs-gold) !important;
+    outline: none !important;
+    background: linear-gradient(145deg, rgba(45, 38, 14, 0.78), rgba(8, 11, 19, 0.98));
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.52), 0 0 12px rgba(250, 204, 21, 0.18) !important;
+}
+
+body.theme-abs-style .news-timeline-card-action {
+    color: var(--abs-gold-soft);
+    border-color: rgba(250, 204, 21, 0.15);
+}
+
+body.theme-abs-style .sidebar-drawer {
+    border-right-color: var(--abs-gold) !important;
+    background: linear-gradient(180deg, #121824, #050810 74%) !important;
+    box-shadow: 14px 0 38px rgba(0, 0, 0, 0.78), 0 0 18px rgba(250, 204, 21, 0.14) !important;
+}
+
+body.theme-abs-style .sidebar-header {
+    border-color: rgba(250, 204, 21, 0.25);
+}
+
+body.theme-abs-style .sidebar-header h2,
+body.theme-abs-style .filter-group-title {
+    color: var(--abs-gold-soft);
+}
+
+body.theme-abs-style .advanced-filter-toggle input:checked + .advanced-filter-switch {
+    border-color: var(--abs-gold);
+    background: rgba(141, 94, 7, 0.78);
+}
+
+body.theme-abs-style.fx-static .apple-hud-bar,
+body.theme-abs-style.fx-static .dokkan-news-snippet,
+body.theme-abs-style.fx-static .dokkan-timeline-panel,
+body.theme-abs-style.fx-static .dokkan-streamers-longitudinal-panel,
+body.theme-abs-style.fx-static #homeCardGrid,
+body.theme-abs-style.fx-static #cardGrid {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 1180px) {
+    body.theme-abs-style .apple-hud-bar {
+        padding-inline: 12px !important;
+    }
+
+    body.theme-abs-style .hud-nav-group {
+        gap: 4px;
+    }
+
+    body.theme-abs-style .hud-nav-link {
+        padding-inline: 9px;
+    }
+}
+
+@media (max-width: 680px) {
+    body .hud-theme-stack .abs-hud-theme-btn {
+        min-width: 29px !important;
+        min-height: 29px !important;
+        padding: 5px !important;
+    }
+
+    body.theme-abs-style .apple-hud-wrapper,
+    body.theme-abs-style.hub-cards-nav-static .apple-hud-wrapper {
+        top: 0 !important;
+        padding: 0 !important;
+    }
+
+    body.theme-abs-style .apple-hud-bar {
+        min-height: 56px !important;
+        padding: 6px 8px !important;
+    }
+
+    body.theme-abs-style .hud-nav-link {
+        min-width: 36px;
+        min-height: 36px;
+        padding: 7px;
+        justify-content: center;
+    }
+
+    body.theme-abs-style .liquid-settings-circle-wrapper,
+    body.theme-abs-style .liquid-settings-bar {
+        right: 10px !important;
+        bottom: 10px !important;
+    }
+
+    body.theme-abs-style .dokkan-news-snippet,
+    body.theme-abs-style .dokkan-timeline-panel,
+    body.theme-abs-style .dokkan-streamers-longitudinal-panel,
+    body.theme-abs-style #homeCardGrid,
+    body.theme-abs-style #cardGrid,
+    body.theme-abs-style .grid {
+        border-radius: 8px !important;
+    }
+}
+
+/* ========================================================================== 
+   SBA SIDE RAIL
+
+   The SBA Hub deliberately owns this navigation treatment.  It reuses the
+   shared Hub controls but presents them as a fixed, editorial side rail so
+   ABS and the empty placeholder theme keep their existing top navigation.
+   ========================================================================== */
+
+body.theme-sba {
+    --sba-rail-width: 96px;
+    --sba-panel-width: 282px;
+    /* SBA Liquid Glass palette. Change these five values to recolor the rail,
+       selection glow, Settings sheet and reflective highlights together. */
+    --sba-liquid-sky: #91c4f2;
+    --sba-liquid-blue: #8ca0d7;
+    --sba-liquid-lavender: #9d79bc;
+    --sba-liquid-magenta: #a14da0;
+    --sba-liquid-plum: #7e1f86;
+    --sba-rail-ink: #05070d;
+    --sba-rail-panel: rgba(5, 7, 13, 0.72);
+    --sba-rail-line: rgba(255, 255, 255, 0.42);
+    --sba-rail-accent: var(--sba-liquid-sky);
+    --sba-rail-muted: #aeb9cf;
+}
+
+body.theme-sba .liquid-settings-circle-wrapper {
+    display: none !important;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: var(--sba-rail-width) !important;
+    height: 100dvh !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    display: block !important;
+    z-index: 1000 !important;
+}
+
+body.theme-sba .liquid-metal-frame {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: var(--sba-rail-ink) !important;
+    box-shadow: 11px 0 34px rgba(0, 0, 0, 0.34) !important;
+    animation: none !important;
+    overflow: hidden !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 14px 8px 10px !important;
+    border: 0 !important;
+    border-right: 1px solid var(--sba-rail-line) !important;
+    border-radius: 0 !important;
+    background:
+        radial-gradient(circle at 16% 5%, color-mix(in srgb, var(--sba-liquid-sky) 22%, transparent), transparent 24%),
+        radial-gradient(circle at 86% 45%, color-mix(in srgb, var(--sba-liquid-lavender) 16%, transparent), transparent 30%),
+        radial-gradient(circle at 15% 88%, color-mix(in srgb, var(--sba-liquid-plum) 18%, transparent), transparent 25%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(5, 7, 13, 0.18)),
+        var(--sba-rail-panel) !important;
+    backdrop-filter: blur(26px) saturate(145%) contrast(104%) !important;
+    -webkit-backdrop-filter: blur(26px) saturate(145%) contrast(104%) !important;
+    overflow: hidden !important;
+}
+
+body.theme-sba .apple-hud-bar::before {
+    display: none !important;
+}
+
+body.theme-sba .apple-nav-center {
+    position: relative !important;
+    inset: auto !important;
+    order: -1;
+    width: 100% !important;
+    height: 74px;
+    margin: 0 0 12px !important;
+    transform: none !important;
+    justify-content: center !important;
+    padding: 0;
+}
+
+body.theme-sba .nav-center-link {
+    width: 52px;
+    height: 68px;
+    justify-content: center !important;
+}
+
+/* abs_logo.png is intentionally flipped only in SBA, matching the requested
+   side-mark direction without changing the standard Hub identity elsewhere. */
+body.theme-sba .nav-center-logo-img,
+body.theme-sba #nav-center-logo,
+body.theme-sba .apple-nav-center .nav-center-logo-img {
+    width: 52px !important;
+    max-width: 52px !important;
+    height: 68px !important;
+    max-height: 68px !important;
+    object-fit: contain !important;
+    transform: scaleX(-1) !important;
+    filter: drop-shadow(0 5px 8px rgba(0, 0, 0, 0.45)) !important;
+}
+
+body.theme-sba .nav-center-link:hover .nav-center-logo-img {
+    transform: scaleX(-1) scale(1.045) !important;
+    filter: drop-shadow(0 0 9px rgba(220, 160, 255, 0.36)) !important;
+}
+
+body.theme-sba .hud-nav-group {
+    display: flex !important;
+    flex: 1 1 auto;
+    min-height: 0;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    /* The shared bar centres direct icons and the Cards wrapper together. */
+    width: 100% !important;
+    position: relative;
+    left: 0;
+    overflow-y: auto;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(126, 212, 178, 0.44) transparent;
+}
+
+body.theme-sba .hud-dropdown-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100%;
+}
+
+body.theme-sba .hud-dropdown-wrap::after,
+body.theme-sba .hud-dropdown-menu {
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-link {
+    --sba-glass-x: 28%;
+    --sba-glass-y: 16%;
+    box-sizing: border-box !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px;
+    height: 50px;
+    padding: 0 !important;
+    position: relative !important;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    border-radius: 50% !important;
+    color: var(--sba-rail-muted) !important;
+    background:
+        radial-gradient(circle at 26% 18%, rgba(255, 255, 255, 0.18), transparent 34%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.035) 44%, rgba(3, 5, 12, 0.12)),
+        rgba(108, 119, 159, 0.075) !important;
+    box-shadow:
+        0 0 0 0.5px rgba(255, 255, 255, 0.12),
+        0 9px 24px rgba(0, 0, 0, 0.30),
+        inset 0 1.5px 1.2px rgba(255, 255, 255, 0.58),
+        inset 0 -2px 3px rgba(3, 5, 16, 0.34),
+        inset 1.5px 0 2px rgba(145, 196, 242, 0.20),
+        inset -1.5px 0 2px rgba(161, 77, 160, 0.14) !important;
+    backdrop-filter: blur(18px) saturate(165%) brightness(1.08) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(165%) brightness(1.08) !important;
+    font-size: 12px !important;
+    letter-spacing: 0.9px !important;
+    text-transform: uppercase !important;
+    transform: none !important;
+    transition:
+        transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 180ms ease,
+        background 180ms ease,
+        box-shadow 180ms ease,
+        color 180ms ease !important;
+}
+
+/* Chromium can refract the actual pixels behind a control with an SVG
+   backdrop filter. Other browsers retain the layered blurred-glass fallback. */
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hud-nav-link {
+        backdrop-filter:
+            url("#sba-liquid-button-refraction")
+            blur(7px)
+            saturate(185%)
+            contrast(106%)
+            brightness(1.09) !important;
+    }
+}
+
+body.theme-sba .hud-nav-group > .hud-nav-link,
+body.theme-sba .hud-dropdown-wrap > .hud-nav-link {
+    margin-inline: auto !important;
+}
+
+body.theme-sba .hud-nav-link::before {
+    content: '';
+    display: block !important;
+    position: absolute;
+    z-index: 0;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.58) 0 3%, rgba(255, 255, 255, 0.21) 11%, transparent 37%),
+        linear-gradient(132deg, rgba(255, 255, 255, 0.20), transparent 39%, rgba(157, 121, 188, 0.06) 68%, rgba(255, 255, 255, 0.13));
+    filter: blur(0.18px);
+    opacity: 0.86;
+    mix-blend-mode: screen;
+    transform: translate3d(-1px, -1px, 0);
+    transition: opacity 180ms ease, transform 220ms cubic-bezier(0.2, 0.8, 0.2, 1);
+    pointer-events: none;
+}
+
+body.theme-sba .hud-nav-link::after {
+    content: '';
+    display: block !important;
+    position: absolute;
+    z-index: 0;
+    inset: -1px;
+    padding: 1px;
+    border-radius: inherit;
+    background: conic-gradient(from 215deg,
+        rgba(145, 196, 242, 0.74),
+        rgba(255, 255, 255, 0.92) 13%,
+        rgba(255, 255, 255, 0.10) 29%,
+        rgba(157, 121, 188, 0.54) 51%,
+        rgba(255, 255, 255, 0.08) 70%,
+        rgba(161, 77, 160, 0.52) 86%,
+        rgba(145, 196, 242, 0.74));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask-composite: exclude;
+    opacity: 0.78;
+    pointer-events: none;
+}
+
+body.theme-sba .hud-nav-link:hover {
+    color: #f5fffb !important;
+    border-color: color-mix(in srgb, var(--sba-liquid-sky) 70%, white) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.24), transparent 35%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.18), rgba(140, 160, 215, 0.08) 48%, rgba(7, 5, 18, 0.10)),
+        rgba(157, 121, 188, 0.095) !important;
+    box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.33),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.28),
+        0 0 0 0.5px rgba(255, 255, 255, 0.20),
+        0 8px 22px rgba(0, 0, 0, 0.30),
+        0 0 16px rgba(140, 160, 215, 0.20) !important;
+    transform: translateY(-1px) scale(1.065) !important;
+}
+
+body.theme-sba .hud-nav-link:hover::before,
+body.theme-sba .hud-nav-link:focus-visible::before {
+    opacity: 0.96;
+    transform: translate3d(1px, 1px, 0) rotate(4deg);
+}
+
+body.theme-sba .hud-nav-link:focus-visible {
+    outline: 2px solid color-mix(in srgb, var(--sba-liquid-sky) 70%, white);
+    outline-offset: 3px;
+}
+
+body.theme-sba .hud-nav-link.active {
+    color: #effff7 !important;
+    border-color: color-mix(in srgb, var(--sba-liquid-sky) 72%, white) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.36), transparent 36%),
+        linear-gradient(145deg, rgba(145, 196, 242, 0.27), rgba(157, 121, 188, 0.15) 56%, rgba(126, 31, 134, 0.12)),
+        rgba(34, 42, 68, 0.18) !important;
+    box-shadow:
+        inset 0 1px 2px rgba(255, 255, 255, 0.40),
+        inset 0 -2px 3px rgba(0, 0, 0, 0.29),
+        inset 1px 0 2px rgba(145, 196, 242, 0.26),
+        inset -1px 0 2px rgba(161, 77, 160, 0.18),
+        0 0 18px rgba(140, 160, 215, 0.26),
+        0 8px 20px rgba(0, 0, 0, 0.29) !important;
+}
+
+body.theme-sba .hud-nav-link .hud-nav-svg {
+    width: 18px !important;
+    height: 18px !important;
+    color: currentColor !important;
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+}
+
+body.theme-sba .hud-nav-link > span {
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-link.active .hud-nav-svg {
+    color: var(--sba-rail-accent) !important;
+    filter: drop-shadow(0 0 6px color-mix(in srgb, var(--sba-liquid-sky) 62%, transparent));
+}
+
+body.theme-sba .sba-side-filter-button,
+body.theme-sba.hub-cards-nav-static .sba-side-filter-button {
+    display: none !important;
+}
+
+body.theme-sba .sba-side-settings-button {
+    margin-top: auto !important;
+    border-top-color: rgba(255, 255, 255, 0.21) !important;
+    border-radius: 50% !important;
+}
+
+body.theme-sba .apple-hud-bar .hud-theme-stack,
+body.theme-sba .hud-theme-stack {
+    width: 100%;
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 5px !important;
+    padding: 5px !important;
+    border: 1px solid rgba(255, 255, 255, 0.19) !important;
+    border-radius: 15px !important;
+    background: rgba(255, 255, 255, 0.055) !important;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.16), inset 0 -1px 2px rgba(0, 0, 0, 0.24) !important;
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+}
+
+body.theme-sba .apple-hud-bar .abs-hud-theme-btn,
+body.theme-sba .hud-theme-stack .abs-hud-theme-btn {
+    min-height: 38px !important;
+    min-width: 0 !important;
+    padding: 6px 4px !important;
+    border-radius: 11px !important;
+    gap: 4px !important;
+    flex-direction: column !important;
+    color: rgba(235, 240, 255, 0.72) !important;
+}
+
+body.theme-sba .hud-btn-indicator {
+    display: block !important;
+    max-width: 64px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: 8px !important;
+    letter-spacing: 0.15px !important;
+    text-transform: none;
+}
+
+/* Style choices use recognisable marks only; their title attributes retain
+   the full names for hover and assistive technology. */
+#settingsDrawer .hud-btn-indicator {
+    display: none !important;
+}
+
+#settingsDrawer .hud-theme-stack .abs-hud-theme-btn {
+    justify-content: center !important;
+}
+
+/* A short material transition keeps the rail, main canvas, and Settings sheet
+   visually continuous while the user switches between Hub styles. */
+body.hub-style-transitioning .apple-hud-wrapper,
+body.hub-style-transitioning .liquid-metal-frame,
+body.hub-style-transitioning .apple-hud-bar,
+body.hub-style-transitioning .hub-main-container,
+body.hub-style-transitioning #settingsDrawer {
+    transition:
+        width 230ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        margin 230ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        padding 230ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        background 190ms ease,
+        border-color 190ms ease,
+        box-shadow 190ms ease !important;
+}
+
+body.theme-sba .hub-main-container {
+    width: calc(100vw - var(--sba-rail-width) - 30px) !important;
+    max-width: 1560px !important;
+    margin: 26px 16px 60px calc(var(--sba-rail-width) + 12px) !important;
+    padding: 0 6px !important;
+}
+
+/* In SBA the existing drawers become the rail's in-place second screen. */
+body.theme-sba .sidebar-overlay {
+    display: none !important;
+}
+
+/* SBA Settings Mini GUI: Anchored adjacent to the Settings button on the dock */
+body.theme-sba #settingsDrawer {
+    position: fixed !important;
+    left: calc(var(--sba-rail-width, 84px) + 14px) !important;
+    bottom: 20px !important;
+    top: auto !important;
+    right: auto !important;
+    width: 290px !important;
+    max-width: calc(100vw - var(--sba-rail-width, 84px) - 28px) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 40px) !important;
+    padding: 16px !important;
+    border-radius: 22px !important;
+    border: 1px solid rgba(255, 255, 255, 0.38) !important;
+    background:
+        radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--sba-liquid-sky) 22%, transparent), transparent 45%),
+        radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--sba-liquid-plum) 24%, transparent), transparent 50%),
+        linear-gradient(180deg, rgba(16, 22, 38, 0.90), rgba(6, 9, 18, 0.95)) !important;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.68),
+        0 0 0 1px rgba(255, 255, 255, 0.1),
+        inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(36px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(36px) saturate(160%) !important;
+    z-index: 1060 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: scale(0.93) translateX(-10px) !important;
+    transform-origin: bottom left !important;
+    transition: opacity 180ms ease, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 180ms ease !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+body.theme-sba.sba-side-settings-open #settingsDrawer,
+body.theme-sba #settingsDrawer.open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: scale(1) translateX(0) !important;
+}
+
+@media (max-width: 1024px) {
+    body.theme-sba #settingsDrawer {
+        left: auto !important;
+        right: 14px !important;
+        bottom: calc(var(--sba-bottom-nav-height, 68px) + 14px) !important;
+        width: min(300px, calc(100vw - 28px)) !important;
+        transform-origin: bottom right !important;
+        transform: scale(0.93) translateY(10px) !important;
+    }
+    body.theme-sba.sba-side-settings-open #settingsDrawer,
+    body.theme-sba #settingsDrawer.open {
+        transform: scale(1) translateY(0) !important;
+    }
+}
+
+body.theme-sba #settingsOverlay {
+    background: rgba(0, 0, 0, 0.3) !important;
+    backdrop-filter: blur(2px) !important;
+    -webkit-backdrop-filter: blur(2px) !important;
+    z-index: 1040 !important;
+}
+
+/* Settings Mini GUI Header */
+body.theme-sba #settingsDrawer .sidebar-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+body.theme-sba #settingsDrawer .sidebar-header h2 {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+}
+
+body.theme-sba #settingsDrawer .close-btn {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease !important;
+}
+
+body.theme-sba #settingsDrawer .close-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    transform: scale(1.06) !important;
+}
+
+/* Sections */
+body.theme-sba #settingsDrawer .settings-theme-section,
+body.theme-sba #settingsDrawer .filter-group {
+    margin-bottom: 12px !important;
+    padding: 10px 12px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 14px !important;
+}
+
+body.theme-sba #settingsDrawer .filter-group-title {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #94a3b8 !important;
+    margin: 0 0 8px !important;
+    display: block !important;
+}
+
+/* Button Grids */
+body.theme-sba #settingsDrawer .fx-mode-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+}
+
+body.theme-sba #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+}
+
+/* Matching Nav Bar Button Styling (hud-nav-link liquid glass) */
+body.theme-sba #settingsDrawer .sba-gui-btn,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn,
+body.theme-sba #settingsDrawer .fx-mode-btn {
+    appearance: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    padding: 9px 6px !important;
+    min-height: 52px !important;
+    border-radius: 13px !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.14), transparent 50%),
+        linear-gradient(180deg, rgba(229, 238, 248, 0.07), rgba(91, 102, 98, 0.03)) !important;
+    border: 1px solid rgba(246, 250, 255, 0.32) !important;
+    box-shadow:
+        0 4px 12px rgba(2, 5, 12, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 0 rgba(26, 32, 30, 0.10) !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn:hover,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn:hover,
+body.theme-sba #settingsDrawer .fx-mode-btn:hover {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.58) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.24), transparent 50%),
+        linear-gradient(180deg, rgba(231, 241, 255, 0.13), rgba(96, 109, 103, 0.06)) !important;
+    box-shadow:
+        0 6px 16px rgba(2, 5, 12, 0.22),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.48) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn.active,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn.active,
+body.theme-sba #settingsDrawer .fx-mode-btn.active {
+    color: #ffffff !important;
+    border-color: rgba(56, 189, 248, 0.85) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.35), transparent 50%),
+        linear-gradient(180deg, rgba(14, 116, 144, 0.38), rgba(6, 40, 60, 0.3)) !important;
+    box-shadow:
+        0 0 16px rgba(56, 189, 248, 0.42),
+        inset 0 0 0 1px rgba(56, 189, 248, 0.35),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.55) !important;
+    transform: translateY(0) !important;
+}
+
+body.theme-sba #settingsDrawer .fx-mode-icon,
+body.theme-sba #settingsDrawer .hud-btn-logo,
+body.theme-sba #settingsDrawer .placeholder-theme-icon {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+}
+
+body.theme-sba #settingsDrawer .hud-btn-logo {
+    object-fit: contain !important;
+}
+
+/* Legacy sidebar drawer for filters remains slide-out */
+body.theme-sba #sidebarDrawer {
+    left: calc(-1 * var(--sba-panel-width)) !important;
+    width: var(--sba-panel-width) !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    padding: 22px 16px 16px !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.43) !important;
+    background:
+        radial-gradient(circle at 0 0, color-mix(in srgb, var(--sba-liquid-sky) 21%, transparent), transparent 33%),
+        radial-gradient(circle at 100% 48%, color-mix(in srgb, var(--sba-liquid-lavender) 19%, transparent), transparent 36%),
+        radial-gradient(circle at 8% 100%, color-mix(in srgb, var(--sba-liquid-plum) 20%, transparent), transparent 32%),
+        linear-gradient(180deg, rgba(20, 24, 40, 0.76), rgba(5, 7, 13, 0.78)) !important;
+    box-shadow: 14px 0 42px rgba(0, 0, 0, 0.42), inset -1px 0 rgba(255, 255, 255, 0.08) !important;
+    backdrop-filter: blur(32px) saturate(155%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(155%) !important;
+    transition: left 220ms cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+body.theme-sba.sba-side-filters-open #sidebarDrawer {
+    left: 0 !important;
+}
+
+body.theme-sba.sba-side-filters-open .apple-hud-bar > * {
+    opacity: 0;
+    pointer-events: none !important;
+    transform: translateX(-9px);
+    transition: opacity 130ms ease, transform 130ms ease;
+}
+
+body.theme-sba .sidebar-header h2,
+body.theme-sba .filter-group-title {
+    color: #f6f7ff !important;
+}
+
+body.theme-sba .settings-theme-section,
+body.theme-sba #settingsDrawer .filter-group,
+body.theme-sba #sidebarDrawer .filter-group {
+    position: relative;
+    margin-bottom: 14px;
+    padding: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    border-radius: 18px;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.025)),
+        color-mix(in srgb, var(--sba-liquid-lavender) 8%, transparent);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.17), inset 0 -1px 2px rgba(0, 0, 0, 0.22);
+    backdrop-filter: blur(18px) saturate(145%);
+    -webkit-backdrop-filter: blur(18px) saturate(145%);
+}
+
+body.theme-sba .settings-theme-section > .filter-group-title {
+    display: block;
+    margin: 0 0 7px;
+    color: rgba(243, 246, 255, 0.84) !important;
+    font-size: 10px;
+    letter-spacing: 0.9px;
+}
+
+body.theme-sba #settingsDrawer .liquid-sync-btn,
+body.theme-sba #settingsDrawer .fx-mode-btn,
+body.theme-sba #sidebarDrawer .reset-btn,
+body.theme-sba #sidebarDrawer select {
+    border-color: rgba(255, 255, 255, 0.17) !important;
+    background:
+        linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.025)),
+        rgba(7, 10, 22, 0.46) !important;
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.14), 0 5px 13px rgba(0, 0, 0, 0.17) !important;
+    backdrop-filter: blur(14px) saturate(145%);
+    -webkit-backdrop-filter: blur(14px) saturate(145%);
+}
+
+body.theme-sba #settingsDrawer .fx-mode-btn.active,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn.active {
+    color: #fff !important;
+    border-color: color-mix(in srgb, var(--sba-liquid-sky) 72%, white) !important;
+    background:
+        linear-gradient(145deg, color-mix(in srgb, var(--sba-liquid-sky) 28%, transparent), color-mix(in srgb, var(--sba-liquid-magenta) 22%, transparent)),
+        rgba(10, 12, 29, 0.52) !important;
+    box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.28), 0 0 14px color-mix(in srgb, var(--sba-liquid-lavender) 30%, transparent) !important;
+}
+
+/* The SBA drawers use the same optical material as the rail. The translucent
+   tint stays thin; depth comes from the refracted backdrop and the light rim. */
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+) {
+    --sba-glass-x: 28%;
+    --sba-glass-y: 16%;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.17), transparent 39%),
+        linear-gradient(145deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.022) 48%, rgba(2, 4, 13, 0.10)),
+        rgba(125, 138, 180, 0.07) !important;
+    box-shadow:
+        0 7px 18px rgba(0, 0, 0, 0.22),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.48),
+        inset 0 -1.5px 2px rgba(3, 5, 16, 0.30),
+        inset 1px 0 1.5px rgba(145, 196, 242, 0.16),
+        inset -1px 0 1.5px rgba(161, 77, 160, 0.12) !important;
+    backdrop-filter: blur(10px) saturate(170%) brightness(1.06) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(170%) brightness(1.06) !important;
+    transition:
+        transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+        border-color 180ms ease,
+        box-shadow 180ms ease,
+        background 180ms ease !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) :is(
+        #settingsDrawer .liquid-sync-btn,
+        #settingsDrawer .fx-mode-btn,
+        #settingsDrawer .abs-hud-theme-btn,
+        #settingsDrawer .close-btn,
+        #sidebarDrawer .reset-btn,
+        #sidebarDrawer .close-btn
+    ) {
+        backdrop-filter:
+            url("#sba-liquid-button-refraction")
+            blur(7px)
+            saturate(180%)
+            contrast(105%)
+            brightness(1.08) !important;
+    }
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+)::before {
+    content: '';
+    position: absolute;
+    z-index: 0;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.42) 0 2%, rgba(255, 255, 255, 0.14) 10%, transparent 36%),
+        linear-gradient(128deg, rgba(255, 255, 255, 0.13), transparent 40%, rgba(157, 121, 188, 0.045) 71%, rgba(255, 255, 255, 0.09));
+    opacity: 0.88;
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #sidebarDrawer .reset-btn
+) > * {
+    position: relative;
+    z-index: 1;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #sidebarDrawer .reset-btn
+):hover {
+    border-color: rgba(214, 231, 255, 0.72) !important;
+    box-shadow:
+        0 9px 22px rgba(0, 0, 0, 0.28),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.58),
+        inset 0 -1.5px 2px rgba(3, 5, 16, 0.28),
+        0 0 14px rgba(140, 160, 215, 0.16) !important;
+    transform: translateY(-1px) scale(1.015);
+}
+
+body.theme-sba #settingsDrawer :is(.fx-mode-btn.active, .abs-hud-theme-btn.active) {
+    border-color: rgba(209, 230, 255, 0.82) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.30), transparent 39%),
+        linear-gradient(145deg, rgba(145, 196, 242, 0.24), rgba(157, 121, 188, 0.13) 55%, rgba(126, 31, 134, 0.10)),
+        rgba(23, 30, 53, 0.20) !important;
+    box-shadow:
+        0 8px 20px rgba(0, 0, 0, 0.25),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.57),
+        inset 0 -1.5px 2px rgba(3, 5, 16, 0.28),
+        0 0 15px rgba(140, 160, 215, 0.22) !important;
+}
+
+body.theme-sba :is(#settingsDrawer, #sidebarDrawer) .close-btn {
+    width: 34px;
+    min-width: 34px;
+    height: 34px;
+    border-radius: 50% !important;
+    color: rgba(244, 247, 255, 0.82);
+}
+
+body.theme-sba.fx-static .apple-hud-bar,
+body.theme-sba.fx-static #settingsDrawer,
+body.theme-sba.fx-static #sidebarDrawer,
+body.theme-sba.fx-static .hud-nav-link,
+body.theme-sba.fx-static :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+) {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba.fx-static .hud-nav-link::before {
+    transform: none;
+    transition: none;
+}
+
+@media (prefers-reduced-transparency: reduce) {
+    body.theme-sba .apple-hud-bar,
+    body.theme-sba #settingsDrawer,
+    body.theme-sba #sidebarDrawer,
+    body.theme-sba .hud-nav-link {
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.theme-sba .hud-nav-link,
+    body.theme-sba .hud-nav-link::before {
+        transition: none !important;
+    }
+}
+
+body.theme-sba #cardsAdvancedFilterBtn {
+    display: none !important;
+}
+
+@media (max-width: 760px) {
+    body.theme-sba {
+        --sba-rail-width: 84px;
+        --sba-panel-width: 268px;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - var(--sba-rail-width) - 18px) !important;
+        margin-left: calc(var(--sba-rail-width) + 8px) !important;
+        margin-right: 10px !important;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        padding-inline: 10px !important;
+    }
+
+    body.theme-sba .nav-center-link {
+        width: 46px;
+    }
+
+    body.theme-sba .nav-center-logo-img,
+    body.theme-sba #nav-center-logo,
+    body.theme-sba .apple-nav-center .nav-center-logo-img {
+        width: 46px !important;
+        max-width: 46px !important;
+    }
+}
+
+@media (max-width: 520px) {
+    /* Preserve usable reading width on a phone: the SBA rail becomes a compact
+       top dock, while filters/settings retain their regular accessible drawers. */
+    body.theme-sba .apple-hud-wrapper,
+    body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+        position: sticky !important;
+        inset: 0 auto auto 0 !important;
+        width: 100% !important;
+        height: auto !important;
+    }
+
+    body.theme-sba .liquid-metal-frame {
+        height: auto !important;
+        overflow: visible !important;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        min-height: 58px !important;
+        height: auto !important;
+        flex-direction: row !important;
+        padding: 5px 8px 5px 12px !important;
+        overflow: visible !important;
+    }
+
+    body.theme-sba .apple-nav-center {
+        display: none !important;
+    }
+
+    body.theme-sba .hud-nav-group {
+        flex-direction: row !important;
+        overflow-x: auto;
+        overflow-y: hidden;
+    }
+
+    body.theme-sba .hud-nav-link {
+        width: auto !important;
+        min-width: 39px;
+        min-height: 39px;
+        justify-content: center !important;
+        padding: 8px !important;
+    }
+
+    body.theme-sba .hud-nav-link > span {
+        display: none;
+    }
+
+    body.theme-sba .sba-side-settings-button {
+        margin-top: 0 !important;
+        border-top-color: transparent !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: 96vw !important;
+        margin: 16px auto 44px !important;
+        padding: 0 4px !important;
+    }
+
+    body.theme-sba #sidebarDrawer {
+        width: min(310px, calc(100vw - 14px)) !important;
+        left: -100vw !important;
+    }
+
+    body.theme-sba.sba-side-filters-open #sidebarDrawer {
+        left: 0 !important;
+    }
+}
+
+/* SBA floating side dock ---------------------------------------------------
+   The dock is the long 398/770 SVG material translated into CSS: a smoked
+   #999 luminosity surface, a very soft lower shadow, and slim pale bevels.
+   It deliberately owns the refraction; the circular action buttons remain
+   crisp controls inside it. */
+body.theme-sba {
+    --sba-rail-width: 104px;
+    --sba-dock-width: 80px;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    width: var(--sba-rail-width) !important;
+}
+
+body.theme-sba .liquid-metal-frame,
+body.theme-sba .apple-hud-bar {
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .liquid-metal-frame {
+    overflow: visible !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    padding: 18px 10px 14px !important;
+    overflow: visible !important;
+}
+
+body.theme-sba .apple-hud-bar::before {
+    display: none !important;
+}
+
+body.theme-sba .apple-nav-center {
+    display: flex !important;
+    order: -1 !important;
+    flex: 0 0 64px !important;
+    width: 100% !important;
+    height: 64px !important;
+    margin: 0 0 14px !important;
+}
+
+body.theme-sba .hud-nav-group {
+    --sba-dock-x: 50%;
+    --sba-dock-y: 14%;
+    position: relative !important;
+    isolation: isolate;
+    flex: 0 1 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 8px !important;
+    width: var(--sba-dock-width) !important;
+    max-height: calc(100dvh - 110px) !important;
+    margin: 0 auto !important;
+    padding: 10px 8px !important;
+    overflow-x: visible !important;
+    overflow-y: auto !important;
+    scrollbar-width: none;
+    border: 1px solid rgba(244, 248, 255, 0.52) !important;
+    border-radius: 38px !important;
+    background:
+        radial-gradient(ellipse 48px 104px at var(--sba-dock-x) var(--sba-dock-y), rgba(255, 255, 255, 0.3), transparent 66%),
+        linear-gradient(180deg, rgba(202, 211, 220, 0.16), rgba(94, 103, 99, 0.09)) !important;
+    box-shadow:
+        0 10px 24px rgba(2, 5, 12, 0.12),
+        inset 0 -1.25px 0.125px rgba(25, 30, 27, 0.18),
+        inset 0 1.25px 0.125px rgba(255, 255, 255, 0.24),
+        inset -1.25px 0 0.5px rgba(232, 239, 244, 0.34),
+        inset 1.25px 0 0.5px rgba(232, 239, 244, 0.34) !important;
+    backdrop-filter: blur(22px) saturate(92%) brightness(1.12) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(92%) brightness(1.12) !important;
+    transition: border-color 180ms ease, box-shadow 180ms ease !important;
+}
+
+body.theme-sba .hud-nav-group::-webkit-scrollbar {
+    display: none;
+}
+
+body.theme-sba .hud-nav-group::before,
+body.theme-sba .hud-nav-group::after {
+    content: '';
+    position: absolute;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+body.theme-sba .hud-nav-group::before {
+    z-index: -1;
+    inset: 1px;
+    background:
+        linear-gradient(112deg, transparent 17%, rgba(255, 255, 255, 0.28) 44%, transparent 65%),
+        radial-gradient(ellipse 42px 92px at var(--sba-dock-x) var(--sba-dock-y), rgba(255, 255, 255, 0.28), transparent 72%);
+    opacity: 0.78;
+    transition: background-position 110ms linear;
+}
+
+body.theme-sba .hud-nav-group::after {
+    z-index: -1;
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(31, 35, 29, 0.14);
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hud-nav-group {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(15px) saturate(92%) brightness(1.12) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(15px) saturate(92%) brightness(1.12) !important;
+    }
+}
+
+body.theme-sba.fx-static .hud-nav-group {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .hud-nav-group > *,
+body.theme-sba .hud-nav-group .hud-dropdown-wrap,
+body.theme-sba .hud-nav-group .hud-nav-link {
+    position: relative;
+    z-index: 1;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link {
+    flex: 0 0 auto !important;
+}
+
+body.theme-sba .hud-nav-group .sba-side-settings-button {
+    margin-top: 0 !important;
+}
+
+@media (max-width: 520px) {
+    body.theme-sba {
+        --sba-rail-width: 86px;
+        --sba-dock-width: 68px;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        padding: 12px 8px 10px !important;
+    }
+
+    body.theme-sba .apple-nav-center {
+        flex-basis: 56px !important;
+        height: 56px !important;
+        margin-bottom: 9px !important;
+    }
+
+    body.theme-sba .hud-nav-group {
+        gap: 7px !important;
+        max-height: calc(100dvh - 92px) !important;
+        padding: 8px 6px !important;
+        border-radius: 32px !important;
+    }
+
+    body.theme-sba:not(.fx-static) .hud-nav-link,
+    body.theme-sba.fx-static .hud-nav-link {
+        width: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        height: 44px !important;
+    }
+}
+
+/* SBA smoked glass palette — based on the supplied gray, white-lit SVG
+   controls. There are intentionally no pink, purple, or neon rim colours. */
+body.theme-sba {
+    --sba-liquid-sky: #f5f6f0;
+    --sba-liquid-blue: #c4c9c0;
+    --sba-liquid-lavender: #aeb4aa;
+    --sba-liquid-magenta: #d8dcd2;
+    --sba-liquid-plum: #596052;
+    --sba-rail-ink: #10130f;
+    --sba-rail-panel: rgba(18, 22, 18, 0.78);
+    --sba-rail-line: rgba(213, 220, 207, 0.34);
+    --sba-rail-accent: #ffffff;
+    --sba-rail-muted: #c7ccc2;
+    background:
+        radial-gradient(ellipse 68% 52% at 9% -9%, rgba(206, 214, 199, 0.17), transparent 68%),
+        radial-gradient(ellipse 54% 46% at 92% 10%, rgba(112, 121, 104, 0.14), transparent 72%),
+        radial-gradient(ellipse 56% 48% at 52% 105%, rgba(74, 82, 69, 0.14), transparent 74%),
+        linear-gradient(145deg, #1c201c 0%, #10130f 48%, #191c17 100%) !important;
+}
+
+body.theme-sba #bg-video {
+    opacity: 0.17;
+    filter: grayscale(0.72) saturate(0.34) brightness(0.48) !important;
+}
+
+body.theme-sba .glass-overlay {
+    background:
+        linear-gradient(120deg, rgba(18, 22, 18, 0.43), rgba(8, 10, 8, 0.61)),
+        radial-gradient(circle at 8% 12%, rgba(244, 246, 240, 0.09), transparent 36%),
+        radial-gradient(circle at 92% 82%, rgba(137, 147, 127, 0.10), transparent 38%) !important;
+    backdrop-filter: blur(16px) saturate(78%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(78%) !important;
+}
+
+body.theme-sba .hud-nav-link {
+    color: #d9ddd5 !important;
+    border-color: rgba(123, 129, 122, 0.76) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.19), transparent 37%),
+        linear-gradient(180deg, rgba(214, 220, 208, 0.14), rgba(76, 83, 75, 0.17) 56%, rgba(14, 17, 13, 0.19)),
+        rgba(140, 146, 139, 0.14) !important;
+    box-shadow:
+        0 13px 25px rgba(6, 8, 6, 0.36),
+        inset 0 1px 0 rgba(255, 255, 255, 0.50),
+        inset 0 5px 8px rgba(255, 255, 255, 0.13),
+        inset 0 -5px 9px rgba(7, 9, 7, 0.34),
+        inset 1px 0 1px rgba(255, 255, 255, 0.18),
+        inset -1px 0 1px rgba(43, 48, 42, 0.36) !important;
+}
+
+body.theme-sba .hud-nav-link::before {
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.62) 0 3%, rgba(255, 255, 255, 0.20) 11%, transparent 38%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.20), transparent 45%, rgba(255, 255, 255, 0.035)) !important;
+    mix-blend-mode: normal;
+}
+
+body.theme-sba .hud-nav-link::after {
+    background: conic-gradient(from 210deg,
+        rgba(75, 86, 50, 0.64),
+        rgba(255, 255, 255, 0.88) 13%,
+        rgba(255, 255, 255, 0.14) 34%,
+        rgba(116, 124, 112, 0.38) 56%,
+        rgba(255, 255, 255, 0.08) 74%,
+        rgba(75, 86, 50, 0.54) 89%,
+        rgba(75, 86, 50, 0.64)) !important;
+    opacity: 0.70;
+}
+
+body.theme-sba .hud-nav-link:hover,
+body.theme-sba .hud-nav-link:focus-visible {
+    color: #ffffff !important;
+    border-color: rgba(239, 242, 234, 0.86) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.28), transparent 38%),
+        linear-gradient(180deg, rgba(231, 236, 224, 0.20), rgba(110, 118, 106, 0.17) 56%, rgba(16, 19, 15, 0.19)),
+        rgba(140, 146, 139, 0.19) !important;
+    box-shadow:
+        0 15px 28px rgba(5, 7, 5, 0.40),
+        inset 0 1px 0 rgba(255, 255, 255, 0.64),
+        inset 0 6px 10px rgba(255, 255, 255, 0.16),
+        inset 0 -5px 9px rgba(7, 9, 7, 0.32),
+        0 0 12px rgba(255, 255, 255, 0.09) !important;
+}
+
+body.theme-sba .hud-nav-link.active,
+body.theme-sba .hud-nav-link[aria-expanded="true"] {
+    color: #ffffff !important;
+    border-color: rgba(244, 246, 240, 0.92) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.34), transparent 39%),
+        linear-gradient(180deg, rgba(240, 243, 235, 0.22), rgba(129, 137, 124, 0.23) 57%, rgba(28, 33, 26, 0.26)),
+        rgba(140, 146, 139, 0.23) !important;
+    box-shadow:
+        0 14px 27px rgba(5, 7, 5, 0.40),
+        inset 0 1px 0 rgba(255, 255, 255, 0.70),
+        inset 0 6px 10px rgba(255, 255, 255, 0.18),
+        inset 0 -5px 9px rgba(7, 9, 7, 0.32),
+        0 0 13px rgba(255, 255, 255, 0.10) !important;
+}
+
+body.theme-sba .hud-nav-link.active .hud-nav-svg {
+    color: #ffffff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.40)) !important;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+) {
+    border-color: rgba(123, 129, 122, 0.72) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.18), transparent 39%),
+        linear-gradient(180deg, rgba(214, 220, 208, 0.13), rgba(76, 83, 75, 0.15) 58%, rgba(14, 17, 13, 0.18)),
+        rgba(140, 146, 139, 0.12) !important;
+    box-shadow:
+        0 10px 20px rgba(6, 8, 6, 0.30),
+        inset 0 1px 0 rgba(255, 255, 255, 0.48),
+        inset 0 4px 7px rgba(255, 255, 255, 0.12),
+        inset 0 -4px 8px rgba(7, 9, 7, 0.30) !important;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+)::before {
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.48) 0 2%, rgba(255, 255, 255, 0.15) 10%, transparent 36%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.13), transparent 46%, rgba(255, 255, 255, 0.025)) !important;
+    mix-blend-mode: normal;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #sidebarDrawer .reset-btn
+):hover,
+body.theme-sba #settingsDrawer :is(.fx-mode-btn.active, .abs-hud-theme-btn.active) {
+    border-color: rgba(243, 246, 238, 0.82) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.27), transparent 40%),
+        linear-gradient(180deg, rgba(235, 239, 229, 0.20), rgba(116, 124, 112, 0.19) 58%, rgba(20, 24, 18, 0.22)),
+        rgba(140, 146, 139, 0.17) !important;
+    box-shadow:
+        0 11px 22px rgba(6, 8, 6, 0.34),
+        inset 0 1px 0 rgba(255, 255, 255, 0.62),
+        inset 0 4px 8px rgba(255, 255, 255, 0.15),
+        inset 0 -4px 8px rgba(7, 9, 7, 0.28) !important;
+}
+
+/* SBA circular navigation buttons, rebuilt directly from the supplied 122 ×
+   124 SVG: #8C928B / 20% fill, #4B5632 / 65% outline, a low soft shadow,
+   and its three white inner-light passes. */
+body.theme-sba:not(.fx-static) .hud-nav-link,
+body.theme-sba.fx-static .hud-nav-link {
+    --sba-glass-x: 50%;
+    --sba-glass-y: 50%;
+    width: 50px !important;
+    min-width: 50px !important;
+    min-height: 50px !important;
+    height: 50px !important;
+    overflow: visible !important;
+    border: 1px solid rgba(75, 86, 50, 0.65) !important;
+    border-radius: 50% !important;
+    color: rgba(245, 247, 240, 0.88) !important;
+    background: rgba(140, 146, 139, 0.20) !important;
+    box-shadow:
+        0 10px 8px -3px rgba(98, 103, 98, 0.30),
+        inset 0 2.5px 0 rgba(255, 255, 255, 0.50),
+        inset 0 5.5px 4px rgba(255, 255, 255, 0.25),
+        inset 0 -2.5px 0 rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    transition:
+        background-color 160ms ease,
+        border-color 160ms ease,
+        box-shadow 160ms ease,
+        color 160ms ease,
+        transform 160ms ease !important;
+}
+
+body.theme-sba .hud-nav-link::before,
+body.theme-sba .hud-nav-link::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-link:hover,
+body.theme-sba .hud-nav-link:focus-visible {
+    color: #ffffff !important;
+    border-color: rgba(245, 247, 240, 0.84) !important;
+    background: rgba(140, 146, 139, 0.29) !important;
+    box-shadow:
+        0 12px 10px -3px rgba(98, 103, 98, 0.34),
+        inset 0 2.5px 0 rgba(255, 255, 255, 0.60),
+        inset 0 5.5px 4px rgba(255, 255, 255, 0.31),
+        inset 0 -2.5px 0 rgba(255, 255, 255, 0.42) !important;
+    outline: none !important;
+    transform: translateY(-1px) !important;
+}
+
+body.theme-sba .hud-nav-link.active,
+body.theme-sba .hud-nav-link[aria-expanded="true"] {
+    color: #ffffff !important;
+    border-color: rgba(245, 247, 240, 0.90) !important;
+    background: rgba(140, 146, 139, 0.34) !important;
+    box-shadow:
+        0 11px 9px -3px rgba(98, 103, 98, 0.34),
+        inset 0 2.5px 0 rgba(255, 255, 255, 0.66),
+        inset 0 5.5px 4px rgba(255, 255, 255, 0.34),
+        inset 0 -2.5px 0 rgba(255, 255, 255, 0.46) !important;
+    transform: none !important;
+}
+
+body.theme-sba .hud-nav-link:active {
+    transform: translateY(1px) scale(0.97) !important;
+    box-shadow:
+        0 5px 6px -3px rgba(98, 103, 98, 0.30),
+        inset 0 2px 0 rgba(255, 255, 255, 0.42),
+        inset 0 4px 4px rgba(255, 255, 255, 0.20),
+        inset 0 -3px 3px rgba(255, 255, 255, 0.30) !important;
+}
+
+body.theme-sba .hud-nav-link .hud-nav-svg,
+body.theme-sba .hud-nav-link.active .hud-nav-svg {
+    color: currentColor !important;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.32)) !important;
+}
+
+/* ========================================================================== 
+   SBA FLOATING LIQUID DOCK
+
+   A persistent, detached navigation capsule replaces the earlier edge rail.
+   Settings and Filters use compact floating sheets above the dock so the
+   navigation remains visible and spatially stable at all times.
+   ========================================================================== */
+
+body.theme-sba {
+    --sba-dock-bottom: 18px;
+    --sba-dock-height: 76px;
+    --sba-dock-gap: 8px;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    position: fixed !important;
+    inset: auto auto var(--sba-dock-bottom) 50% !important;
+    width: max-content !important;
+    max-width: calc(100vw - 24px) !important;
+    height: var(--sba-dock-height) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateX(-50%) !important;
+    display: block !important;
+    z-index: 1100 !important;
+}
+
+body.theme-sba .liquid-metal-frame {
+    width: auto !important;
+    max-width: 100% !important;
+    height: 100% !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 40px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    position: relative !important;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-height: var(--sba-dock-height) !important;
+    height: var(--sba-dock-height) !important;
+    padding: 10px !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    border-radius: 40px !important;
+    background:
+        radial-gradient(ellipse at 22% 4%, rgba(255, 255, 255, 0.18), transparent 38%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.105), rgba(255, 255, 255, 0.025) 48%, rgba(4, 6, 15, 0.17)),
+        rgba(26, 31, 43, 0.58) !important;
+    box-shadow:
+        0 18px 42px rgba(0, 0, 0, 0.34),
+        0 2px 8px rgba(0, 0, 0, 0.28),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.48),
+        inset 0 -1.5px 2.5px rgba(0, 0, 0, 0.30),
+        inset 1px 0 1.5px rgba(145, 196, 242, 0.16),
+        inset -1px 0 1.5px rgba(161, 77, 160, 0.13) !important;
+    backdrop-filter: blur(24px) saturate(180%) contrast(106%) brightness(1.04) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(180%) contrast(106%) brightness(1.04) !important;
+    overflow: visible !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .apple-hud-bar {
+        backdrop-filter:
+            url("#sba-liquid-button-refraction")
+            blur(17px)
+            saturate(185%)
+            contrast(107%)
+            brightness(1.05) !important;
+    }
+}
+
+body.theme-sba .apple-hud-bar::before {
+    content: '' !important;
+    display: block !important;
+    position: absolute;
+    z-index: 0;
+    inset: 1px;
+    border-radius: inherit;
+    background:
+        radial-gradient(ellipse at 20% 0%, rgba(255, 255, 255, 0.32), transparent 34%),
+        linear-gradient(112deg, rgba(145, 196, 242, 0.09), transparent 24%, transparent 72%, rgba(161, 77, 160, 0.08));
+    mix-blend-mode: screen;
+    pointer-events: none;
+}
+
+body.theme-sba .apple-nav-center {
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-group {
+    position: relative;
+    z-index: 1;
+    display: flex !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: var(--sba-dock-gap) !important;
+    left: auto !important;
+    overflow: visible !important;
+}
+
+body.theme-sba .hud-dropdown-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    width: auto !important;
+}
+
+body.theme-sba .hud-nav-group > .hud-nav-link,
+body.theme-sba .hud-dropdown-wrap > .hud-nav-link {
+    margin: 0 !important;
+}
+
+body.theme-sba .sba-side-settings-button {
+    margin: 0 !important;
+    border-top-color: rgba(255, 255, 255, 0.34) !important;
+}
+
+body.theme-sba .hud-nav-link[aria-expanded="true"] {
+    color: #ffffff !important;
+    border-color: rgba(220, 235, 255, 0.84) !important;
+    background:
+        radial-gradient(circle at var(--sba-glass-x) var(--sba-glass-y), rgba(255, 255, 255, 0.38), transparent 36%),
+        linear-gradient(145deg, rgba(145, 196, 242, 0.28), rgba(157, 121, 188, 0.16) 57%, rgba(126, 31, 134, 0.12)),
+        rgba(35, 43, 69, 0.24) !important;
+}
+
+body.theme-sba .hub-main-container {
+    width: min(1560px, calc(100vw - 32px)) !important;
+    max-width: 1560px !important;
+    margin: 26px auto calc(var(--sba-dock-height) + var(--sba-dock-bottom) + 42px) !important;
+    padding: 0 6px !important;
+}
+
+body.theme-sba #sidebarDrawer {
+    position: fixed !important;
+    inset: auto auto calc(var(--sba-dock-height) + var(--sba-dock-bottom) + 12px) 50% !important;
+    width: min(356px, calc(100vw - 28px)) !important;
+    max-width: 356px !important;
+    height: auto !important;
+    max-height: calc(100dvh - var(--sba-dock-height) - var(--sba-dock-bottom) - 42px) !important;
+    padding: 20px 16px 16px !important;
+    border: 1px solid rgba(255, 255, 255, 0.36) !important;
+    border-radius: 28px !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translate(-50%, 16px) scale(0.965) !important;
+    transform-origin: 50% 100%;
+    overflow-x: hidden;
+    overflow-y: auto;
+    box-shadow:
+        0 24px 56px rgba(0, 0, 0, 0.42),
+        inset 0 1.5px 1px rgba(255, 255, 255, 0.42),
+        inset 0 -1px 2px rgba(0, 0, 0, 0.25) !important;
+    transition:
+        opacity 180ms ease,
+        visibility 180ms ease,
+        transform 240ms cubic-bezier(0.2, 0.85, 0.2, 1) !important;
+}
+
+body.theme-sba.sba-side-filters-open #sidebarDrawer {
+    left: 50% !important;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translate(-50%, 0) scale(1) !important;
+}
+
+body.theme-sba.sba-side-filters-open .apple-hud-bar > * {
+    opacity: 1;
+    pointer-events: auto !important;
+    transform: none;
+}
+
+@media (max-width: 620px) {
+    body.theme-sba {
+        --sba-dock-bottom: 10px;
+        --sba-dock-height: 64px;
+        --sba-dock-gap: 5px;
+    }
+
+    body.theme-sba .apple-hud-wrapper,
+    body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+        position: fixed !important;
+        inset: auto auto var(--sba-dock-bottom) 50% !important;
+        width: max-content !important;
+        max-width: calc(100vw - 12px) !important;
+        height: var(--sba-dock-height) !important;
+        transform: translateX(-50%) !important;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        min-height: var(--sba-dock-height) !important;
+        height: var(--sba-dock-height) !important;
+        padding: 7px !important;
+        border-radius: 34px !important;
+    }
+
+    body.theme-sba .hud-nav-group {
+        flex-direction: row !important;
+        gap: var(--sba-dock-gap) !important;
+        overflow: visible !important;
+    }
+
+    body.theme-sba .hud-nav-link {
+        width: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        height: 44px !important;
+        padding: 0 !important;
+    }
+
+    body.theme-sba .hud-nav-link .hud-nav-svg {
+        width: 17px !important;
+        height: 17px !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - 18px) !important;
+        margin: 14px auto calc(var(--sba-dock-height) + var(--sba-dock-bottom) + 30px) !important;
+        padding: 0 2px !important;
+    }
+
+    body.theme-sba #sidebarDrawer {
+        left: 50% !important;
+        bottom: calc(var(--sba-dock-height) + var(--sba-dock-bottom) + 9px) !important;
+        width: min(340px, calc(100vw - 18px)) !important;
+        max-width: calc(100vw - 18px) !important;
+    }
+}
+
+/* SBA glass side rail — restores the always-available vertical navigation
+   while keeping the newer lens, rim-light, and pointer-responsive controls. */
+body.theme-sba {
+    background:
+        radial-gradient(ellipse 72% 54% at 7% -8%, rgba(110, 150, 194, 0.28), transparent 66%),
+        radial-gradient(ellipse 58% 50% at 95% 12%, rgba(132, 94, 178, 0.20), transparent 70%),
+        radial-gradient(ellipse 56% 48% at 52% 105%, rgba(87, 57, 136, 0.20), transparent 72%),
+        linear-gradient(145deg, #151923 0%, #0b0e16 48%, #11101c 100%) !important;
+    background-attachment: fixed !important;
+}
+
+body.theme-sba #bg-video {
+    opacity: 0.27;
+    filter: saturate(0.60) brightness(0.55) hue-rotate(188deg);
+}
+
+body.theme-sba .glass-overlay {
+    background:
+        linear-gradient(120deg, rgba(12, 16, 27, 0.43), rgba(8, 10, 18, 0.60)),
+        radial-gradient(circle at 8% 12%, rgba(145, 196, 242, 0.17), transparent 36%),
+        radial-gradient(circle at 92% 82%, rgba(161, 77, 160, 0.15), transparent 38%) !important;
+    backdrop-filter: blur(16px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(120%) !important;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    position: fixed !important;
+    inset: 0 auto 0 0 !important;
+    width: var(--sba-rail-width) !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    transform: none !important;
+    z-index: 1000 !important;
+}
+
+body.theme-sba .liquid-metal-frame {
+    width: 100% !important;
+    max-width: none !important;
+    height: 100% !important;
+    border-radius: 0 !important;
+    background: var(--sba-rail-ink) !important;
+    box-shadow: 11px 0 34px rgba(0, 0, 0, 0.34) !important;
+    overflow: hidden !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    padding: 14px 8px 10px !important;
+    border: 0 !important;
+    border-right: 1px solid var(--sba-rail-line) !important;
+    border-radius: 0 !important;
+    background:
+        radial-gradient(circle at 16% 5%, color-mix(in srgb, var(--sba-liquid-sky) 22%, transparent), transparent 24%),
+        radial-gradient(circle at 86% 45%, color-mix(in srgb, var(--sba-liquid-lavender) 16%, transparent), transparent 30%),
+        radial-gradient(circle at 15% 88%, color-mix(in srgb, var(--sba-liquid-plum) 18%, transparent), transparent 25%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.045), rgba(5, 7, 13, 0.18)),
+        var(--sba-rail-panel) !important;
+    box-shadow: none !important;
+    overflow: hidden !important;
+}
+
+body.theme-sba .apple-hud-bar::before {
+    display: none !important;
+}
+
+body.theme-sba .apple-nav-center {
+    display: flex !important;
+    position: relative !important;
+    inset: auto !important;
+    order: -1;
+    width: 100% !important;
+    height: 74px;
+    margin: 0 0 12px !important;
+    transform: none !important;
+    justify-content: center !important;
+    padding: 0;
+}
+
+body.theme-sba .hud-nav-group {
+    position: relative;
+    z-index: 1;
+    display: flex !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    left: 0 !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+body.theme-sba .hud-dropdown-wrap {
+    display: flex !important;
+    justify-content: center !important;
+    width: 100% !important;
+}
+
+body.theme-sba .hud-nav-group > .hud-nav-link,
+body.theme-sba .hud-dropdown-wrap > .hud-nav-link {
+    margin-inline: auto !important;
+}
+
+body.theme-sba .sba-side-settings-button {
+    margin-top: auto !important;
+    border-top-color: rgba(255, 255, 255, 0.34) !important;
+}
+
+body.theme-sba .hud-nav-link:active {
+    transform: translateY(1px) scale(0.94) !important;
+    transition-duration: 70ms !important;
+}
+
+body.theme-sba :is(
+    #settingsDrawer .liquid-sync-btn,
+    #settingsDrawer .fx-mode-btn,
+    #settingsDrawer .abs-hud-theme-btn,
+    #settingsDrawer .close-btn,
+    #sidebarDrawer .reset-btn,
+    #sidebarDrawer .close-btn
+):active {
+    transform: translateY(1px) scale(0.975) !important;
+    transition-duration: 70ms !important;
+}
+
+body.theme-sba .hub-main-container {
+    width: calc(100vw - var(--sba-rail-width) - 30px) !important;
+    max-width: 1560px !important;
+    margin: 26px 16px 60px calc(var(--sba-rail-width) + 12px) !important;
+    padding: 0 6px !important;
+}
+
+body.theme-sba #sidebarDrawer {
+    position: fixed !important;
+    inset: 0 auto 0 calc(-1 * var(--sba-panel-width)) !important;
+    width: var(--sba-panel-width) !important;
+    max-width: none !important;
+    height: 100dvh !important;
+    max-height: none !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.43) !important;
+    border-radius: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    transform-origin: initial !important;
+    overflow-x: hidden;
+    overflow-y: auto;
+    transition: left 220ms cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+}
+
+body.theme-sba.sba-side-filters-open #sidebarDrawer {
+    inset: 0 auto 0 0 !important;
+    left: 0 !important;
+    transform: none !important;
+}
+
+body.theme-sba.sba-side-filters-open .apple-hud-bar > * {
+    opacity: 0;
+    pointer-events: none !important;
+    transform: translateX(-9px);
+}
+
+@media (max-width: 760px) {
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - var(--sba-rail-width) - 18px) !important;
+        margin-left: calc(var(--sba-rail-width) + 8px) !important;
+        margin-right: 10px !important;
+    }
+}
+
+@media (max-width: 520px) {
+    body.theme-sba {
+        --sba-rail-width: 76px;
+        --sba-panel-width: min(290px, calc(100vw - 14px));
+    }
+
+    body.theme-sba .apple-hud-wrapper,
+    body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+        position: fixed !important;
+        inset: 0 auto 0 0 !important;
+        width: var(--sba-rail-width) !important;
+        height: 100dvh !important;
+        transform: none !important;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        min-height: 0 !important;
+        height: 100% !important;
+        flex-direction: column !important;
+        padding: 11px 6px 8px !important;
+    }
+
+    body.theme-sba .apple-nav-center {
+        display: flex !important;
+        height: 57px;
+        margin-bottom: 7px !important;
+    }
+
+    body.theme-sba .hud-nav-group {
+        flex-direction: column !important;
+        gap: 7px !important;
+        overflow-y: auto !important;
+    }
+
+    body.theme-sba .hud-nav-link {
+        width: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        height: 44px !important;
+        padding: 0 !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - var(--sba-rail-width) - 12px) !important;
+        margin: 14px 6px 44px calc(var(--sba-rail-width) + 6px) !important;
+        padding: 0 2px !important;
+    }
+
+    body.theme-sba #sidebarDrawer {
+        inset: 0 auto 0 calc(-1 * var(--sba-panel-width)) !important;
+        width: var(--sba-panel-width) !important;
+        max-width: var(--sba-panel-width) !important;
+        bottom: auto !important;
+    }
+
+    body.theme-sba.sba-side-filters-open #sidebarDrawer {
+        inset: 0 auto 0 0 !important;
+        left: 0 !important;
+    }
+}
+
+/* Final SBA dock layer: kept last so the legacy full-height rail cannot
+   repaint over the SVG-inspired floating capsule above. */
+body.theme-sba {
+    --sba-rail-width: 104px;
+    --sba-dock-width: 80px;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    width: var(--sba-rail-width) !important;
+}
+
+body.theme-sba .liquid-metal-frame {
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    align-items: center !important;
+    padding: 18px 10px 14px !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .apple-nav-center {
+    flex: 0 0 64px !important;
+    height: 64px !important;
+    margin-bottom: 14px !important;
+}
+
+body.theme-sba .hud-nav-group {
+    --sba-dock-x: 50%;
+    --sba-dock-y: 14%;
+    isolation: isolate;
+    flex: 0 1 auto !important;
+    width: var(--sba-dock-width) !important;
+    max-height: calc(100dvh - 110px) !important;
+    gap: 8px !important;
+    margin: 0 auto !important;
+    padding: 10px 8px !important;
+    overflow-x: visible !important;
+    overflow-y: auto !important;
+    scrollbar-width: none;
+    border: 1px solid rgba(204, 204, 204, 0.78) !important;
+    border-radius: 38px !important;
+    background:
+        radial-gradient(ellipse 44px 92px at var(--sba-dock-x) var(--sba-dock-y), rgba(255, 255, 255, 0.24), transparent 66%),
+        linear-gradient(180deg, rgba(153, 153, 153, 0.33), rgba(79, 84, 77, 0.25)) !important;
+    box-shadow:
+        0 8px 15px rgba(0, 0, 0, 0.02),
+        inset 0 -1.25px 0.125px rgba(40, 40, 40, 0.38),
+        inset 0 1.25px 0.125px rgba(40, 40, 40, 0.34),
+        inset -1.25px 0 0.5px rgba(208, 208, 208, 0.52),
+        inset 1.25px 0 0.5px rgba(208, 208, 208, 0.52) !important;
+    backdrop-filter: blur(18px) saturate(82%) brightness(1.06) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(82%) brightness(1.06) !important;
+}
+
+body.theme-sba .hud-nav-group::before,
+body.theme-sba .hud-nav-group::after {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: inherit;
+}
+
+body.theme-sba .hud-nav-group::before {
+    inset: 1px;
+    background:
+        linear-gradient(112deg, transparent 21%, rgba(255, 255, 255, 0.2) 44%, transparent 64%),
+        radial-gradient(ellipse 38px 86px at var(--sba-dock-x) var(--sba-dock-y), rgba(255, 255, 255, 0.22), transparent 72%);
+}
+
+body.theme-sba .hud-nav-group::after {
+    inset: 0;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.3), inset 0 -1px 0 rgba(31, 35, 29, 0.24);
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hud-nav-group {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(12px) saturate(82%) brightness(1.06) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(12px) saturate(82%) brightness(1.06) !important;
+    }
+}
+
+body.theme-sba.fx-static .hud-nav-group {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .hud-nav-group > *,
+body.theme-sba .hud-nav-group .hud-dropdown-wrap,
+body.theme-sba .hud-nav-group .hud-nav-link {
+    position: relative;
+    z-index: 1;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link,
+body.theme-sba .hud-nav-group .sba-side-settings-button {
+    flex: 0 0 auto !important;
+    margin-top: 0 !important;
+}
+
+@media (max-width: 520px) {
+    body.theme-sba {
+        --sba-rail-width: 86px;
+        --sba-dock-width: 68px;
+    }
+
+    body.theme-sba .apple-hud-bar {
+        padding: 12px 8px 10px !important;
+    }
+
+    body.theme-sba .apple-nav-center {
+        flex-basis: 56px !important;
+        height: 56px !important;
+        margin-bottom: 9px !important;
+    }
+
+    body.theme-sba .hud-nav-group {
+        gap: 7px !important;
+        max-height: calc(100dvh - 92px) !important;
+        padding: 8px 6px !important;
+        border-radius: 32px !important;
+    }
+
+    body.theme-sba:not(.fx-static) .hud-nav-link,
+    body.theme-sba.fx-static .hud-nav-link {
+        width: 44px !important;
+        min-width: 44px !important;
+        min-height: 44px !important;
+        height: 44px !important;
+    }
+}

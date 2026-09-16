@@ -1,0 +1,10 @@
+{
+  "version": 1,
+  "dfe_lr_stems": [
+    101215, 101216, 101589, 101590, 101737, 101738, 101862, 101865,
+    101889, 101890, 102005, 102006, 102179, 102180, 102262, 102263,
+    102384, 102385, 102450, 102488, 102489, 102601, 102602, 102758,
+    102759, 102829, 102831, 102941, 102943
+  ],
+  "notes": "Curated banner provenance for exact LR roots. This supplements game data because the local card and awakening tables do not retain historical banner or coin type."
+}

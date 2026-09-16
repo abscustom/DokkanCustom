@@ -1,0 +1,1366 @@
+{
+  "generated_from": "database_decrypted.db",
+  "generated_at": "2026-08-31T22:19:25.309Z",
+  "by_passive_skill_set": {
+    "2727": [
+      {
+        "effect_id": 1,
+        "script_name": "pse0001",
+        "lite_flicker_rate": 70,
+        "bgm_id": 172
+      }
+    ],
+    "2733": [
+      {
+        "effect_id": 2,
+        "script_name": "pse0002",
+        "lite_flicker_rate": 70,
+        "bgm_id": 175
+      }
+    ],
+    "2739": [
+      {
+        "effect_id": 3,
+        "script_name": "pse0005",
+        "lite_flicker_rate": 70,
+        "bgm_id": 171
+      }
+    ],
+    "2749": [
+      {
+        "effect_id": 4,
+        "script_name": "pse0003",
+        "lite_flicker_rate": 70,
+        "bgm_id": 181
+      }
+    ],
+    "2752": [
+      {
+        "effect_id": 5,
+        "script_name": "pse0004",
+        "lite_flicker_rate": 70,
+        "bgm_id": 183
+      }
+    ],
+    "2758": [
+      {
+        "effect_id": 3,
+        "script_name": "pse0005",
+        "lite_flicker_rate": 70,
+        "bgm_id": 171
+      }
+    ],
+    "2775": [
+      {
+        "effect_id": 6,
+        "script_name": "pse0006",
+        "lite_flicker_rate": 70,
+        "bgm_id": 186
+      }
+    ],
+    "2867": [
+      {
+        "effect_id": 7,
+        "script_name": "pse0007",
+        "lite_flicker_rate": 50,
+        "bgm_id": 193
+      }
+    ],
+    "2889": [
+      {
+        "effect_id": 8,
+        "script_name": "pse0008",
+        "lite_flicker_rate": 50,
+        "bgm_id": 195
+      }
+    ],
+    "2895": [
+      {
+        "effect_id": 10,
+        "script_name": "pse0010",
+        "lite_flicker_rate": 30,
+        "bgm_id": 197
+      }
+    ],
+    "2911": [
+      {
+        "effect_id": 9,
+        "script_name": "pse0009",
+        "lite_flicker_rate": 50,
+        "bgm_id": 200
+      }
+    ],
+    "2942": [
+      {
+        "effect_id": 11,
+        "script_name": "pse0011",
+        "lite_flicker_rate": 30,
+        "bgm_id": 203
+      }
+    ],
+    "3010": [
+      {
+        "effect_id": 12,
+        "script_name": "pse0015",
+        "lite_flicker_rate": 30,
+        "bgm_id": 215
+      }
+    ],
+    "3012": [
+      {
+        "effect_id": 13,
+        "script_name": "pse0014",
+        "lite_flicker_rate": 30,
+        "bgm_id": 216
+      }
+    ],
+    "3028": [
+      {
+        "effect_id": 14,
+        "script_name": "pse0013",
+        "lite_flicker_rate": 30,
+        "bgm_id": 217
+      }
+    ],
+    "3061": [
+      {
+        "effect_id": 15,
+        "script_name": "pse0017",
+        "lite_flicker_rate": 30,
+        "bgm_id": 221
+      }
+    ],
+    "3071": [
+      {
+        "effect_id": 16,
+        "script_name": "pse0016",
+        "lite_flicker_rate": 50,
+        "bgm_id": 226
+      }
+    ],
+    "3072": [
+      {
+        "effect_id": 17,
+        "script_name": "pse0018",
+        "lite_flicker_rate": 50,
+        "bgm_id": 228
+      }
+    ],
+    "3334": [
+      {
+        "effect_id": 19,
+        "script_name": "pse0020",
+        "lite_flicker_rate": 30,
+        "bgm_id": 237
+      }
+    ],
+    "3335": [
+      {
+        "effect_id": 18,
+        "script_name": "pse0019",
+        "lite_flicker_rate": 30,
+        "bgm_id": 239
+      }
+    ],
+    "3367": [
+      {
+        "effect_id": 20,
+        "script_name": "pse0022",
+        "lite_flicker_rate": 50,
+        "bgm_id": 258
+      }
+    ],
+    "3413": [
+      {
+        "effect_id": 21,
+        "script_name": "pse0021",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "3414": [
+      {
+        "effect_id": 21,
+        "script_name": "pse0021",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "3415": [
+      {
+        "effect_id": 21,
+        "script_name": "pse0021",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "3438": [
+      {
+        "effect_id": 22,
+        "script_name": "pse0023",
+        "lite_flicker_rate": 30,
+        "bgm_id": 263
+      }
+    ],
+    "3449": [
+      {
+        "effect_id": 23,
+        "script_name": "pse0024",
+        "lite_flicker_rate": 30,
+        "bgm_id": 268
+      }
+    ],
+    "3450": [
+      {
+        "effect_id": 23,
+        "script_name": "pse0024",
+        "lite_flicker_rate": 30,
+        "bgm_id": 268
+      }
+    ],
+    "3451": [
+      {
+        "effect_id": 24,
+        "script_name": "pse0027",
+        "lite_flicker_rate": 30,
+        "bgm_id": 265
+      }
+    ],
+    "3458": [
+      {
+        "effect_id": 25,
+        "script_name": "pse0025",
+        "lite_flicker_rate": 70,
+        "bgm_id": 270
+      }
+    ],
+    "3485": [
+      {
+        "effect_id": 26,
+        "script_name": "pse0028",
+        "lite_flicker_rate": 30,
+        "bgm_id": 274
+      }
+    ],
+    "3489": [
+      {
+        "effect_id": 27,
+        "script_name": "pse0026",
+        "lite_flicker_rate": 30,
+        "bgm_id": 272
+      }
+    ],
+    "3518": [
+      {
+        "effect_id": 28,
+        "script_name": "pse0029",
+        "lite_flicker_rate": 50,
+        "bgm_id": 280
+      }
+    ],
+    "3525": [
+      {
+        "effect_id": 29,
+        "script_name": "pse0031",
+        "lite_flicker_rate": 30,
+        "bgm_id": 285
+      }
+    ],
+    "3529": [
+      {
+        "effect_id": 30,
+        "script_name": "pse0030",
+        "lite_flicker_rate": 30,
+        "bgm_id": 288
+      }
+    ],
+    "3534": [
+      {
+        "effect_id": 31,
+        "script_name": "pse0032",
+        "lite_flicker_rate": 30,
+        "bgm_id": 290
+      }
+    ],
+    "3573": [
+      {
+        "effect_id": 32,
+        "script_name": "pse0033",
+        "lite_flicker_rate": 50,
+        "bgm_id": 292
+      }
+    ],
+    "3577": [
+      {
+        "effect_id": 33,
+        "script_name": "pse0034",
+        "lite_flicker_rate": 50,
+        "bgm_id": 295
+      }
+    ],
+    "3880": [
+      {
+        "effect_id": 34,
+        "script_name": "pse0035",
+        "lite_flicker_rate": 30,
+        "bgm_id": 307
+      }
+    ],
+    "3893": [
+      {
+        "effect_id": 35,
+        "script_name": "pse0037",
+        "lite_flicker_rate": 50,
+        "bgm_id": 314
+      }
+    ],
+    "3899": [
+      {
+        "effect_id": 36,
+        "script_name": "pse0036",
+        "lite_flicker_rate": 50,
+        "bgm_id": 312
+      }
+    ],
+    "3918": [
+      {
+        "effect_id": 37,
+        "script_name": "pse0038",
+        "lite_flicker_rate": 50,
+        "bgm_id": 316
+      }
+    ],
+    "3963": [
+      {
+        "effect_id": 38,
+        "script_name": "pse0040",
+        "lite_flicker_rate": 30,
+        "bgm_id": 320
+      }
+    ],
+    "3979": [
+      {
+        "effect_id": 39,
+        "script_name": "pse0039",
+        "lite_flicker_rate": 50,
+        "bgm_id": 329
+      }
+    ],
+    "3984": [
+      {
+        "effect_id": 40,
+        "script_name": "pse0041",
+        "lite_flicker_rate": 70,
+        "bgm_id": 322
+      }
+    ],
+    "3989": [
+      {
+        "effect_id": 41,
+        "script_name": "pse0042",
+        "lite_flicker_rate": 70,
+        "bgm_id": 327
+      }
+    ],
+    "4008": [
+      {
+        "effect_id": 42,
+        "script_name": "pse0043",
+        "lite_flicker_rate": 50,
+        "bgm_id": 333
+      }
+    ],
+    "4044": [
+      {
+        "effect_id": 43,
+        "script_name": "pse0048",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4049": [
+      {
+        "effect_id": 44,
+        "script_name": "pse0044",
+        "lite_flicker_rate": 50,
+        "bgm_id": 335
+      }
+    ],
+    "4078": [
+      {
+        "effect_id": 45,
+        "script_name": "pse0045",
+        "lite_flicker_rate": 30,
+        "bgm_id": 342
+      }
+    ],
+    "4093": [
+      {
+        "effect_id": 43,
+        "script_name": "pse0048",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4094": [
+      {
+        "effect_id": 43,
+        "script_name": "pse0048",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4096": [
+      {
+        "effect_id": 46,
+        "script_name": "pse0046",
+        "lite_flicker_rate": 30,
+        "bgm_id": 346
+      }
+    ],
+    "4123": [
+      {
+        "effect_id": 47,
+        "script_name": "pse0047",
+        "lite_flicker_rate": 30,
+        "bgm_id": 349
+      }
+    ],
+    "4126": [
+      {
+        "effect_id": 48,
+        "script_name": "pse0055",
+        "lite_flicker_rate": 30,
+        "bgm_id": 361
+      }
+    ],
+    "4130": [
+      {
+        "effect_id": 49,
+        "script_name": "pse0050",
+        "lite_flicker_rate": 70,
+        "bgm_id": 354
+      }
+    ],
+    "4132": [
+      {
+        "effect_id": 50,
+        "script_name": "pse0049",
+        "lite_flicker_rate": 50,
+        "bgm_id": 356
+      }
+    ],
+    "4139": [
+      {
+        "effect_id": 51,
+        "script_name": "pse0051",
+        "lite_flicker_rate": 30,
+        "bgm_id": 359
+      }
+    ],
+    "4148": [
+      {
+        "effect_id": 52,
+        "script_name": "pse0054",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4150": [
+      {
+        "effect_id": 53,
+        "script_name": "pse0052",
+        "lite_flicker_rate": 30,
+        "bgm_id": 363
+      }
+    ],
+    "4176": [
+      {
+        "effect_id": 54,
+        "script_name": "pse0053",
+        "lite_flicker_rate": 30,
+        "bgm_id": 364
+      }
+    ],
+    "4185": [
+      {
+        "effect_id": 55,
+        "script_name": "pse0056",
+        "lite_flicker_rate": 30,
+        "bgm_id": 366
+      }
+    ],
+    "4193": [
+      {
+        "effect_id": 61,
+        "script_name": "pse0076",
+        "lite_flicker_rate": 30,
+        "bgm_id": 398
+      }
+    ],
+    "4198": [
+      {
+        "effect_id": 57,
+        "script_name": "pse0057",
+        "lite_flicker_rate": 30,
+        "bgm_id": 376
+      }
+    ],
+    "4199": [
+      {
+        "effect_id": 56,
+        "script_name": "pse0058",
+        "lite_flicker_rate": 30,
+        "bgm_id": 371
+      }
+    ],
+    "4205": [
+      {
+        "effect_id": 58,
+        "script_name": "pse0061",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4233": [
+      {
+        "effect_id": 59,
+        "script_name": "pse0060",
+        "lite_flicker_rate": 30,
+        "bgm_id": 380
+      }
+    ],
+    "4246": [
+      {
+        "effect_id": 63,
+        "script_name": "pse0064",
+        "lite_flicker_rate": 30,
+        "bgm_id": 392
+      }
+    ],
+    "4247": [
+      {
+        "effect_id": 63,
+        "script_name": "pse0064",
+        "lite_flicker_rate": 30,
+        "bgm_id": 392
+      }
+    ],
+    "4263": [
+      {
+        "effect_id": 62,
+        "script_name": "pse0062",
+        "lite_flicker_rate": 30,
+        "bgm_id": 389
+      }
+    ],
+    "4272": [
+      {
+        "effect_id": 60,
+        "script_name": "pse0059",
+        "lite_flicker_rate": 30,
+        "bgm_id": 388
+      }
+    ],
+    "4288": [
+      {
+        "effect_id": 66,
+        "script_name": "pse0063",
+        "lite_flicker_rate": 30,
+        "bgm_id": 408
+      }
+    ],
+    "4313": [
+      {
+        "effect_id": 67,
+        "script_name": "pse0069",
+        "lite_flicker_rate": 30,
+        "bgm_id": 414
+      }
+    ],
+    "4315": [
+      {
+        "effect_id": 64,
+        "script_name": "pse0065",
+        "lite_flicker_rate": 50,
+        "bgm_id": 400
+      }
+    ],
+    "4319": [
+      {
+        "effect_id": 65,
+        "script_name": "pse0066",
+        "lite_flicker_rate": 30,
+        "bgm_id": 403
+      }
+    ],
+    "4337": [
+      {
+        "effect_id": 68,
+        "script_name": "pse0068",
+        "lite_flicker_rate": 30,
+        "bgm_id": 421
+      }
+    ],
+    "4445": [
+      {
+        "effect_id": 69,
+        "script_name": "pse0075",
+        "lite_flicker_rate": 30,
+        "bgm_id": 425
+      }
+    ],
+    "4447": [
+      {
+        "effect_id": 71,
+        "script_name": "pse0074",
+        "lite_flicker_rate": 30,
+        "bgm_id": 428
+      }
+    ],
+    "4455": [
+      {
+        "effect_id": 72,
+        "script_name": "pse0071",
+        "lite_flicker_rate": 30,
+        "bgm_id": 420
+      }
+    ],
+    "4461": [
+      {
+        "effect_id": 73,
+        "script_name": "pse0073",
+        "lite_flicker_rate": 50,
+        "bgm_id": 410
+      }
+    ],
+    "4463": [
+      {
+        "effect_id": 74,
+        "script_name": "pse0070",
+        "lite_flicker_rate": 30,
+        "bgm_id": 412
+      }
+    ],
+    "4468": [
+      {
+        "effect_id": 67,
+        "script_name": "pse0069",
+        "lite_flicker_rate": 30,
+        "bgm_id": 414
+      }
+    ],
+    "4474": [
+      {
+        "effect_id": 68,
+        "script_name": "pse0068",
+        "lite_flicker_rate": 30,
+        "bgm_id": 421
+      }
+    ],
+    "4479": [
+      {
+        "effect_id": 75,
+        "script_name": "pse0077",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4481": [
+      {
+        "effect_id": 75,
+        "script_name": "pse0077",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4485": [
+      {
+        "effect_id": 71,
+        "script_name": "pse0074",
+        "lite_flicker_rate": 30,
+        "bgm_id": 428
+      }
+    ],
+    "4499": [
+      {
+        "effect_id": 76,
+        "script_name": "pse0072",
+        "lite_flicker_rate": 70,
+        "bgm_id": 426
+      }
+    ],
+    "4520": [
+      {
+        "effect_id": 1,
+        "script_name": "pse0001",
+        "lite_flicker_rate": 70,
+        "bgm_id": 172
+      }
+    ],
+    "4522": [
+      {
+        "effect_id": 2,
+        "script_name": "pse0002",
+        "lite_flicker_rate": 70,
+        "bgm_id": 175
+      }
+    ],
+    "4524": [
+      {
+        "effect_id": 4,
+        "script_name": "pse0003",
+        "lite_flicker_rate": 70,
+        "bgm_id": 181
+      }
+    ],
+    "4525": [
+      {
+        "effect_id": 5,
+        "script_name": "pse0004",
+        "lite_flicker_rate": 70,
+        "bgm_id": 183
+      }
+    ],
+    "4545": [
+      {
+        "effect_id": 77,
+        "script_name": "pse0079",
+        "lite_flicker_rate": 50,
+        "bgm_id": 437
+      }
+    ],
+    "4552": [
+      {
+        "effect_id": 78,
+        "script_name": "pse0080",
+        "lite_flicker_rate": 30,
+        "bgm_id": 439
+      }
+    ],
+    "4553": [
+      {
+        "effect_id": 79,
+        "script_name": "pse0078",
+        "lite_flicker_rate": 30,
+        "bgm_id": 441
+      }
+    ],
+    "4556": [
+      {
+        "effect_id": 61,
+        "script_name": "pse0076",
+        "lite_flicker_rate": 30,
+        "bgm_id": 398
+      }
+    ],
+    "4572": [
+      {
+        "effect_id": 81,
+        "script_name": "pse0082",
+        "lite_flicker_rate": 30,
+        "bgm_id": 448
+      }
+    ],
+    "4573": [
+      {
+        "effect_id": 80,
+        "script_name": "pse0081",
+        "lite_flicker_rate": 50,
+        "bgm_id": 450
+      }
+    ],
+    "4577": [
+      {
+        "effect_id": 82,
+        "script_name": "pse0083",
+        "lite_flicker_rate": 30,
+        "bgm_id": 452
+      }
+    ],
+    "4578": [
+      {
+        "effect_id": 82,
+        "script_name": "pse0083",
+        "lite_flicker_rate": 30,
+        "bgm_id": 452
+      }
+    ],
+    "4594": [
+      {
+        "effect_id": 83,
+        "script_name": "pse0084",
+        "lite_flicker_rate": 30,
+        "bgm_id": 454
+      }
+    ],
+    "4595": [
+      {
+        "effect_id": 84,
+        "script_name": "pse0085",
+        "lite_flicker_rate": 30,
+        "bgm_id": 456
+      }
+    ],
+    "4621": [
+      {
+        "effect_id": 85,
+        "script_name": "pse0086",
+        "lite_flicker_rate": 30,
+        "bgm_id": 458
+      }
+    ],
+    "4622": [
+      {
+        "effect_id": 85,
+        "script_name": "pse0086",
+        "lite_flicker_rate": 30,
+        "bgm_id": 458
+      }
+    ],
+    "4627": [
+      {
+        "effect_id": 86,
+        "script_name": "pse0087",
+        "lite_flicker_rate": 30,
+        "bgm_id": 460
+      }
+    ],
+    "4628": [
+      {
+        "effect_id": 86,
+        "script_name": "pse0087",
+        "lite_flicker_rate": 30,
+        "bgm_id": 460
+      }
+    ],
+    "4631": [
+      {
+        "effect_id": 15,
+        "script_name": "pse0017",
+        "lite_flicker_rate": 30,
+        "bgm_id": 221
+      }
+    ],
+    "4634": [
+      {
+        "effect_id": 88,
+        "script_name": "pse0088",
+        "lite_flicker_rate": 50,
+        "bgm_id": 462
+      }
+    ],
+    "4637": [
+      {
+        "effect_id": 87,
+        "script_name": "pse0089",
+        "lite_flicker_rate": 30,
+        "bgm_id": 464
+      }
+    ],
+    "4646": [
+      {
+        "effect_id": 9,
+        "script_name": "pse0009",
+        "lite_flicker_rate": 50,
+        "bgm_id": 200
+      }
+    ],
+    "4662": [
+      {
+        "effect_id": 89,
+        "script_name": "pse0090",
+        "lite_flicker_rate": 30,
+        "bgm_id": 467
+      }
+    ],
+    "4663": [
+      {
+        "effect_id": 89,
+        "script_name": "pse0090",
+        "lite_flicker_rate": 30,
+        "bgm_id": 467
+      }
+    ],
+    "4683": [
+      {
+        "effect_id": 90,
+        "script_name": "pse0091",
+        "lite_flicker_rate": 50,
+        "bgm_id": 470
+      }
+    ],
+    "4684": [
+      {
+        "effect_id": 90,
+        "script_name": "pse0091",
+        "lite_flicker_rate": 50,
+        "bgm_id": 470
+      }
+    ],
+    "4687": [
+      {
+        "effect_id": 91,
+        "script_name": "pse0092",
+        "lite_flicker_rate": 50,
+        "bgm_id": 472
+      }
+    ],
+    "4688": [
+      {
+        "effect_id": 10,
+        "script_name": "pse0010",
+        "lite_flicker_rate": 30,
+        "bgm_id": 197
+      }
+    ],
+    "4712": [
+      {
+        "effect_id": 92,
+        "script_name": "pse0100",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4713": [
+      {
+        "effect_id": 93,
+        "script_name": "pse0101",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4714": [
+      {
+        "effect_id": 94,
+        "script_name": "pse0102",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4715": [
+      {
+        "effect_id": 95,
+        "script_name": "pse0103",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4716": [
+      {
+        "effect_id": 96,
+        "script_name": "pse0104",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4717": [
+      {
+        "effect_id": 97,
+        "script_name": "pse0105",
+        "lite_flicker_rate": 30,
+        "bgm_id": null
+      }
+    ],
+    "4722": [
+      {
+        "effect_id": 8,
+        "script_name": "pse0008",
+        "lite_flicker_rate": 50,
+        "bgm_id": 195
+      }
+    ],
+    "4735": [
+      {
+        "effect_id": 98,
+        "script_name": "pse0093",
+        "lite_flicker_rate": 50,
+        "bgm_id": 476
+      }
+    ],
+    "4736": [
+      {
+        "effect_id": 99,
+        "script_name": "pse0094",
+        "lite_flicker_rate": 50,
+        "bgm_id": 478
+      }
+    ],
+    "4737": [
+      {
+        "effect_id": 100,
+        "script_name": "pse0095",
+        "lite_flicker_rate": 30,
+        "bgm_id": 484
+      }
+    ],
+    "4751": [
+      {
+        "effect_id": 101,
+        "script_name": "pse0098",
+        "lite_flicker_rate": 50,
+        "bgm_id": 480
+      }
+    ],
+    "4754": [
+      {
+        "effect_id": 102,
+        "script_name": "pse0099",
+        "lite_flicker_rate": 30,
+        "bgm_id": 482
+      }
+    ],
+    "4774": [
+      {
+        "effect_id": 103,
+        "script_name": "pse0106",
+        "lite_flicker_rate": 30,
+        "bgm_id": 486
+      }
+    ],
+    "4779": [
+      {
+        "effect_id": 104,
+        "script_name": "pse0096",
+        "lite_flicker_rate": 30,
+        "bgm_id": 492
+      }
+    ],
+    "4780": [
+      {
+        "effect_id": 104,
+        "script_name": "pse0096",
+        "lite_flicker_rate": 30,
+        "bgm_id": 492
+      }
+    ],
+    "4797": [
+      {
+        "effect_id": 108,
+        "script_name": "pse0108",
+        "lite_flicker_rate": 50,
+        "bgm_id": 496
+      }
+    ],
+    "4798": [
+      {
+        "effect_id": 112,
+        "script_name": "pse0112",
+        "lite_flicker_rate": 50,
+        "bgm_id": 505
+      }
+    ],
+    "4799": [
+      {
+        "effect_id": 112,
+        "script_name": "pse0112",
+        "lite_flicker_rate": 50,
+        "bgm_id": 505
+      }
+    ],
+    "4802": [
+      {
+        "effect_id": 109,
+        "script_name": "pse0109",
+        "lite_flicker_rate": 50,
+        "bgm_id": 499
+      }
+    ],
+    "4803": [
+      {
+        "effect_id": 107,
+        "script_name": "pse0097",
+        "lite_flicker_rate": 30,
+        "bgm_id": 494
+      }
+    ],
+    "4804": [
+      {
+        "effect_id": 107,
+        "script_name": "pse0097",
+        "lite_flicker_rate": 30,
+        "bgm_id": 494
+      }
+    ],
+    "4833": [
+      {
+        "effect_id": 16,
+        "script_name": "pse0016",
+        "lite_flicker_rate": 50,
+        "bgm_id": 226
+      }
+    ],
+    "4834": [
+      {
+        "effect_id": 17,
+        "script_name": "pse0018",
+        "lite_flicker_rate": 50,
+        "bgm_id": 228
+      }
+    ],
+    "4836": [
+      {
+        "effect_id": 12,
+        "script_name": "pse0015",
+        "lite_flicker_rate": 30,
+        "bgm_id": 215
+      }
+    ],
+    "4837": [
+      {
+        "effect_id": 13,
+        "script_name": "pse0014",
+        "lite_flicker_rate": 30,
+        "bgm_id": 216
+      }
+    ],
+    "4840": [
+      {
+        "effect_id": 18,
+        "script_name": "pse0019",
+        "lite_flicker_rate": 30,
+        "bgm_id": 239
+      }
+    ],
+    "4841": [
+      {
+        "effect_id": 19,
+        "script_name": "pse0020",
+        "lite_flicker_rate": 30,
+        "bgm_id": 237
+      }
+    ],
+    "4844": [
+      {
+        "effect_id": 111,
+        "script_name": "pse0111",
+        "lite_flicker_rate": 50,
+        "bgm_id": 502
+      }
+    ],
+    "4845": [
+      {
+        "effect_id": 111,
+        "script_name": "pse0111",
+        "lite_flicker_rate": 50,
+        "bgm_id": 502
+      }
+    ],
+    "4860": [
+      {
+        "effect_id": 7,
+        "script_name": "pse0007",
+        "lite_flicker_rate": 50,
+        "bgm_id": 193
+      }
+    ],
+    "4869": [
+      {
+        "effect_id": 113,
+        "script_name": "pse0113",
+        "lite_flicker_rate": 30,
+        "bgm_id": 510
+      }
+    ],
+    "4886": [
+      {
+        "effect_id": 114,
+        "script_name": "pse0114",
+        "lite_flicker_rate": 70,
+        "bgm_id": 513
+      }
+    ],
+    "4887": [
+      {
+        "effect_id": 114,
+        "script_name": "pse0114",
+        "lite_flicker_rate": 70,
+        "bgm_id": 513
+      }
+    ],
+    "4894": [
+      {
+        "effect_id": 6,
+        "script_name": "pse0006",
+        "lite_flicker_rate": 70,
+        "bgm_id": 186
+      }
+    ],
+    "4896": [
+      {
+        "effect_id": 115,
+        "script_name": "pse0115",
+        "lite_flicker_rate": 50,
+        "bgm_id": 516
+      }
+    ],
+    "4897": [
+      {
+        "effect_id": 115,
+        "script_name": "pse0115",
+        "lite_flicker_rate": 50,
+        "bgm_id": 516
+      }
+    ],
+    "4901": [
+      {
+        "effect_id": 116,
+        "script_name": "pse0117",
+        "lite_flicker_rate": 30,
+        "bgm_id": 518
+      }
+    ],
+    "4915": [
+      {
+        "effect_id": 117,
+        "script_name": "pse0116",
+        "lite_flicker_rate": 30,
+        "bgm_id": 521
+      }
+    ],
+    "4944": [
+      {
+        "effect_id": 118,
+        "script_name": "pse0118",
+        "lite_flicker_rate": 30,
+        "bgm_id": 523
+      }
+    ],
+    "4946": [
+      {
+        "effect_id": 119,
+        "script_name": "pse0119",
+        "lite_flicker_rate": 30,
+        "bgm_id": 525
+      }
+    ],
+    "4959": [
+      {
+        "effect_id": 20,
+        "script_name": "pse0022",
+        "lite_flicker_rate": 50,
+        "bgm_id": 258
+      }
+    ],
+    "4965": [
+      {
+        "effect_id": 120,
+        "script_name": "pse0120",
+        "lite_flicker_rate": 30,
+        "bgm_id": 527
+      }
+    ],
+    "4966": [
+      {
+        "effect_id": 120,
+        "script_name": "pse0120",
+        "lite_flicker_rate": 30,
+        "bgm_id": 527
+      }
+    ],
+    "4971": [
+      {
+        "effect_id": 122,
+        "script_name": "pse0122",
+        "lite_flicker_rate": 30,
+        "bgm_id": 529
+      }
+    ],
+    "4977": [
+      {
+        "effect_id": 121,
+        "script_name": "pse0121",
+        "lite_flicker_rate": 30,
+        "bgm_id": 532
+      }
+    ],
+    "4980": [
+      {
+        "effect_id": 27,
+        "script_name": "pse0026",
+        "lite_flicker_rate": 30,
+        "bgm_id": 272
+      }
+    ],
+    "4990": [
+      {
+        "effect_id": 11,
+        "script_name": "pse0011",
+        "lite_flicker_rate": 30,
+        "bgm_id": 203
+      }
+    ],
+    "4995": [
+      {
+        "effect_id": 110,
+        "script_name": "pse0110",
+        "lite_flicker_rate": 70,
+        "bgm_id": 553
+      }
+    ],
+    "4997": [
+      {
+        "effect_id": 41,
+        "script_name": "pse0042",
+        "lite_flicker_rate": 70,
+        "bgm_id": 327
+      }
+    ],
+    "5000": [
+      {
+        "effect_id": 124,
+        "script_name": "pse0130",
+        "lite_flicker_rate": 50,
+        "bgm_id": 549
+      }
+    ],
+    "5005": [
+      {
+        "effect_id": 125,
+        "script_name": "pse0129",
+        "lite_flicker_rate": 50,
+        "bgm_id": 552
+      }
+    ],
+    "5007": [
+      {
+        "effect_id": 126,
+        "script_name": "pse0128",
+        "lite_flicker_rate": 30,
+        "bgm_id": 551
+      }
+    ],
+    "5010": [
+      {
+        "effect_id": 127,
+        "script_name": "pse0123",
+        "lite_flicker_rate": 30,
+        "bgm_id": 534
+      }
+    ],
+    "5014": [
+      {
+        "effect_id": 128,
+        "script_name": "pse0124",
+        "lite_flicker_rate": 30,
+        "bgm_id": 536
+      }
+    ],
+    "5021": [
+      {
+        "effect_id": 38,
+        "script_name": "pse0040",
+        "lite_flicker_rate": 30,
+        "bgm_id": 320
+      }
+    ],
+    "5036": [
+      {
+        "effect_id": 40,
+        "script_name": "pse0041",
+        "lite_flicker_rate": 70,
+        "bgm_id": 322
+      }
+    ]
+  }
+}

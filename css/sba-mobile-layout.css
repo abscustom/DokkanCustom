@@ -1,0 +1,387 @@
+/* ===========================================================================
+   SBA MOBILE LAYOUT NORMALIZATION
+   Loaded by the Hub and Calculator only. Editor intentionally does not load
+   this file so its workspace remains unchanged.
+   =========================================================================== */
+
+@media (max-width: 760px) {
+    html,
+    body.theme-sba {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    /* Keep the full shared dock on one stable, scrollable rail instead of
+       letting individual labels force it wider than the viewport. */
+    body.theme-sba .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+        width: calc(100vw - 16px) !important;
+        max-width: calc(100vw - 16px) !important;
+        height: 60px !important;
+        padding: 4px 6px !important;
+        box-sizing: border-box !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+    }
+
+    body.theme-sba .hud-nav-group .hud-nav-link,
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"],
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Settings"] {
+        width: 54px !important;
+        min-width: 54px !important;
+        height: 52px !important;
+        min-height: 52px !important;
+        padding: 4px 2px !important;
+    }
+
+    body.theme-sba .hud-nav-group .hud-nav-link.active,
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"] {
+        width: 62px !important;
+        min-width: 62px !important;
+        height: 52px !important;
+        min-height: 52px !important;
+    }
+
+    body.theme-sba .hud-nav-group .hud-nav-link > span {
+        max-width: 50px !important;
+        overflow: hidden !important;
+        font-size: 7.5px !important;
+        text-overflow: ellipsis !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - 16px) !important;
+        max-width: none !important;
+        margin: 12px auto calc(var(--sba-dock-height, 60px) + var(--sba-dock-bottom, 10px) + 34px) !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba .hub-home-view,
+    body.theme-sba .hub-cards-view,
+    body.theme-sba .hub-home-top-grid,
+    body.theme-sba .cards-workspace-heading,
+    body.theme-sba .cards-workspace-actions {
+        min-width: 0 !important;
+    }
+
+    body.theme-sba .hub-home-view {
+        padding-right: 0 !important;
+    }
+
+    body.theme-sba .cards-workspace-actions {
+        align-items: stretch !important;
+    }
+
+    body.theme-sba .cards-workspace-actions .cards-search-toolbar {
+        min-width: 0 !important;
+        width: 100% !important;
+    }
+
+    body.theme-sba #settingsDrawer {
+        right: 8px !important;
+        left: 8px !important;
+        width: auto !important;
+        max-width: none !important;
+        bottom: 68px !important;
+        max-height: calc(100dvh - 84px) !important;
+    }
+
+    /* Calculator: collapse the desktop 180px side dock into normal stacked
+       content before it can push the stats workspace off-screen. */
+    body.calc-liquid-body.theme-sba .calc-news-snippet {
+        position: relative !important;
+        width: 100% !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+    }
+
+    body.calc-liquid-body.theme-sba .calc-wrapper {
+        width: 100% !important;
+        margin: 10px auto 96px !important;
+        padding: 0 8px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.calc-liquid-body.theme-sba .calc-studio-layout {
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-template-rows: auto !important;
+        width: 100% !important;
+    }
+
+    body.calc-liquid-body.theme-sba #calc-live-dash-grid,
+    body.calc-liquid-body.theme-sba .calc-left-dock-column {
+        grid-column: 1 !important;
+        grid-row: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.calc-liquid-body.theme-sba .calc-left-dock-column {
+        position: static !important;
+        order: 2;
+    }
+
+    body.calc-liquid-body.theme-sba .calc-masonry-2col,
+    body.calc-liquid-body.theme-sba .boss-defense-grid-5 {
+        grid-template-columns: minmax(0, 1fr) !important;
+    }
+
+    body.calc-liquid-body.theme-sba .calc-unit-picker-dialog,
+    body.calc-liquid-body.theme-sba .vcard-container {
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: calc(100dvh - 28px) !important;
+        overflow-y: auto !important;
+    }
+}
+
+@media (max-width: 390px) {
+    body.theme-sba .hud-nav-group .hud-nav-link,
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"],
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Settings"] {
+        width: 50px !important;
+        min-width: 50px !important;
+    }
+
+    body.theme-sba .hud-nav-group .hud-nav-link.active,
+    body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"] {
+        width: 58px !important;
+        min-width: 58px !important;
+    }
+
+    body.calc-liquid-body.theme-sba .apple-glass-character-deck {
+        padding: 12px !important;
+    }
+}
+
+/* Keep the SBA Hub's redesigned Home and Cards chrome stable when browser
+   zoom crosses the desktop breakpoint.  These rules are Hub-only: the
+   Calculator and Editor are not affected. */
+body.theme-sba:not(.calc-liquid-body) .apple-nav-center {
+    display: none !important;
+}
+
+@media (max-width: 990px) {
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .hub-home-view {
+        display: flex !important;
+        flex-direction: column !important;
+        width: 100% !important;
+        padding-top: 136px !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .hub-home-top-grid {
+        display: contents !important;
+        width: auto !important;
+        margin: 0 !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-news-snippet,
+    body.theme-sba:has(#hubCardsSection[style*="display: block"]) .cards-news-snippet {
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        z-index: 1001 !important;
+        display: flex !important;
+        width: 100vw !important;
+        height: 74px !important;
+        min-height: 74px !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        pointer-events: auto !important;
+    }
+
+    body.theme-sba:has(#hubCardsSection[style*="display: block"]) .hub-cards-view {
+        padding-top: 88px !important;
+    }
+
+    /* Do not let the old large Streamers card return at tablet widths. */
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel {
+        position: fixed !important;
+        top: 73px !important;
+        right: 0 !important;
+        left: 0 !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100vw !important;
+        height: 53px !important;
+        min-height: 53px !important;
+        max-height: 53px !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        padding: 5px 12px !important;
+        overflow: hidden !important;
+        border-radius: 0 !important;
+        background: rgba(15, 11, 27, 0.84) !important;
+        box-sizing: border-box !important;
+        pointer-events: auto !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamers-panel-header {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex: 0 0 46px !important;
+        width: 46px !important;
+        height: 42px !important;
+        padding: 0 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.18) !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamers-badge-tag,
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamers-live-preview-grid,
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamer-pill-name,
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamer-live-status {
+        display: none !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamers-horizontal-track {
+        display: flex !important;
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: auto !important;
+        scrollbar-width: none;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamer-card-pill {
+        display: grid !important;
+        width: 28px !important;
+        min-width: 28px !important;
+        height: 28px !important;
+        padding: 0 !important;
+        place-items: center !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-streamers-longitudinal-panel .streamer-avatar-circle {
+        width: 23px !important;
+        height: 23px !important;
+        font-size: 9px !important;
+    }
+
+    /* Match the desktop Home sequence at every zoom level: absCustoms title,
+       its character showcase, then the release timeline. */
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .dokkan-timeline-panel {
+        position: relative !important;
+        inset: auto !important;
+        order: 4 !important;
+        width: 100vw !important;
+        height: 278px !important;
+        min-height: 278px !important;
+        margin: 22px 0 30px calc(50% - 50vw) !important;
+        padding-inline: max(14px, calc((100vw - 1560px) / 2 + 18px)) !important;
+        border-radius: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .hub-showcase-divider {
+        order: 0 !important;
+        width: 100vw !important;
+        margin: 0 0 10px calc(50% - 50vw) !important;
+        padding-inline: max(14px, calc((100vw - 1560px) / 2 + 18px)) !important;
+        border-radius: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) #homeCardGrid {
+        order: 3 !important;
+        margin-top: 0 !important;
+    }
+
+    /* Keep absCustoms directly beneath the centered pixel divider. */
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .sba-showcase-section {
+        order: 1 !important;
+        width: 100vw !important;
+        margin: 20px 0 0 calc(50% - 50vw) !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .sba-showcase-anchor {
+        width: 100% !important;
+        margin: 0 0 9px !important;
+        padding-inline: max(14px, calc((100vw - 1560px) / 2 + 18px)) !important;
+        min-height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+        box-sizing: border-box !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .sba-showcase-anchor .sba-showcase-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 9px !important;
+        min-height: 38px !important;
+        margin: 0 !important;
+        padding: 0 2px !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) .sba-showcase-anchor .sba-showcase-title-svg {
+        width: 22px !important;
+        height: 22px !important;
+        color: #c9dfff !important;
+        flex: 0 0 auto !important;
+    }
+
+    body.theme-sba:has(#hubHomeSection:not([style*="display: none"])) #homeCardGrid {
+        order: 2 !important;
+        margin-top: 0 !important;
+    }
+}
+
+/* Standalone official-card inspector: this page uses its own ABS inspector
+   shell, so it gets a small mobile pass without inheriting Hub or Editor UI. */
+@media (max-width: 760px) {
+    body.is-published {
+        max-width: 100%;
+        overflow-x: clip;
+    }
+
+    body.is-published #app {
+        padding-bottom: 24px;
+    }
+
+    body.is-published #app.theme-abs-style #top-content .container-1220,
+    body.is-published #layout-abs-style {
+        width: calc(100vw - 16px) !important;
+        max-width: none !important;
+        padding-inline: 0 !important;
+        box-sizing: border-box !important;
+    }
+
+    body.is-published .modern-top-bar.scouter-hud-bar {
+        min-height: 58px !important;
+    }
+
+    body.is-published .scouter-hud-container {
+        min-height: 58px !important;
+        padding-inline: 9px !important;
+        gap: 8px !important;
+    }
+
+    body.is-published .top-bar-center {
+        display: none !important;
+    }
+
+    body.is-published .top-bar-right {
+        gap: 6px !important;
+    }
+
+    body.is-published .top-bar-right .hud-btn-indicator {
+        display: none !important;
+    }
+
+    body.is-published .abs-art-box {
+        min-height: 0 !important;
+    }
+}

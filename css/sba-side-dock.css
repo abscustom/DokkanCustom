@@ -1,0 +1,573 @@
+/* Last-mile SBA dock material: deliberately separate so it always wins over
+   the older SBA rail experiments in hub-themes.css. */
+body.theme-sba .hud-nav-group {
+    border-color: rgba(244, 248, 255, 0.52) !important;
+    background:
+        radial-gradient(ellipse 48px 104px at var(--sba-dock-x, 50%) var(--sba-dock-y, 14%), rgba(255, 255, 255, 0.22), transparent 66%),
+        linear-gradient(180deg, rgba(202, 211, 220, 0.10), rgba(94, 103, 99, 0.045)) !important;
+    box-shadow:
+        0 10px 24px rgba(2, 5, 12, 0.12),
+        inset 0 -1.25px 0.125px rgba(25, 30, 27, 0.18),
+        inset 0 1.25px 0.125px rgba(255, 255, 255, 0.24),
+        inset -1.25px 0 0.5px rgba(232, 239, 244, 0.34),
+        inset 1.25px 0 0.5px rgba(232, 239, 244, 0.34) !important;
+    backdrop-filter: blur(22px) saturate(92%) brightness(1.12) !important;
+    -webkit-backdrop-filter: blur(22px) saturate(92%) brightness(1.12) !important;
+}
+
+body.theme-sba .hud-nav-group::before {
+    background:
+        linear-gradient(112deg, transparent 17%, rgba(255, 255, 255, 0.28) 44%, transparent 65%),
+        radial-gradient(ellipse 42px 92px at var(--sba-dock-x, 50%) var(--sba-dock-y, 14%), rgba(255, 255, 255, 0.2), transparent 72%) !important;
+}
+
+body.theme-sba .hud-nav-group::after {
+    border-color: rgba(255, 255, 255, 0.28) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.4), inset 0 -1px 0 rgba(31, 35, 29, 0.14) !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hud-nav-group {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(15px) saturate(92%) brightness(1.12) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(15px) saturate(92%) brightness(1.12) !important;
+    }
+}
+
+/* The controls use the same clear material as the dock rather than a solid
+   gray fill, so the whole stack reads as one liquid-glass object. */
+body.theme-sba:not(.fx-static) .hud-nav-link,
+body.theme-sba.fx-static .hud-nav-link {
+    background:
+        radial-gradient(circle at var(--sba-glass-x, 50%) var(--sba-glass-y, 42%), rgba(255, 255, 255, 0.16), transparent 45%),
+        linear-gradient(180deg, rgba(229, 238, 248, 0.06), rgba(91, 102, 98, 0.02)) !important;
+    border-color: rgba(246, 250, 255, 0.38) !important;
+    box-shadow:
+        0 9px 20px rgba(2, 5, 12, 0.09),
+        inset 0 1.4px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -1.5px 0 rgba(26, 32, 30, 0.10) !important;
+}
+
+body.theme-sba .hud-nav-link:hover,
+body.theme-sba .hud-nav-link:focus-visible {
+    background:
+        radial-gradient(circle at var(--sba-glass-x, 50%) var(--sba-glass-y, 42%), rgba(255, 255, 255, 0.27), transparent 46%),
+        linear-gradient(180deg, rgba(231, 241, 255, 0.11), rgba(96, 109, 103, 0.04)) !important;
+    border-color: rgba(255, 255, 255, 0.58) !important;
+    box-shadow:
+        0 10px 22px rgba(2, 5, 12, 0.11),
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.54),
+        inset 0 -1.5px 0 rgba(26, 32, 30, 0.10) !important;
+}
+
+body.theme-sba .hud-nav-link.active,
+body.theme-sba .hud-nav-link[aria-expanded="true"] {
+    background:
+        radial-gradient(circle at var(--sba-glass-x, 50%) var(--sba-glass-y, 42%), rgba(255, 255, 255, 0.3), transparent 47%),
+        linear-gradient(180deg, rgba(234, 244, 255, 0.13), rgba(100, 113, 107, 0.045)) !important;
+    border-color: rgba(255, 255, 255, 0.64) !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hud-nav-link {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(8px) saturate(90%) brightness(1.13) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(8px) saturate(90%) brightness(1.13) !important;
+    }
+}
+
+body.theme-sba.fx-static .hud-nav-link {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* A slimmer dock leaves the page room to behave like a real dashboard. */
+body.theme-sba {
+    --sba-rail-width: 88px;
+    --sba-dock-width: 66px;
+}
+
+body.theme-sba .apple-hud-bar {
+    padding-inline: 7px !important;
+}
+
+body.theme-sba .apple-nav-center {
+    flex-basis: 58px !important;
+    height: 58px !important;
+    margin-bottom: 10px !important;
+}
+
+body.theme-sba .hud-nav-group {
+    gap: 7px !important;
+    max-height: calc(100dvh - 94px) !important;
+    padding: 8px !important;
+    border-radius: 34px !important;
+}
+
+/* SBA cards keeps the canvas focused on searching. Every browse filter is
+   moved into the dock-triggered drawer, including source/type/rarity pills. */
+.sba-card-filter-section {
+    display: none;
+}
+
+body.theme-sba .hub-cards-view .cards-reset-toolbar,
+body.theme-sba .hub-cards-view > .hub-view-header > .cards-inline-filter-bar {
+    display: none !important;
+}
+
+body.theme-sba #sidebarDrawer .sba-legacy-filter-control {
+    display: none !important;
+}
+
+body.theme-sba #sidebarDrawer .sba-card-filter-section {
+    display: grid;
+    gap: 10px;
+    margin-top: 10px;
+    padding-top: 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+body.theme-sba #sidebarDrawer .sba-card-filter-heading {
+    color: rgba(255, 255, 255, 0.72);
+    font-size: 0.7rem;
+    font-weight: 800;
+    letter-spacing: 0.13em;
+    text-transform: uppercase;
+}
+
+body.theme-sba #sidebarDrawer .cards-inline-filter-bar {
+    display: grid !important;
+    gap: 12px;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba #sidebarDrawer .filter-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+body.theme-sba #sidebarDrawer .filter-group-label {
+    flex: 0 0 100%;
+    color: rgba(255, 255, 255, 0.62);
+    font-size: 0.72rem;
+    font-weight: 750;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body.theme-sba #sidebarDrawer .filter-bar-divider {
+    display: none;
+}
+
+body.theme-sba #sidebarDrawer .filter-pill-btn {
+    min-width: 38px;
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.17);
+    border-radius: 11px;
+    background: rgba(255, 255, 255, 0.055);
+    color: rgba(255, 255, 255, 0.78);
+}
+
+body.theme-sba #sidebarDrawer .filter-pill-btn.active {
+    border-color: rgba(255, 255, 255, 0.52);
+    background: rgba(255, 255, 255, 0.15);
+    color: #fff;
+}
+
+/* Home follows the reference's dashboard hierarchy without inventing fake
+   metrics: header, a primary content column, a supporting side panel, then
+   full-width community and showcase rows. */
+body.theme-sba .hub-home-view {
+    display: grid;
+    gap: 18px;
+}
+
+body.theme-sba .sba-dashboard-heading {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 4px 4px 0;
+}
+
+body.theme-sba .sba-dashboard-eyebrow {
+    color: rgba(211, 222, 255, 0.58);
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.16em;
+}
+
+body.theme-sba .sba-dashboard-heading h1 {
+    margin: 4px 0;
+    color: #f4f7fb;
+    font-size: clamp(1.55rem, 2.6vw, 2.25rem);
+    letter-spacing: -0.045em;
+}
+
+body.theme-sba .sba-dashboard-heading p {
+    margin: 0;
+    color: rgba(225, 232, 245, 0.62);
+    font-size: 0.9rem;
+}
+
+body.theme-sba .sba-dashboard-status {
+    flex: 0 0 auto;
+    padding: 8px 11px;
+    border: 1px solid rgba(218, 230, 255, 0.28);
+    border-radius: 999px;
+    background: rgba(218, 230, 255, 0.08);
+    color: rgba(241, 246, 255, 0.9);
+    font-size: 0.74rem;
+    font-weight: 750;
+}
+
+body.theme-sba .hub-home-top-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.2fr) minmax(330px, 0.9fr);
+    gap: 18px;
+}
+
+body.theme-sba .dokkan-news-snippet,
+body.theme-sba .dokkan-timeline-panel,
+body.theme-sba .dokkan-streamers-longitudinal-panel,
+body.theme-sba .hub-showcase-divider {
+    border: 1px solid rgba(227, 236, 255, 0.14) !important;
+    border-radius: 24px !important;
+    background: linear-gradient(145deg, rgba(255, 255, 255, 0.07), rgba(119, 139, 180, 0.025)) !important;
+    box-shadow: 0 16px 32px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.13) !important;
+}
+
+body.theme-sba .dokkan-news-snippet,
+body.theme-sba .dokkan-timeline-panel {
+    min-height: 330px;
+}
+
+body.theme-sba .dokkan-streamers-longitudinal-panel {
+    margin: 0 !important;
+}
+
+body.theme-sba .hub-showcase-divider {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    margin: 0 !important;
+    padding: 18px 22px !important;
+}
+
+body.theme-sba .hub-showcase-divider .hub-section-title,
+body.theme-sba .hub-showcase-divider .hub-section-subtitle {
+    margin: 0 !important;
+}
+
+@media (max-width: 900px) {
+    body.theme-sba .hub-home-top-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 520px) {
+    body.theme-sba {
+        --sba-rail-width: 76px;
+        --sba-dock-width: 62px;
+    }
+
+    body.theme-sba .hud-nav-group {
+        padding: 7px 6px !important;
+    }
+
+    body.theme-sba .sba-dashboard-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+/* Bottom navigation: the SBA mark remains a quiet upper-left anchor while
+   the usable controls live in one compact glass bar at the bottom. */
+body.theme-sba {
+    --sba-rail-width: 0px;
+    background-size: 155% 155%, 145% 145%, 150% 150%, 100% 100% !important;
+    background-position: 2% 0%, 98% 8%, 48% 100%, center !important;
+    animation: sba-clean-gradient-drift 22s ease-in-out infinite alternate;
+}
+
+body.theme-sba.fx-static {
+    animation: none !important;
+}
+
+@keyframes sba-clean-gradient-drift {
+    0% { background-position: 2% 0%, 98% 8%, 48% 100%, center; }
+    100% { background-position: 15% 8%, 86% 0%, 58% 88%, center; }
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    pointer-events: none;
+    background: transparent !important;
+}
+
+body.theme-sba .liquid-metal-frame,
+body.theme-sba .apple-hud-bar {
+    width: 100% !important;
+    height: 100% !important;
+    pointer-events: none;
+    background: transparent !important;
+}
+
+body.theme-sba .apple-nav-center {
+    position: fixed !important;
+    inset: 10px auto auto 14px !important;
+    z-index: 1003;
+    width: 42px !important;
+    height: 48px !important;
+    flex-basis: auto !important;
+    pointer-events: auto;
+}
+
+body.theme-sba .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    position: fixed !important;
+    inset: auto auto 18px 50% !important;
+    z-index: 1002;
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    width: auto !important;
+    max-width: calc(100vw - 24px) !important;
+    height: 66px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 8px 10px !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    border-radius: 34px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) !important;
+}
+
+body.theme-sba .hud-nav-group::-webkit-scrollbar {
+    display: none;
+}
+
+body.theme-sba .hud-nav-group .hud-dropdown-wrap {
+    width: auto !important;
+}
+
+body.theme-sba .hub-main-container {
+    width: min(1560px, calc(100vw - 28px)) !important;
+    max-width: 1560px !important;
+    margin: 24px auto 122px !important;
+    padding: 0 4px !important;
+}
+
+/* Kube-style search lens: an SVG displacement backdrop plus a restrained
+   specular rim in Chromium, layered-blur glass in every other browser. */
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    padding: 1px !important;
+    border-radius: 22px !important;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.52), rgba(219, 231, 255, 0.16) 45%, rgba(255, 255, 255, 0.34)) !important;
+    box-shadow: 0 12px 30px rgba(1, 4, 10, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    min-height: 50px;
+    border-radius: 21px !important;
+    background:
+        radial-gradient(ellipse 50% 120% at var(--sba-glass-x, 50%) var(--sba-glass-y, 45%), rgba(255, 255, 255, 0.14), transparent 74%),
+        rgba(205, 219, 240, 0.055) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(12, 18, 29, 0.1) !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hub-cards-view .liquid-search-box {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(1px) saturate(112%) brightness(1.08) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(1px) saturate(112%) brightness(1.08) !important;
+    }
+}
+
+body.theme-sba.fx-static .hub-cards-view .liquid-search-box {
+    backdrop-filter: blur(8px) saturate(105%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(105%) !important;
+}
+
+/* A single bottom pager remains. The cards grid is intentionally dense and
+   naturally page-scrolls, so it never creates a second scroll surface. */
+body.theme-sba #paginationTop {
+    display: none !important;
+}
+
+body.theme-sba #cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)) !important;
+    gap: 14px 9px !important;
+    padding: 14px 10px 20px !important;
+    background: rgba(14, 20, 35, 0.19) !important;
+    border-color: rgba(231, 240, 255, 0.11) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.09) !important;
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+        inset: auto auto 10px 50% !important;
+        justify-content: flex-start !important;
+        height: 60px !important;
+        padding: 7px 9px !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - 16px) !important;
+        margin-bottom: 108px !important;
+    }
+}
+
+/* SBA navigation is now an inactive-by-default glass nav. The mark remains
+   anchored at the upper-left; entering that slim edge reveals the controls. */
+body.theme-sba {
+    --sba-rail-width: 64px;
+    --sba-dock-width: 66px;
+}
+
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    width: var(--sba-rail-width) !important;
+}
+
+body.theme-sba .liquid-metal-frame,
+body.theme-sba .apple-hud-bar {
+    overflow: visible !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    padding: 8px 0 !important;
+    border: 0 !important;
+}
+
+body.theme-sba .apple-nav-center {
+    position: relative !important;
+    z-index: 3;
+    flex-basis: 54px !important;
+    width: 64px !important;
+    height: 54px !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .hud-nav-group {
+    position: absolute !important;
+    top: 66px !important;
+    left: 0 !important;
+    z-index: 2;
+    flex: none !important;
+    transform: translateX(calc(-100% - 12px));
+    opacity: 0;
+    pointer-events: none;
+    transition: transform 230ms cubic-bezier(0.22, 1, 0.36, 1), opacity 160ms ease !important;
+}
+
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    transform: translateX(0);
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* Clean, flat liquid-glass search surface for the Cards view. */
+body.theme-sba .hub-cards-view .hub-view-header {
+    gap: 12px !important;
+}
+
+body.theme-sba .hub-cards-view .cards-search-toolbar {
+    width: min(720px, 100%);
+    margin-inline: auto;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    padding: 1px !important;
+    border: 0 !important;
+    border-radius: 18px !important;
+    background: linear-gradient(120deg, rgba(255, 255, 255, 0.42), rgba(225, 236, 255, 0.12) 48%, rgba(255, 255, 255, 0.26)) !important;
+    box-shadow: 0 12px 28px rgba(2, 5, 12, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    min-height: 48px;
+    border: 0 !important;
+    border-radius: 17px !important;
+    background: rgba(214, 226, 244, 0.075) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(16, 21, 30, 0.16) !important;
+    backdrop-filter: blur(18px) saturate(105%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(105%) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input {
+    color: rgba(249, 251, 255, 0.94) !important;
+    background: transparent !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input::placeholder {
+    color: rgba(219, 229, 243, 0.5) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    min-height: 36px;
+    margin: 4px !important;
+    padding: 0 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    border-radius: 13px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* Cards have only one page scroll. The grid expands naturally, and its denser
+   columns show more characters without creating a second scroll region. */
+body.theme-sba .hub-main-container,
+body.theme-sba .hub-cards-view,
+body.theme-sba #cardGrid {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+body.theme-sba #cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(88px, 1fr)) !important;
+    gap: 16px 12px !important;
+    min-height: 0 !important;
+    padding: 16px 12px 22px !important;
+}
+
+@media (max-width: 520px) {
+    body.theme-sba {
+        --sba-rail-width: 60px;
+        --sba-dock-width: 62px;
+    }
+
+    body.theme-sba .apple-nav-center {
+        width: 60px !important;
+    }
+
+    body.theme-sba .hub-cards-view .cards-search-toolbar {
+        width: 100%;
+    }
+
+    body.theme-sba #cardGrid {
+        grid-template-columns: repeat(auto-fill, minmax(78px, 1fr)) !important;
+        gap: 14px 8px !important;
+    }
+}

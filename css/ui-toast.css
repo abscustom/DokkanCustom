@@ -1,0 +1,97 @@
+/* Lightweight, framework-free feedback surface shared by the hub, viewer,
+   editor, and calculator.  It deliberately uses the existing glass language
+   without stealing focus or blocking the current task. */
+#cardhub-toast-region {
+    position: fixed;
+    right: max(18px, env(safe-area-inset-right));
+    bottom: max(22px, calc(env(safe-area-inset-bottom) + 18px));
+    z-index: 2147483000;
+    display: grid;
+    width: min(360px, calc(100vw - 36px));
+    gap: 10px;
+    pointer-events: none;
+}
+
+.cardhub-toast {
+    --toast-accent: #bfd7ff;
+    position: relative;
+    display: grid;
+    grid-template-columns: 28px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-height: 58px;
+    padding: 11px 11px 11px 13px;
+    overflow: hidden;
+    border: 1px solid color-mix(in srgb, var(--toast-accent) 48%, rgba(255, 255, 255, 0.32));
+    border-radius: 18px;
+    color: #f8fbff;
+    background: linear-gradient(135deg, rgba(27, 38, 64, 0.74), rgba(17, 12, 33, 0.60));
+    box-shadow: 0 15px 34px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.36);
+    backdrop-filter: blur(18px) saturate(132%);
+    -webkit-backdrop-filter: blur(18px) saturate(132%);
+    pointer-events: auto;
+    animation: cardhub-toast-in 260ms cubic-bezier(.2,.9,.25,1.12) both;
+}
+
+.cardhub-toast::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 15% 0%, color-mix(in srgb, var(--toast-accent) 34%, transparent), transparent 42%);
+    opacity: .75;
+}
+
+.cardhub-toast.is-leaving { animation: cardhub-toast-out 180ms ease-in both; }
+.cardhub-toast--success { --toast-accent: #78edb5; }
+.cardhub-toast--error { --toast-accent: #ff8297; }
+.cardhub-toast--loading { --toast-accent: #a98dff; }
+
+.cardhub-toast__icon,
+.cardhub-toast__content,
+.cardhub-toast__action { position: relative; z-index: 1; }
+.cardhub-toast__icon { display: grid; place-items: center; width: 28px; height: 28px; color: var(--toast-accent); font-size: 17px; font-weight: 900; }
+.cardhub-toast--loading .cardhub-toast__icon { animation: cardhub-toast-spin 1s linear infinite; }
+.cardhub-toast__content { min-width: 0; }
+.cardhub-toast__title { font: 800 12px/1.15 system-ui, sans-serif; letter-spacing: .02em; }
+.cardhub-toast__detail { margin-top: 3px; color: rgba(239, 245, 255, .74); font: 600 11px/1.25 system-ui, sans-serif; }
+.cardhub-toast__action { border: 0; color: inherit; cursor: pointer; font: 800 11px/1 system-ui, sans-serif; }
+.cardhub-toast__action { margin-top: 7px; padding: 6px 8px; border-radius: 9px; background: color-mix(in srgb, var(--toast-accent) 25%, rgba(255,255,255,.12)); }
+
+body.theme-sba .cardhub-toast { background: rgba(55, 58, 83, .44); border-color: rgba(233, 242, 255, .44); box-shadow: 0 18px 38px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.55), inset 0 -1px 0 rgba(0,0,0,.18); }
+
+@keyframes cardhub-toast-in { from { opacity: 0; transform: translateY(12px) scale(.96); } to { opacity: 1; transform: translateY(0) scale(1); } }
+@keyframes cardhub-toast-out { to { opacity: 0; transform: translateX(18px) scale(.96); } }
+@keyframes cardhub-toast-spin { to { transform: rotate(360deg); } }
+
+@media (max-width: 760px) {
+    #cardhub-toast-region { right: 12px; bottom: max(76px, calc(env(safe-area-inset-bottom) + 68px)); width: min(340px, calc(100vw - 24px)); }
+}
+
+/* Abs.Clean theme override — sharp corners + grid micro-texture */
+body.theme-abs-clean .cardhub-toast,
+body.theme-sba .cardhub-toast {
+    border-radius: 0px !important;
+    background:
+        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px),
+        linear-gradient(135deg, rgba(10,18,36,0.88), rgba(6,8,20,0.78)) !important;
+    background-size: 12px 12px, 12px 12px, auto auto !important;
+    border: 1px solid color-mix(in srgb, var(--toast-accent) 55%, rgba(255,255,255,0.25)) !important;
+    box-shadow: 0 8px 28px rgba(0,0,0,0.55), inset 0 1px 0 rgba(255,255,255,0.28) !important;
+}
+
+body.theme-abs-clean .cardhub-toast__title,
+body.theme-sba .cardhub-toast__title {
+    letter-spacing: 1.2px !important;
+    text-transform: uppercase !important;
+    font-size: 10.5px !important;
+}
+
+body.theme-abs-clean .cardhub-toast__action,
+body.theme-sba .cardhub-toast__action {
+    border-radius: 0px !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    font-size: 9.5px !important;
+}

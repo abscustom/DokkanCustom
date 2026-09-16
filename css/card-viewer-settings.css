@@ -1,0 +1,2540 @@
+/* Navbar appearance is owned by sba-bottom-nav.css and sba-mobile-layout.css.
+   Keep viewer-specific styling limited to its settings and card content. */
+
+/* --------------------------------------------------------------------------
+   Viewer motion surface
+   --------------------------------------------------------------------------
+   This is intentionally viewer-only. The panel is a small landing surface for
+   the local/remote battle-character idle stream without changing the published
+   card-art layers. */
+body.card-viewer-page #abs-motion-box {
+    display: flex !important;
+    flex-direction: column !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgba(148, 163, 184, 0.42) !important;
+    border-radius: 3px !important;
+    background: rgba(5, 12, 24, 0.74) !important;
+    box-shadow: 0 8px 18px rgba(2, 8, 18, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.10) !important;
+}
+
+body.card-viewer-page #abs-motion-box > .abs-motion-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 0 0 20px !important;
+    width: 100% !important;
+    min-height: 20px !important;
+    height: 20px !important;
+    margin: 0 !important;
+    padding: 2px 8px !important;
+    box-sizing: border-box !important;
+    color: rgba(241, 245, 249, 0.92) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 0 !important;
+    border-bottom: 1px solid rgba(226, 232, 240, 0.18) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page #abs-motion-box .abs-motion-title {
+    color: currentColor !important;
+    font: 800 10px/1 Arial, sans-serif !important;
+    letter-spacing: 0.12em !important;
+    text-transform: lowercase !important;
+}
+
+body.card-viewer-page #abs-motion-box > .abs-motion-content {
+    display: flex !important;
+    align-items: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 6px 8px 7px !important;
+    box-sizing: border-box !important;
+    color: rgba(226, 232, 240, 0.78) !important;
+    background: transparent !important;
+}
+
+body.card-viewer-page #abs-motion-box .abs-motion-viewport {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 34px !important;
+    min-height: 34px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgba(148, 163, 184, 0.20) !important;
+    border-radius: 2px !important;
+    background: rgba(2, 6, 23, 0.46) !important;
+}
+
+body.card-viewer-page #abs-motion-box #abs-motion-canvas {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+}
+
+body.card-viewer-page #abs-motion-box .abs-motion-status {
+    position: absolute !important;
+    inset: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 6px !important;
+    color: rgba(226, 232, 240, 0.66) !important;
+    font: 600 9px/1 Arial, sans-serif !important;
+    letter-spacing: 0.08em !important;
+    text-transform: lowercase !important;
+    pointer-events: none !important;
+}
+
+body.card-viewer-page #abs-motion-box .abs-motion-note {
+    flex: 0 0 auto !important;
+    color: rgba(148, 163, 184, 0.76) !important;
+    font: 600 8px/1.15 Arial, sans-serif !important;
+    letter-spacing: 0.05em !important;
+    text-transform: lowercase !important;
+    white-space: nowrap !important;
+}
+
+/* ABS Clean places the art as an absolute hero surface. Lift the motion box
+   into the short lane immediately above it without changing the art's stage
+   height or pushing the Stats/Forms surfaces around. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    position: absolute !important;
+    top: -76px !important;
+    right: 0 !important;
+    left: 0 !important;
+    z-index: 72 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #abs-motion-box,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #abs-motion-box {
+    border-color: rgba(197, 232, 255, 0.24) !important;
+    background: rgba(4, 13, 25, 0.82) !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+        top: -70px !important;
+    }
+
+    body.card-viewer-page #abs-motion-box .abs-motion-note {
+        display: none !important;
+    }
+}
+
+/* The viewer uses the same floating mini GUI as the other SBA pages, but
+   gives this page a stable centered anchor so the six-item dock cannot push
+   the popover off either edge of a narrow viewport. */
+body.card-viewer-page.theme-sba #settingsDrawer {
+    left: auto !important;
+    right: max(12px, env(safe-area-inset-right)) !important;
+    width: min(350px, calc(100vw - 24px)) !important;
+}
+
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-settings-subtitle {
+    display: block !important;
+    margin-top: 3px !important;
+    color: #94a3b8 !important;
+    font-size: 10px !important;
+    font-weight: 600 !important;
+    letter-spacing: 0.04em !important;
+}
+
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+}
+
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options .sba-gui-btn,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-mode-options .sba-gui-btn {
+    min-width: 0 !important;
+    overflow: hidden !important;
+}
+
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options .hud-btn-indicator,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-mode-options .hud-btn-indicator {
+    max-width: 100% !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+}
+
+@media (max-width: 520px) {
+    body.card-viewer-page.theme-sba #settingsDrawer {
+        left: 12px !important;
+        right: 12px !important;
+        width: calc(100vw - 24px) !important;
+    }
+}
+
+/* Final motion-surface pass: give the idle stream a real preview area and use
+   the same transparent dark glass used by Forms/Awakenings. The compact box
+   remains in the left art rail, leaving the identity header aligned with the
+   Leader Skill column on the right. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    height: 164px !important;
+    min-height: 164px !important;
+    max-height: 164px !important;
+    background: var(--abs-liquid-light-fill, rgba(3, 10, 18, 0.54)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-light-fill, none) !important;
+    border: 1px solid rgba(197, 232, 255, 0.22) !important;
+    border-radius: 4px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08), 0 10px 24px rgba(0, 0, 0, 0.25) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box::before,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-header {
+    flex: 0 0 20px !important;
+    min-height: 20px !important;
+    height: 20px !important;
+    padding: 2px 9px !important;
+    background: transparent !important;
+    background-image: none !important;
+    border-bottom: 1px solid rgba(197, 232, 255, 0.18) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-content {
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-height: 0 !important;
+    padding: 7px 9px 8px !important;
+    background: transparent !important;
+    background-image: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-viewport {
+    height: 100% !important;
+    min-height: 0 !important;
+    border-color: rgba(197, 232, 255, 0.16) !important;
+    background: rgba(0, 8, 18, 0.24) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
+    object-fit: contain !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-status[data-state="ready"] {
+    opacity: 0.56 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-style .abs-side-col > #abs-motion-box {
+    background: var(--abs-liquid-dark-fill, rgba(3, 10, 18, 0.54)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-dark-fill, none) !important;
+    border-color: rgba(197, 232, 255, 0.22) !important;
+}
+
+@media (min-width: 681px) {
+    /* Give the left rail a real grid track. The viewer identity header now
+       begins directly above Leader Skill instead of being painted underneath
+       the motion/art rail. */
+    body.card-viewer-page.theme-abs-clean #layout-abs-style {
+        grid-template-areas:
+            "side header"
+            "side main" !important;
+        margin-top: 24px !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header {
+        grid-area: header !important;
+        width: 100% !important;
+        max-width: none !important;
+        margin: 0 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col {
+        grid-area: main !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-grid-container > .abs-side-col,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-side-col {
+        grid-area: side !important;
+        grid-column: 1 !important;
+        grid-row: 1 / span 2 !important;
+        top: 0 !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: 0 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+    }
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+        height: 148px !important;
+        min-height: 148px !important;
+        max-height: 148px !important;
+    }
+}
+
+/* Published viewer clean parity. These rules are intentionally scoped to the
+   viewer page so the editor's ABS Clean composition and the legacy abs.style
+/* Presentation keep their existing contracts. The values mirror the shared
+   editor layout: the page scale is 0.70 and the centered content track keeps
+   the global 0.96 adjustment. */
+body.card-viewer-page.theme-abs-clean {
+    --abs-clean-ui-scale: 0.70 !important;
+    min-height: 100vh !important;
+    background-color: #f8fafc !important;
+    background:
+        radial-gradient(ellipse 85% 65% at 50% 20%, #ffffff 0%, #f1f5f9 65%, #e2e8f0 100%) !important;
+    background-attachment: fixed !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] {
+    background-color: #07101b !important;
+    background:
+        radial-gradient(ellipse 60% 40% at 50% 30%, rgba(15, 28, 52, 0.35), transparent 70%),
+        radial-gradient(ellipse 70% 50% at 20% 80%, rgba(10, 22, 40, 0.30), transparent 70%),
+        radial-gradient(ellipse 65% 55% at 85% 75%, rgba(12, 25, 45, 0.28), transparent 70%),
+        #07101b !important;
+    color: #e2e8f0 !important;
+}
+
+body.card-viewer-page.fx-static,
+body.card-viewer-page.theme-abs-clean.fx-static {
+    background: #060913 !important;
+    background-color: #060913 !important;
+    background-image: none !important;
+}
+
+body.card-viewer-page.fx-static #abs-clean-grid-circuit,
+body.card-viewer-page.fx-static #abs-clean-lr-aura,
+body.card-viewer-page.fx-static #abs-clean-lr-lightning,
+body.card-viewer-page.fx-static #abs-clean-ring-effect,
+body.card-viewer-page.fx-static #abs-card-bg-lwf-canvas {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #app,
+body.card-viewer-page.theme-abs-clean #top-content,
+body.card-viewer-page.theme-abs-clean #top-content > .container-1220,
+body.card-viewer-page.theme-abs-clean #layout-abs-style {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #abs-clean-grid-circuit {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #top-content {
+    zoom: var(--abs-clean-ui-scale, 0.70) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #top-content > .container-1220 {
+    zoom: 0.96 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style {
+    zoom: 1 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #abs-clean-leader-banner-slot {
+    display: block !important;
+    visibility: visible !important;
+}
+
+/* Clean-only nodes must never alter the published legacy abs.style flow. */
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-grid-circuit,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-awakening-portraits,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-name-badges,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-type-matchups,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-portrait-stage,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-bottom-timeline,
+body.card-viewer-page:not(.theme-abs-clean) .abs-clean-bottom-timeline,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-leader-banner-slot,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-leader-bar,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-info-bar,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-release-date,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-ability-docks,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-identity-icons,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-link-skills-slot,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-header-partners,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-header-form-portraits,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-header-badges-rail,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-header-stats,
+body.card-viewer-page:not(.theme-abs-clean) #abs-clean-awakening-forms-box,
+body.card-viewer-page:not(.theme-abs-clean) #abs-passive-summary,
+body.card-viewer-page:not(.theme-abs-clean) .abs-passive-summary {
+    display: none !important;
+}
+
+/* ==========================================================================
+   Published viewer presentation refinements
+   ========================================================================== */
+
+/* ABS Style owns a fully black canvas. The legacy layout already darkens its
+   inner panels, but the published page's body and top wrapper used to leave
+   a light/gradient strip above the card. */
+html:has(body.card-viewer-page.theme-abs-style),
+body.card-viewer-page.theme-abs-style,
+body.card-viewer-page.theme-abs-style #app,
+body.card-viewer-page.theme-abs-style #top-content,
+body.card-viewer-page.theme-abs-style #top-content > .container-1220,
+body.card-viewer-page.theme-abs-style #top-content > .container-1220 > .container-text-center,
+body.card-viewer-page.theme-abs-style #layout-abs-style {
+    background: #0b0f19 !important;
+    background-color: #0b0f19 !important;
+    background-image: none !important;
+}
+
+/* Top identity badges inherit 1:1 styling and positioning from abs-clean.css */
+
+/* BASE / EZA / SEZA stay in the art column but render after the fixed-height
+   portrait stage. The art wrapper is an absolute overlay on that same stage,
+   so this keeps the strip below the complete card image at every aspect size. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: block"] {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    order: 2 !important;
+    z-index: 76 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 25px !important;
+    min-height: 25px !important;
+    margin: -16px 0 -8px !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    pointer-events: auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: none"] {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: block"] > .abs-content {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    height: 25px !important;
+    min-height: 25px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-container {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    width: min(100%, 260px) !important;
+    height: 24px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-container > .abs-stat-tab {
+    flex: 1 1 0 !important;
+    min-width: 0 !important;
+    width: auto !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    margin: 0 !important;
+    padding: 5px 8px !important;
+    color: rgba(226, 232, 240, 0.82) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(226, 232, 240, 0.24) !important;
+    border-radius: 2px !important;
+    box-shadow: none !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-container > .abs-stat-tab.active {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.16) !important;
+    border-color: rgba(255, 255, 255, 0.52) !important;
+}
+
+/* Viewer animation actions use the same small pill footprint beside the
+   section's left type marker. Play is neutral white; a discovered KO launch
+   keeps the identical pill shape with a red danger treatment. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-header-actions {
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(255, 255, 255, 0.84) !important;
+    border-radius: 2px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 8px rgba(255, 255, 255, 0.08) !important;
+    font-size: 9px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.06em !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn:not(.abs-animation-ko-launch):not(.abs-animation-play-btn--with-text) > span:not(.abs-animation-btn-text) {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn svg {
+    width: 11px !important;
+    height: 11px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn:hover,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn:focus-visible {
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.20) !important;
+    border-color: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]) {
+    width: auto !important;
+    min-width: 37px !important;
+    max-width: none !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    box-sizing: border-box !important;
+    padding: 0 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    color: #ff4d4d !important;
+    background: rgba(127, 29, 29, 0.72) !important;
+    border-color: rgba(248, 113, 113, 0.95) !important;
+    border-radius: 2px !important;
+    box-shadow: inset 0 1px 0 rgba(254, 202, 202, 0.18), 0 0 8px rgba(239, 68, 68, 0.18) !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]) > svg {
+    width: 10px !important;
+    height: 10px !important;
+    fill: currentColor !important;
+    flex-shrink: 0 !important;
+    display: inline-block !important;
+    vertical-align: middle !important;
+    margin: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]) > span {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #ff4d4d !important;
+    -webkit-text-fill-color: #ff4d4d !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
+    text-shadow: 0 0 6px rgba(239, 68, 68, 0.6) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):hover,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):focus-visible {
+    color: #ffffff !important;
+    background: rgba(185, 28, 28, 0.90) !important;
+    border-color: #fecaca !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):hover > svg,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):focus-visible > svg {
+    fill: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):hover > span,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):focus-visible > span {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+/* Published cards retain the editor's left-side type-pill lane. The viewer's
+   playable control is an independent accessory: it sits immediately to the
+   right of the centred skill name without widening or moving that name. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-name-group,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-name-group {
+    position: relative !important;
+    display: inline-flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    /* Keep the icon out of the flex width; the attack name is centered by
+       itself and the icon is anchored just to its left. */
+    gap: 0 !important;
+    width: max-content !important;
+    max-width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-name-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-name-actions {
+    position: absolute !important;
+    top: 50% !important;
+    left: calc(100% + 6px) !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    width: max-content !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateY(-50%) !important;
+    z-index: 10 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-name-actions > .abs-animation-header-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-name-actions > .abs-animation-header-actions {
+    position: static !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title {
+    justify-content: flex-start !important;
+    gap: 6px !important;
+}
+
+/* Passive controls belong to the real passive header, not to the centered
+   title flex item. Keep them inside the passive panel at the upper-left name
+   baseline. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-animation-header-actions {
+    position: absolute !important;
+    top: 50% !important;
+    left: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: translateY(-50%) !important;
+    z-index: 80 !important;
+    pointer-events: auto !important;
+}
+
+/* Leave a small clear lane after the action pill before the detected passive
+   ability icons begin. This affects the viewer clean header only. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name:has(> .abs-animation-header-actions) > #abs-clean-ability-docks:not([hidden]) > #abs-clean-passive-icons > .abs-passive-icons-strip {
+    margin-left: 40px !important;
+}
+
+/* Light-mode clean panels recolour every header descendant with a broad
+   selector.  These viewer-only selectors deliberately carry the header and
+   action ancestry so the controls remain white, while KO becomes red only
+   after the animation loader reveals it. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn > span {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn > svg {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn.abs-animation-ko-launch[hidden] {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn.abs-animation-ko-launch:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn.abs-animation-ko-launch:not([hidden]) > span {
+    color: #fecaca !important;
+    -webkit-text-fill-color: #fecaca !important;
+}
+
+@media (max-width: 680px) {
+
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: block"] {
+        padding-inline: 4px !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn {
+        min-width: 22px !important;
+        padding: 0 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name:has(> .abs-animation-header-actions) > #abs-clean-ability-docks:not([hidden]) > #abs-clean-passive-icons > .abs-passive-icons-strip {
+        margin-left: 54px !important;
+    }
+}
+
+/* Passive follows the same exterior square-band treatment, stretched across
+   the complete passive panel. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+    margin-top: 42px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
+    top: -36px !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    transform: none !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    color: #ffffff !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 64%, rgba(255, 255, 255, 0.38)) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
+    justify-content: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    max-width: none !important;
+
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
+    margin-left: 0 !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+        margin-top: 42px !important;
+    }
+}
+
+/* Passive is the one deliberate exception: keep its Play/KO group beside the
+   PASSIVE SKILL label in the title row, not in the external utility rail. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > .abs-animation-header-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > .abs-counter-animation-actions {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    max-width: none !important;
+    height: 22px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    z-index: 8 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-play-btn > span {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-play-btn > svg {
+    color: #ffffff !important;
+    fill: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-ko-launch:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-ko-launch:not([hidden]) > span {
+    color: #fecaca !important;
+    -webkit-text-fill-color: #fecaca !important;
+    background: rgba(127, 29, 29, 0.72) !important;
+    border-color: rgba(248, 113, 113, 0.95) !important;
+}
+
+/* Published clean cards without an Active Skill should not inherit the
+   editor's four-row utility grid.  The right utility column used to stretch
+   the empty pair row, leaving a large blank band between Super Attack and
+   Passive.  Collapse that row and give the left stack an explicit three-row
+   path; the utility column remains anchored to the same top edge. */
+@media (min-width: 681px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col {
+        grid-template-rows: max-content max-content max-content max-content max-content max-content !important;
+        align-content: start !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col.abs-clean-no-active-domain {
+        grid-template-areas:
+            "leader utility"
+            "sa utility"
+            "passive utility"
+            "rail rail"
+            "links links"
+            "partners partners" !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col.abs-clean-no-active-domain > #abs-passive-skill-box {
+        grid-area: passive !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-category-links-column {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        grid-area: utility !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        height: 0 !important;
+        min-height: 0 !important;
+        align-self: start !important;
+        overflow: visible !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row {
+        margin-top: 0 !important;
+        margin-bottom: 0 !important;
+    }
+}
+
+/* Forms are a compact progression rail in the viewer side-by-side. Keep the arrow in its
+   own flex slot so it can never sit on top of the following form portrait,
+   with proper centering and spacing matching the editor. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container,
+.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container,
+.theme-abs-clean #abs-transformations-container {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: 100% !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    padding: 10px 12px 14px !important;
+    box-sizing: border-box !important;
+    scrollbar-width: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container::-webkit-scrollbar,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container::-webkit-scrollbar,
+.theme-abs-clean #abs-transformations-container::-webkit-scrollbar {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-row,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-row,
+.theme-abs-clean #abs-transformations-container > .abs-transform-row {
+    position: relative !important;
+    display: flex !important;
+    flex: 0 0 68px !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: visible !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-divider,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-divider,
+.theme-abs-clean #abs-transformations-container > .abs-transform-divider {
+    display: flex !important;
+    flex: 0 0 24px !important;
+    width: 24px !important;
+    min-width: 24px !important;
+    max-width: 24px !important;
+    height: 68px !important;
+    min-height: 68px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    background: transparent !important;
+    border: 0 !important;
+    overflow: visible !important;
+    opacity: 1 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider::before,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider::before,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-divider::before,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-divider::before,
+.theme-abs-clean #abs-transformations-container > .abs-transform-divider::before {
+    content: "→" !important;
+    display: block !important;
+    color: var(--theme-text, #38bdf8) !important;
+    font-size: 16px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-shadow: 0 0 8px color-mix(in srgb, var(--theme-border, #38bdf8) 55%, transparent) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider::after,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider::after,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-divider::after,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-divider::after,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider > *,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-divider > *,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-divider > *,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-divider > *,
+.theme-abs-clean #abs-transformations-container > .abs-transform-divider::after,
+.theme-abs-clean #abs-transformations-container > .abs-transform-divider > * {
+    display: none !important;
+    content: none !important;
+}
+
+/* The shared clean stylesheet also leaves an arrow on the preceding form
+   row. The viewer uses the wider dedicated divider lane above, so suppress
+   that legacy pseudo-element to avoid a doubled/overlapping arrow. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row::after,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row::after,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-row::after,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-row::after,
+.theme-abs-clean #abs-transformations-container > .abs-transform-row::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* The shared grid rule adds extra specificity with :has(), so mirror that
+   condition in the viewer override to guarantee the old pseudo-arrow stays
+   suppressed in the cascade. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row:nth-child(6n + 1):has(+ .abs-transform-divider + .abs-transform-row)::after,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row:nth-child(6n + 3):has(+ .abs-transform-divider + .abs-transform-row)::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* The row's internal link wrapper must fit its fixed portrait column; this
+   prevents the long name from widening the arrow lane or clipping the next
+   form when the viewer is narrow. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row > div,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row > .abs-transform-link,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row > div,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container > .abs-transform-row > .abs-transform-link,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-row > div,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container > .abs-transform-row > .abs-transform-link,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-row > div,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container > .abs-transform-row > .abs-transform-link,
+.theme-abs-clean #abs-transformations-container > .abs-transform-row > div,
+.theme-abs-clean #abs-transformations-container > .abs-transform-row > .abs-transform-link {
+    width: 68px !important;
+    min-width: 68px !important;
+    max-width: 68px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    overflow: visible !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-transformations-container .abs-transform-name,
+body.card-viewer-page.theme-abs-clean #abs-clean-awakening-forms-box #abs-transformations-container .abs-transform-name,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-transformations-container .abs-transform-name,
+body.card-viewer-page.theme-abs-clean #abs-transformations-container .abs-transform-name,
+.theme-abs-clean #abs-clean-awakening-forms-box .abs-transform-name,
+.theme-abs-clean #abs-transformations-container .abs-transform-name {
+    display: none !important;
+}
+
+/* Keep this final viewer-only rule in sync with the structural placement
+   above. It intentionally has no fixed pixel art height: the portrait stage
+   and art wrapper share the same aspect-ratio contract. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: block"] {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    left: auto !important;
+    order: 2 !important;
+    margin: -16px 0 -8px !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-eza-toggle-bar[style*="display: block"] {
+        top: auto !important;
+        margin: -16px 0 -8px !important;
+    }
+}
+
+/* Awakening portraits use the same explicit arrow lane as Forms. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-clean-awakening-portraits.abs-clean-awakening-box-portraits {
+    gap: 12px !important;
+    overflow: visible !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-clean-awakening-portraits.abs-clean-awakening-box-portraits > .abs-clean-awakening-arrow {
+    display: flex !important;
+    flex: 0 0 26px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 26px !important;
+    min-width: 26px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    margin: 0 !important;
+    padding: 0 4px !important;
+    box-sizing: border-box !important;
+    color: var(--theme-text, #38bdf8) !important;
+    font-size: 14px !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    overflow: visible !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-box #abs-clean-awakening-portraits.abs-clean-awakening-box-portraits > .abs-clean-awakening-arrow::before {
+    content: "→" !important;
+    display: block !important;
+    color: currentColor !important;
+    text-shadow: 0 0 8px color-mix(in srgb, var(--theme-border, #38bdf8) 55%, transparent) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+    margin-top: 42px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
+    top: -36px !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    display: flex !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    transform: none !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
+    justify-content: center !important;
+    gap: 7px !important;
+    width: 100% !important;
+    max-width: none !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
+    margin-left: 0 !important;
+}
+
+/* Standby Container - really dark and transparent glass */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.abs-standby-rendered,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.abs-clean-standby-rendered {
+    background: rgba(3, 7, 18, 0.90) !important;
+    background-color: rgba(3, 7, 18, 0.90) !important;
+    background-image: none !important;
+    backdrop-filter: blur(16px) saturate(180%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.12)) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.70), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+/* Super Attack - remove dead space while keeping text centered */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header > .abs-sa-header-title {
+    grid-template-columns: minmax(0, 1fr) !important;
+    grid-template-rows: auto auto !important;
+    row-gap: 8px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-title-center {
+    grid-column: 1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: none !important;
+    min-width: 0 !important;
+    min-height: 24px !important;
+    padding: 0 120px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-title-center > .abs-sa-name-glow {
+    flex: 0 1 auto !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-effect-inline {
+    margin: 8px 0 10px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-content {
+    padding: 8px 14px 10px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-clean-effects,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-box:has(.abs-sa-clean-effects) .abs-sa-clean-effects {
+    grid-column: auto !important;
+    grid-row: auto !important;
+    align-self: auto !important;
+    padding: 4px 0 0 !important;
+    width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups {
+    padding-top: 18px !important;
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* ABS.CLEAN Declaration text pills and square play button matching */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-ex-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-type-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    padding: 0 10px !important;
+    margin: 0 !important;
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    border-radius: 2px !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-pill-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-pill-actions {
+    position: absolute !important;
+    top: 12px !important;
+    left: 20px !important;
+    right: auto !important;
+    bottom: auto !important;
+    inset-inline-start: 20px !important;
+    inset-inline-end: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 22px !important;
+    width: max-content !important;
+    max-width: none !important;
+    z-index: 8 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-pill-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-pill-actions {
+    position: absolute !important;
+    top: 16px !important;
+    left: 20px !important;
+    right: auto !important;
+    bottom: auto !important;
+    inset-inline-start: 20px !important;
+    inset-inline-end: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 22px !important;
+    width: max-content !important;
+    max-width: none !important;
+    z-index: 8 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-header-meta,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-header-meta {
+    top: 12px !important;
+    right: 18px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-header-meta,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-header-meta {
+    top: 16px !important;
+    right: 18px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-pill-actions > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-pill-actions > .abs-sa-type-pill {
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    bottom: auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-pill-actions,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-pill-actions {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    box-sizing: border-box !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 0 0 auto !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-animation-play-btn[hidden],
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-animation-ko-launch[hidden],
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style [hidden].abs-animation-ko-launch {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions > .abs-animation-play-btn:not([hidden]),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions > .abs-animation-play-btn:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-domain-play-btn,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-domain-play-btn {
+    position: static !important;
+    flex: 0 0 auto !important;
+    width: 22px !important;
+    min-width: 22px !important;
+    max-width: 22px !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.84) !important;
+    border-radius: 2px !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    color: #ffffff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 8px rgba(255, 255, 255, 0.08) !important;
+    transform: none !important;
+    cursor: pointer !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions > .abs-animation-play-btn:not([hidden]) svg,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-pill-actions > .abs-animation-header-actions > .abs-animation-play-btn:not([hidden]) svg,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-domain-play-btn svg,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-domain-play-btn svg {
+    width: 10px !important;
+    height: 10px !important;
+    fill: #ffffff !important;
+    color: #ffffff !important;
+}
+
+/* Super Attack content padding and divider line lowering with generous bottom margin */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-content {
+    padding: 8px 14px 10px !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups {
+    padding-top: 18px !important;
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Single Super Attack allowed to span full length; EX Super Attack claims full row and appears below standard SAs */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:not(.abs-clean-ex-super-attack) {
+    order: 1 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-single-standard-super-attack,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:only-child,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-ex-super-attack {
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-ex-super-attack {
+    order: 2 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:has(> .abs-box:only-child) {
+    grid-template-columns: 1fr !important;
+}
+
+/* Standby Skill fading divider between condition and standby skill effect */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-clean-standby-divider,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-clean-active-divider {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    overflow: visible !important;
+    position: relative !important;
+    z-index: 1 !important;
+    flex: 0 0 2px !important;
+    width: 100% !important;
+    height: 2px !important;
+    min-height: 2px !important;
+    max-height: 2px !important;
+    margin: 6px 0 10px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-clean-standby-divider > hr.divider,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-clean-active-divider > hr.divider {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    position: relative !important;
+    z-index: 1 !important;
+    width: 100% !important;
+    height: 2px !important;
+    min-height: 2px !important;
+    max-height: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background-color: rgba(255, 255, 255, 0.78) !important;
+    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.88) 50%, rgba(255, 255, 255, 0.18) 88%, transparent 100%) !important;
+    background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.88) 50%, rgba(255, 255, 255, 0.18) 88%, transparent 100%) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 8px rgba(255, 255, 255, 0.24) !important;
+    filter: none !important;
+    box-sizing: border-box !important;
+}
+
+/* Leader Skill surface - transparent dark glass matching Super Attack */
+body.card-viewer-page.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-leader-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-leader-skill-box {
+    background: rgba(3, 10, 18, 0.54) !important;
+    background-color: rgba(3, 10, 18, 0.54) !important;
+    background-image: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box::before,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-leader-banner-slot #abs-leader-skill-box::before,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-leader-container > .abs-box::before,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-leader-skill-box::before {
+    display: none !important;
+    content: none !important;
+}
+
+/* Standby Skill margin reduction before passive */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row > #abs-standby-container > .abs-box {
+    margin: 0 !important;
+    margin-bottom: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col.abs-clean-has-standby > #abs-passive-skill-box {
+    margin-top: 32px !important;
+}
+
+/* Fallback positioning for declaration pills rendered directly without .abs-sa-pill-actions */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-type-pill {
+    position: absolute !important;
+    top: 0 !important;
+    left: 11px !important;
+    z-index: 8 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill {
+    position: absolute !important;
+    top: 0 !important;
+    left: 11px !important;
+    z-index: 9 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill + .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill + .abs-sa-type-pill {
+    left: 49px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-header-title > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-header-title > .abs-sa-type-pill {
+    position: absolute !important;
+    top: 12px !important;
+    left: 20px !important;
+    z-index: 8 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-header-title > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-header-title > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container .abs-sa-header-title > .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-sa-header-title > .abs-sa-type-pill {
+    position: absolute !important;
+    top: 16px !important;
+    left: 20px !important;
+    z-index: 8 !important;
+}
+
+/* Keep published Active, Dokkan Field, and Standby panels on the same
+   translucent type-tinted surface as the editor. This follows the shared
+   --theme-border/--theme-main variables populated from the card typing. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box[data-active-kind="domain"],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.abs-clean-domain-rendered,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box[data-active-kind="domain"],
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.abs-clean-domain-rendered,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box {
+    background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
+        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
+    ) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 24%, rgba(5, 12, 24, 0.46)) !important;
+    background-image: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
+        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
+    ) !important;
+}
+
+/* Match the editor's dark-mode Standby surface. The earlier viewer rule is
+   intentionally more specific, so this keeps its rendered Standby panel from
+   falling back to the deprecated black fill. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.abs-standby-rendered,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.abs-clean-standby-rendered {
+    background: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
+        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
+    ) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 24%, rgba(5, 12, 24, 0.46)) !important;
+    background-image: linear-gradient(
+        145deg,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
+        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
+    ) !important;
+}
+
+
+/* ===========================================================================
+   ABS.CLEAN EX SUPER ATTACK CONDENSED GAP & EFFECTS DIVIDER (VIEWER)
+   =========================================================================== */
+/* Keep the EX Super Attack container free of the extra white divider. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline::after,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline::after {
+    content: none !important;
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy::after,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy::after {
+    display: none !important;
+    content: none !important;
+}
+
+/* Suppress overlapping top line on special effects groups */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups::before,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-special-effects-groups::before {
+    display: none !important;
+    content: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header {
+    padding-bottom: 4px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline {
+    margin-bottom: 4px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content {
+    padding-top: 4px !important;
+    padding-bottom: 6px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy {
+    padding: 2px 12px 2px !important;
+    margin: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy .abs-skill-label,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy .abs-skill-label {
+    margin-bottom: 2px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy .mb-3,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy .mb-3 {
+    margin-bottom: 2px !important;
+}
+
+/* Stat badges area: tighter margin to "Self" tag (-14px) without clipping */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-special-effects-groups,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-special-effects-groups {
+    padding-top: 0 !important;
+    margin-top: 0 !important;
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-effect-group,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-effect-group {
+    margin-top: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-box:not(.abs-clean-single-standard-super-attack):not(.abs-clean-ex-super-attack) .abs-sa-title-center {
+    padding: 0 85px !important;
+}
+
+/* ===========================================================================
+   ABS.CLEAN VIEWER DISPLAY PANELS CURSOR FIX
+   =========================================================================== */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box {
+    cursor: default !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box *:not(button):not(button *):not(a):not(a *),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box *:not(button):not(button *):not(a):not(a *),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box *:not(button):not(button *):not(a):not(a *) {
+    cursor: default;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container .abs-domain-header-icon,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container .abs-domain-header-icon,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container button,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container button,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container button,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-active-container a,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-field-container a,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container a,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn *,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch * {
+    cursor: pointer !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn > svg,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn > path,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn > span,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch > svg,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch > path,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch > span {
+    pointer-events: none !important;
+    cursor: pointer !important;
+}
+
+/* ABS Clean: Nav bar & Settings Drawer for Viewer (Sharp Squared Edges & Glass) */
+body.card-viewer-page.theme-abs-clean .hud-nav-group,
+body.card-viewer-page.theme-abs-clean .hud-nav-group .hud-nav-link,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper,
+body.card-viewer-page.theme-abs-clean .liquid-metal-frame {
+    border-radius: 0px !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group {
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group::before,
+body.card-viewer-page.theme-abs-clean .hud-nav-group::after {
+    border-radius: 0px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #settingsDrawer,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .sba-gui-btn,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .sba-settings-close-btn {
+    border-radius: 4px !important;
+}
+
+/* ===========================================================================
+   VIEWER NAVBAR HOVER FIX & SETTINGS THEME EXPANSION FIX
+   =========================================================================== */
+
+/* Navbar: preserve abs.clean style ONLY on the nav group pill (not the whole wrapper!) */
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover,
+body.card-viewer-page.theme-abs-clean .apple-hud-bar {
+    background: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group,
+body.card-viewer-page.theme-abs-clean .hud-nav-group:hover,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:focus-within .hud-nav-group {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group::before,
+body.card-viewer-page.theme-abs-clean .hud-nav-group::after,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group::before,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group::after {
+    border-radius: 0px !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group .hud-nav-link,
+body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link {
+    border-radius: 0px !important;
+}
+
+body.card-viewer-page.theme-abs-clean .hud-nav-group .hud-nav-link:hover {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* Card Theme Style (abs.style and abs.clean) in Settings Drawer: expand full box */
+#settingsDrawer .card-viewer-style-options,
+body.card-viewer-page #settingsDrawer .card-viewer-style-options,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .card-viewer-style-options,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#settingsDrawer .card-viewer-style-options .abs-hud-theme-btn,
+body.card-viewer-page #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 56px !important;
+    min-height: 56px !important;
+    padding: 8px 12px !important;
+    box-sizing: border-box !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease !important;
+}
+
+#settingsDrawer .card-viewer-style-options .abs-hud-theme-btn.active,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn { border-radius: 4px !important; }
+body.card-viewer-page.theme-abs-clean #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn.active,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn.active {
+    background: rgba(56, 189, 248, 0.14) !important;
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+#settingsDrawer .card-viewer-style-options .abs-hud-theme-btn:hover,
+body.card-viewer-page.theme-abs-clean #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn:hover,
+body.card-viewer-page.theme-sba #settingsDrawer .card-viewer-style-options .abs-hud-theme-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.45) !important;
+}
+
+#settingsDrawer .card-viewer-style-options .abs-hud-theme-btn .hud-btn-logo {
+    max-height: 22px !important;
+    width: auto !important;
+    object-fit: contain !important;
+}
+
+#settingsDrawer .card-viewer-style-options .abs-hud-theme-btn .hud-btn-indicator {
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.8px !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+}
+
+/* Explicit visible styling for play buttons with text labels (Intro & Counter) in viewer */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn.abs-animation-play-btn--with-text,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-animation-play-btn {
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 2px 8px !important;
+    gap: 5px !important;
+    white-space: nowrap !important;
+    display: inline-flex !important;
+    align-items: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-play-btn > span.abs-animation-btn-text,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-animation-btn-text {
+    display: inline-block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.6px !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
+}
+
+/* ===========================================================================
+   ABS.CLEAN VIEWER ACTION PANELS — PASSIVE-MATCHING TYPE GLASS
+   Keep only the typing-coloured outline and a restrained transparent fill.
+   =========================================================================== */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box[data-active-kind="domain"],
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.abs-clean-domain-rendered,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box {
+    --viewer-action-accent: var(--theme-border, #38bdf8);
+    position: relative !important;
+    overflow: visible !important;
+    background: color-mix(in srgb, var(--viewer-action-accent) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--viewer-action-accent) 28%, transparent) !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--viewer-action-accent) 64%, rgba(255, 255, 255, 0.38)) !important;
+    box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box[data-active-kind="domain"] > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.abs-clean-domain-rendered > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box > .abs-header {
+    position: relative !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border-bottom: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-content,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box[data-active-kind="domain"] > .abs-content,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.abs-clean-domain-rendered > .abs-content,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box > .abs-content {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Super Attack shells keep their structure, but reveal a small amount of the
+   page atmosphere instead of reading as a fully opaque block. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 10%, rgba(3, 8, 18, 0.62)) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 10%, rgba(3, 8, 18, 0.62)) !important;
+    background-image: none !important;
+    border-color: color-mix(in srgb, var(--theme-border, #38bdf8) 52%, rgba(255, 255, 255, 0.22)) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 20px rgba(2, 8, 18, 0.18) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-content {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    box-shadow: none !important;
+}
+
+/* EX Super Attack condition divider stays removed: no line below the
+   condition copy, while the former divider under the effect stays gone. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-clean-ex-condition-divider {
+    display: none !important;
+    width: 100% !important;
+    height: 1px !important;
+    min-height: 1px !important;
+    margin: 4px 0 8px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-clean-ex-condition-divider > hr.divider {
+    display: none !important;
+    width: 100% !important;
+    height: 1px !important;
+    min-height: 1px !important;
+    max-height: 1px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 18%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 88%, #ffffff 12%) 50%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 82%,
+        transparent 100%
+    ) !important;
+    background-image: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 18%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 88%, #ffffff 12%) 50%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 82%,
+        transparent 100%
+    ) !important;
+    box-shadow: 0 0 7px color-mix(in srgb, var(--theme-border, #38bdf8) 30%, transparent) !important;
+}
+
+/* Active Skill uses the same neutral liquid-glass surface as Passive Skill.
+   Keep its typing-aware outline so the section is still easy to identify. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box {
+    background: var(--abs-liquid-light-fill, linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(214, 239, 255, 0.2) 44%, rgba(255, 255, 255, 0.16) 100%)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-light-fill, linear-gradient(135deg, rgba(255, 255, 255, 0.38) 0%, rgba(214, 239, 255, 0.2) 44%, rgba(255, 255, 255, 0.16) 100%)) !important;
+    border-color: color-mix(in srgb, var(--theme-border, #38bdf8) 64%, rgba(255, 255, 255, 0.38)) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean-dark #layout-abs-style #abs-active-container > .abs-box {
+    background: var(--abs-liquid-dark-fill, linear-gradient(135deg, rgba(18, 38, 56, 0.58) 0%, rgba(6, 16, 29, 0.34) 48%, rgba(24, 53, 78, 0.42) 100%)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-dark-fill, linear-gradient(135deg, rgba(18, 38, 56, 0.58) 0%, rgba(6, 16, 29, 0.34) 48%, rgba(24, 53, 78, 0.42) 100%)) !important;
+}
+
+/* Keep the three primary Viewer skill shells crisp and squared off. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-leader-skill-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-leader-container > .abs-box {
+    border-radius: 0 !important;
+}
+
+/* Motion rail composition: the idle panel owns a real slice of the left rail
+   before the portrait/art footprint. This keeps its header visible, moves the
+   art down by the same amount, and lets the existing Forms/Awakenings flow
+   continue below the complete rail instead of underneath it. */
+@media (min-width: 681px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
+        --abs-clean-motion-rail-top: 6px;
+        --abs-clean-motion-rail-height: 214px;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        order: -2 !important;
+        flex: 0 0 190px !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        height: 190px !important;
+        min-height: 190px !important;
+        max-height: 190px !important;
+        margin: var(--abs-clean-motion-rail-top) 0 24px !important;
+        z-index: 72 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
+        top: calc(var(--abs-clean-motion-rail-top) + var(--abs-clean-motion-rail-height)) !important;
+    }
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
+        --abs-clean-motion-rail-top: 12px;
+        --abs-clean-motion-rail-height: 196px;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+        position: relative !important;
+        top: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        left: auto !important;
+        order: -2 !important;
+        flex: 0 0 176px !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        height: 176px !important;
+        min-height: 176px !important;
+        max-height: 176px !important;
+        margin: var(--abs-clean-motion-rail-top) 0 20px !important;
+        z-index: 72 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
+        top: calc(var(--abs-clean-motion-rail-top) + var(--abs-clean-motion-rail-height)) !important;
+    }
+}
+
+/* The idle LWFs use a tall battle-stage coordinate system, so the character
+   can look undersized inside the motion rail. Enlarge the rendered stage
+   around its center while keeping the viewport clipped. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
+    transform: scale(1.4) !important;
+    transform-origin: center center !important;
+    will-change: transform !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
+        transform: scale(1.28) !important;
+    }
+}
+
+
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    border: 1px solid var(--abs-liquid-border, rgba(226, 245, 255, 0.32)) !important;
+    border-radius: 2px !important;
+    background: var(--abs-liquid-light-fill, rgba(3, 10, 18, 0.54)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-light-fill, none) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.14), 0 8px 18px rgba(2, 8, 18, 0.18) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-header {
+    flex: 0 0 24px !important;
+    height: 24px !important;
+    min-height: 24px !important;
+    padding: 4px 10px !important;
+    justify-content: flex-start !important;
+    color: var(--theme-text, #38bdf8) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-bottom: 1px solid var(--abs-liquid-border, rgba(226, 245, 255, 0.24)) !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-content {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: auto !important;
+    gap: 7px !important;
+    padding: 8px 10px 10px !important;
+    background: transparent !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-viewport {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    border: 1px solid color-mix(in srgb, var(--abs-liquid-border, #38bdf8) 58%, transparent) !important;
+    border-radius: 1px !important;
+    background: rgba(2, 6, 23, 0.20) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-status {
+    inset: auto 8px 5px auto !important;
+    display: block !important;
+    padding: 0 !important;
+    color: rgba(226, 232, 240, 0.62) !important;
+    font: 700 8px/1 Arial, sans-serif !important;
+    letter-spacing: 0.08em !important;
+    text-transform: lowercase !important;
+    pointer-events: none !important;
+    text-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-note {
+    align-self: flex-start !important;
+    margin-top: 2px !important;
+    color: var(--theme-text, #38bdf8) !important;
+    font: 800 8px/1.1 Arial, sans-serif !important;
+    letter-spacing: 0.08em !important;
+    text-transform: lowercase !important;
+}
+
+/* The viewer header is in the same right-hand grid track as Leader/Passive.
+   Keep the portrait, name, release metadata, and identity tags on one center
+   axis so a long title does not pull the visible header sideways. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: relative !important;
+    z-index: 90 !important;
+    overflow: visible !important;
+    width: 100% !important;
+    min-height: auto !important;
+    padding-inline: 0 !important;
+    padding-top: 12px !important;
+    padding-bottom: 6px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > .abs-header-left {
+    order: 1 !important;
+    align-self: flex-start !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: var(--abs-clean-viewer-axis-width, 100%) !important;
+    max-width: none !important;
+    margin-top: 0 !important;
+    margin-right: 0 !important;
+    margin-bottom: 0 !important;
+    margin-left: var(--abs-clean-viewer-axis-left, 0%) !important;
+    gap: 8px !important;
+    padding: 4px 10px 2px !important;
+    box-sizing: border-box !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > .abs-header-left > #abs-composed-icon {
+    margin-inline: auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header .abs-header-text {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: min(100%, 760px) !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin-inline: auto !important;
+    gap: 6px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header .abs-title-brand-row,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header .abs-clean-name-line {
+    width: 100% !important;
+    min-width: 0 !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    row-gap: 6px !important;
+    column-gap: 12px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-char-title,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-char-name,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-clean-release-date {
+    width: 100% !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-clean-release-date {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-inline: auto !important;
+}
+
+/* Long viewer names may wrap inside the centered header track instead of
+   forcing the whole title row wider than the portrait/skill column. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-char-name {
+    display: block !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    white-space: normal !important;
+    overflow-wrap: break-word !important;
+    word-break: normal !important;
+    line-height: 1.18 !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
+    order: initial !important;
+    align-self: auto !important;
+    position: absolute !important;
+    inset: auto !important;
+    top: auto !important;
+    left: var(--abs-clean-viewer-identity-left, 50%) !important;
+    right: auto !important;
+    bottom: calc(100% - 1px) !important;
+    z-index: 80 !important;
+    transform: translateX(-50%) !important;
+    width: max-content !important;
+    max-width: calc(100% - 8%) !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    align-items: stretch !important;
+    justify-content: flex-start !important;
+    align-content: normal !important;
+    gap: 6px !important;
+    text-align: center !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag {
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+    justify-content: center !important;
+    text-align: center !important;
+}
+
+/* Compact single-row rail: shrink-wrap badges so the row stays one line
+   (~30px tall) and always fits above the header. A tall wrapped rail would
+   get clamped back down into the header by the page-top guard. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
+    flex-wrap: nowrap !important;
+}
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type {
+    width: auto !important;
+}
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening {
+    min-width: 0 !important;
+}
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge {
+    padding: 5px 8px !important;
+    gap: 6px !important;
+    min-height: 30px !important;
+}
+@media (max-width: 700px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
+        flex-wrap: wrap !important;
+    }
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-style .abs-side-col > #abs-motion-box {
+    background: var(--abs-liquid-dark-fill, rgba(3, 10, 18, 0.54)) !important;
+    background-color: transparent !important;
+    background-image: var(--abs-liquid-dark-fill, none) !important;
+    border-color: rgba(197, 232, 255, 0.28) !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-header {
+        height: 22px !important;
+        min-height: 22px !important;
+        flex-basis: 22px !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
+        gap: 4px !important;
+    }
+}
+
+/* ============================================================================
+   VIEWER MOTION TUNING
+   These variables are intentionally scoped to the published ABS Clean viewer.
+   The editor keeps its own motion sizing and opacity rules.
+
+   --abs-viewer-motion-scale: actual LWF character size inside the viewport
+   --abs-viewer-motion-width/height: motion panel dimensions
+   --abs-viewer-motion-margin-*: rail spacing around the motion panel
+   ========================================================================== */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
+    --abs-viewer-motion-scale: 2;
+    --abs-viewer-motion-width: 98%;
+    --abs-viewer-motion-height: 192px;
+    --abs-viewer-motion-backdrop: transparent;
+    --abs-viewer-motion-margin-top: 0px;
+    --abs-viewer-motion-margin-right: 0px;
+    --abs-viewer-motion-margin-bottom: 16px;
+    --abs-viewer-motion-margin-left: 0px;
+    --abs-viewer-motion-label-gap: 7px;
+    --abs-clean-motion-rail-top: var(--abs-viewer-motion-margin-top) !important;
+    --abs-clean-motion-rail-height: calc(var(--abs-viewer-motion-height) + var(--abs-viewer-motion-margin-bottom)) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    width: var(--abs-viewer-motion-width) !important;
+    height: var(--abs-viewer-motion-height) !important;
+    min-height: var(--abs-viewer-motion-height) !important;
+    max-height: var(--abs-viewer-motion-height) !important;
+    flex: 0 0 var(--abs-viewer-motion-height) !important;
+    margin: var(--abs-viewer-motion-margin-top) var(--abs-viewer-motion-margin-right) var(--abs-viewer-motion-margin-bottom) var(--abs-viewer-motion-margin-left) !important;
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Dark mode has a more specific legacy gradient rule, so repeat the viewer
+   override here to keep this surface genuinely transparent. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-style .abs-side-col > #abs-motion-box {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* Keep the old header harmless if another script injects it, but use the
+   external caption below for the published viewer layout. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-header {
+    display: none !important;
+}
+
+/* The external caption is a published-viewer treatment only. Keep the
+   editor's normal in-panel motion header available everywhere else. */
+body:not(.card-viewer-page) #abs-motion-box > .abs-motion-external-label {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-external-label {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    z-index: 2 !important;
+    display: block !important;
+    padding: 0 !important;
+    color: rgba(148, 163, 184, 0.84) !important;
+    background: transparent !important;
+    border: 0 !important;
+    font: 800 9px/1.2 Arial, sans-serif !important;
+    letter-spacing: 0.1em !important;
+    text-transform: lowercase !important;
+    text-shadow: none !important;
+    pointer-events: none !important;
+    white-space: nowrap !important;
+    transform: translate(2px, calc(-100% - var(--abs-viewer-motion-label-gap))) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-content {
+    display: flex !important;
+    flex-direction: column !important;
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    gap: 0 !important;
+    padding: 7px 9px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    background: rgba(9, 20, 32, 0.42) !important;
+    background-color: rgba(9, 20, 32, 0.42) !important;
+    background-image: none !important;
+    border: 2px solid rgba(148, 163, 184, 0.28) !important;
+    border-radius: 4px !important;
+    box-shadow: 0 8px 20px rgba(2, 8, 18, 0.18) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-viewport {
+    flex: 1 1 auto !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: var(--abs-viewer-motion-backdrop) !important;
+    background-color: var(--abs-viewer-motion-backdrop) !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
+    background: transparent !important;
+    background-color: transparent !important;
+    transform: scale(1.35) !important;
+    translate: (0px,500px) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-note {
+    opacity: 0.72 !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
+        --abs-viewer-motion-scale: 1.28;
+        --abs-viewer-motion-height: 176px;
+        --abs-viewer-motion-margin-top: 12px;
+        --abs-viewer-motion-margin-bottom: 20px;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-external-label {
+        font-size: 9px !important;
+    }
+}
+/* Published-page top spacing and page-level idle caption. */
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
+        position: relative !important;
+        inset: auto !important;
+        transform: none !important;
+        order: -1 !important;
+        align-self: center !important;
+        max-width: 100% !important;
+        margin: 0 0 6px !important;
+    }
+}
+body.card-viewer-page.theme-abs-clean #top-content {
+    padding-top: 8px !important;
+}
+body.card-viewer-page > .abs-motion-page-label {
+    display: none;
+}
+body.card-viewer-page.theme-abs-clean > .abs-motion-page-label {
+    display: block;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 95;
+    margin: 0;
+    padding: 0;
+    color: rgba(148, 163, 184, 0.84);
+    font: 800 9px/1.2 Arial, sans-serif;
+    letter-spacing: 0.1em;
+    pointer-events: none;
+}
+/* Match the Forms surface with a single translucent fill. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-content,
+body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-content {
+    background: rgba(3, 10, 18, 0.54) !important;
+    border-color: rgba(197, 232, 255, 0.22) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.25) !important;
+}
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-status[data-state="ready"],
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-note {
+    display: none !important;
+}
+body.card-viewer-page #abs-motion-box .abs-motion-status:empty {
+    display: none !important;
+}
+/* Legacy ABS.STYLE drops the motion preview surface (abs.clean keeps it).
+   JS keeps running against the hidden canvas, so nothing else changes. */
+body.card-viewer-page.theme-abs-style #layout-abs-style .abs-side-col > #abs-motion-box,
+body.card-viewer-page.theme-abs-style #abs-motion-box,
+#app.theme-abs-style #abs-motion-box {
+    display: none !important;
+}
+
+/* Media availability is decided by the bridge payload, so the published
+   page starts with the optional motion surface out of flow.  This avoids a
+   blank rail flashing while card data or the local bridge is still loading. */
+body.card-viewer-page #abs-motion-box:not([data-motion-available="true"]),
+body.card-viewer-page #abs-motion-box[hidden],
+body.card-viewer-page #abs-motion-box.is-unavailable {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* The animation stylesheet gives action wrappers an !important display
+   value, which would otherwise override the browser's hidden attribute. */
+body.card-viewer-page .abs-animation-header-actions[hidden],
+body.card-viewer-page .abs-animation-header-actions > .abs-animation-play-btn[hidden] {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* When idle media is unavailable, let the identity header occupy the full
+   top row.  The side rail moves to row two so the expanded header cannot
+   overlap the portrait/art stage. */
+@media (min-width: 681px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) {
+        grid-template-areas:
+            "header header"
+            "side main" !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-top-header {
+        grid-area: header !important;
+        width: 100% !important;
+        max-width: none !important;
+        min-width: 0 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-grid-container > .abs-side-col,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-side-col {
+        grid-area: side !important;
+        grid-column: 1 !important;
+        grid-row: auto !important;
+    }
+}
+
+/* The rail variables are also cleared synchronously by viewer-motion.js;
+   these selectors keep layout stable if the optional module is unavailable. */
+body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) .abs-side-col {
+    --abs-viewer-motion-height: 0px !important;
+    --abs-viewer-motion-margin-top: 0px !important;
+    --abs-viewer-motion-margin-bottom: 0px !important;
+    --abs-clean-motion-rail-top: 0px !important;
+    --abs-clean-motion-rail-height: 0px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
+    top: 0 !important;
+}

@@ -1,0 +1,4663 @@
+/* Final SBA navigation and Cards canvas layer. This file is intentionally
+   loaded after the iterative SBA theme experiments. */
+body.theme-sba {
+    --sba-rail-width: 0px;
+    background:
+        radial-gradient(ellipse 76% 60% at 4% -10%, rgba(113, 162, 219, 0.24), transparent 68%),
+        radial-gradient(ellipse 60% 58% at 98% 8%, rgba(145, 103, 202, 0.19), transparent 70%),
+        radial-gradient(ellipse 65% 54% at 48% 108%, rgba(78, 79, 174, 0.16), transparent 74%),
+        linear-gradient(145deg, #121825 0%, #0a0e18 48%, #151124 100%) !important;
+    background-size: 155% 155%, 145% 145%, 150% 150%, 100% 100% !important;
+    background-position: 2% 0%, 98% 8%, 48% 100%, center !important;
+    background-attachment: fixed !important;
+    animation: sba-bottom-gradient-drift 22s ease-in-out infinite alternate;
+}
+
+body.theme-sba.fx-static {
+    animation: none !important;
+}
+
+@keyframes sba-bottom-gradient-drift {
+    0% { background-position: 2% 0%, 98% 8%, 48% 100%, center; }
+    100% { background-position: 15% 8%, 86% 0%, 58% 88%, center; }
+}
+
+/* Keep only the SBA mark in the upper-left. */
+body.theme-sba .apple-hud-wrapper,
+body.theme-sba.hub-cards-nav-static .apple-hud-wrapper {
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100dvh !important;
+    pointer-events: none;
+    background: transparent !important;
+}
+
+body.theme-sba .liquid-metal-frame,
+body.theme-sba .apple-hud-bar {
+    width: 100vw !important;
+    height: 100% !important;
+    overflow: visible !important;
+    pointer-events: none;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Older SBA lens selectors include :not(.fx-static), so match that
+   specificity before clearing the full-screen wrapper's inherited blur. */
+body.theme-sba:not(.fx-static) .apple-hud-bar,
+body.theme-sba.fx-static .apple-hud-bar {
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .apple-hud-bar {
+    border: 0 !important;
+    padding: 0 !important;
+}
+
+body.theme-sba .apple-nav-center {
+    position: fixed !important;
+    inset: 10px auto auto 14px !important;
+    z-index: 1003;
+    display: flex !important;
+    width: 42px !important;
+    height: 48px !important;
+    margin: 0 !important;
+    pointer-events: auto;
+}
+
+/* Shared dock foundations also apply on pages without hub-themes.css. */
+body.theme-sba .hud-nav-group {
+    isolation: isolate;
+    scrollbar-width: none;
+    -webkit-font-smoothing: auto;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link {
+    position: relative;
+    z-index: 1;
+    isolation: isolate;
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    font-size: 12px !important;
+    letter-spacing: 0.9px !important;
+    text-transform: uppercase;
+}
+
+body.theme-sba .hud-nav-group,
+body.theme-sba .hud-nav-group .hud-nav-link {
+    box-sizing: border-box;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-svg {
+    position: relative;
+    z-index: 2;
+    overflow: visible;
+}
+
+/* Persistent bottom liquid-glass navigation. */
+body.theme-sba .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    position: fixed !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: 2px !important;
+    left: 50% !important;
+    z-index: 1002;
+    display: flex !important;
+    flex: none !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 7px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: calc(100vw - 24px) !important;
+    height: 58px !important;
+    max-height: none !important;
+    margin: 0 !important;
+    padding: 4px 10px !important;
+    overflow-x: auto !important;
+    overflow-y: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) !important;
+    transition: none !important;
+}
+
+body.theme-sba .hud-nav-group::-webkit-scrollbar {
+    display: none;
+}
+
+body.theme-sba .hud-nav-group .hud-dropdown-wrap {
+    width: auto !important;
+    flex: 0 0 auto !important;
+}
+
+/* Keep the touch targets generous, while giving the glyphs an even amount of
+   glass around every side.  The older SBA rules size these independently. */
+body.theme-sba .hud-nav-group .hud-nav-link {
+    display: grid !important;
+    place-items: center !important;
+    padding: 0 !important;
+    line-height: 0 !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link .hud-nav-svg {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    flex: 0 0 17px !important;
+}
+
+/* The bottom bar is an end-of-page affordance: it floats in only when the
+   current document is near its bottom, then leaves the content unobstructed. */
+body.theme-sba .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    bottom: 16px !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(18px) !important;
+    transition: transform 240ms cubic-bezier(0.22, 1, 0.36, 1), opacity 180ms ease !important;
+}
+
+body.theme-sba.sba-bottom-nav-visible .hud-nav-group,
+body.theme-sba.sba-bottom-nav-visible .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba.sba-bottom-nav-visible .apple-hud-wrapper:focus-within .hud-nav-group {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+body.theme-sba .hub-main-container {
+    width: min(1560px, calc(100vw - 28px)) !important;
+    max-width: 1560px !important;
+    margin: 24px auto 122px !important;
+    padding: 0 4px !important;
+}
+
+/* Kube-inspired search lens: a thin specular bezel, SVG displacement in
+   Chromium, and a translucent blur fallback elsewhere. */
+body.theme-sba .hub-cards-view .cards-search-toolbar {
+    width: min(760px, 100%) !important;
+    margin-inline: auto !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    padding: 1px !important;
+    border: 0 !important;
+    border-radius: 22px !important;
+    background: linear-gradient(115deg, rgba(255, 255, 255, 0.52), rgba(219, 231, 255, 0.16) 45%, rgba(255, 255, 255, 0.34)) !important;
+    box-shadow: 0 12px 30px rgba(1, 4, 10, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    min-height: 50px;
+    border: 0 !important;
+    border-radius: 21px !important;
+    background:
+        radial-gradient(ellipse 50% 120% at var(--sba-glass-x, 50%) var(--sba-glass-y, 45%), rgba(255, 255, 255, 0.14), transparent 74%),
+        rgba(205, 219, 240, 0.055) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22), inset 0 -1px 0 rgba(12, 18, 29, 0.1) !important;
+}
+
+@supports (backdrop-filter: url("#sba-liquid-button-refraction")) {
+    body.theme-sba:not(.fx-static) .hub-cards-view .liquid-search-box {
+        backdrop-filter: url("#sba-liquid-button-refraction") blur(1px) saturate(112%) brightness(1.08) !important;
+        -webkit-backdrop-filter: url("#sba-liquid-button-refraction") blur(1px) saturate(112%) brightness(1.08) !important;
+    }
+}
+
+body.theme-sba.fx-static .hub-cards-view .liquid-search-box {
+    backdrop-filter: blur(8px) saturate(105%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(105%) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input {
+    color: rgba(249, 251, 255, 0.94) !important;
+    background: transparent !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input::placeholder {
+    color: rgba(219, 229, 243, 0.5) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    min-height: 36px;
+    margin: 4px !important;
+    padding: 0 15px !important;
+    border: 1px solid rgba(255, 255, 255, 0.34) !important;
+    border-radius: 13px !important;
+    background: rgba(255, 255, 255, 0.11) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.28) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* One natural document scroll and only the bottom page control. */
+body.theme-sba #paginationTop {
+    display: none !important;
+}
+
+body.theme-sba #paginationBottom {
+    margin-bottom: 94px !important;
+}
+
+body.theme-sba .hub-main-container,
+body.theme-sba .hub-cards-view,
+body.theme-sba #cardGrid {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+}
+
+body.theme-sba #cardGrid {
+    /* Ten cards per row gives the circular portraits room to breathe and makes
+       the 140-card SBA page size end on a complete row. */
+    grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)) !important;
+    gap: 20px 10px !important;
+    min-height: 0 !important;
+    padding: 24px 20px 28px !important;
+    background: rgba(14, 20, 35, 0.12) !important;
+    border-color: rgba(231, 240, 255, 0.1) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+    overflow: hidden !important;
+    isolation: isolate;
+}
+
+/* Bottom navigation: a compact version of the reference's icon-and-label
+   liquid glass dock. The group owns the glass; items are intentionally clear
+   until one becomes the selected, raised pill. */
+body.theme-sba {
+    --sba-dock-glass: rgba(255, 255, 255, 0.17);
+    --sba-dock-highlight: rgba(255, 255, 255, 0.70);
+    --sba-dock-text: rgba(247, 250, 255, 0.88);
+    --sba-dock-active: #ffffff;
+}
+
+body.theme-sba .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    gap: 2px !important;
+    height: 70px !important;
+    padding: 5px 11px !important;
+    border: 1px solid rgba(255, 255, 255, 0.36) !important;
+    border-radius: 35px !important;
+    background: var(--sba-dock-glass) !important;
+    box-shadow:
+        0 12px 28px rgba(0, 0, 0, 0.20),
+        inset 1px 1px 0 var(--sba-dock-highlight),
+        inset 0 0 7px rgba(255, 255, 255, 0.24) !important;
+    backdrop-filter: blur(10px) saturate(128%) brightness(1.13) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(128%) brightness(1.13) !important;
+}
+
+body.theme-sba .hud-nav-group::before {
+    opacity: 0.72 !important;
+    background: linear-gradient(112deg, transparent 12%, rgba(255, 255, 255, 0.30) 48%, transparent 70%) !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 5px 4px !important;
+    border: 0 !important;
+    border-radius: 29px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--sba-dock-text) !important;
+    line-height: 1 !important;
+    transition: transform 220ms ease, background 220ms ease, color 220ms ease, box-shadow 220ms ease !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link::before,
+body.theme-sba .hud-nav-group .hud-nav-link::after {
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link .hud-nav-svg {
+    width: 19px !important;
+    height: 19px !important;
+    flex-basis: 19px !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link > span {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden;
+    color: currentColor !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body.theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):focus-visible {
+    transform: translateY(-2px) scale(1.04) !important;
+    background: transparent !important;
+    color: #fff !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link.active:hover,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover {
+    background: rgba(255, 255, 255, 0.24) !important;
+    color: var(--sba-dock-active) !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link.active,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"] {
+    width: 80px !important;
+    min-width: 80px !important;
+    margin-inline: -2px !important;
+    background: rgba(255, 255, 255, 0.24) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.62), inset 0 -1px 0 rgba(21, 27, 38, 0.14), 0 5px 12px rgba(0, 0, 0, 0.12) !important;
+    color: var(--sba-dock-active) !important;
+}
+
+/* Leave inactive destinations as clean icon-and-label content in the shared
+   glass dock; only the active destination receives a pill of its own. */
+body.theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]) {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]) .hud-nav-svg {
+    filter: none !important;
+}
+
+/* One continuous, low-contrast dock holds the icons. The selected item is
+   deliberately the only piece that receives a white glass surface. */
+body.theme-sba .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+    background: rgba(11, 16, 28, 0.16) !important;
+    border-color: rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+}
+
+body.theme-sba .hud-nav-group::before,
+body.theme-sba .hud-nav-group::after {
+    display: none !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"] {
+    width: 82px !important;
+    min-width: 82px !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Settings"] {
+    width: 78px !important;
+    min-width: 78px !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Calculator"] > span,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-label="Settings"] > span {
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+/* Filters is a Cards-only workspace action. */
+body.theme-sba .hud-nav-group .sba-side-filter-button {
+    display: none !important;
+}
+
+/* Cards search uses the same three-layer glass: beveled rim, translucent
+   lens, and a compact raised Search action. */
+body.theme-sba .hub-cards-view .cards-search-toolbar {
+    width: min(840px, 100%) !important;
+    gap: 10px !important;
+    padding: 6px !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 29px !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.16), inset 1px 1px 0 rgba(255, 255, 255, 0.48), inset 0 0 7px rgba(255, 255, 255, 0.16) !important;
+    backdrop-filter: blur(10px) saturate(125%) brightness(1.1) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(125%) brightness(1.1) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    flex: 1 1 auto !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    min-height: 46px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box .search-icon {
+    width: 18px !important;
+    height: 18px !important;
+    margin-left: 14px !important;
+    fill: rgba(255, 255, 255, 0.78) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    min-height: 36px !important;
+    margin: 4px 5px 4px 2px !important;
+    padding: 0 17px !important;
+    border-radius: 18px !important;
+    background: rgba(255, 255, 255, 0.18) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.46), 0 4px 9px rgba(0, 0, 0, 0.10) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    align-self: center !important;
+    flex: 0 0 48px !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    padding: 0 !important;
+    gap: 0 !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    transition: width 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        flex-basis 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        padding 260ms cubic-bezier(0.22, 1, 0.36, 1),
+        gap 220ms ease,
+        border-radius 220ms ease, background 220ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn svg {
+    display: block !important;
+    margin: 0 !important;
+    flex-shrink: 0 !important;
+    width: 20px !important;
+    height: 20px !important;
+    transition: transform 240ms cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+body.theme-sba #cardsAdvancedFilterBtn {
+    display: inline-flex !important;
+}
+
+/* The Filters button is completely independent from search. It widens only
+   when explicitly clicked (aria-expanded="true"), with a buttery smooth label reveal. */
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:not([aria-expanded="true"]):not(.active) .advanced-filter-count {
+    display: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn .filter-button-label {
+    display: inline-block !important;
+    max-width: 0 !important;
+    overflow: hidden !important;
+    opacity: 0 !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.04em !important;
+    white-space: nowrap !important;
+    transition: max-width 240ms cubic-bezier(0.16, 1, 0.3, 1), opacity 200ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:focus-visible {
+    outline: 2px solid rgba(255, 255, 255, 0.76) !important;
+    outline-offset: 2px !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:is([aria-expanded="true"], .active) {
+    /* Icon + Filters label + the active-filter count need room together. */
+    flex: 0 0 138px !important;
+    flex-basis: 138px !important;
+    width: 138px !important;
+    min-width: 138px !important;
+    padding: 0 14px !important;
+    gap: 7px !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    box-shadow: 0 0 14px rgba(255, 255, 255, 0.2), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn[aria-expanded="true"] svg {
+    transform: rotate(180deg) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:is([aria-expanded="true"], .active) .filter-button-label {
+    max-width: 64px !important;
+    opacity: 1 !important;
+}
+
+/* Give the search action the exact compact glass button language as Filters. */
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    display: inline-grid !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+}
+
+/* Spotlight search surface. The component reference uses one softly raised
+   rounded input with a blurred backdrop; the previous implementation had a
+   second bezel around that input, which made it look double-layered. */
+body.theme-sba .hub-cards-view .cards-search-toolbar {
+    width: min(820px, calc(100% - 24px)) !important;
+    flex-wrap: nowrap !important;
+    gap: 12px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    flex: 1 1 auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 32px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    animation: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    min-height: 64px !important;
+    height: 64px !important;
+    box-sizing: border-box !important;
+    padding: 8px 12px 8px 18px !important;
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    border-radius: 32px !important;
+    background:
+        radial-gradient(ellipse 46% 150% at var(--sba-glass-x, 50%) var(--sba-glass-y, 44%), rgba(255, 255, 255, 0.16), transparent 72%),
+        rgba(220, 230, 244, 0.16) !important;
+    box-shadow:
+        0 12px 30px rgba(2, 5, 12, 0.18),
+        inset 1px 1px 0 rgba(255, 255, 255, 0.42),
+        inset 0 -1px 0 rgba(17, 24, 39, 0.16) !important;
+    backdrop-filter: blur(24px) saturate(135%) brightness(1.06) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(135%) brightness(1.06) !important;
+    transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box:focus-within {
+    border-color: rgba(255, 255, 255, 0.52) !important;
+    background:
+        radial-gradient(ellipse 46% 150% at var(--sba-glass-x, 50%) var(--sba-glass-y, 44%), rgba(255, 255, 255, 0.21), transparent 72%),
+        rgba(226, 235, 248, 0.20) !important;
+    box-shadow:
+        0 14px 34px rgba(2, 5, 12, 0.20),
+        inset 1px 1px 0 rgba(255, 255, 255, 0.56),
+        inset 0 -1px 0 rgba(17, 24, 39, 0.12) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box .search-icon {
+    flex: 0 0 auto !important;
+    width: 22px !important;
+    height: 22px !important;
+    margin: 0 8px 0 0 !important;
+    fill: rgba(255, 255, 255, 0.84) !important;
+    opacity: 0.92 !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input {
+    min-width: 0 !important;
+    flex: 1 1 auto !important;
+    height: 48px !important;
+    padding: 0 10px !important;
+    color: rgba(249, 251, 255, 0.95) !important;
+    font-size: 16px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input::placeholder {
+    color: rgba(231, 238, 248, 0.58) !important;
+    font-weight: 450 !important;
+}
+
+/* Searching is live on input, as in Spotlight, so the separate text action
+   is intentionally removed from the SBA capsule. */
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    display: none !important;
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .hub-cards-view .cards-search-toolbar {
+        width: calc(100% - 12px) !important;
+        gap: 7px !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-search-box {
+        min-height: 58px !important;
+        height: 58px !important;
+        padding-left: 14px !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn {
+        flex-basis: 42px !important;
+        width: 42px !important;
+        min-width: 42px !important;
+        height: 42px !important;
+        min-height: 42px !important;
+    }
+}
+
+/* The Cards canvas is intentionally open; card circles sit directly on the
+   page gradient instead of on a separate gray slab. */
+body.theme-sba #cardGrid {
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+}
+
+/* SBA Home release rail: release batches remain in chronological order, but
+   the dense framed rows become compact circular portraits on the far right. */
+body.theme-sba .hub-home-top-grid {
+    grid-template-columns: minmax(0, 1fr) 288px !important;
+    gap: 24px !important;
+    align-items: start !important;
+}
+
+body.theme-sba .dokkan-timeline-panel {
+    position: sticky !important;
+    top: 18px !important;
+    right: 0 !important;
+    left: 50% !important;
+    width: 100vw !important;
+    height: min(72dvh, 650px) !important;
+    min-height: 420px !important;
+    max-height: 650px !important;
+    padding: 13px 12px 12px !important;
+    border: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-radius: 22px !important;
+    background: rgba(12, 18, 31, 0.24) !important;
+    box-shadow: 0 16px 34px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+    backdrop-filter: blur(13px) saturate(118%) !important;
+    -webkit-backdrop-filter: blur(13px) saturate(118%) !important;
+}
+
+body.theme-sba .timeline-panel-header {
+    margin: 0 4px 8px !important;
+    padding: 0 0 8px !important;
+    border-bottom-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+body.theme-sba .timeline-panel-title {
+    gap: 6px !important;
+    font-size: 11px !important;
+    letter-spacing: 0.11em !important;
+}
+
+body.theme-sba .timeline-title-svg {
+    width: 15px !important;
+    height: 15px !important;
+}
+
+body.theme-sba .timeline-badge-count {
+    margin-left: auto !important;
+    padding: 2px 6px !important;
+    font-size: 8px !important;
+    border-radius: 8px !important;
+    color: rgba(255, 255, 255, 0.72) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theme-sba .dokkan-timeline-scroll-track {
+    padding: 1px 4px 14px !important;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.28) transparent;
+}
+
+body.theme-sba .timeline-nodes-stream {
+    position: relative !important;
+    gap: 16px !important;
+    padding: 3px 0 16px !important;
+}
+
+/* A proper release rail: each date becomes a stop on the same vertical line,
+   while the compact portraits remain three across to preserve the narrow panel. */
+body.theme-sba .timeline-nodes-stream::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 8px !important;
+    bottom: 8px !important;
+    left: 6px !important;
+    display: block !important;
+    width: 1px !important;
+    background: linear-gradient(to bottom, rgba(145, 196, 242, 0.08), rgba(157, 121, 188, 0.68), rgba(126, 31, 134, 0.10)) !important;
+    pointer-events: none;
+}
+
+body.theme-sba .timeline-node-item {
+    position: relative !important;
+    padding-left: 11px !important;
+}
+
+body.theme-sba .timeline-node-marker {
+    position: absolute !important;
+    z-index: 2 !important;
+    top: 3px !important;
+    left: 1px !important;
+    display: block !important;
+    width: 11px !important;
+    height: 11px !important;
+    border: 2px solid rgba(222, 234, 255, 0.88) !important;
+    border-radius: 50% !important;
+    background: #9d79bc !important;
+    box-shadow: 0 0 0 3px rgba(157, 121, 188, 0.16), 0 0 10px rgba(145, 196, 242, 0.40) !important;
+}
+
+body.theme-sba .timeline-node-card {
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+body.theme-sba .timeline-node-header {
+    display: block !important;
+    margin: 0 0 8px !important;
+    padding: 0 0 0 5px !important;
+    border: 0 !important;
+}
+
+body.theme-sba .timeline-node-date {
+    position: relative !important;
+    display: block !important;
+    color: rgba(232, 239, 255, 0.74) !important;
+    font-size: 9px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase;
+}
+
+body.theme-sba .timeline-node-date::before {
+    content: '' !important;
+    position: absolute !important;
+    top: 50% !important;
+    right: calc(100% + 4px) !important;
+    width: 7px !important;
+    height: 1px !important;
+    background: rgba(189, 211, 245, 0.52) !important;
+}
+
+body.theme-sba .timeline-node-tags {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 3px !important;
+    margin-top: 4px !important;
+}
+
+body.theme-sba .timeline-tag {
+    padding: 2px 5px !important;
+    border-radius: 7px !important;
+    font-size: 7px !important;
+    letter-spacing: 0.04em !important;
+    line-height: 1.1 !important;
+}
+
+body.theme-sba .timeline-node-tags .tag-new {
+    color: #a7f3d0 !important;
+    border-color: rgba(52, 211, 153, 0.74) !important;
+    background: rgba(16, 185, 129, 0.20) !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba .timeline-node-tags .tag-eza {
+    color: #fde68a !important;
+    border-color: rgba(250, 204, 21, 0.78) !important;
+    background: rgba(234, 179, 8, 0.20) !important;
+}
+
+body.theme-sba .timeline-node-tags .tag-seza {
+    color: #fecaca !important;
+    border-color: rgba(248, 113, 113, 0.78) !important;
+    background: rgba(239, 68, 68, 0.20) !important;
+}
+
+body.theme-sba .timeline-node-tags .tag-new-cc {
+    color: #e9d5ff !important;
+    border-color: rgba(192, 132, 252, 0.80) !important;
+    background: rgba(168, 85, 247, 0.20) !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba .timeline-entries-list {
+    display: grid !important;
+    /* The fixed-width rail keeps a compact three-by-three portrait cluster. */
+    grid-template-columns: repeat(3, 40px) !important;
+    justify-content: center !important;
+    gap: 2px !important;
+}
+
+body.theme-sba .timeline-entry-row {
+    display: grid !important;
+    place-items: center !important;
+    width: 40px !important;
+    height: 40px !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 auto !important;
+    padding: 0 !important;
+    overflow: visible !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 50% !important;
+    background: rgba(5, 9, 18, 0.18) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+    animation: none !important;
+    transform: none !important;
+}
+
+body.theme-sba .timeline-entry-row:hover {
+    z-index: 4 !important;
+    border-color: rgba(255, 255, 255, 0.72) !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    transform: translateY(-2px) scale(1.06) !important;
+}
+
+body.theme-sba .timeline-entry-row--new {
+    border-color: rgba(110, 231, 183, 0.90) !important;
+    background: linear-gradient(145deg, rgba(16, 185, 129, 0.92), rgba(5, 150, 105, 0.78)) !important;
+}
+
+body.theme-sba .timeline-entry-row--eza {
+    border-color: rgba(253, 224, 71, 0.92) !important;
+    background: linear-gradient(145deg, rgba(234, 179, 8, 0.92), rgba(202, 138, 4, 0.80)) !important;
+}
+
+body.theme-sba .timeline-entry-row--seza {
+    border-color: rgba(252, 165, 165, 0.92) !important;
+    background: linear-gradient(145deg, rgba(239, 68, 68, 0.94), rgba(185, 28, 28, 0.80)) !important;
+}
+
+body.theme-sba .timeline-entry-row--custom {
+    border-color: rgba(216, 180, 254, 0.92) !important;
+    background: linear-gradient(145deg, rgba(168, 85, 247, 0.92), rgba(126, 34, 206, 0.80)) !important;
+}
+
+body.theme-sba .timeline-entry-row::after {
+    display: none !important;
+}
+
+.sba-timeline-floating-tooltip {
+    position: fixed;
+    z-index: 12050;
+    max-width: min(260px, calc(100vw - 24px));
+    padding: 7px 9px;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    border-radius: 9px;
+    background: rgba(8, 12, 22, 0.94);
+    box-shadow: 0 10px 22px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.14);
+    color: #fff;
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.25;
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(4px);
+    transition: opacity 130ms ease, transform 130ms ease;
+}
+
+.sba-timeline-floating-tooltip.is-visible {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* SBA Home news becomes a compact market-style ticker. The original news
+   page keeps its full cards; this only changes the small Home feed. */
+body.theme-sba .dokkan-news-snippet {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    gap: 10px !important;
+    height: 74px !important;
+    min-height: 74px !important;
+    max-height: 74px !important;
+    padding: 8px 12px !important;
+    overflow: hidden !important;
+    border-radius: 18px !important;
+    background: rgba(12, 18, 31, 0.28) !important;
+    box-sizing: border-box !important;
+}
+
+body.theme-sba .sba-news-ticker-brand {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    flex: 0 0 auto;
+    gap: 0;
+    height: 58px;
+    min-width: 46px;
+    padding: 2px 8px 2px 2px;
+    box-sizing: border-box;
+    border: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.18);
+    background: transparent;
+    color: rgba(255, 255, 255, 0.92);
+    cursor: pointer;
+    font-size: 8px;
+    font-weight: 900;
+    letter-spacing: 0.12em;
+}
+
+body.theme-sba .sba-news-ticker-logo {
+    display: block;
+    width: 27px;
+    height: 27px;
+    margin-bottom: 1px;
+    object-fit: contain;
+}
+
+/* Keep the mark and NEWS as two deliberate, stacked levels. */
+body.theme-sba .sba-news-ticker-brand > span {
+    display: block;
+    width: 30px;
+    padding-top: 2px;
+    border-top: 1px solid rgba(255, 255, 255, 0.26);
+    text-align: center;
+}
+
+body.theme-sba .sba-news-ticker-viewport {
+    min-width: 0;
+    flex: 1 1 auto;
+}
+
+body.theme-sba .sba-news-ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    width: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    scrollbar-width: none;
+    cursor: grab;
+}
+
+body.theme-sba .sba-news-ticker-track::-webkit-scrollbar { display: none; }
+
+body.theme-sba .sba-news-ticker-item {
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    flex: 0 0 290px;
+    min-width: 290px;
+    gap: 0;
+    min-height: 48px;
+    padding: 0;
+    overflow: hidden;
+    border: 0;
+    border-right: 1px solid rgba(255, 255, 255, 0.13);
+    background: rgba(15, 20, 35, 0.14);
+    color: inherit;
+    cursor: pointer;
+    text-align: left;
+}
+
+body.theme-sba .sba-news-ticker-item::after {
+    content: '';
+    position: absolute;
+    z-index: 1;
+    inset: 0;
+    background: linear-gradient(90deg, rgba(11, 16, 29, 0.92) 0%, rgba(11, 16, 29, 0.73) 52%, rgba(11, 16, 29, 0.40) 100%);
+    pointer-events: none;
+}
+
+body.theme-sba .sba-news-ticker-item:hover .sba-news-ticker-title {
+    color: #fff;
+}
+
+body.theme-sba .sba-news-ticker-thumb {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    opacity: 0.46;
+    background: rgba(255, 255, 255, 0.04);
+}
+
+body.theme-sba .sba-news-ticker-thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.0);
+    filter: saturate(0.90) contrast(1.06);
+}
+
+body.theme-sba .sba-news-ticker-copy {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    min-width: 0;
+    width: 100%;
+    padding: 0 13px;
+    box-sizing: border-box;
+    gap: 3px;
+}
+
+body.theme-sba .sba-news-ticker-date {
+    color: rgba(191, 219, 254, 0.70);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+}
+
+body.theme-sba .sba-news-ticker-title {
+    overflow: hidden;
+    color: rgba(247, 250, 255, 0.84);
+    font-size: 10px;
+    font-weight: 800;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    transition: color 160ms ease;
+}
+
+/* Separate release dates with a thin, readable rail divider. */
+body.theme-sba .timeline-node-item + .timeline-node-item {
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+}
+
+body.theme-sba .timeline-composed-icon {
+    width: 36px !important;
+    height: 36px !important;
+    overflow: hidden !important;
+    border-radius: 50% !important;
+}
+
+body.theme-sba .timeline-composed-icon .tl-frame,
+body.theme-sba .timeline-composed-icon .tl-lr-dial,
+body.theme-sba .timeline-composed-icon .tl-lr-lightning,
+body.theme-sba .timeline-composed-icon .tl-rarity,
+body.theme-sba .timeline-composed-icon .tl-type,
+body.theme-sba .timeline-composed-icon .tl-eza-badge,
+body.theme-sba .timeline-row-name-box {
+    display: none !important;
+}
+
+body.theme-sba .timeline-composed-icon .tl-char-img {
+    inset: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    transform: scale(1.22) !important;
+    transform-origin: center !important;
+}
+
+/* Uploaded art usually includes more transparent breathing room than Dokkan's
+   circle files, so it gets a stronger in-circle crop. */
+body.theme-sba .timeline-composed-icon .tl-char-img.is-custom-timeline-portrait {
+    transform: scale(1.52) !important;
+}
+
+/* On wide SBA Home layouts the timeline is a true right-hand release rail.
+   It is positioned against the Home section rather than being limited to the
+   top news row, so it continues alongside Streamers and the lower content. */
+@media (min-width: 991px) {
+    body.theme-sba .hub-home-view {
+        position: relative !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+        padding-right: 174px !important;
+        padding-top: 136px !important;
+        /* Deliberately not !important: switchHubView uses inline display:none
+           to hide Home while Cards or News is selected. */
+        display: flex;
+        flex-direction: column !important;
+    }
+
+    body.theme-sba .hub-home-top-grid {
+        display: contents !important;
+        margin: 0 !important;
+    }
+
+    body.theme-sba .dokkan-news-snippet {
+        order: -1;
+        position: fixed !important;
+        top: 0 !important;
+        right: 0 !important;
+        left: 0 !important;
+        z-index: 1001 !important;
+        width: 100vw !important;
+        margin: 0 !important;
+        border-radius: 0 !important;
+        pointer-events: auto !important;
+    }
+
+    /* Existing streamer links become a compact Twitch strip directly below
+       the news ticker, retaining their live/offline state and click actions. */
+    body.theme-sba .dokkan-streamers-longitudinal-panel {
+        position: fixed !important;
+        top: 73px !important;
+        right: 0 !important;
+        left: 0 !important;
+        z-index: 1000 !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        width: 100vw !important;
+        height: 53px !important;
+        min-height: 53px !important;
+        max-height: 53px !important;
+        gap: 10px !important;
+        margin: 0 !important;
+        padding: 5px 12px !important;
+        overflow: visible !important;
+        border-radius: 0 !important;
+        border-color: rgba(145, 70, 255, 0.30) !important;
+        background: rgba(15, 11, 27, 0.84) !important;
+        box-sizing: border-box !important;
+        pointer-events: auto !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-panel-header {
+        flex: 0 0 auto !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: 46px !important;
+        min-width: 46px !important;
+        height: 42px !important;
+        padding: 0 !important;
+        box-sizing: border-box !important;
+        border: 0 !important;
+        border-right: 1px solid rgba(255, 255, 255, 0.18) !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-panel-title {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        width: auto !important;
+        gap: 0 !important;
+        font-size: 9px !important;
+        letter-spacing: 0.09em !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .twitch-header-svg {
+        width: 16px !important;
+        height: 16px !important;
+        transform: translateX(-3px);
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-badge-tag,
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-live-preview-grid {
+        display: none !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-horizontal-track {
+        flex: 1 1 auto !important;
+        gap: 6px !important;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow-x: auto !important;
+        scroll-padding-inline: 0 !important;
+        scrollbar-width: none;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamers-horizontal-track::-webkit-scrollbar { display: none; }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-card-pill {
+        position: relative !important;
+        width: 28px !important;
+        height: 28px !important;
+        min-width: 28px !important;
+        padding: 0 !important;
+        justify-content: center !important;
+        border: 1px solid transparent !important;
+        border-radius: 50% !important;
+        background: transparent !important;
+        box-shadow: none !important;
+        transform: none !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-avatar-circle {
+        width: 23px !important;
+        height: 23px !important;
+        font-size: 9px !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-pill-name,
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-live-status {
+        display: none !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-card-pill.live-pill-glow {
+        border-color: rgba(74, 222, 128, 0.96) !important;
+        box-shadow: inset 0 0 0 1px rgba(187, 247, 208, 0.56) !important;
+        animation: none !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-card-pill.live-pill-glow::after {
+        content: '' !important;
+        position: absolute !important;
+        z-index: 3 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 7px !important;
+        height: 7px !important;
+        border: 1px solid rgba(230, 255, 239, 0.95) !important;
+        border-radius: 50% !important;
+        background: #22c55e !important;
+        box-shadow: none !important;
+    }
+
+    body.theme-sba .dokkan-streamers-longitudinal-panel .streamer-card-pill.live-pill-glow:hover {
+        transform: scale(1.08) !important;
+    }
+
+
+    /* SBA leads with community creations. Keep the source markup intact so
+       ABS retains its original dashboard order. */
+    body.theme-sba .hub-showcase-divider { order: 0; margin-top: 8px !important; }
+    body.theme-sba #homeCardGrid { order: 1; }
+    body.theme-sba .sba-dashboard-heading { order: 2; margin-top: 34px !important; }
+    body.theme-sba .hub-home-top-grid { order: 3; margin-top: 18px !important; }
+    body.theme-sba .dokkan-streamers-longitudinal-panel { order: 4; }
+
+    body.theme-sba .dokkan-timeline-panel {
+        position: absolute !important;
+        top: 146px !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 154px !important;
+        height: auto !important;
+        min-height: 620px !important;
+        max-height: none !important;
+        padding-inline: 8px !important;
+    }
+
+    body.theme-sba .dokkan-timeline-scroll-track {
+        padding-inline: 2px !important;
+    }
+}
+
+@media (max-width: 990px) {
+    body.theme-sba .hub-home-top-grid {
+        grid-template-columns: 1fr !important;
+    }
+
+    body.theme-sba .dokkan-timeline-panel {
+        position: relative !important;
+        top: auto !important;
+        max-height: 560px !important;
+    }
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:hover .hud-nav-group,
+    body.theme-sba .apple-hud-wrapper:focus-within .hud-nav-group {
+        bottom: 0 !important;
+        justify-content: flex-start !important;
+        height: 58px !important;
+        padding: 4px 9px !important;
+    }
+
+    body.theme-sba .hub-main-container {
+        width: calc(100vw - 16px) !important;
+        margin-bottom: 108px !important;
+    }
+
+    body.theme-sba #cardGrid {
+        grid-template-columns: repeat(auto-fill, minmax(84px, 1fr)) !important;
+        gap: 16px 8px !important;
+        padding: 20px 12px 24px !important;
+    }
+}
+
+/* Selected SBA navigation item: a translucent convex liquid-glass bubble.
+   The highlight follows the pointer through the variables set in main.js. */
+body.theme-sba .hud-nav-group .hud-nav-link.active,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"] {
+    position: relative !important;
+    isolation: isolate !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255, 255, 255, 0.52) !important;
+    background:
+        radial-gradient(ellipse 58% 46% at 18% 16%, rgba(255, 255, 255, 0.52), transparent 72%),
+        radial-gradient(ellipse 80% 66% at 84% 104%, rgba(145, 196, 242, 0.20), transparent 76%),
+        linear-gradient(158deg, rgba(255, 255, 255, 0.25) 0%, rgba(234, 242, 255, 0.13) 44%, rgba(125, 142, 174, 0.08) 100%) !important;
+    background-size: 145% 145%, 150% 150%, 100% 100% !important;
+    animation: sba-active-glass-drift 5.5s ease-in-out infinite alternate !important;
+    box-shadow:
+        0 8px 18px rgba(3, 8, 20, 0.17),
+        0 2px 5px rgba(255, 255, 255, 0.10),
+        inset 0 1.5px 0 rgba(255, 255, 255, 0.82),
+        inset 0 -2px 2px rgba(52, 67, 96, 0.18),
+        inset 1px 0 1px rgba(255, 255, 255, 0.30) !important;
+    backdrop-filter: blur(18px) saturate(142%) brightness(1.16) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(142%) brightness(1.16) !important;
+    text-shadow: -0.55px 0 rgba(255, 82, 158, 0.48), 0.55px 0 rgba(81, 211, 255, 0.50) !important;
+    transform: translateY(1px) !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link.active::before,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"]::before {
+    content: '' !important;
+    position: absolute !important;
+    z-index: 1 !important;
+    inset: 1px !important;
+    display: block !important;
+    border-radius: inherit !important;
+    background: linear-gradient(112deg, transparent 16%, rgba(255, 255, 255, 0.34) 46%, transparent 66%) !important;
+    opacity: 0.48 !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba .hud-nav-group .hud-nav-link.active > *,
+body.theme-sba .hud-nav-group .hud-nav-link[aria-expanded="true"] > * {
+    position: relative !important;
+    z-index: 2 !important;
+}
+
+@keyframes sba-active-glass-drift {
+    0% { background-position: 0% 0%, 100% 100%, 0 0; }
+    100% { background-position: 100% 72%, 0% 22%, 0 0; }
+}
+
+/* DokkanDB-inspired release rail: every batch is a dated stop on a single
+   chronological spine, with a compact release countdown for future cards. */
+body.theme-sba .hub-main-container,
+body.theme-sba .hub-home-view {
+    box-shadow: none !important;
+}
+
+body.theme-sba .timeline-node-card {
+    position: relative !important;
+    padding: 7px 0 2px !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+}
+
+body.theme-sba .timeline-node-header {
+    position: relative !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) auto !important;
+    align-items: center !important;
+    gap: 4px 5px !important;
+    margin: 0 0 7px !important;
+    padding: 0 0 5px 5px !important;
+    border-bottom: 1px solid rgba(190, 210, 246, 0.22) !important;
+}
+
+body.theme-sba .timeline-node-date {
+    grid-column: 1 !important;
+    color: rgba(243, 247, 255, 0.94) !important;
+    font-size: 8px !important;
+    letter-spacing: 0.06em !important;
+}
+
+body.theme-sba .timeline-node-tags {
+    grid-column: 1 / -1 !important;
+    margin-top: 0 !important;
+}
+
+body.theme-sba .timeline-node-countdown {
+    grid-column: 2 !important;
+    padding: 2px 4px !important;
+    border: 1px solid rgba(125, 211, 252, 0.72) !important;
+    border-radius: 99px !important;
+    background: rgba(14, 116, 144, 0.22) !important;
+    color: #bae6fd !important;
+    font-size: 7px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.04em !important;
+    white-space: nowrap !important;
+}
+
+/* SBA Home timeline: a lower, horizontal release carousel. */
+body.theme-sba .dokkan-timeline-panel {
+    position: relative !important;
+    inset: auto !important;
+    order: 7 !important;
+    flex: 0 0 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: none !important;
+    height: 278px !important;
+    margin: 36px 0 112px calc(50% - 50vw) !important;
+    padding: 14px max(18px, calc((100vw - 1560px) / 2 + 18px)) !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(225, 236, 255, 0.16) !important;
+    border-radius: 22px !important;
+    background: linear-gradient(135deg, rgba(22, 30, 54, 0.34), rgba(46, 28, 69, 0.23)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,0.14) !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+}
+
+body.theme-sba .timeline-panel-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin: 0 0 9px !important;
+    padding: 0 2px !important;
+    border-bottom: 0 !important;
+}
+
+body.theme-sba .timeline-carousel-controls {
+    display: inline-flex !important;
+    gap: 5px !important;
+}
+
+body.theme-sba .timeline-carousel-controls button {
+    display: grid !important;
+    place-items: center !important;
+    width: 25px !important;
+    height: 25px !important;
+    padding: 0 !important;
+    box-sizing: border-box !important;
+    border: 1px solid rgba(255,255,255,0.28) !important;
+    border-radius: 50% !important;
+    background: rgba(255,255,255,0.09) !important;
+    color: rgba(255,255,255,0.92) !important;
+    font-size: 19px !important;
+    line-height: 1 !important;
+}
+
+body.theme-sba .timeline-carousel-controls button svg {
+    display: block !important;
+    width: 12px !important;
+    height: 12px !important;
+    margin: auto !important;
+}
+
+body.theme-sba .timeline-carousel-controls button:hover {
+    background: rgba(255,255,255,0.22) !important;
+    border-color: rgba(255,255,255,0.56) !important;
+}
+
+body.theme-sba .dokkan-timeline-scroll-track {
+    height: 214px !important;
+    padding: 0 2px 8px !important;
+    overflow-x: auto !important;
+    overflow-y: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: rgba(191, 219, 254, 0.42) transparent !important;
+}
+
+body.theme-sba .timeline-nodes-stream {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: stretch !important;
+    gap: 0 !important;
+    min-width: max-content !important;
+    height: 205px !important;
+    padding: 0 12px !important;
+}
+
+body.theme-sba .timeline-nodes-stream::before {
+    top: 72px !important;
+    right: 18px !important;
+    bottom: auto !important;
+    left: 18px !important;
+    width: auto !important;
+    height: 1px !important;
+    background: linear-gradient(90deg, rgba(145,196,242,0.14), rgba(157,121,188,0.74), rgba(126,31,134,0.16)) !important;
+}
+
+body.theme-sba .timeline-node-item {
+    width: 228px !important;
+    min-width: 228px !important;
+    padding: 0 8px !important;
+}
+
+body.theme-sba .timeline-node-marker {
+    top: 67px !important;
+    left: 10px !important;
+    width: 11px !important;
+    height: 11px !important;
+}
+
+body.theme-sba .timeline-node-card {
+    height: 100% !important;
+    padding: 0 !important;
+}
+
+body.theme-sba .timeline-node-header {
+    display: flex !important;
+    align-items: flex-start !important;
+    justify-content: space-between !important;
+    min-height: 65px !important;
+    margin: 0 0 10px !important;
+    padding: 0 0 6px 18px !important;
+    border-bottom: 0 !important;
+}
+
+body.theme-sba .timeline-node-date {
+    max-width: 120px !important;
+    color: rgba(244,247,255,0.90) !important;
+    font-size: 10px !important;
+    line-height: 1.25 !important;
+}
+
+body.theme-sba .timeline-node-countdown {
+    transform: scale(0.86) !important;
+    transform-origin: top right !important;
+}
+
+body.theme-sba .timeline-node-tags {
+    position: absolute !important;
+    top: 37px !important;
+    left: 18px !important;
+    z-index: 2 !important;
+    max-width: 190px !important;
+}
+
+body.theme-sba .timeline-entries-list {
+    grid-template-columns: repeat(3, 56px) !important;
+    justify-content: start !important;
+    gap: 5px !important;
+    padding-left: 18px !important;
+}
+
+body.theme-sba .timeline-entry-row {
+    width: 56px !important;
+    height: 56px !important;
+}
+
+/* -------------------------------------------------------------------------
+   SBA home: full-art custom carousel + a deliberately placed release rail.
+   These rules live last so the retired right-rail experiments cannot leak
+   back into the current horizontal timeline. ABS does not match this scope.
+   ------------------------------------------------------------------------- */
+body.theme-sba #homeCardGrid.sba-showcase-carousel {
+    position: relative !important;
+    display: block !important;
+    order: 1 !important;
+    width: min(100%, 1160px) !important;
+    height: 366px !important;
+    min-height: 366px !important;
+    margin: 4px auto 38px !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    border: 1px solid rgba(255,255,255,.17) !important;
+    border-radius: 26px !important;
+    background: linear-gradient(120deg, rgba(126,31,134,.16), rgba(17,28,52,.18), rgba(145,196,242,.14)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16) !important;
+    cursor: default !important;
+    isolation: isolate;
+}
+
+body.theme-sba #homeCardGrid.sba-showcase-carousel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background: radial-gradient(circle at 50% 45%, rgba(255,255,255,.15), transparent 42%);
+}
+
+body.theme-sba .sba-showcase-slide {
+    --sba-showcase-type: #6aaeff;
+    position: absolute !important;
+    z-index: 1;
+    top: 14px;
+    left: 50%;
+    display: block;
+    width: 246px;
+    height: 326px;
+    overflow: hidden;
+    border: 3px solid var(--sba-showcase-type);
+    border-radius: 20px;
+    background: rgba(5,9,21,.38);
+    box-shadow: 0 16px 34px rgba(1,4,15,.30), 0 0 16px color-mix(in srgb, var(--sba-showcase-type) 32%, transparent), inset 0 1px 0 rgba(255,255,255,.18);
+    text-decoration: none;
+    transform: translateX(calc(-50% + (var(--sba-unused, 0) * 1px)));
+    transition: transform .42s cubic-bezier(.22,.82,.2,1), filter .35s ease, opacity .35s ease, box-shadow .35s ease;
+}
+
+body.theme-sba .sba-showcase-slide[data-sba-type="agl"] { --sba-showcase-type: #42a8ff; }
+body.theme-sba .sba-showcase-slide[data-sba-type="teq"] { --sba-showcase-type: #3fdb85; }
+body.theme-sba .sba-showcase-slide[data-sba-type="int"] { --sba-showcase-type: #b177ff; }
+body.theme-sba .sba-showcase-slide[data-sba-type="str"] { --sba-showcase-type: #fa5a66; }
+body.theme-sba .sba-showcase-slide[data-sba-type="phy"] { --sba-showcase-type: #f7b738; }
+
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-2"] { transform: translateX(calc(-50% - 414px)) scale(.74); opacity: .24; filter: blur(4px) saturate(.72); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-1"] { transform: translateX(calc(-50% - 236px)) scale(.88); opacity: .55; filter: blur(2px) saturate(.82); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="0"] { z-index: 4; view-transition-name: sba-showcase-active; transform: translateX(-50%) scale(1); opacity: 1; filter: none; border-color: var(--sba-showcase-type); box-shadow: 0 20px 42px rgba(0,0,0,.36), 0 0 28px color-mix(in srgb, var(--sba-showcase-type) 48%, transparent), inset 0 1px 0 rgba(255,255,255,.42); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="1"] { transform: translateX(calc(-50% + 236px)) scale(.88); opacity: .55; filter: blur(2px) saturate(.82); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="2"] { transform: translateX(calc(-50% + 414px)) scale(.74); opacity: .24; filter: blur(4px) saturate(.72); }
+
+body.theme-sba .sba-showcase-slide .sba-showcase-art-image,
+body.theme-sba .sba-showcase-slide .sba-showcase-art-poster,
+body.theme-sba .sba-showcase-slide .sba-showcase-art-video {
+    display: block;
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    transform: scale(1.035);
+}
+
+body.theme-sba .sba-showcase-slide .sba-showcase-art-poster { z-index: 0; }
+body.theme-sba .sba-showcase-slide .sba-showcase-art-video { z-index: 1; }
+
+body.theme-sba .sba-showcase-rarity {
+    position: absolute;
+    z-index: 4;
+    bottom: 4px;
+    left: 4px;
+    display: grid;
+    width: 37px;
+    height: 37px;
+    padding: 3px;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.40);
+    border-radius: 11px;
+    background: rgba(6,10,22,.70);
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.22);
+    backdrop-filter: blur(8px);
+}
+
+body.theme-sba .sba-showcase-rarity img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+body.theme-sba .sba-showcase-card-label {
+    position: absolute;
+    right: 10px;
+    bottom: 10px;
+    /* Leave the left corner entirely to the rarity badge, so LR/TUR/SSR
+       never competes with the card name. */
+    left: 52px;
+    z-index: 2;
+    overflow: hidden;
+    padding: 6px 9px;
+    border: 1px solid rgba(255,255,255,.16);
+    border-radius: 10px;
+    background: rgba(7,11,26,.64);
+    color: #f6f9ff;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .025em;
+    line-height: 1.2;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    backdrop-filter: blur(8px);
+}
+
+body.theme-sba .sba-showcase-arrow {
+    position: absolute !important;
+    z-index: 8;
+    top: 50%;
+    display: grid;
+    width: 38px;
+    height: 38px;
+    padding: 0 !important;
+    place-items: center;
+    border: 1px solid rgba(255,255,255,.38) !important;
+    border-radius: 50% !important;
+    background: rgba(24,32,57,.50) !important;
+    color: rgba(255,255,255,.94) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.28);
+    font-size: 28px;
+    line-height: 1;
+    transform: translateY(-50%);
+    backdrop-filter: blur(10px);
+}
+body.theme-sba .sba-showcase-arrow:hover { background: rgba(255,255,255,.20) !important; border-color: rgba(255,255,255,.72) !important; }
+body.theme-sba .sba-showcase-arrow.is-previous { left: max(16px, calc(50% - 365px)); }
+body.theme-sba .sba-showcase-arrow.is-next { right: max(16px, calc(50% - 365px)); }
+body.theme-sba .sba-showcase-empty { position: relative; z-index: 1; padding-top: 150px; color: rgba(255,255,255,.65); text-align: center; }
+
+@media (min-width: 991px) {
+    body.theme-sba .hub-home-view {
+        padding-right: 0 !important;
+        padding-bottom: 0 !important;
+    }
+
+    body.theme-sba .dokkan-timeline-panel {
+        position: relative !important;
+        inset: auto !important;
+        order: 9 !important;
+        flex: 0 0 auto !important;
+        width: calc(100vw - 28px) !important;
+        min-width: 0 !important;
+        height: 306px !important;
+        min-height: 306px !important;
+        max-height: none !important;
+        margin: 68px 14px 116px calc(50% - 50vw + 14px) !important;
+        padding: 17px clamp(18px, 3vw, 46px) 14px !important;
+        overflow: hidden !important;
+        border: 1px solid rgba(226,236,255,.18) !important;
+        border-radius: 24px !important;
+        background: linear-gradient(125deg, rgba(18,27,49,.52), rgba(41,27,64,.40)) !important;
+        box-shadow: inset 0 1px 0 rgba(255,255,255,.16) !important;
+        transform: none !important;
+    }
+}
+
+body.theme-sba .timeline-panel-header {
+    position: relative;
+    z-index: 2;
+    min-height: 46px !important;
+    margin: 0 0 8px !important;
+    padding: 0 1px 10px !important;
+    border-bottom: 0 !important;
+}
+
+body.theme-sba .timeline-panel-title { gap: 9px !important; }
+body.theme-sba .timeline-panel-title .timeline-title-svg { width: 22px !important; height: 22px !important; color: #c9dfff !important; }
+body.theme-sba .timeline-panel-heading-copy { display: grid; gap: 1px; }
+body.theme-sba .timeline-panel-heading-copy > span { color: #f6f8ff; font-size: 17px !important; font-weight: 900; letter-spacing: .12em; line-height: 1; text-transform: uppercase; }
+body.theme-sba .timeline-panel-heading-copy small { color: rgba(210,222,246,.64); font-size: 9px; font-weight: 700; letter-spacing: .10em; text-transform: uppercase; }
+
+body.theme-sba .dokkan-timeline-scroll-track { height: 220px !important; padding: 0 1px 8px !important; }
+body.theme-sba .timeline-nodes-stream { height: 210px !important; padding: 0 16px !important; }
+body.theme-sba .timeline-nodes-stream::before { top: 73px !important; left: 18px !important; right: 18px !important; }
+body.theme-sba .timeline-node-item { width: 218px !important; min-width: 218px !important; }
+body.theme-sba .timeline-node-header { min-height: 66px !important; padding-left: 19px !important; }
+body.theme-sba .timeline-node-marker { top: 68px !important; left: 10px !important; }
+body.theme-sba .timeline-node-tags { top: 40px !important; left: 19px !important; }
+body.theme-sba .timeline-entries-list { grid-template-columns: repeat(3, 58px) !important; gap: 6px !important; padding-left: 19px !important; }
+body.theme-sba .timeline-entry-row { width: 58px !important; height: 58px !important; }
+
+@media (max-width: 760px) {
+    body.theme-sba #homeCardGrid.sba-showcase-carousel { height: 308px !important; min-height: 308px !important; }
+    body.theme-sba .sba-showcase-slide { top: 12px; width: 204px; height: 278px; }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-2"] { transform: translateX(calc(-50% - 290px)) scale(.70); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-1"] { transform: translateX(calc(-50% - 166px)) scale(.84); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="1"] { transform: translateX(calc(-50% + 166px)) scale(.84); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="2"] { transform: translateX(calc(-50% + 290px)) scale(.70); }
+    body.theme-sba .sba-showcase-arrow.is-previous { left: 9px; }
+    body.theme-sba .sba-showcase-arrow.is-next { right: 9px; }
+    body.theme-sba .dokkan-timeline-panel { height: 300px !important; min-height: 300px !important; margin: 54px 0 98px !important; }
+}
+
+/* Timeline cleanup: one chronological spine and one unwrapped card lane.
+   The older vertical rail and per-date separators are explicitly neutralized
+   here so they cannot create a second divider beside the horizontal line. */
+body.theme-sba .timeline-nodes-stream::before {
+    top: 73px !important;
+    right: 18px !important;
+    bottom: auto !important;
+    left: 18px !important;
+    width: auto !important;
+    height: 1px !important;
+}
+
+body.theme-sba .timeline-node-item,
+body.theme-sba .timeline-node-item + .timeline-node-item {
+    width: max-content !important;
+    min-width: 190px !important;
+    padding: 0 12px !important;
+    border: 0 !important;
+}
+
+body.theme-sba .timeline-node-card,
+body.theme-sba .timeline-node-header {
+    width: max-content !important;
+    min-width: 100% !important;
+    border: 0 !important;
+}
+
+body.theme-sba .timeline-node-header {
+    min-height: 66px !important;
+    margin: 0 0 10px !important;
+    padding: 0 0 6px 18px !important;
+}
+
+body.theme-sba .timeline-node-date::before { display: none !important; }
+
+body.theme-sba .timeline-entries-list {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    grid-template-columns: none !important;
+    justify-content: flex-start !important;
+    gap: 6px !important;
+    width: max-content !important;
+    padding: 0 0 0 18px !important;
+}
+
+body.theme-sba .timeline-entry-row {
+    flex: 0 0 58px !important;
+    width: 58px !important;
+    height: 58px !important;
+}
+
+/* Timeline presentation pass: a single compact date line, centered release
+   stops, and grouped portraits. The arrows remain the only visible scroller. */
+body.theme-sba .dokkan-timeline-scroll-track {
+    overflow-x: auto !important;
+    scrollbar-width: none !important;
+    -ms-overflow-style: none;
+}
+body.theme-sba .dokkan-timeline-scroll-track::-webkit-scrollbar { display: none !important; }
+
+body.theme-sba .timeline-node-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    min-height: 66px !important;
+    padding: 0 8px !important;
+    white-space: nowrap !important;
+}
+
+body.theme-sba .timeline-node-date {
+    position: static !important;
+    display: inline-block !important;
+    max-width: none !important;
+    white-space: nowrap !important;
+}
+
+body.theme-sba .timeline-node-tags {
+    position: static !important;
+    display: inline-flex !important;
+    flex: 0 0 auto !important;
+    flex-wrap: nowrap !important;
+    gap: 3px !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .timeline-node-countdown {
+    position: static !important;
+    grid-column: auto !important;
+    flex: 0 0 auto !important;
+    transform: none !important;
+}
+
+body.theme-sba .timeline-node-marker {
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+}
+
+body.theme-sba .timeline-entries-list {
+    gap: 7px !important;
+    padding: 7px 9px !important;
+    border: 1px solid rgba(255,255,255,.16) !important;
+    border-radius: 15px !important;
+    background: linear-gradient(135deg, rgba(14,22,41,.42), rgba(51,30,72,.24)) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.14) !important;
+}
+
+body.theme-sba .timeline-entry-row {
+    flex-basis: 68px !important;
+    width: 68px !important;
+    height: 68px !important;
+}
+
+/* Final compact group layout. */
+@media (min-width: 761px) {
+    body.theme-sba .dokkan-timeline-panel {
+        height: 254px !important;
+        min-height: 254px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   ABS Cards workspace pass
+   --------------------------------------------------------------------------
+   The new ABS layout gets the compact Spotlight interaction. The legacy
+   Dokkan layout remains available through the toggle without inheriting these
+   workspace-only presentation changes. */
+body.theme-sba .hub-cards-view .cards-news-snippet {
+    display: none !important;
+}
+
+body.theme-sba.cards-layout-simple .hub-cards-view .cards-news-snippet {
+    display: flex !important;
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 14px !important;
+}
+
+body.theme-sba.cards-layout-simple .hub-cards-view .hub-view-info {
+    display: none !important;
+}
+
+/* Regular search bar: permanently visible input cleanly docked next to the Filters button */
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    flex: 1 1 280px !important;
+    width: min(340px, 36vw) !important;
+    min-width: 180px !important;
+    max-width: 380px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 999px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transition: width 240ms ease, flex-basis 240ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    padding: 0 14px 0 16px !important;
+    border-radius: 999px !important;
+    border: 1px solid rgba(255, 255, 255, 0.30) !important;
+    background:
+        radial-gradient(ellipse 46% 150% at var(--sba-glass-x, 50%) var(--sba-glass-y, 44%), rgba(255, 255, 255, 0.16), transparent 72%),
+        rgba(220, 230, 244, 0.14) !important;
+    box-shadow:
+        0 8px 24px rgba(2, 5, 12, 0.16),
+        inset 1px 1px 0 rgba(255, 255, 255, 0.38),
+        inset 0 -1px 0 rgba(17, 24, 39, 0.14) !important;
+    backdrop-filter: blur(24px) saturate(135%) brightness(1.06) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(135%) brightness(1.06) !important;
+    cursor: text !important;
+    overflow: hidden !important;
+    transition: border-color 220ms ease, box-shadow 220ms ease, background 220ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box:focus-within {
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    background:
+        radial-gradient(ellipse 46% 150% at var(--sba-glass-x, 50%) var(--sba-glass-y, 44%), rgba(255, 255, 255, 0.22), transparent 72%),
+        rgba(226, 235, 248, 0.18) !important;
+    box-shadow:
+        0 10px 28px rgba(2, 5, 12, 0.22),
+        inset 1px 1px 0 rgba(255, 255, 255, 0.56),
+        0 0 0 2px rgba(255, 255, 255, 0.25) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box .search-icon {
+    flex: 0 0 auto !important;
+    width: 18px !important;
+    height: 18px !important;
+    margin: 0 8px 0 0 !important;
+    fill: rgba(255, 255, 255, 0.82) !important;
+    opacity: 0.9 !important;
+    cursor: text !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input {
+    flex: 1 1 auto !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 100% !important;
+    padding: 0 4px !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    cursor: text !important;
+    color: rgba(249, 251, 255, 0.95) !important;
+    font-size: 14px !important;
+    font-weight: 500 !important;
+    letter-spacing: 0.01em !important;
+    background: transparent !important;
+    border: none !important;
+    outline: none !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input::placeholder {
+    color: rgba(231, 238, 248, 0.58) !important;
+    font-weight: 450 !important;
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .hub-cards-view .liquid-search-border-container {
+        flex: 1 1 auto !important;
+        width: auto !important;
+        min-width: 0 !important;
+        max-width: none !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-search-box {
+        height: 44px !important;
+        min-height: 44px !important;
+        padding: 0 10px 0 12px !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-search-box input {
+        font-size: 13px !important;
+    }
+}
+
+/* Section labels sit just above their recessed SBA surfaces rather than
+   consuming space inside them. Both home sections now share one full-bleed
+   punched-in treatment. */
+@media (min-width: 761px) {
+    body.theme-sba .dokkan-timeline-panel {
+        margin-top: 76px !important;
+        overflow: visible !important;
+    }
+
+    body.theme-sba .timeline-panel-header {
+        position: absolute !important;
+        z-index: 5 !important;
+        right: clamp(28px, 4vw, 64px) !important;
+        bottom: calc(100% + 9px) !important;
+        left: clamp(28px, 4vw, 64px) !important;
+        min-height: 38px !important;
+        margin: 0 !important;
+        padding: 0 2px !important;
+    }
+
+    body.theme-sba .hub-showcase-divider {
+        width: 100vw !important;
+        margin: 34px 0 8px calc(50% - 50vw) !important;
+        padding: 0 clamp(28px, 4vw, 64px) !important;
+    }
+
+    body.theme-sba .hub-showcase-divider .hub-section-title {
+        margin: 0 !important;
+    }
+
+    body.theme-sba #homeCardGrid.sba-showcase-carousel {
+        width: 100vw !important;
+        margin: 0 0 42px calc(50% - 50vw) !important;
+        border-right: 0 !important;
+        border-left: 0 !important;
+        border-radius: 0 !important;
+        background:
+            radial-gradient(ellipse 52% 150% at 50% 0%, rgba(130,100,192,.13), transparent 70%),
+            linear-gradient(180deg, rgba(4,9,20,.34), rgba(17,20,42,.08)) !important;
+        box-shadow:
+            inset 0 20px 40px rgba(0,0,0,.24),
+            inset 0 -18px 38px rgba(0,0,0,.18),
+            inset 0 1px 0 rgba(255,255,255,.10) !important;
+    }
+}
+
+body.theme-sba .dokkan-timeline-scroll-track { height: 170px !important; }
+body.theme-sba .timeline-nodes-stream { height: 162px !important; }
+
+body.theme-sba .timeline-entries-list {
+    margin-inline: auto !important;
+}
+
+body.theme-sba .timeline-composed-icon .tl-char-img {
+    transform: scale(1.42) !important;
+}
+body.theme-sba .timeline-composed-icon .tl-char-img.is-custom-timeline-portrait {
+    transform: scale(1.72) !important;
+}
+
+/* The circle background follows each card's type; release state is now a
+   separate readable corner tag instead of recoloring the whole portrait. */
+body.theme-sba .timeline-entry-row[data-timeline-type="agl"] { background: linear-gradient(145deg, rgba(46,145,255,.94), rgba(24,95,201,.82)) !important; }
+body.theme-sba .timeline-entry-row[data-timeline-type="teq"] { background: linear-gradient(145deg, rgba(40,205,110,.94), rgba(18,132,71,.82)) !important; }
+body.theme-sba .timeline-entry-row[data-timeline-type="int"] { background: linear-gradient(145deg, rgba(169,94,255,.94), rgba(109,49,196,.82)) !important; }
+body.theme-sba .timeline-entry-row[data-timeline-type="str"] { background: linear-gradient(145deg, rgba(245,83,94,.94), rgba(183,34,48,.82)) !important; }
+body.theme-sba .timeline-entry-row[data-timeline-type="phy"] { background: linear-gradient(145deg, rgba(247,183,43,.94), rgba(202,133,16,.82)) !important; }
+
+body.theme-sba .timeline-entry-row {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+body.theme-sba .timeline-entry-status {
+    position: absolute;
+    z-index: 6;
+    top: -6px;
+    left: -6px;
+    display: block;
+    padding: 2px 4px;
+    border: 1px solid rgba(255,255,255,.52);
+    border-radius: 6px;
+    background: rgba(10,16,31,.82);
+    box-shadow: 0 1px 4px rgba(0,0,0,.35);
+    color: #fff;
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: .04em;
+    line-height: 1;
+}
+
+/* The Custom Cards heading is a label, not another glass panel. Keep it in
+   the same clean, outside-the-track position as Timeline. */
+@media (min-width: 761px) {
+    html body.theme-sba .hub-showcase-divider {
+        display: flex !important;
+        align-items: end !important;
+        justify-content: space-between !important;
+        min-height: 38px !important;
+        height: auto !important;
+        border: 0 !important;
+        border-radius: 0 !important;
+        background: transparent !important;
+        box-shadow: none !important;
+    }
+
+    html body.theme-sba .hub-showcase-divider::before,
+    html body.theme-sba .hub-showcase-divider::after {
+        display: none !important;
+    }
+
+    html body.theme-sba .hub-showcase-divider .sba-showcase-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 9px !important;
+    }
+
+    html body.theme-sba .hub-showcase-divider .sba-showcase-title-svg {
+        width: 22px !important;
+        height: 22px !important;
+        color: #c9dfff !important;
+        flex: 0 0 auto !important;
+    }
+
+    /* Bypass the width inherited from the home grid and pin the recessed
+       carousel directly to both viewport edges. */
+    html body.theme-sba #homeCardGrid.sba-showcase-carousel {
+        position: relative !important;
+        left: 50% !important;
+        width: 100vw !important;
+        min-width: 100vw !important;
+        max-width: none !important;
+        margin: 0 0 42px -50vw !important;
+        box-sizing: border-box !important;
+    }
+}
+body.theme-sba .timeline-entry-row--new .timeline-entry-status { color: #a7f3d0; border-color: rgba(52,211,153,.86); }
+body.theme-sba .timeline-entry-row--eza .timeline-entry-status { color: #fde68a; border-color: rgba(250,204,21,.88); }
+body.theme-sba .timeline-entry-row--seza .timeline-entry-status { color: #fecaca; border-color: rgba(248,113,113,.88); }
+body.theme-sba .timeline-entry-row--custom .timeline-entry-status { color: #e9d5ff; border-color: rgba(192,132,252,.88); }
+
+/* Keep the portrait clean: type is communicated by a fine ring, while the
+   status tag carries NEW/EZA/SEZA. The artwork is deliberately larger than
+   its slightly smaller circular hit area. */
+body.theme-sba .timeline-entry-row {
+    --timeline-type-ring: #4ea8ff;
+    flex-basis: 60px !important;
+    width: 60px !important;
+    height: 60px !important;
+    border: 2px solid var(--timeline-type-ring) !important;
+    border-radius: 50% !important;
+    background: rgba(7,13,28,.52) !important;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.16), 0 3px 9px rgba(0,0,0,.24) !important;
+}
+body.theme-sba .timeline-entry-row[data-timeline-type="agl"] { --timeline-type-ring: #42a8ff; }
+body.theme-sba .timeline-entry-row[data-timeline-type="teq"] { --timeline-type-ring: #3fdb85; }
+body.theme-sba .timeline-entry-row[data-timeline-type="int"] { --timeline-type-ring: #b177ff; }
+body.theme-sba .timeline-entry-row[data-timeline-type="str"] { --timeline-type-ring: #fa5a66; }
+body.theme-sba .timeline-entry-row[data-timeline-type="phy"] { --timeline-type-ring: #f7b738; }
+/* Override the earlier type fill rules: the ring alone now carries typing. */
+body.theme-sba .timeline-entry-row[data-timeline-type] {
+    background: rgba(7,13,28,.52) !important;
+}
+
+/* Cards is the only remaining place where visitors choose a presentation.
+   Dokkan keeps the full framed icons; Simple uses compact circular portraits. */
+body.theme-sba .cards-layout-switcher {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    width: 100%;
+    margin: 10px 0 2px;
+    color: rgba(220,229,247,.62);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+}
+
+body.theme-sba .cards-layout-switcher > span { margin-right: 4px; }
+
+body.theme-sba .cards-layout-option {
+    min-width: 72px;
+    padding: 7px 12px;
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 999px;
+    background: rgba(255,255,255,.055);
+    color: rgba(235,241,255,.72);
+    font: inherit;
+    line-height: 1;
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, color .18s ease, transform .18s ease;
+}
+
+body.theme-sba .cards-layout-option:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.40); }
+body.theme-sba .cards-layout-option.active {
+    border-color: rgba(255,255,255,.64);
+    background: rgba(255,255,255,.18);
+    color: #fff;
+    box-shadow: inset 0 1px 0 rgba(255,255,255,.34), 0 4px 13px rgba(4,9,25,.20);
+}
+
+/* Dokkan Cards deliberately restores the former framed database viewer while
+   keeping the new ABS home, navigation, and page background intact. */
+body.theme-sba.cards-layout-dokkan #cardGrid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)) !important;
+    gap: 26px 18px !important;
+    padding: 28px 22px 40px !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .card-icon {
+    width: 150px !important;
+    height: 150px !important;
+    overflow: visible !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Strip the circular SBA lens entirely in the legacy viewer. */
+body.theme-sba.cards-layout-dokkan #cardGrid .card-icon::before,
+body.theme-sba.cards-layout-dokkan #cardGrid .card-icon::after {
+    content: none !important;
+    display: none !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .frame,
+body.theme-sba.cards-layout-dokkan #cardGrid .char-img {
+    display: block !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .custom-badge.rarity-badge,
+body.theme-sba.cards-layout-dokkan #cardGrid .custom-badge.type-badge {
+    display: inline-grid !important;
+}
+
+/* The legacy Dokkan layout now keeps the same HTML/CSS badge system as the
+   compact grid, with a slightly larger placement over the square card art. */
+body.theme-sba.cards-layout-dokkan #cardGrid .custom-badge.rarity-badge {
+    top: auto !important;
+    right: auto !important;
+    bottom: -10px !important;
+    left: -7px !important;
+    width: 42px !important;
+    height: 42px !important;
+    z-index: 6 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .hub-eza-badge.custom-awakening-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    position: absolute !important;
+    top: auto !important;
+    right: 55px !important;
+    bottom: 4px !important;
+    left: auto !important;
+    transform: none !important;
+    width: auto !important;
+    min-width: 34px !important;
+    height: 19px !important;
+    padding: 0 7px !important;
+    z-index: 7 !important;
+    border-radius: 5px !important;
+    font-size: 8px !important;
+    font-style: italic !important;
+    font-weight: 950 !important;
+    letter-spacing: .05em !important;
+    line-height: 1 !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .hub-eza-badge.custom-awakening-badge.hub-eza-badge--eza {
+    background: linear-gradient(135deg, #fff3a4 0%, #f59e0b 48%, #92400e 100%) !important;
+    border: 1px solid rgba(254, 240, 138, .95) !important;
+    color: #fff !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .hub-eza-badge.custom-awakening-badge.hub-eza-badge--seza {
+    background: linear-gradient(135deg, #efd0ff 0%, #a855f7 38%, #f59e0b 70%, #f8fafc 100%) !important;
+    border: 1px solid rgba(255,255,255,.9) !important;
+    color: #fff !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .custom-badge.type-badge {
+    top: -12px !important;
+    right: -12px !important;
+    bottom: auto !important;
+    left: auto !important;
+    width: 40px !important;
+    height: 40px !important;
+    z-index: 6 !important;
+}
+
+/* Cards grid: rarity and type are lightweight labels above the artwork. Keep
+   the EZA/SEZA label in the same top row and remove the old circular chips. */
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .card-icon {
+    overflow: visible !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge,
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    top: -25px !important;
+    bottom: auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    color: #f8fafc !important;
+    font-family: "Arial Narrow", "Segoe UI", sans-serif !important;
+    font-size: 11px !important;
+    font-style: italic !important;
+    font-weight: 950 !important;
+    letter-spacing: .04em !important;
+    line-height: 1 !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.95), 0 0 5px rgba(0,0,0,.8) !important;
+    z-index: 30 !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge {
+    left: 7px !important;
+    right: auto !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge {
+    left: auto !important;
+    right: 7px !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge .custom-badge-text,
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge .custom-badge-text {
+    display: inline !important;
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    color: currentColor !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: inherit !important;
+    letter-spacing: inherit !important;
+    filter: none !important;
+    transform: none !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge[data-rarity="lr"] { color: #facc15 !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge[data-rarity="tur"] { color: #7dd3fc !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.rarity-badge[data-rarity="ssr"] { color: #f0abfc !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge[data-type="agl"] { color: #7dd3fc !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge[data-type="teq"] { color: #86efac !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge[data-type="int"] { color: #d8b4fe !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge[data-type="str"] { color: #fca5a5 !important; }
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .custom-badge.type-badge[data-type="phy"] { color: #fde68a !important; }
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .hub-eza-badge.custom-awakening-badge {
+    top: -25px !important;
+    right: 50% !important;
+    bottom: auto !important;
+    left: auto !important;
+    transform: translateX(50%) !important;
+    z-index: 31 !important;
+}
+
+/* Dokkan layout keeps the original image-based badge treatment. These
+   explicit dimensions prevent the source PNGs from falling back to their
+   intrinsic size when the compact text badge rules are active elsewhere. */
+body.theme-sba.cards-layout-dokkan #cardGrid img.rarity {
+    position: absolute !important;
+    width: auto !important;
+    height: 75px !important;
+    top: auto !important;
+    right: auto !important;
+    bottom: -16px !important;
+    left: -10px !important;
+    z-index: 3 !important;
+    display: block !important;
+    filter: drop-shadow(0 2px 2px #000) !important;
+    object-fit: contain !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid img.type {
+    position: absolute !important;
+    width: auto !important;
+    height: 55px !important;
+    top: -8px !important;
+    right: -8px !important;
+    bottom: auto !important;
+    left: auto !important;
+    z-index: 3 !important;
+    display: block !important;
+    object-fit: contain !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid img.hub-eza-badge {
+    position: absolute !important;
+    width: auto !important;
+    height: 36px !important;
+    top: auto !important;
+    right: -28px !important;
+    bottom: -3px !important;
+    left: auto !important;
+    z-index: 5 !important;
+    display: block !important;
+    object-fit: contain !important;
+}
+
+/* ABS metadata follows the upper arc of the wheel instead of a straight row. */
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .hub-card-meta-arc {
+    position: absolute !important;
+    /* Keep the lettering kissing the black crown of the wheel, not floating
+       above it.  The path itself stays intentionally shallow. */
+    top: -10px !important;
+    left: 0 !important;
+    z-index: 31 !important;
+    width: 150px !important;
+    height: 48px !important;
+    overflow: visible !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .hub-card-meta-arc text {
+    fill: #f8fafc !important;
+    stroke: rgba(2, 6, 23, .92) !important;
+    stroke-width: 2px !important;
+    paint-order: stroke fill !important;
+    font-family: "Arial Narrow", "Segoe UI", sans-serif !important;
+    font-size: 10px !important;
+    font-style: italic !important;
+    font-weight: 950 !important;
+    letter-spacing: .55px !important;
+    text-transform: uppercase !important;
+    text-shadow: 0 1px 2px rgba(0,0,0,.9) !important;
+}
+
+/* ABS keeps the unit identity visible.  It deliberately overlaps the lower
+   rim a touch, rather than appearing only on hover underneath the wheel. */
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .name-container {
+    bottom: -7px !important;
+    width: 132px !important;
+    height: 22px !important;
+    padding: 0 5px !important;
+    opacity: 1 !important;
+    transform: translateX(-50%) !important;
+    border-radius: 5px !important;
+    background: rgba(4, 8, 16, .92) !important;
+    border-color: rgba(255, 255, 255, .25) !important;
+    box-shadow: 0 2px 7px rgba(0, 0, 0, .72), inset 0 1px 0 rgba(255, 255, 255, .16) !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-box:hover .name-container {
+    transform: translateX(-50%) !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-name {
+    font-size: 10px !important;
+    font-weight: 850 !important;
+}
+
+/* Long ABS names use the existing duplicated text track.  It remains still
+   for names that fit, and drifts at a deliberately unhurried pace otherwise. */
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-name-wrapper.marquee-active {
+    text-overflow: clip !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-name-wrapper.marquee-active .marquee-track {
+    display: flex !important;
+    align-items: center !important;
+    width: max-content !important;
+    min-width: 100% !important;
+    animation: hub-abs-card-name-marquee 18s linear infinite !important;
+    will-change: transform;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-name-wrapper.marquee-active .char-name {
+    flex: 0 0 auto !important;
+    max-width: none !important;
+}
+
+body.theme-sba:not(.cards-layout-dokkan) #cardGrid .char-name-wrapper.marquee-active .marquee-spacer {
+    flex: 0 0 auto !important;
+    padding: 0 22px !important;
+    color: rgba(255, 255, 255, .7) !important;
+}
+
+@keyframes hub-abs-card-name-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+/* Reversible Exchange units now use a compact left-side mini grid. The
+   partner always occupies one circle and an extra linked form fills a second
+   circle when present. Home retains its separate showcase treatment. */
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-stack .card-icon::before,
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-stack .card-icon::after {
+    top: 7px !important;
+    left: 7px !important;
+    width: 136px !important;
+    height: 136px !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-stack > .card-icon > .hub-circle-img:not(.sba-reversible-portrait) {
+    top: var(--sba-portrait-top, -6px) !important;
+    left: var(--sba-portrait-left, -7px) !important;
+    width: var(--sba-portrait-size, 162px) !important;
+    height: var(--sba-portrait-size, 162px) !important;
+    transform: scale(var(--sba-portrait-scale, 1)) !important;
+    clip-path: circle(var(--sba-portrait-clip, 45%) at 50.7% 50%) !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-custom-reversible-stack > .card-icon > .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait) {
+    top: calc(var(--sba-custom-portrait-top, -12px) + 3px) !important;
+    left: var(--sba-custom-portrait-left, -14px) !important;
+    width: var(--sba-custom-portrait-size, 174px) !important;
+    height: var(--sba-custom-portrait-size, 174px) !important;
+    transform: scale(var(--sba-custom-portrait-scale, 1)) !important;
+    clip-path: circle(var(--sba-custom-portrait-clip, 39%) at 51.15% 50%) !important;
+}
+
+/* Regular custom portraits sit two pixels lower in the ABS Cards grid. */
+body.theme-sba.cards-layout-simple #cardGrid > .char-box:not(.sba-custom-reversible-stack) .hub-circle-img.is-fallback-thumb:not(.sba-reversible-portrait) {
+    top: calc(var(--sba-custom-portrait-top, -12px) + 3px) !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-mini-grid {
+    position: absolute !important;
+    /* Two companion circles intentionally overlap the outer upper-right rim. */
+    top: 6px !important;
+    right: auto !important;
+    left: 118px !important;
+    z-index: 18 !important;
+    display: grid !important;
+    grid-template-columns: 30px !important;
+    grid-auto-rows: 30px !important;
+    gap: 3px !important;
+    width: 30px !important;
+    min-height: 30px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-mini-grid > .sba-reversible-mini:only-child {
+    grid-column: auto !important;
+    justify-self: stretch !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-mini {
+    position: relative !important;
+    display: block !important;
+    width: 30px !important;
+    height: 30px !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+    border: 2px solid var(--sba-mini-ring-color, #7dd3fc) !important;
+    border-radius: 50% !important;
+    background: rgba(2, 6, 18, .74) !important;
+    box-shadow:
+        0 0 0 1.5px rgba(1, 4, 12, .96),
+        inset 0 1px 0 rgba(255, 255, 255, .18) !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-mini .sba-reversible-portrait {
+    position: absolute !important;
+    top: -2px !important;
+    left: -4px !important;
+    width: 34px !important;
+    height: 34px !important;
+    max-width: none !important;
+    object-fit: cover !important;
+    object-position: 50% 50% !important;
+    border: 0 !important;
+    border-radius: 50% !important;
+    clip-path: circle(50% at 50% 50%) !important;
+    transform: none !important;
+    filter: saturate(1.05) contrast(1.03) !important;
+}
+
+/* Uploaded square artwork gets a modest, centered zoom in its mini circle;
+   the clipping wrapper guarantees it never crosses the circular edge. */
+body.theme-sba.cards-layout-simple #cardGrid .sba-custom-reversible-mini .sba-reversible-portrait {
+    top: -2px !important;
+    left: -6px !important;
+    width: 40px !important;
+    height: 40px !important;
+    transform: scale(1.06) !important;
+    transform-origin: 50% 50% !important;
+    object-fit: cover !important;
+    object-position: 50% 50% !important;
+}
+
+/* The partner stack must not pull an LR aura off center. Reversible cards use
+   the exact same canvas geometry as a normal ABS wheel. */
+body.theme-sba.cards-layout-simple #cardGrid .sba-reversible-stack .sba-lr-lwf-canvas {
+    top: var(--sba-lr-aura-top, 55%) !important;
+    left: var(--sba-lr-aura-left, 52%) !important;
+    width: var(--sba-lr-aura-width, 236px) !important;
+    height: var(--sba-lr-aura-height, 420px) !important;
+    -webkit-mask: radial-gradient(ellipse var(--sba-lr-aura-mask-x, 96px) var(--sba-lr-aura-mask-y, 114px) at 50% 50%, #000 0 55%, rgba(0, 0, 0, .92) 70%, rgba(0, 0, 0, .65) 85%, rgba(0, 0, 0, .2) 95%, transparent 100%) !important;
+    mask: radial-gradient(ellipse var(--sba-lr-aura-mask-x, 96px) var(--sba-lr-aura-mask-y, 114px) at 50% 50%, #000 0 55%, rgba(0, 0, 0, .92) 70%, rgba(0, 0, 0, .65) 85%, rgba(0, 0, 0, .2) 95%, transparent 100%) !important;
+}
+
+/* Each ABS wheel gets a dark translucent version of its typing colour.  The
+   alpha is intentionally low so aura and lightning effects remain visible. */
+body.theme-sba.cards-layout-simple #cardGrid .card-icon::after {
+    background:
+        radial-gradient(
+            circle at 44% 36%,
+            color-mix(in srgb, var(--hub-ring-color) 32%, transparent) 0%,
+            color-mix(in srgb, var(--hub-ring-color) 17%, transparent) 50%,
+            rgba(2, 6, 18, .54) 100%
+        ) !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .lr-dial {
+    display: block !important;
+    width: 140px !important;
+    height: 140px !important;
+    top: 5px !important;
+    left: 5px !important;
+    z-index: 1 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .lr-lightning {
+    display: block !important;
+    width: 290px !important;
+    top: 50% !important;
+    left: 50% !important;
+    z-index: 2 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .hub-circle-img,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-ring-effect,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-seza-ring-effect,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-eza-ring-effect,
+body.theme-sba.cards-layout-dokkan #cardGrid .sba-lr-lwf-canvas,
+body.cards-layout-dokkan #cardGrid .sba-ring-effect,
+body.cards-layout-dokkan #cardGrid .sba-seza-ring-effect,
+body.cards-layout-dokkan #cardGrid .sba-eza-ring-effect,
+body.cards-layout-dokkan .grid .sba-ring-effect,
+body.cards-layout-dokkan .grid .sba-seza-ring-effect,
+body.cards-layout-dokkan .grid .sba-eza-ring-effect {
+    display: none !important;
+}
+
+/* The timeline data is shared, but SBA is the only theme that uses compact
+   state tags and carousel arrows. Preserve the original ABS header and
+   showcase markup unchanged. */
+body:not(.theme-sba) .timeline-entry-status,
+body:not(.theme-sba) .timeline-carousel-controls,
+body:not(.theme-sba) .timeline-panel-heading-copy,
+body:not(.theme-sba) .sba-showcase-title {
+    display: none !important;
+}
+
+body.theme-sba .abs-timeline-title,
+body.theme-sba .abs-timeline-badge,
+body.theme-sba .abs-showcase-heading {
+    display: none !important;
+}
+
+/* The dot companion lives inside the deliberately spacious absCustoms header.
+   Keep it behind the heading so the sprite adds motion without competing with
+   the label. */
+body.theme-sba .hub-showcase-divider {
+    overflow: hidden !important;
+}
+
+body.theme-sba .hub-showcase-divider .sba-showcase-title {
+    position: relative;
+    z-index: 2;
+}
+
+body:not(.theme-sba) .dot-character-home-player {
+    display: none !important;
+}
+
+/* The absCustoms mark uses a card-shaped SVG with more built-in whitespace
+   than Timeline's hourglass. Give it a little extra optical size and keep
+   both title lines pinned to the same left edge. */
+body.theme-sba .sba-showcase-anchor .timeline-panel-heading-copy {
+    justify-items: start !important;
+    text-align: left !important;
+}
+
+body.theme-sba .sba-showcase-anchor .sba-showcase-title-svg {
+    width: 26px !important;
+    height: 26px !important;
+}
+
+/* A small centered brand break between the Twitch row and the pixel scene. */
+body.theme-sba .sba-pixel-logo-band {
+    width: 100vw;
+    height: 44px;
+    margin: 0 calc(50% - 50vw);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    /* Sit with the Twitch strip (1000), but below the News ticker (1001).
+       Since this band follows Twitch in the markup, it still paints on top
+       of Twitch without covering the scrolling headlines. */
+    z-index: 1000;
+    overflow: visible;
+}
+
+body.theme-sba .sba-pixel-divider-logo {
+    display: block;
+    width: auto;
+    height: 128px;
+    max-width: 84vw;
+    max-height: none;
+    object-fit: contain;
+    pointer-events: none;
+    filter:
+        sepia(0.92)
+        saturate(2.05)
+        /* Sepia starts warm, so offset its native hue before applying the
+           sampled LWF hue. This keeps the logo aligned with the live frame. */
+        hue-rotate(calc(var(--dot-lwf-accent-hue, 210deg) - 60deg))
+        contrast(1.08)
+        brightness(0.94)
+        drop-shadow(0 0 8px rgb(var(--dot-lwf-accent-rgb, 110 150 255) / 0.32))
+        drop-shadow(0 13px 17px rgba(0, 0, 0, 0.66))
+        drop-shadow(0 3px 4px rgba(0, 0, 0, 0.46));
+}
+
+/* Let the alternate mark overlap the Twitch strip above. Its lower artwork
+   fades away softly instead of ending at a visible hard crop. */
+body.theme-sba .sba-pixel-divider-logo.is-alt-home-logo {
+    height: 120px;
+    /* With the 44px logo band this aligns the top of the art with the top of
+       the Twitch strip, making the overlap deliberate without touching News. */
+    transform: translateY(-13px);
+    -webkit-mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
+    mask-image: linear-gradient(to bottom, #000 0 90%, transparent 100%);
+    /* The standard logo's wide drop shadow becomes a hard black box once the
+       alternate art is masked. Leave that shadow off for a clean fade. */
+    filter:
+        sepia(0.92)
+        saturate(2.05)
+        hue-rotate(calc(var(--dot-lwf-accent-hue, 210deg) - 60deg))
+        contrast(1.08)
+        brightness(0.94);
+}
+
+@media (max-width: 760px) {
+    body.theme-sba .sba-pixel-logo-band {
+        height: 39px;
+        margin-bottom: 0;
+    }
+
+    body.theme-sba .sba-pixel-divider-logo {
+        width: auto;
+        height: 102px;
+        max-width: 88vw;
+        max-height: none;
+    }
+
+    body.theme-sba .sba-pixel-divider-logo.is-alt-home-logo {
+        height: 62px;
+        transform: translateY(-21px);
+        -webkit-mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
+        mask-image: linear-gradient(to bottom, #000 0 58%, transparent 100%);
+    }
+}
+
+@media (min-width: 761px) {
+    /* Align the custom heading's lower edge with the Timeline heading. */
+    html body.theme-sba .hub-showcase-divider {
+        position: relative !important;
+        top: 0 !important;
+        z-index: 4 !important;
+        margin-top: 8px !important;
+        /* The dot LWF source is a portrait 852 x 1536 scene. Give it a real
+           presentation band instead of clipping it to the old 38px label. */
+        min-height: 260px !important;
+        height: 260px !important;
+        align-items: center !important;
+        overflow: hidden !important;
+        /* The LWF owns this treatment: only its top and bottom edges are
+           framed, with the accent colour supplied by the current scene. */
+        border-top: 1px solid rgb(var(--dot-lwf-accent-rgb, 42 45 56) / 0.86) !important;
+        border-bottom: 1px solid rgb(var(--dot-lwf-accent-rgb, 42 45 56) / 0.76) !important;
+        border-right: 0 !important;
+        border-left: 0 !important;
+        background:
+            linear-gradient(90deg, rgba(2, 5, 12, 0.84), rgba(9, 13, 24, 0.48) 50%, rgba(2, 5, 12, 0.84)) !important;
+        box-shadow:
+            inset 0 12px 16px -13px rgb(var(--dot-lwf-accent-rgb, 42 45 56) / 0.95),
+            inset 0 -12px 16px -13px rgb(var(--dot-lwf-accent-rgb, 42 45 56) / 0.84),
+            inset 0 18px 32px rgba(0, 0, 0, 0.48),
+            inset 0 -18px 32px rgba(0, 0, 0, 0.44) !important;
+    }
+
+    /* Keep the section identity anchored to the divider rather than letting
+       the flex alignment make it float alongside the enlarged pixel scene. */
+    /* The title is a real sibling of the carousel, so it cannot be clipped by
+       the pixel divider and remains attached when the showcase is pushed down. */
+    html body.theme-sba .sba-showcase-section {
+        width: 100vw !important;
+        /* Keep the showcase near the top again, directly after the centered
+           pixel divider rather than forcing a viewport-sized blank gap. */
+        margin: 28px 0 0 calc(50% - 50vw) !important;
+        padding: 0 !important;
+        position: relative !important;
+        z-index: 6 !important;
+    }
+
+    html body.theme-sba .sba-showcase-anchor {
+        width: 100% !important;
+        margin: 0 0 9px !important;
+        padding: 0 clamp(28px, 4vw, 64px) !important;
+        min-height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
+    }
+
+    html body.theme-sba .sba-showcase-anchor .sba-showcase-title {
+        display: flex !important;
+        align-items: center !important;
+        gap: 9px !important;
+        min-height: 38px !important;
+        margin: 0 !important;
+        padding: 0 2px !important;
+    }
+
+    html body.theme-sba .sba-showcase-anchor .sba-showcase-title-svg {
+        width: 22px !important;
+        height: 22px !important;
+        color: #c9dfff !important;
+        flex: 0 0 auto !important;
+    }
+
+    /* Start the carousel directly below the title; the anchor itself carries
+       the intentional scroll distance from the pixel divider. */
+    html body.theme-sba #homeCardGrid.sba-showcase-carousel {
+        margin-top: 0 !important;
+    }
+}
+
+body.theme-sba .timeline-composed-icon {
+    width: 56px !important;
+    height: 56px !important;
+}
+body.theme-sba .timeline-composed-icon .tl-char-img {
+    transform: scale(1.68) !important;
+}
+body.theme-sba .timeline-composed-icon .tl-char-img.is-custom-timeline-portrait {
+    transform: scale(1.92) !important;
+}
+
+body.theme-sba .timeline-entries-list {
+    gap: 6px !important;
+    padding: 6px 8px !important;
+}
+
+/* Bring the timestamp closer to its release stop. */
+body.theme-sba .timeline-nodes-stream::before { top: 64px !important; }
+body.theme-sba .timeline-node-marker { top: 59px !important; }
+
+/* Full-bleed recessed release track: it reads as a gentle punch into the
+   SBA page background instead of a floating card with unused side gutters. */
+@media (min-width: 761px) {
+    body.theme-sba .dokkan-timeline-panel {
+        width: 100vw !important;
+        margin-left: calc(50% - 50vw) !important;
+        margin-right: 0 !important;
+        padding-inline: clamp(28px, 4vw, 64px) !important;
+        border-right: 0 !important;
+        border-left: 0 !important;
+        border-radius: 0 !important;
+        background:
+            radial-gradient(ellipse 52% 150% at 50% 0%, rgba(130,100,192,.13), transparent 70%),
+            linear-gradient(180deg, rgba(4,9,20,.34), rgba(17,20,42,.08)) !important;
+        box-shadow:
+            inset 0 20px 40px rgba(0,0,0,.24),
+            inset 0 -18px 38px rgba(0,0,0,.18),
+            inset 0 1px 0 rgba(255,255,255,.10) !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Cards workspace header
+   --------------------------------------------------------------------------
+   Cards uses the same full-bleed recessed surface as the Home timeline. The
+   title stays on the left while the layout switch and search/filter actions
+   share one compact control row on the right in both ABS and Dokkan modes.
+   -------------------------------------------------------------------------- */
+body.theme-sba .hub-cards-view {
+    width: 100% !important;
+    max-width: none !important;
+}
+
+body.theme-sba .hub-cards-view > .hub-view-header {
+    width: 100% !important;
+    max-width: none !important;
+    margin: 0 0 20px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+body.theme-sba .cards-workspace-panel {
+    --cards-workspace-gutter: clamp(20px, 4vw, 64px);
+    position: relative !important;
+    isolation: isolate;
+    width: 100vw !important;
+    max-width: none !important;
+    margin-left: calc(50% - 50vw) !important;
+    margin-right: 0 !important;
+    box-sizing: border-box !important;
+    padding: 18px var(--cards-workspace-gutter) 15px !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 0 22px 22px !important;
+    background:
+        radial-gradient(ellipse 60% 120% at 50% 0%, rgba(24, 36, 60, 0.45), transparent 75%),
+        linear-gradient(180deg, rgba(5, 9, 18, 0.88) 0%, rgba(2, 4, 10, 0.94) 100%) !important;
+    box-shadow:
+        inset 0 20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 -20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+    backdrop-filter: blur(16px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+}
+
+body.theme-sba .cards-workspace-panel::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    background: linear-gradient(108deg, rgba(255, 255, 255, .06), transparent 26%, transparent 72%, rgba(185, 207, 255, .045));
+}
+
+body.theme-sba .cards-workspace-heading {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 16px !important;
+    min-height: 58px !important;
+    width: 100% !important;
+}
+
+body.theme-sba .cards-workspace-divider {
+    flex: 0 0 1px !important;
+    width: 1px !important;
+    height: 32px !important;
+    margin: 0 6px !important;
+    background: linear-gradient(180deg, transparent, rgba(226, 236, 255, .32) 20%, rgba(226, 236, 255, .32) 80%, transparent) !important;
+}
+
+body.theme-sba .hub-cards-view .hub-view-info.cards-workspace-title,
+body.theme-sba.cards-layout-simple .hub-cards-view .hub-view-info.cards-workspace-title {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 11px !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    text-align: left !important;
+}
+
+body.theme-sba .cards-workspace-title-icon {
+    flex: 0 0 28px !important;
+    width: 28px !important;
+    height: 28px !important;
+    color: #d5e5ff !important;
+    filter: drop-shadow(0 2px 8px rgba(123, 177, 255, .22));
+}
+
+body.theme-sba .cards-workspace-title > div {
+    display: grid !important;
+    gap: 3px !important;
+    min-width: 0 !important;
+}
+
+body.theme-sba .cards-workspace-title .hub-section-title {
+    margin: 0 !important;
+    color: #f7f9ff !important;
+    font-size: clamp(17px, 1.7vw, 22px) !important;
+    font-weight: 900 !important;
+    letter-spacing: .12em !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+}
+
+body.theme-sba .cards-workspace-title .hub-section-subtitle {
+    margin: 0 !important;
+    overflow: hidden !important;
+    color: rgba(210, 222, 246, .66) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em !important;
+    line-height: 1.2 !important;
+    text-overflow: ellipsis !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+}
+
+body.theme-sba .cards-workspace-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    gap: 14px !important;
+    min-width: 0 !important;
+}
+
+/* Explicitly keep the mode switcher visible; older iterations hid it when
+   the title was collapsed for the ABS card presentation. */
+body.theme-sba .hub-cards-view .cards-layout-switcher {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: max-content !important;
+    margin: 0 !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body.theme-sba .hub-cards-view .cards-layout-option {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    visibility: visible !important;
+}
+
+body.theme-sba .cards-workspace-actions .cards-search-toolbar,
+body.theme-sba.cards-layout-simple .cards-workspace-actions .cards-search-toolbar {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .cards-workspace-actions .cards-reset-toolbar {
+    display: none !important;
+}
+
+/* While JavaScript is moving the detailed pills into the filter drawer, keep
+   them from briefly appearing as a second strip under the header. */
+body.theme-sba .cards-workspace-panel > .cards-inline-filter-bar {
+    display: none !important;
+}
+
+/* Cards also retains the Home ticker in the legacy Dokkan mode, so switching
+   modes changes the card viewer only and never removes the workspace chrome. */
+body.theme-sba .hub-cards-view .cards-news-snippet {
+    display: flex !important;
+    width: 100vw !important;
+    max-width: none !important;
+    margin: 0 0 14px calc(50% - 50vw) !important;
+}
+
+/* The showcase is intentionally a lower, wide rectangle rather than a tall
+   square block; card proportions stay intact while the Home view breathes. */
+@media (min-width: 761px) {
+    body.theme-sba #homeCardGrid.sba-showcase-carousel {
+        height: 300px !important;
+        min-height: 300px !important;
+        margin-bottom: 30px !important;
+    }
+
+    body.theme-sba .sba-showcase-slide {
+        top: 13px !important;
+        width: 208px !important;
+        height: 274px !important;
+    }
+
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-2"] { transform: translateX(calc(-50% - 360px)) scale(.70); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-1"] { transform: translateX(calc(-50% - 204px)) scale(.86); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="1"] { transform: translateX(calc(-50% + 204px)) scale(.86); }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="2"] { transform: translateX(calc(-50% + 360px)) scale(.70); }
+}
+
+@media (max-width: 900px) {
+    body.theme-sba .cards-workspace-heading {
+        grid-template-columns: 1fr !important;
+        gap: 13px !important;
+    }
+
+    body.theme-sba .cards-workspace-actions {
+        justify-content: flex-start !important;
+        flex-wrap: wrap !important;
+    }
+
+    body.theme-sba .cards-workspace-actions .cards-search-toolbar,
+    body.theme-sba.cards-layout-simple .cards-workspace-actions .cards-search-toolbar,
+    body.theme-sba.cards-layout-simple .cards-workspace-actions .cards-search-toolbar:focus-within {
+        flex: 1 1 260px !important;
+        width: auto !important;
+        min-width: 0 !important;
+    }
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .cards-workspace-panel {
+        --cards-workspace-gutter: 14px;
+        padding-top: 14px !important;
+        padding-bottom: 12px !important;
+        border-radius: 0 0 16px 16px !important;
+    }
+
+    body.theme-sba .cards-workspace-title .hub-section-title { font-size: 16px !important; }
+    body.theme-sba .cards-workspace-title .hub-section-subtitle { font-size: 8px !important; }
+
+    body.theme-sba .hub-cards-view .cards-news-snippet {
+        margin-bottom: 10px !important;
+    }
+
+    body.theme-sba #homeCardGrid.sba-showcase-carousel {
+        height: 276px !important;
+        min-height: 276px !important;
+    }
+
+    body.theme-sba .sba-showcase-slide {
+        top: 11px !important;
+        width: 188px !important;
+        height: 248px !important;
+    }
+}
+
+/* The Cards ticker is fixed to the top on wide screens. Reserve that same
+   strip in the document flow so the recessed Cards header never sits beneath
+   it when arriving from Home, News, or a card detail page. */
+@media (min-width: 991px) {
+    body.theme-sba .hub-cards-view {
+        padding-top: 76px !important;
+    }
+}
+
+/* --------------------------------------------------------------------------
+   Cards surface layout
+   --------------------------------------------------------------------------
+   The header is intentionally transparent and overlaps the top edge of the
+   recessed card surface. This mirrors the Home Timeline: the label and tools
+   sit on the edge, while the cards themselves live inside the punched-in
+   rectangle below.
+   -------------------------------------------------------------------------- */
+body.theme-sba .hub-cards-view > .cards-workspace-header {
+    position: relative !important;
+    z-index: 8 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    /* The controls belong directly above the rectangular card surface.  This
+       keeps their glass edges clear of the surface border at every size. */
+    margin: 0 0 0 calc(50% - 50vw) !important;
+    padding: 0 clamp(20px, 4vw, 64px) !important;
+    box-sizing: border-box !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba .cards-workspace-header .cards-workspace-heading {
+    position: relative !important;
+    z-index: 2 !important;
+    min-height: 64px !important;
+    padding: 0 0 12px !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba .cards-workspace-header .cards-workspace-title,
+body.theme-sba .cards-workspace-header .cards-workspace-actions,
+body.theme-sba .cards-workspace-header .cards-workspace-actions * {
+    pointer-events: auto !important;
+}
+
+body.theme-sba .cards-grid-surface {
+    position: relative !important;
+    isolation: isolate;
+    z-index: 1 !important;
+    width: 100vw !important;
+    max-width: none !important;
+    min-height: 260px !important;
+    margin: 0 0 30px calc(50% - 50vw) !important;
+    padding: 38px clamp(20px, 4vw, 64px) 30px !important;
+    box-sizing: border-box !important;
+    overflow: visible !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-left: 0 !important;
+    border-right: 0 !important;
+    border-radius: 0 !important;
+    background:
+        radial-gradient(ellipse 60% 120% at 50% 0%, rgba(24, 36, 60, 0.45), transparent 75%),
+        linear-gradient(180deg, rgba(5, 9, 18, 0.88) 0%, rgba(2, 4, 10, 0.94) 100%) !important;
+    box-shadow:
+        inset 0 20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 -20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 16px 40px rgba(0, 0, 0, 0.60) !important;
+    backdrop-filter: blur(16px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+}
+
+body.theme-abs-clean .cards-grid-surface,
+body.theme-sba.theme-abs-clean .cards-grid-surface {
+    background:
+        radial-gradient(ellipse 60% 120% at 50% 0%, rgba(24, 36, 60, 0.45), transparent 75%),
+        linear-gradient(180deg, rgba(5, 9, 18, 0.88) 0%, rgba(2, 4, 10, 0.94) 100%) !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.20) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.20) !important;
+    box-shadow:
+        inset 0 20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 -20px 48px rgba(0, 0, 0, 0.70),
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        0 16px 40px rgba(0, 0, 0, 0.60) !important;
+    backdrop-filter: blur(16px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(16px) saturate(130%) !important;
+}
+
+body.theme-sba .cards-grid-surface::before {
+    content: '';
+    position: absolute;
+    z-index: -1;
+    inset: 0;
+    pointer-events: none;
+    border-radius: inherit;
+    background: linear-gradient(108deg, rgba(255, 255, 255, .045), transparent 28%, transparent 72%, rgba(185, 207, 255, .035));
+}
+
+/* Use the existing pager actions as the surface's left/right controls. The
+   count is redundant in this visual treatment, so the arrows remain the only
+   visible navigation affordance. */
+body.theme-sba .cards-grid-surface > #paginationTop {
+    display: block !important;
+    position: absolute !important;
+    z-index: 7 !important;
+    inset: 0 !important;
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba .cards-grid-surface > #paginationTop .hub-pagination-control {
+    position: absolute !important;
+    inset: 0 !important;
+    display: block !important;
+    width: auto !important;
+    max-width: none !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    /* The shared pager has a glass blur that is useful for its old floating
+       card, but this pager now spans the whole punched-in surface.  Leaving
+       that backdrop filter on would blur every card underneath it. */
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    pointer-events: none !important;
+}
+
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-status {
+    position: absolute !important;
+    top: 8px !important;
+    left: 50% !important;
+    transform: translateX(-50%) !important;
+    z-index: 5 !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 3px 12px !important;
+    border-radius: 999px !important;
+    background: rgba(15, 23, 42, 0.68) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(14px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(14px) saturate(130%) !important;
+    color: rgba(241, 245, 249, 0.92) !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    white-space: nowrap !important;
+    pointer-events: auto !important;
+}
+
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn {
+    position: absolute !important;
+    /* Keep the page arrows beside the first row, like the Timeline controls.
+       A full card page can be several rows tall, so centering them in the
+       whole surface would put the only navigation affordance far below the
+       fold. */
+    top: 114px !important;
+    z-index: 2 !important;
+    display: grid !important;
+    width: 40px !important;
+    height: 40px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 1px solid rgba(226, 236, 255, .38) !important;
+    border-radius: 50% !important;
+    background: rgba(24, 32, 57, .52) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .30), 0 5px 14px rgba(0, 0, 0, .18) !important;
+    color: rgba(255, 255, 255, .94) !important;
+    transform: translateY(-50%) !important;
+    pointer-events: auto !important;
+}
+
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:first-child { left: 12px !important; }
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:last-child { right: 12px !important; }
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:disabled { display: none !important; }
+body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:hover {
+    border-color: rgba(255, 255, 255, .78) !important;
+    background: rgba(255, 255, 255, .18) !important;
+}
+
+body.theme-sba .hub-cards-view > #paginationBottom {
+    display: none !important;
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .hub-cards-view > .cards-workspace-header {
+        margin-bottom: 0 !important;
+        padding-inline: 14px !important;
+    }
+
+    body.theme-sba .cards-grid-surface {
+        min-height: 220px !important;
+        margin-bottom: 20px !important;
+        padding: 38px 14px 22px !important;
+        border-radius: 0 !important;
+    }
+
+    body.theme-sba .cards-grid-surface > #paginationTop .hub-page-status {
+        top: 6px !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+        font-size: 10px !important;
+        padding: 2px 10px !important;
+    }
+
+    body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn {
+        width: 34px !important;
+        height: 34px !important;
+        top: 94px !important;
+    }
+
+    body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:first-child { left: 5px !important; }
+    body.theme-sba .cards-grid-surface > #paginationTop .hub-page-nav-btn:last-child { right: 5px !important; }
+}
+
+/* --------------------------------------------------------------------------
+   Compact Cards controls and inline SBA filters
+   -------------------------------------------------------------------------- */
+/* Sixty items cleanly fills 10 desktop columns (6 complete rows) or 6 medium columns (10 complete rows), reaching edge to edge. */
+body.theme-sba.cards-layout-simple #cardGrid,
+body.theme-sba.cards-layout-dokkan #cardGrid {
+    grid-template-columns: repeat(10, minmax(0, 1fr)) !important;
+    gap: 20px 8px !important;
+    width: 100% !important;
+}
+
+body.theme-sba.cards-layout-simple #cardGrid .char-box {
+    zoom: .68 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box {
+    zoom: .72 !important;
+}
+
+@media (max-width: 1360px) and (min-width: 901px) {
+    body.theme-sba.cards-layout-simple #cardGrid,
+    body.theme-sba.cards-layout-dokkan #cardGrid {
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        gap: 18px 10px !important;
+    }
+}
+
+@media (max-width: 900px) and (min-width: 621px) {
+    body.theme-sba.cards-layout-simple #cardGrid,
+    body.theme-sba.cards-layout-dokkan #cardGrid {
+        grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+        gap: 16px 8px !important;
+    }
+}
+
+body.theme-sba .cards-workspace-actions {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    flex: 1 1 auto !important;
+    width: auto !important;
+    max-width: none !important;
+    gap: 16px !important;
+}
+
+/* Filters and search sit docked towards the left next to the Cards text,
+   with the layout choice anchored to the far right. */
+body.theme-sba .cards-workspace-actions .cards-search-toolbar {
+    position: relative !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 10px !important;
+    order: 1 !important;
+    flex: 0 1 auto !important;
+    width: auto !important;
+    max-width: 590px !important;
+    margin: 0 !important;
+}
+
+body.theme-sba .cards-workspace-actions .cards-layout-switcher {
+    order: 2 !important;
+    margin-left: auto !important;
+}
+
+/* Modern, ultra-clean rounded capsule pill search styling */
+body.theme-sba .hub-cards-view .liquid-search-border-container,
+body.theme-sba .hub-cards-view .liquid-search-box {
+    border-radius: 999px !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box {
+    min-height: 48px !important;
+    height: 48px !important;
+    border-radius: 999px !important;
+    cursor: text !important;
+    transition:
+        width 280ms cubic-bezier(.22, 1, .36, 1),
+        min-width 280ms cubic-bezier(.22, 1, .36, 1),
+        padding 220ms ease,
+        border-color 220ms ease,
+        box-shadow 220ms ease,
+        background 220ms ease !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box .search-icon {
+    cursor: pointer !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-box input {
+    cursor: text !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    border-radius: 999px !important;
+    cursor: pointer !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-border-container {
+    border-radius: 999px !important;
+    transition:
+        flex-basis 280ms cubic-bezier(.22, 1, .36, 1),
+        width 280ms cubic-bezier(.22, 1, .36, 1) !important;
+}
+
+/* SBA Cards Filter Popover: Docked directly under the Filters button with clean fade and scale animations */
+body.theme-sba .sba-cards-filter-popover {
+    position: absolute !important;
+    z-index: 1200 !important;
+    top: calc(100% + 8px) !important;
+    left: 0 !important;
+    right: auto !important;
+    bottom: auto !important;
+    transform: translateY(-8px) scale(0.97) !important;
+    transform-origin: top left !important;
+    width: min(480px, calc(100vw - 28px)) !important;
+    max-height: min(86dvh, 720px) !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+    padding: 16px 18px !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    border-radius: 4px !important;
+    background:
+        radial-gradient(ellipse 70% 80% at 50% 0%, rgba(30, 45, 80, 0.35), transparent 75%),
+        linear-gradient(180deg, rgba(6, 12, 22, 0.94) 0%, rgba(3, 6, 13, 0.97) 100%) !important;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(24px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(120%) !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: grid !important;
+    gap: 12px !important;
+    transition:
+        opacity 200ms cubic-bezier(0.16, 1, 0.3, 1),
+        transform 200ms cubic-bezier(0.16, 1, 0.3, 1),
+        visibility 200ms ease !important;
+}
+
+body.theme-sba .sba-cards-filter-popover.is-open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+body.theme-sba:not(.hub-cards-active) .sba-cards-filter-popover {
+    display: none !important;
+}
+
+body.theme-sba .sba-cards-filter-popover-header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.12) !important;
+    color: #f1f5f9 !important;
+    font-size: 11px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.12em !important;
+    text-transform: uppercase !important;
+}
+
+body.theme-sba .sba-cards-filter-reset {
+    position: absolute;
+    top: -1px;
+    right: 0;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 4px !important;
+    background: rgba(255, 255, 255, 0.06) !important;
+    color: #94a3b8 !important;
+    padding: 4px 10px !important;
+    font: inherit;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    cursor: pointer;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease !important;
+}
+
+body.theme-sba .sba-cards-filter-reset:hover {
+    background: rgba(239, 68, 68, 0.16) !important;
+    border-color: rgba(239, 68, 68, 0.40) !important;
+    color: #fca5a5 !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .sba-card-filter-section,
+body.theme-sba .sba-cards-filter-popover .sba-advanced-filter-slot,
+body.theme-sba .sba-cards-filter-popover .sba-category-filter-slot {
+    display: grid;
+    gap: 10px;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-group {
+    margin: 0;
+    padding: 11px 0 0;
+    border: 0;
+    border-top: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 0;
+    background: transparent;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-heading {
+    justify-content: center;
+    position: relative;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-clear {
+    position: absolute;
+    right: 0;
+    border-radius: 4px !important;
+    padding: 3px 8px !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.04em !important;
+    text-transform: uppercase !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-list {
+    max-height: 182px;
+    justify-content: flex-start;
+    gap: 6px !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-pill,
+body.theme-sba .category-pill {
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    font-size: 11px !important;
+    transition: background 160ms ease, border-color 160ms ease !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-search-wrap,
+body.theme-sba .category-filter-search-wrap {
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    background: rgba(0, 0, 0, 0.45) !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .category-filter-status {
+    text-align: center;
+    font-size: 11px !important;
+    color: #94a3b8 !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .sba-card-filter-heading {
+    color: rgba(230, 238, 255, 0.72);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    text-align: center !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .cards-inline-filter-bar {
+    display: grid !important;
+    gap: 10px;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .filter-pill-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: flex-start !important;
+    gap: 7px;
+}
+
+body.theme-sba .sba-cards-filter-popover .filter-group-label {
+    flex: 0 0 100%;
+    text-align: left !important;
+    color: rgba(230, 238, 255, 0.65);
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+body.theme-sba .sba-cards-filter-popover .filter-bar-divider {
+    display: none;
+}
+
+body.theme-sba .sba-cards-filter-popover .filter-pill-btn {
+    min-width: 38px !important;
+    padding: 6px 11px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #cbd5e1 !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .filter-pill-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+    transform: none !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-animation-filter-group {
+    margin: 0;
+    padding-top: 11px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12) !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-animation-filter-group > .filter-group-title {
+    width: 100%;
+    align-self: stretch !important;
+    text-align: left !important;
+}
+
+/* Dock Filters and search controls to the left in workspace actions;
+   the layout switcher remains independently anchored on the right. */
+body.theme-sba .cards-workspace-actions .cards-search-toolbar,
+body.theme-sba.cards-layout-simple .cards-workspace-actions .cards-search-toolbar,
+body.theme-sba.cards-layout-dokkan .cards-workspace-actions .cards-search-toolbar {
+    justify-content: flex-start !important;
+    margin-left: 0 !important;
+    margin-right: auto !important;
+}
+
+/* Keep the toolbar's box model predictable while the active-state rule at the
+   end of this stylesheet expands the Filters control. */
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn {
+    box-sizing: border-box !important;
+}
+
+/* Advanced-filter copy should wrap naturally inside the glass popover rather
+   than inheriting a narrow, clipped flex child from the legacy drawer. */
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle {
+    align-items: center !important;
+    justify-content: flex-start !important;
+    min-width: 0 !important;
+    gap: 12px !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle-copy {
+    flex: 0 1 auto !important;
+    min-width: 0 !important;
+    overflow: visible !important;
+    text-align: left !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle-copy strong,
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle-copy small {
+    white-space: normal !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle .advanced-filter-switch {
+    flex: 0 0 40px !important;
+    margin-top: 0 !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+body.theme-sba .sba-cards-filter-popover .advanced-filter-toggle .advanced-filter-switch::after {
+    border-radius: 2px !important;
+}
+
+/* The Cards header owns its filters now, so the dock does not duplicate it. */
+body.theme-sba.hub-cards-nav-static .sba-side-filter-button {
+    display: none !important;
+}
+
+@media (max-width: 900px) {
+    body.theme-sba .cards-workspace-heading {
+        flex-wrap: wrap !important;
+        gap: 12px !important;
+    }
+
+    body.theme-sba .cards-workspace-actions {
+        width: 100% !important;
+        justify-content: space-between !important;
+    }
+}
+
+@media (max-width: 620px) {
+    body.theme-sba .cards-workspace-divider {
+        display: none !important;
+    }
+
+    body.theme-sba.cards-layout-simple #cardGrid,
+    body.theme-sba.cards-layout-dokkan #cardGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+        gap: 14px 6px !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-search-box {
+        min-height: 44px !important;
+        height: 44px !important;
+    }
+
+    body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn {
+        flex-basis: 44px !important;
+        width: 44px !important;
+        min-width: 44px !important;
+        height: 44px !important;
+        min-height: 44px !important;
+    }
+
+    body.theme-sba .sba-cards-filter-popover {
+        top: calc(100% + 8px) !important;
+        left: 0 !important;
+        right: auto !important;
+        width: min(360px, calc(100vw - 24px)) !important;
+        max-height: min(80dvh, 520px) !important;
+        padding: 14px !important;
+    }
+}
+
+/* ==========================================================================
+   SBA SETTINGS FLOATING MINI GUI (POPOVER NEXT TO SETTINGS BUTTON)
+   ========================================================================== */
+body.theme-sba #settingsDrawer {
+    position: fixed !important;
+    top: auto !important;
+    bottom: 76px !important;
+    left: auto !important;
+    right: 20px !important;
+    width: 290px !important;
+    max-width: calc(100vw - 24px) !important;
+    height: auto !important;
+    max-height: calc(100dvh - 100px) !important;
+    padding: 16px !important;
+    border-radius: 22px !important;
+    border: 1px solid rgba(255, 255, 255, 0.38) !important;
+    background:
+        radial-gradient(circle at 10% 10%, color-mix(in srgb, var(--sba-liquid-sky) 22%, transparent), transparent 45%),
+        radial-gradient(circle at 90% 90%, color-mix(in srgb, var(--sba-liquid-plum) 24%, transparent), transparent 50%),
+        linear-gradient(180deg, rgba(16, 22, 38, 0.94), rgba(6, 9, 18, 0.98)) !important;
+    box-shadow:
+        0 24px 60px rgba(0, 0, 0, 0.78),
+        0 0 0 1px rgba(255, 255, 255, 0.12),
+        inset 0 1px 1px rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(36px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(36px) saturate(160%) !important;
+    z-index: 2000 !important;
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    transform: translateY(12px) scale(0.94) !important;
+    transform-origin: bottom center !important;
+    transition: opacity 180ms ease, transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1), visibility 180ms ease !important;
+    overflow-y: auto !important;
+    overflow-x: hidden !important;
+}
+
+body.theme-sba.sba-side-settings-open #settingsDrawer,
+body.theme-sba #settingsDrawer.open {
+    opacity: 1 !important;
+    visibility: visible !important;
+    pointer-events: auto !important;
+    transform: translateY(0) scale(1) !important;
+}
+
+body.theme-sba #settingsOverlay {
+    display: none !important;
+}
+
+/* Settings Mini GUI Header */
+body.theme-sba #settingsDrawer .sidebar-header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    margin-bottom: 14px !important;
+    padding-bottom: 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
+}
+
+body.theme-sba #settingsDrawer .sidebar-header h2 {
+    font-size: 15px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.02em !important;
+    color: #ffffff !important;
+    margin: 0 !important;
+}
+
+body.theme-sba #settingsDrawer .close-btn {
+    width: 28px !important;
+    height: 28px !important;
+    border-radius: 50% !important;
+    border: 1px solid rgba(255, 255, 255, 0.28) !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #cbd5e1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-size: 13px !important;
+    cursor: pointer !important;
+    transition: all 0.18s ease !important;
+}
+
+body.theme-sba #settingsDrawer .close-btn:hover {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.55) !important;
+    transform: scale(1.06) !important;
+}
+
+/* Sections */
+body.theme-sba #settingsDrawer .settings-theme-section,
+body.theme-sba #settingsDrawer .filter-group {
+    margin-bottom: 12px !important;
+    padding: 10px 12px !important;
+    background: rgba(255, 255, 255, 0.04) !important;
+    border: 1px solid rgba(255, 255, 255, 0.09) !important;
+    border-radius: 14px !important;
+}
+
+body.theme-sba #settingsDrawer .filter-group-title {
+    font-size: 10.5px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #94a3b8 !important;
+    margin: 0 0 8px !important;
+    display: block !important;
+}
+
+/* Button Grids */
+body.theme-sba #settingsDrawer .fx-mode-grid {
+    display: grid !important;
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 8px !important;
+}
+
+body.theme-sba #settingsDrawer .hud-theme-stack:not(.card-viewer-style-options) {
+    display: grid !important;
+    grid-template-columns: repeat(3, 1fr) !important;
+    gap: 6px !important;
+}
+
+/* Matching Nav Bar Button Styling (hud-nav-link liquid glass) */
+body.theme-sba #settingsDrawer .sba-gui-btn,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn,
+body.theme-sba #settingsDrawer .fx-mode-btn {
+    appearance: none !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 5px !important;
+    padding: 9px 6px !important;
+    min-height: 52px !important;
+    border-radius: 13px !important;
+    font-family: inherit !important;
+    font-size: 11px !important;
+    font-weight: 600 !important;
+    color: #cbd5e1 !important;
+    cursor: pointer !important;
+    transition: all 0.18s cubic-bezier(0.2, 0.8, 0.2, 1) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.14), transparent 50%),
+        linear-gradient(180deg, rgba(229, 238, 248, 0.07), rgba(91, 102, 98, 0.03)) !important;
+    border: 1px solid rgba(246, 250, 255, 0.32) !important;
+    box-shadow:
+        0 4px 12px rgba(2, 5, 12, 0.15),
+        inset 0 1px 0 rgba(255, 255, 255, 0.32),
+        inset 0 -1px 0 rgba(26, 32, 30, 0.10) !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn:hover,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn:hover,
+body.theme-sba #settingsDrawer .fx-mode-btn:hover {
+    color: #ffffff !important;
+    border-color: rgba(255, 255, 255, 0.58) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(255, 255, 255, 0.24), transparent 50%),
+        linear-gradient(180deg, rgba(231, 241, 255, 0.13), rgba(96, 109, 103, 0.06)) !important;
+    box-shadow:
+        0 6px 16px rgba(2, 5, 12, 0.22),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.48) !important;
+    transform: translateY(-1px) !important;
+}
+
+body.theme-sba #settingsDrawer .sba-gui-btn.active,
+body.theme-sba #settingsDrawer .abs-hud-theme-btn.active,
+body.theme-sba #settingsDrawer .fx-mode-btn.active {
+    color: #ffffff !important;
+    border-color: rgba(56, 189, 248, 0.85) !important;
+    background:
+        radial-gradient(circle at 50% 30%, rgba(56, 189, 248, 0.35), transparent 50%),
+        linear-gradient(180deg, rgba(14, 116, 144, 0.38), rgba(6, 40, 60, 0.3)) !important;
+    box-shadow:
+        0 0 16px rgba(56, 189, 248, 0.42),
+        inset 0 0 0 1px rgba(56, 189, 248, 0.35),
+        inset 0 1.2px 0 rgba(255, 255, 255, 0.55) !important;
+    transform: translateY(0) !important;
+}
+
+body.theme-sba #settingsDrawer .fx-mode-icon,
+body.theme-sba #settingsDrawer .hud-btn-logo,
+body.theme-sba #settingsDrawer .placeholder-theme-icon {
+    width: 20px !important;
+    height: 20px !important;
+    stroke: currentColor !important;
+    fill: none !important;
+}
+
+body.theme-sba #settingsDrawer .hud-btn-logo {
+    object-fit: contain !important;
+}
+
+/* --------------------------------------------------------------------------
+   Custom Card Coverflow
+   A data-driven vanilla implementation of the supplied coverflow treatment.
+   It deliberately reuses the Home carousel's custom-card art, navigation,
+   touch controls, and card links instead of introducing a separate React UI.
+   -------------------------------------------------------------------------- */
+body.theme-sba #homeCardGrid.sba-showcase-carousel {
+    height: 388px !important;
+    min-height: 388px !important;
+    margin-bottom: 34px !important;
+    perspective: 1400px;
+    background: rgba(7, 12, 29, 0.54) !important;
+    box-shadow: inset 0 18px 34px rgba(0, 0, 0, 0.28), inset 0 -18px 28px rgba(0, 0, 0, 0.25), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+body.theme-sba #homeCardGrid.sba-showcase-carousel::before {
+    z-index: 1;
+    background: radial-gradient(ellipse 58% 76% at 50% 45%, rgba(164, 194, 255, 0.09), transparent 74%);
+}
+
+body.theme-sba .sba-showcase-ambience {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+body.theme-sba .sba-showcase-ambience::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    background: radial-gradient(ellipse at center, rgba(7, 12, 29, 0.12), rgba(5, 9, 23, 0.9) 90%);
+}
+
+body.theme-sba .sba-showcase-ambience img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    filter: brightness(0.26) saturate(0.88) blur(26px);
+    opacity: 0.9;
+    transform: scale(1.16);
+}
+
+body.theme-sba .sba-showcase-eyebrow {
+    position: absolute;
+    z-index: 9;
+    top: 13px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    color: rgba(229, 240, 255, 0.78);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transform: translateX(-50%);
+    white-space: nowrap;
+}
+
+body.theme-sba .sba-showcase-eyebrow span {
+    width: 28px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(185, 214, 255, 0.72));
+}
+
+body.theme-sba .sba-showcase-eyebrow span:last-child {
+    transform: scaleX(-1);
+}
+
+body.theme-sba .sba-showcase-slide {
+    z-index: 2;
+    top: 40px !important;
+    width: 236px !important;
+    height: 316px !important;
+    border-width: 1px;
+    border-color: rgba(225, 239, 255, 0.22);
+    border-radius: 18px;
+    background: rgba(8, 14, 31, 0.66);
+    transform-style: preserve-3d;
+    box-shadow: 0 18px 38px rgba(0, 0, 0, 0.46), inset 0 1px 0 rgba(255, 255, 255, 0.16);
+    transition: transform 720ms cubic-bezier(.25, 1, .5, 1), filter 600ms ease, opacity 600ms ease, box-shadow 600ms ease;
+}
+
+body.theme-sba .sba-showcase-slide::after {
+    position: absolute;
+    z-index: 3;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+    background: linear-gradient(180deg, rgba(2, 6, 18, 0.34), rgba(2, 6, 18, 0.02) 30%, rgba(2, 6, 18, 0.22) 58%, rgba(2, 6, 18, 0.92));
+}
+
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-2"] { transform: translateX(calc(-50% - 410px)) scale(.63) rotateY(38deg) !important; opacity: .2; filter: brightness(.48) blur(3px) saturate(.72); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-1"] { transform: translateX(calc(-50% - 224px)) scale(.82) rotateY(24deg) !important; opacity: .58; filter: brightness(.73) blur(1px) saturate(.84); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="0"] { z-index: 6; transform: translateX(-50%) scale(1) rotateY(0) !important; opacity: 1; filter: none; border-color: rgba(220, 237, 255, 0.58); box-shadow: 0 26px 54px rgba(0, 0, 0, 0.62), 0 0 28px color-mix(in srgb, var(--sba-showcase-type) 42%, transparent), inset 0 1px 0 rgba(255, 255, 255, 0.44); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="1"] { transform: translateX(calc(-50% + 224px)) scale(.82) rotateY(-24deg) !important; opacity: .58; filter: brightness(.73) blur(1px) saturate(.84); }
+body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="2"] { transform: translateX(calc(-50% + 410px)) scale(.63) rotateY(-38deg) !important; opacity: .2; filter: brightness(.48) blur(3px) saturate(.72); }
+body.theme-sba .sba-showcase-slide:not(.is-active) { cursor: pointer; pointer-events: auto; }
+
+body.theme-sba .sba-showcase-slide .sba-showcase-art-image,
+body.theme-sba .sba-showcase-slide .sba-showcase-art-poster,
+body.theme-sba .sba-showcase-slide .sba-showcase-art-video {
+    transform: scale(1.01);
+}
+
+body.theme-sba .sba-showcase-active-copy {
+    position: absolute;
+    z-index: 5;
+    right: 12px;
+    bottom: 12px;
+    left: 12px;
+    display: grid;
+    gap: 4px;
+    color: #f8fbff;
+    text-align: center;
+    text-shadow: none;
+    animation: sba-showcase-copy-in 520ms 120ms ease both;
+}
+
+body.theme-sba .sba-showcase-active-copy .sba-showcase-release-date {
+    color: rgba(221, 236, 255, 0.74);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+}
+
+body.theme-sba .sba-showcase-active-copy strong {
+    overflow: hidden;
+    color: #ffffff;
+    font-size: 13px;
+    font-weight: 900;
+    letter-spacing: .01em;
+    line-height: 1.1;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+body.theme-sba .sba-showcase-active-copy strong:not(.is-marquee) .sba-showcase-name-track {
+    display: block;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+body.theme-sba .sba-showcase-active-copy strong.is-marquee .sba-showcase-name-track {
+    display: flex;
+    width: max-content;
+    animation: sba-showcase-name-marquee 10s linear infinite;
+}
+
+body.theme-sba .sba-showcase-active-copy strong.is-marquee .sba-showcase-name-track > span {
+    padding-right: 42px;
+}
+
+body.theme-sba .sba-showcase-active-copy small {
+    color: rgba(232, 242, 255, 0.78);
+    font-size: 8px;
+    font-weight: 800;
+    letter-spacing: .1em;
+}
+
+body.theme-sba .sba-showcase-slide.is-active .sba-showcase-card-label { display: none; }
+body.theme-sba .sba-showcase-slide.is-active .sba-showcase-rarity { display: none; }
+
+/* Side previews stay clean art: no rarity badge circle on non-focused cards. */
+body.theme-sba .sba-showcase-slide:not(.is-active) .sba-showcase-rarity {
+    display: none;
+}
+
+body.theme-sba .sba-showcase-slide:not(.is-active) .sba-showcase-card-label {
+    bottom: 10px;
+    left: 10px;
+}
+
+body.theme-sba .sba-showcase-arrow {
+    z-index: 12;
+    top: 54%;
+    width: 42px;
+    height: 42px;
+    border-color: rgba(226, 239, 255, 0.42) !important;
+    background: rgba(10, 17, 37, 0.58) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.22);
+}
+
+body.theme-sba .sba-showcase-arrow svg { width: 19px; height: 19px; }
+body.theme-sba .sba-showcase-arrow.is-previous { left: max(18px, calc(50% - 340px)); }
+body.theme-sba .sba-showcase-arrow.is-next { right: max(18px, calc(50% - 340px)); }
+
+body.theme-sba .sba-showcase-pagination {
+    position: absolute;
+    z-index: 12;
+    bottom: 10px;
+    left: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    width: min(76vw, 650px);
+    max-width: calc(100% - 32px);
+    padding: 2px 3px;
+    overflow-x: auto;
+    transform: translateX(-50%);
+}
+
+body.theme-sba .sba-showcase-pagination::-webkit-scrollbar { display: none; }
+
+body.theme-sba .sba-showcase-dot {
+    width: 7px;
+    height: 7px;
+    padding: 0;
+    border: 0;
+    border-radius: 999px;
+    background: rgba(226, 239, 255, 0.28);
+    box-shadow: none;
+    cursor: pointer;
+    transition: width 260ms ease, background 260ms ease, box-shadow 260ms ease;
+}
+
+body.theme-sba .sba-showcase-dot.is-active {
+    width: 25px;
+    background: #d7ebff;
+    box-shadow: 0 0 12px rgba(160, 204, 255, 0.72);
+}
+
+@keyframes sba-showcase-copy-in {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes sba-showcase-name-marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+}
+
+@media (max-width: 760px) {
+    body.theme-sba #homeCardGrid.sba-showcase-carousel { height: 326px !important; min-height: 326px !important; }
+    body.theme-sba .sba-showcase-eyebrow { top: 10px; font-size: 8px; }
+    body.theme-sba .sba-showcase-slide { top: 32px !important; width: 194px !important; height: 262px !important; }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-2"] { transform: translateX(calc(-50% - 278px)) scale(.62) rotateY(34deg) !important; }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="-1"] { transform: translateX(calc(-50% - 150px)) scale(.8) rotateY(22deg) !important; }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="1"] { transform: translateX(calc(-50% + 150px)) scale(.8) rotateY(-22deg) !important; }
+    body.theme-sba .sba-showcase-slide[data-sba-showcase-offset="2"] { transform: translateX(calc(-50% + 278px)) scale(.62) rotateY(-34deg) !important; }
+    body.theme-sba .sba-showcase-active-copy strong { font-size: 11px; }
+    body.theme-sba .sba-showcase-arrow.is-previous { left: 9px; }
+    body.theme-sba .sba-showcase-arrow.is-next { right: 9px; }
+}
+
+/* Final Cards-toolbar override: Search is now the same compact glass control
+   as Filters instead of the previous hidden text action. */
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    display: inline-grid !important;
+    width: 48px !important;
+    min-width: 48px !important;
+    height: 48px !important;
+    min-height: 48px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    place-items: center !important;
+    border: 1px solid rgba(255, 255, 255, 0.32) !important;
+    border-radius: 999px !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.32) !important;
+    color: rgba(255, 255, 255, 0.92) !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-search-btn svg {
+    width: 20px !important;
+    height: 20px !important;
+    fill: none !important;
+    stroke: currentColor !important;
+    stroke-width: 2 !important;
+    stroke-linecap: round !important;
+}
+
+/* The search capsule already contains its own lens. Hide the legacy action
+   button so it cannot render a second overlapping search pill. */
+body.theme-sba .hub-cards-view .liquid-search-btn {
+    display: none !important;
+}
+
+/* Keep the opened Filters label intact after every responsive rule. */
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:is([aria-expanded="true"], .active) {
+    box-sizing: border-box !important;
+    flex: 0 0 138px !important;
+    flex-basis: 138px !important;
+    width: 138px !important;
+    min-width: 138px !important;
+    padding: 0 14px !important;
+    gap: 7px !important;
+}
+
+body.theme-sba .hub-cards-view .liquid-toolbar-filter-btn:is([aria-expanded="true"], .active) .filter-button-label {
+    max-width: 64px !important;
+    opacity: 1 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+
+/* ==========================================================================
+   GLOBAL ABS.CLEAN NAVBAR & ANIMATED COSMIC GRID SYSTEM
+   Active across Home, Cards, Calculator, News, and ABS.Clean Viewer
+   ========================================================================== */
+
+/* 1. Circuit Grid Background Canvas */
+body.theme-abs-clean #abs-clean-grid-circuit {
+    display: block !important;
+    position: fixed !important;
+    inset: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    pointer-events: none !important;
+    z-index: 0 !important;
+}
+
+/* 2. 50/50 Chance Modes: Black Lines vs White Lines on Dark Cosmic Background */
+body.theme-abs-clean {
+    background-color: #060911 !important;
+    background: radial-gradient(ellipse 85% 65% at 50% 20%, #0d1527 0%, #080d1a 60%, #03060c 100%) !important;
+    background-attachment: fixed !important;
+    color: #f8fafc !important;
+    animation: none !important;
+}
+
+body.theme-abs-clean #abs-clean-grid-circuit {
+    opacity: 0.98 !important;
+}
+
+/* Static Mode: Flat color background for maximum performance, no canvas overhead */
+body.fx-static,
+body.theme-sba.fx-static,
+body.theme-abs-clean.fx-static {
+    background: #060913 !important;
+    background-color: #060913 !important;
+    background-image: none !important;
+}
+
+body.fx-static #abs-clean-grid-circuit,
+body.theme-sba.fx-static #abs-clean-grid-circuit,
+body.theme-abs-clean.fx-static #abs-clean-grid-circuit {
+    display: none !important;
+}
+
+/* 3. Suppress blocking background overlays in Clean Mode */
+body.theme-abs-clean .glass-overlay,
+body.theme-abs-clean #wave-bg-container,
+body.theme-abs-clean #fluted-glass-background,
+body.theme-abs-clean .fluted-glass-overlay {
+    display: none !important;
+}
+
+body.theme-abs-clean .hub-main-container,
+body.theme-abs-clean .calc-wrapper,
+body.theme-abs-clean #top-content {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+/* 4. Global ABS.Clean Navbar: Sharp squared edges & cyber circuit pattern */
+body.theme-abs-clean .apple-hud-wrapper,
+body.theme-abs-clean .apple-hud-wrapper:hover,
+body.theme-abs-clean .liquid-metal-frame,
+body.theme-abs-clean .apple-hud-bar {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+    border: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-abs-clean .hud-nav-group,
+body.theme-abs-clean .hud-nav-group:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group,
+body.theme-abs-clean .apple-hud-wrapper:focus-within .hud-nav-group {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    height: 56px !important;
+    max-height: 56px !important;
+    padding: 4px 8px !important;
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+    box-sizing: border-box !important;
+}
+
+body.theme-abs-clean .hud-nav-group::before,
+body.theme-abs-clean .hud-nav-group::after,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group::before,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group::after {
+    border-radius: 0px !important;
+}
+
+/* Nav Links: Square, horizontal layout with distinct cell spacing and crisp text */
+body.theme-abs-clean .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]) {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    width: auto !important;
+    min-width: 72px !important;
+    padding: 4px 12px !important;
+    border-radius: 0px !important;
+    border: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.03) !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    color: rgba(255, 255, 255, 0.82) !important;
+    transform: none !important;
+    transition: all 0.16s ease !important;
+    box-sizing: border-box !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]):hover {
+    transform: none !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(255, 255, 255, 0.24) !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-label="Calculator"] {
+    min-width: 96px !important;
+    padding: 4px 10px !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-label="Editor"] {
+    min-width: 80px !important;
+    padding: 4px 10px !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active:hover,
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover,
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"]:hover {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+    width: auto !important;
+    min-width: 80px !important;
+    height: 46px !important;
+    min-height: 46px !important;
+    margin-inline: 0 !important;
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.48) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.65), 0 4px 14px rgba(0, 0, 0, 0.35) !important;
+    color: #ffffff !important;
+    opacity: 1 !important;
+    padding: 4px 12px !important;
+    transform: none !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link .hud-nav-svg {
+    display: block !important;
+    width: 17px !important;
+    height: 17px !important;
+    margin: 0 !important;
+    flex: 0 0 17px !important;
+}
+
+body.theme-abs-clean .hud-nav-group .hud-nav-link > span {
+    display: inline-block !important;
+    font-size: 11px !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    text-transform: uppercase !important;
+    color: currentColor !important;
+    white-space: nowrap !important;
+    line-height: 1 !important;
+}
+
+/* 5. Dropdown & Drawer Parity: Square 0px edges */
+body.theme-abs-clean .hud-dropdown-menu {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.94) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 16px 36px rgba(0, 0, 0, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+}
+
+body.theme-abs-clean .hud-dropdown-item {
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .hud-dropdown-item:hover {
+    border-radius: 0px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theme-abs-clean #settingsDrawer,
+body.theme-abs-clean .liquid-glass-drawer {
+    border-radius: 0px !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+}
+
+body.theme-abs-clean .sba-gui-btn,
+body.theme-abs-clean .abs-hud-theme-btn {
+    border-radius: 0px !important;
+}
+
+/* ========================================================================
+   Stars Background Video — abs.clean theme
+   The video must be z-index 0, body must be transparent, so the video
+   is NOT painted over by the body background (z-index -1 sits behind
+   the body's own paint layer — that's why it was invisible before).
+   ======================================================================== */
+#stars-bg-video {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    /* Zoom in to crop the bottom-right watermark (~9% cut from all edges) */
+    transform: scale(1.18);
+    transform-origin: center center;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.50;  /* stars less prominent */
+}
+
+body.theme-abs-clean #stars-bg-video {
+    display: block;
+}
+
+/* When Static Only is active — hide video */
+body.fx-static #stars-bg-video {
+    display: none !important;
+}
+
+/* -----------------------------------------------------------------------
+   With the video visible, the body background must be transparent so it
+   doesn't paint over the video. Fallback dark color goes on <html>.
+   ----------------------------------------------------------------------- */
+html:has(#stars-bg-video) {
+    background: #03060c;
+}
+
+body.theme-abs-clean.theme-abs-clean-dark {
+    background: transparent !important;
+    background-color: transparent !important;
+    background-image: none !important;
+}
+
+/* The grid canvas sits on top of the video */
+body.theme-abs-clean #abs-clean-grid-circuit {
+    z-index: 1 !important;
+    /* Brighter grid lines over the dimmed stars */
+    opacity: 0.90 !important;
+}
+
+/* In abs-clean-dark, the stars video IS the background.
+   Hide the fluted-glass WebGL canvas and overlay so they don't
+   paint a white/grey sheet over the video. */
+body.theme-abs-clean.theme-abs-clean-dark .fluted-glass-background,
+body.theme-abs-clean.theme-abs-clean-dark .fluted-glass-overlay {
+    display: none !important;
+}
+
+/* When Static Only hides the video, fall back to solid dark
+   so the calculator doesn't go white/blank. */
+body.fx-static.theme-abs-clean.theme-abs-clean-dark,
+body.fx-static html:has(#stars-bg-video) {
+    background: #03060c !important;
+}

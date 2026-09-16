@@ -1,0 +1,85 @@
+/* Shared monochrome WebGL fluted-glass foundation (Editor intentionally opts out). */
+body.has-fluted-glass-background {
+    position: relative;
+    isolation: isolate;
+    background: transparent !important;
+}
+
+body.has-fluted-glass-background #bg-video {
+    display: none !important;
+}
+
+.fluted-glass-background {
+    position: fixed;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+}
+
+.fluted-glass-overlay {
+    position: fixed;
+    z-index: 1;
+    inset: 0;
+    pointer-events: none;
+    background: rgba(1, 5, 11, 0.27);
+    backdrop-filter: blur(3px) saturate(100%);
+    -webkit-backdrop-filter: blur(3px) saturate(100%);
+}
+
+/* Pages that already include .glass-overlay keep their markup; this turns it
+   into the matching monochrome glass veil above the shader. */
+body.has-fluted-glass-background .glass-overlay {
+    z-index: 1 !important;
+    background: rgba(1, 5, 11, 0.27) !important;
+    animation: none !important;
+    backdrop-filter: blur(3px) saturate(100%) !important;
+    -webkit-backdrop-filter: blur(3px) saturate(100%) !important;
+}
+
+/* The shader sits above the root paint layer; ordinary page content is one
+   layer higher, keeping the canvas visible without covering any controls. */
+body.has-fluted-glass-background > :not(.fluted-glass-background):not(.fluted-glass-overlay):not(.glass-overlay):not(script):not(style):not(link) {
+    position: relative;
+    z-index: 2;
+}
+
+body.fluted-glass-disabled .fluted-glass-background,
+body.fluted-glass-disabled .fluted-glass-overlay {
+    display: none;
+}
+
+body.fluted-glass-disabled {
+    background: #070707 !important;
+}
+
+/* Shader Off restores the original page-specific backgrounds. */
+body.has-fluted-glass-background.fluted-glass-disabled #bg-video {
+    display: block !important;
+}
+
+body.has-fluted-glass-background.fluted-glass-disabled .glass-overlay {
+    background: rgba(8, 14, 28, 0.90) !important;
+    backdrop-filter: blur(14px) !important;
+    -webkit-backdrop-filter: blur(14px) !important;
+}
+
+body.has-fluted-glass-background:not(.fluted-glass-disabled) #wave-bg-container {
+    display: none !important;
+}
+
+body.has-fluted-glass-background.fluted-glass-disabled #wave-bg-container {
+    display: block !important;
+}
+
+body.fluted-glass-fallback {
+    background:
+        repeating-linear-gradient(92deg, #f7fbff 0 16px, #dfeaf6 17px 20px, #edf5fc 21px 37px) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .fluted-glass-background { display: none; }
+    body.has-fluted-glass-background:not(.fluted-glass-disabled) { background: #edf5fc !important; }
+}

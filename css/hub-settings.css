@@ -1,0 +1,112 @@
+/* ===========================================================================
+   ABS.CLEAN HUB SETTINGS POPOVER
+   Clean technical dark glass, 4px crisp radius, 1px border highlight,
+   refined typography and cyan active indicators.
+   ========================================================================== */
+
+body.theme-sba #settingsDrawer.hub-settings-panel,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel {
+    width: 324px !important;
+    padding: 18px 20px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background:
+        radial-gradient(ellipse 70% 80% at 50% 0%, rgba(30, 45, 80, 0.35), transparent 75%),
+        linear-gradient(180deg, rgba(6, 12, 22, 0.94) 0%, rgba(3, 6, 13, 0.97) 100%) !important;
+    box-shadow:
+        0 20px 50px rgba(0, 0, 0, 0.75),
+        inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+    backdrop-filter: blur(24px) saturate(120%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(120%) !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .sidebar-header,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .sidebar-header {
+    padding: 0 0 12px !important;
+    margin-bottom: 14px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.10) !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .sidebar-header h2,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .sidebar-header h2 {
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.10em !important;
+    text-transform: uppercase !important;
+    color: #f1f5f9 !important;
+    margin: 0 !important;
+}
+
+.hub-settings-description {
+    margin: 4px 0 0;
+    color: #94a3b8;
+    font-size: 11px;
+    line-height: 1.4;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .filter-group,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .filter-group {
+    padding: 0 !important;
+    margin: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .filter-group-title,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .filter-group-title {
+    font-size: 10px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.10em !important;
+    text-transform: uppercase !important;
+    color: #94a3b8 !important;
+    margin-bottom: 8px !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .fx-mode-btn {
+    min-height: 64px !important;
+    gap: 7px !important;
+    border-radius: 4px !important;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    background: rgba(255, 255, 255, 0.05) !important;
+    color: #cbd5e1 !important;
+    box-shadow: none !important;
+    text-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    transform: none !important;
+    transition: background 160ms ease, border-color 160ms ease, color 160ms ease, box-shadow 160ms ease !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel::before,
+body.theme-sba #settingsDrawer.hub-settings-panel::after,
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn::before,
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn::after {
+    display: none !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn:hover,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .fx-mode-btn:hover {
+    background: rgba(255, 255, 255, 0.12) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
+    color: #ffffff !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn.active,
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn[aria-pressed="true"],
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .fx-mode-btn.active,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .fx-mode-btn[aria-pressed="true"] {
+    background: linear-gradient(135deg, rgba(56, 189, 248, 0.22), rgba(14, 165, 233, 0.10)) !important;
+    border-color: rgba(56, 189, 248, 0.70) !important;
+    color: #38bdf8 !important;
+    box-shadow: 0 0 14px rgba(56, 189, 248, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+body.theme-sba #settingsDrawer.hub-settings-panel .fx-mode-btn:focus-visible,
+body.theme-abs-clean #settingsDrawer.hub-settings-panel .fx-mode-btn:focus-visible {
+    outline: 2px solid rgba(56, 189, 248, 0.75) !important;
+    outline-offset: 2px;
+}
