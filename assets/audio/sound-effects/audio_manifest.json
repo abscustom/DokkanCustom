@@ -1,0 +1,56 @@
+{
+  "version": 1,
+  "generatedAt": "2026-09-01T15:13:45.551Z",
+  "source": "Nox files/assets/se",
+  "note": "Inventory only. Cue names and IDs can be added later with vgmstream or another CRI ACB metadata reader.",
+  "banks": [
+    {
+      "id": "se00000",
+      "acb": "se00000.acb",
+      "awb": null,
+      "acbBytes": 2561408
+    },
+    {
+      "id": "se00100",
+      "acb": "se00100.acb",
+      "awb": null,
+      "acbBytes": 275552
+    },
+    {
+      "id": "se00200",
+      "acb": "se00200.acb",
+      "awb": null,
+      "acbBytes": 1097088
+    },
+    {
+      "id": "se00300",
+      "acb": "se00300.acb",
+      "awb": null,
+      "acbBytes": 152768
+    },
+    {
+      "id": "se00400",
+      "acb": "se00400.acb",
+      "awb": null,
+      "acbBytes": 181600
+    },
+    {
+      "id": "se01000",
+      "acb": "se01000.acb",
+      "awb": null,
+      "acbBytes": 25962208
+    },
+    {
+      "id": "se02000",
+      "acb": "se02000.acb",
+      "awb": null,
+      "acbBytes": 289280
+    },
+    {
+      "id": "se03000",
+      "acb": "se03000.acb",
+      "awb": null,
+      "acbBytes": 507424
+    }
+  ]
+}

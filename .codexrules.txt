@@ -1,0 +1,8 @@
+# Architecture Rules
+- Use CSS Variables for repeated colors, fonts, and spacing to eliminate duplicate CSS values.
+- Enforce DRY (Don't Repeat Yourself) code patterns. Combine overlapping CSS classes into utility classes.
+- Write modular, reusable JavaScript functions. Avoid duplicating logic across files.
+
+# Output Formatting (Coordinates with Caveman)
+- Never output full files. Only return specific line diffs or targeted code patches.
+- If a utility or function already exists in the workspace (via GitNexus mapping), reuse it instead of writing a new one.

@@ -1,0 +1,2 @@
+# Local Chrome debugging profile; never ship browser cache or session data.
+/.chrome-dot-debug/
