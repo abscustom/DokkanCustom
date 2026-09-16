@@ -52,14 +52,24 @@ const DOKKAN_SEZA_MOVIES = {
 
 const activePlayers = new Map();
 let cachedSezaFiles = null;
+let cachedDokkanModeFiles = null;
+let cachedDokkanModeLightningFiles = null;
+let cachedTypeArrowFiles = null;
 
 // Helper: Converts pure black RGB into transparent alpha
 async function makeSheetTransparent(imageBlob) {
     const img = await new Promise((resolve, reject) => {
         const image = new Image();
-        image.onload = () => resolve(image);
-        image.onerror = reject;
-        image.src = URL.createObjectURL(imageBlob);
+        const imageUrl = URL.createObjectURL(imageBlob);
+        image.onload = () => {
+            URL.revokeObjectURL(imageUrl);
+            resolve(image);
+        };
+        image.onerror = (error) => {
+            URL.revokeObjectURL(imageUrl);
+            reject(error);
+        };
+        image.src = imageUrl;
     });
 
     const canvas = document.createElement('canvas');
@@ -86,7 +96,7 @@ async function makeSheetTransparent(imageBlob) {
 async function fetchSezaPackFiles() {
     if (cachedSezaFiles) return cachedSezaFiles;
 
-    const folder = 'assets/super_eza/effect/super_optimal_eff/';
+    const folder = 'assets/effects/super-eza/effect/super_optimal_eff/';
     
     try {
         const [lwfRes, s1Res, s2Res] = await Promise.all([
@@ -121,11 +131,192 @@ async function fetchSezaPackFiles() {
     }
 }
 
+async function fetchDokkanModePackFiles(packType = 'aura') {
+    if (packType === 'lightning') {
+        if (cachedDokkanModeLightningFiles) return cachedDokkanModeLightningFiles;
+        const folder = 'assets/effects/dokkan-mode-lightning/';
+        const names = [
+            'dokkan_mode.lwf',
+            'dokkan_mode-1.png',
+            'dokkan_mode-2.png',
+            'dokkan_mode-3.png',
+            'mask_bk.png'
+        ];
+        try {
+            const responses = await Promise.all(names.map((name) => fetch(`${folder}${name}`)));
+            const missingIndex = responses.findIndex((response) => !response.ok);
+            if (missingIndex >= 0) {
+                throw new Error(`Dokkan Mode Lightning file not found: ${folder}${names[missingIndex]}`);
+            }
+            const blobs = await Promise.all(responses.map((response) => response.blob()));
+            const preparedBlobs = await Promise.all(blobs.map((blob, index) => (
+                names[index] === 'mask_bk.png' ? makeSheetTransparent(blob) : blob
+            )));
+            cachedDokkanModeLightningFiles = preparedBlobs.map((blob, index) => new File([blob], names[index]));
+            return cachedDokkanModeLightningFiles;
+        } catch (error) {
+            console.warn('Dokkan Mode Lightning LWF Fetch Error:', error);
+            return null;
+        }
+    }
+
+    if (cachedDokkanModeFiles) return cachedDokkanModeFiles;
+
+    const folder = 'assets/effects/dokkan-mode/';
+    const names = [
+        'dokkan_mode.lwf',
+        'dokkan_mode-1.png',
+        'dokkan_mode-2.png',
+        'dokkan_mode-3.png',
+        'mask_bk.png'
+    ];
+
+    try {
+        const responses = await Promise.all(names.map((name) => fetch(`${folder}${name}`)));
+        const missingIndex = responses.findIndex((response) => !response.ok);
+        if (missingIndex >= 0) {
+            throw new Error(`Dokkan Mode file not found: ${folder}${names[missingIndex]}`);
+        }
+
+        const blobs = await Promise.all(responses.map((response) => response.blob()));
+        const preparedBlobs = await Promise.all(blobs.map((blob, index) => (
+            names[index] === 'mask_bk.png' ? makeSheetTransparent(blob) : blob
+        )));
+        cachedDokkanModeFiles = preparedBlobs.map((blob, index) => new File([blob], names[index]));
+        return cachedDokkanModeFiles;
+    } catch (error) {
+        console.warn('Dokkan Mode LWF Fetch Error:', error);
+        return null;
+    }
+}
+
+
+async function fetchTypeArrowPackFiles() {
+    if (cachedTypeArrowFiles) return cachedTypeArrowFiles;
+
+    const folder = 'assets/ui/type-arrows/';
+    const names = [
+        'type_arrow_icon.lwf',
+        'cha_type_down_icon_ef_01.png',
+        'cha_type_icon.png',
+        'type_arrow_icon.png',
+        'cha_type_up_icon_ef_01.png'
+    ];
+
+    try {
+        const responses = await Promise.all(names.map((name) => fetch(folder + name)));
+        const missingIndex = responses.findIndex((res) => !res.ok);
+        if (missingIndex >= 0) {
+            throw new Error('Type Arrow file not found: ' + folder + names[missingIndex]);
+        }
+
+        const blobs = await Promise.all(responses.map((res) => res.blob()));
+        cachedTypeArrowFiles = blobs.map((blob, idx) => new File([blob], names[idx]));
+        return cachedTypeArrowFiles;
+    } catch (err) {
+        console.warn('Type Arrow LWF Fetch Error:', err);
+        return null;
+    }
+}
+
 const DokkanLWF = {
+
+    async attachTypeArrowEffect(targetContainer, cardType = 'agl', isAdvantage = true, options = {}) {
+        if (!targetContainer) return;
+        const targetMovie = options.movie || 'ef_003';
+        const movieScale = Math.max(1, Number(options.scale) || 1);
+        const readyClass = String(options.readyClass || '');
+        // The game effect has independent back-light and face-highlight clips.
+        // Keep their canvases separate so ABS Clean can sandwich the static
+        // type emblem between them without changing any other theme.
+        const layer = String(options.layer || 'back').toLowerCase().replace(/[^a-z0-9_-]/g, '') || 'back';
+        if (readyClass) targetContainer.classList.remove(readyClass);
+
+        let canvas = targetContainer.querySelector(`.type-arrow-lwf-canvas[data-lwf-layer="${layer}"]`);
+        // Adopt the single-canvas implementation used before layered effects
+        // were introduced, preserving an already decoded LWF on refresh.
+        if (!canvas && layer === 'back') {
+            canvas = targetContainer.querySelector('.type-arrow-lwf-canvas:not([data-lwf-layer])');
+        }
+        if (!canvas) {
+            canvas = document.createElement('canvas');
+            canvas.className = 'type-arrow-lwf-canvas';
+            canvas.width = 130;
+            canvas.height = 130;
+            targetContainer.appendChild(canvas);
+        }
+        canvas.dataset.lwfLayer = layer;
+        canvas.classList.toggle('type-arrow-lwf-front-canvas', layer === 'front');
+
+        const canvasId = canvas.id || ('type_arrow_lwf_' + Math.random().toString(36).substr(2, 9));
+        canvas.id = canvasId;
+
+        const playbackRate = options.playbackRate !== undefined
+            ? Math.max(0.05, Number(options.playbackRate) || 1)
+            : 0.5;
+
+        const attachKey = `type-arrow:${layer}:${String(cardType || 'agl').toLowerCase()}:${targetMovie}:${isAdvantage ? 'adv' : 'dis'}:${movieScale}:${playbackRate}`;
+        if (canvas.dataset.lwfLoading === attachKey) return;
+        if (canvas.dataset.lwfReady === 'true' && canvas.dataset.lwfKey === attachKey && activePlayers.has(canvasId)) {
+            const existingPlayer = activePlayers.get(canvasId);
+            if (existingPlayer) existingPlayer.playbackRate = playbackRate;
+            if (readyClass) targetContainer.classList.add(readyClass);
+            this.play(canvasId);
+            return;
+        }
+
+        this.destroy(canvasId);
+        canvas.dataset.lwfLoading = attachKey;
+
+        try {
+            const files = await fetchTypeArrowPackFiles();
+            if (!files) return;
+
+            const player = new LwfPackPlayer(canvas, () => {}, { resourceKey: 'dokkan-type-arrow-pack' });
+            player.loopMovie = true;
+            player.playbackRate = playbackRate;
+
+            const ingested = player.ingestFiles(files);
+            if (!ingested.lwfFile) return;
+
+            const check = await player.prepare(ingested.lwfFile);
+            if (!check.ok) return;
+
+            await player.load();
+
+            if (player.lwf && player.lwf.rendererFactory) {
+                player.lwf.rendererFactory.clearColor = null;
+            }
+
+            if (player.movies.includes(targetMovie)) {
+                player.setMovie(targetMovie, { play: true });
+                player.movie?.scaleTo?.(movieScale, movieScale);
+                canvas.dataset.lwfReady = 'true';
+                canvas.dataset.lwfKey = attachKey;
+                if (readyClass) targetContainer.classList.add(readyClass);
+                activePlayers.set(canvasId, player);
+            } else if (player.movies.length > 0) {
+                const fallbackMovie = player.movies.find(m => m === 'ef_003' || m === 'ef_002') || player.movies[0];
+                player.setMovie(fallbackMovie, { play: true });
+                player.movie?.scaleTo?.(movieScale, movieScale);
+                canvas.dataset.lwfReady = 'true';
+                canvas.dataset.lwfKey = attachKey;
+                if (readyClass) targetContainer.classList.add(readyClass);
+                activePlayers.set(canvasId, player);
+            }
+        } catch (err) {
+            console.error('Dokkan Type Arrow LWF Player Error:', err);
+        } finally {
+            if (canvas.dataset.lwfLoading === attachKey) delete canvas.dataset.lwfLoading;
+        }
+    },
+
     pause(canvasId) {
         if (activePlayers.has(canvasId)) {
             const player = activePlayers.get(canvasId);
             try { player.pause(); } catch(e) {}
+            const canvas = document.getElementById(canvasId);
+            if (canvas) canvas.dataset.lwfPlaying = 'false';
         }
     },
 
@@ -133,6 +324,24 @@ const DokkanLWF = {
         if (activePlayers.has(canvasId)) {
             const player = activePlayers.get(canvasId);
             try { player.play(); } catch(e) {}
+            const canvas = document.getElementById(canvasId);
+            if (canvas) canvas.dataset.lwfPlaying = 'true';
+        }
+    },
+
+    restart(canvasId, { play = true } = {}) {
+        if (!activePlayers.has(canvasId)) return false;
+        const player = activePlayers.get(canvasId);
+        try {
+            const startFrame = Number(player.loopStartFrame) > 0 ? Number(player.loopStartFrame) : 1;
+            if (typeof player.seekFrame === 'function') player.seekFrame(startFrame, { play });
+            else if (play) player.play();
+            else player.pause();
+            const canvas = document.getElementById(canvasId);
+            if (canvas) canvas.dataset.lwfPlaying = play ? 'true' : 'false';
+            return true;
+        } catch(e) {
+            return false;
         }
     },
 
@@ -160,6 +369,11 @@ const DokkanLWF = {
         return false;
     },
 
+    getFrameState(canvasId) {
+        const player = activePlayers.get(canvasId);
+        return player?.getFrameState?.() || null;
+    },
+
     destroy(canvasId) {
         if (activePlayers.has(canvasId)) {
             const player = activePlayers.get(canvasId);
@@ -169,6 +383,8 @@ const DokkanLWF = {
             } catch(e) {}
             activePlayers.delete(canvasId);
         }
+        const canvas = document.getElementById(canvasId);
+        if (canvas) canvas.dataset.lwfPlaying = 'false';
     },
 
     async attachSezaFlameBorder(targetContainer, cardType = 'agl') {
@@ -191,12 +407,20 @@ const DokkanLWF = {
         const canvasId = canvas.id || `seza_lwf_${Math.random().toString(36).substr(2, 9)}`;
         canvas.id = canvasId;
 
-        this.destroy(canvasId);
+        const attachKey = `seza:${cType}:${movieName}`;
+        if (canvas.dataset.lwfLoading === attachKey) return;
+        if (canvas.dataset.lwfReady === 'true' && canvas.dataset.lwfKey === attachKey && activePlayers.has(canvasId)) {
+            this.play(canvasId);
+            return;
+        }
 
-        const files = await fetchSezaPackFiles();
-        if (!files) return;
+        this.destroy(canvasId);
+        canvas.dataset.lwfLoading = attachKey;
 
         try {
+            const files = await fetchSezaPackFiles();
+            if (!files) return;
+
             const player = new LwfPackPlayer(canvas, () => {});
             player.loopMovie = true;
 
@@ -215,10 +439,97 @@ const DokkanLWF = {
             const targetMovieIndex = player.movies.indexOf(movieName);
             if (targetMovieIndex >= 0) {
                 player.setMovie(movieName, { play: true });
+                canvas.dataset.lwfReady = 'true';
+                canvas.dataset.lwfKey = attachKey;
                 activePlayers.set(canvasId, player);
             }
         } catch (err) {
             console.error("Dokkan SEZA LWF Player Error:", err);
+        } finally {
+            if (canvas.dataset.lwfLoading === attachKey) delete canvas.dataset.lwfLoading;
+        }
+    },
+
+    async attachDokkanModeLrEffect(canvas) {
+        if (!canvas || canvas.dataset.lwfLoading === 'true') return false;
+
+        const isLightning = canvas.classList.contains('sba-lr-lwf-lightning-canvas') || canvas.dataset.lwfPack === 'lightning';
+        const prefix = isLightning ? 'sba_lr_lightning_' : 'sba_lr_lwf_';
+        const canvasId = canvas.id || `${prefix}${Math.random().toString(36).slice(2, 11)}`;
+        canvas.id = canvasId;
+
+        if (activePlayers.has(canvasId)) {
+            this.play(canvasId);
+            return true;
+        }
+
+        canvas.dataset.lwfLoading = 'true';
+        const requestToken = Math.random().toString(36).slice(2);
+        canvas.dataset.lwfRequest = requestToken;
+
+        const files = await fetchDokkanModePackFiles(isLightning ? 'lightning' : 'aura');
+        if (!files || !canvas.isConnected || canvas.dataset.lwfRequest !== requestToken) {
+            delete canvas.dataset.lwfLoading;
+            return false;
+        }
+
+        let player = null;
+        try {
+            player = new LwfPackPlayer(canvas, () => {}, {
+                resourceKey: isLightning ? 'dokkan-mode-ef-002-lightning' : 'dokkan-mode-ef-002-aura',
+                // Lightning sheets contain their own authored translucent glow.
+                // Luma reduction is useful for dark aura plates, but it removes
+                // most of the electric layer's low-alpha pixels at card scale.
+                disableAdditiveReduction: isLightning
+            });
+            player.loopMovie = true;
+            player.loopStartFrame = 22;
+            player.loopEndFrame = 46;
+            player.playbackRate = isLightning ? 0.38 : 0.48;
+            player.waitForNestedMoviesAtEnd = true;
+
+            const ingested = player.ingestFiles(files);
+            if (!ingested.lwfFile) throw new Error('dokkan_mode.lwf was not ingested');
+
+            const check = await player.prepare(ingested.lwfFile);
+            if (!check.ok) {
+                throw new Error(`Dokkan Mode pack is missing: ${check.missing.join(', ')}`);
+            }
+
+            if (!canvas.isConnected || canvas.dataset.lwfRequest !== requestToken) {
+                player.clear();
+                return false;
+            }
+
+            await player.load();
+            if (!canvas.isConnected || canvas.dataset.lwfRequest !== requestToken) {
+                player.clear();
+                return false;
+            }
+
+            if (player.lwf?.rendererFactory) player.lwf.rendererFactory.clearColor = null;
+            if (!player.setMovie('ef_002', { play: true })) {
+                throw new Error('Movie ef_002 is not present in dokkan_mode.lwf');
+            }
+            player.movie?.scaleTo?.(2.85, 2.85);
+            player.seekFrame?.(player.loopStartFrame, { play: true });
+
+            activePlayers.set(canvasId, player);
+            canvas.dataset.lwfReady = 'true';
+            canvas.dataset.lwfPlaying = 'true';
+            canvas.dataset.lwfMovie = 'ef_002';
+            canvas.dataset.lwfMovieScale = '2.85';
+            canvas.dataset.lwfLoop = '22-46';
+            canvas.dataset.lwfSpeed = String(player.playbackRate);
+            return true;
+        } catch (error) {
+            try { player?.clear?.(); } catch (clearError) {}
+            console.error('Dokkan Mode LR LWF Player Error:', error);
+            return false;
+        } finally {
+            if (canvas.dataset.lwfRequest === requestToken) {
+                delete canvas.dataset.lwfLoading;
+            }
         }
     },
 
@@ -238,10 +549,10 @@ const DokkanLWF = {
         this.destroy(canvasId);
 
         const candidateFolders = [
-            `assets/dokkan_field/lwf_bg/${fieldId}/`,
-            `assets/dokkan_field/lwf_bg/${numId}/`,
-            `./assets/dokkan_field/lwf_bg/${fieldId}/`,
-            `./assets/dokkan_field/lwf_bg/${numId}/`
+            `assets/effects/domains/lwf_bg/${fieldId}/`,
+            `assets/effects/domains/lwf_bg/${numId}/`,
+            `./assets/effects/domains/lwf_bg/${fieldId}/`,
+            `./assets/effects/domains/lwf_bg/${numId}/`
         ];
 
         let lwfBlob = null;
@@ -373,10 +684,8 @@ const DokkanLWF = {
         const targetIds = [...new Set([folderId, parentFolderId])];
         const candidateFolders = [];
         targetIds.forEach(id => {
-            candidateFolders.push(`assets/card_bg/${id}/`);
-            candidateFolders.push(`./assets/card_bg/${id}/`);
-            candidateFolders.push(`assets/card/${id}/`);
-            candidateFolders.push(`./assets/card/${id}/`);
+            candidateFolders.push(`./assets/card-art/backgrounds/${id}/`);
+            candidateFolders.push(`./assets/card-art/cards/${id}/`);
         });
 
         let lwfBlob = null;
@@ -492,6 +801,12 @@ const DokkanLWF = {
 };
 
 window.DokkanLWF = DokkanLWF;
+// The editor's cache/theme scripts are classic scripts while this bridge is a
+// deferred module.  Let them run their reload hydration pass only after the
+// player API has been published, avoiding a first-render race.
+if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('dokkan-lwf-ready'));
+}
 
 /* ==========================================================================
    GLOBAL DOMAIN PREVIEW MODAL CONTROLLER

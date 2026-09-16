@@ -3,15 +3,189 @@
    ========================================================================== */
 
 const CENTRAL_ASSET_URL = 'https://abscustom.github.io/assets/images/';
+// The original ABS dashboard has been retired. The refined SBA implementation
+// is now the public ABS theme; its internal key stays "sba" to avoid breaking
+// the established CSS and saved asset references.
+const HUB_THEME_KEYS = new Set(['sba']);
+const CARD_LAYOUT_KEYS = new Set(['dokkan', 'simple']);
+const CARD_LAYOUT_SCHEMA = 'simple-default-v2';
 let currentHubView = 'home';
-let currentAppStyle = localStorage.getItem('hub_selected_style') || 'abs-style';
+if ('scrollRestoration' in window.history) window.history.scrollRestoration = 'manual';
+if (performance.getEntriesByType('navigation')[0]?.type === 'reload') {
+    window.addEventListener('load', () => requestAnimationFrame(() => window.scrollTo(0, 0)), { once: true });
+}
+let currentAppStyle = HUB_THEME_KEYS.has(localStorage.getItem('hub_selected_style'))
+    ? localStorage.getItem('hub_selected_style')
+    : 'sba';
+// The initial selector briefly defaulted to Dokkan. Treat that old preference
+// as unversioned and migrate it once to the intended Simple default.
+let currentCardsLayout = localStorage.getItem('hub_cards_layout_schema') === CARD_LAYOUT_SCHEMA &&
+    CARD_LAYOUT_KEYS.has(localStorage.getItem('hub_cards_layout'))
+    ? localStorage.getItem('hub_cards_layout')
+    : 'simple';
 let currentFxMode = localStorage.getItem('hub_card_fx_mode') || 'all';
 let currentSourceFilter = 'all';
 let searchQuery = '';
+let requireKoScreen = false;
+let selectedCategoryFilters = new Set();
+let categoryDefinitions = [];
+let koScreenCardIds = new Set();
+let koScreenIndexPromise = null;
 let allCardItems = [];
 let filteredCardItems = [];
 let currentPage = 1;
-const CARDS_PER_PAGE = 60;
+const CARDS_PER_PAGE = 40;
+// Keep the SBA Cards panel compact enough to read as a landscape section.
+// 40 items cleanly fills 10 columns (4 rows) or 5 columns (8 rows).
+const SBA_CARDS_PER_PAGE = 40;
+const HOME_LOGO_DEFAULT_SRC = 'https://abscustom.github.io/assets/images/abs_logo_home.png';
+const HOME_LOGO_ALT_SRC = 'https://abscustom.github.io/assets/images/abs_logo_other.png';
+let sbaBottomNavHideTimer = null;
+let hubLightningObserver = null;
+let sbaLrLwfObserver = null;
+
+function canPlayHubLightning() {
+    return currentFxMode !== 'no-lightning' &&
+        currentFxMode !== 'static' &&
+        currentAppStyle !== 'sba' &&
+        !document.hidden;
+}
+
+function chooseHomeLogoVariant() {
+    const homeLogo = document.querySelector('.sba-pixel-divider-logo');
+    if (!homeLogo) return;
+
+    // The alternate mark is an occasional Home-page variant.
+    const useAlternateLogo = Math.random() < 0.30;
+    homeLogo.src = useAlternateLogo ? HOME_LOGO_ALT_SRC : HOME_LOGO_DEFAULT_SRC;
+    homeLogo.classList.toggle('is-alt-home-logo', useAlternateLogo);
+}
+
+function updateHubLightningVideo(video) {
+    const shouldPlay = canPlayHubLightning() && video.dataset.hubLightningVisible === 'true';
+    if (shouldPlay) {
+        video.play().catch(() => {});
+    } else {
+        video.pause();
+    }
+}
+
+function ensureHubLightningObserver() {
+    if (hubLightningObserver || typeof IntersectionObserver === 'undefined') return;
+    hubLightningObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            entry.target.dataset.hubLightningVisible = String(entry.isIntersecting);
+            updateHubLightningVideo(entry.target);
+        });
+    }, { root: null, rootMargin: '80px', threshold: 0.01 });
+}
+
+function mountHubLightningVideos(container) {
+    if (!container) return;
+    ensureHubLightningObserver();
+
+    container.querySelectorAll('.hub-lr-lightning').forEach((video) => {
+        video.dataset.hubLightningVisible = 'false';
+        if (hubLightningObserver) {
+            hubLightningObserver.observe(video);
+        } else {
+            video.dataset.hubLightningVisible = 'true';
+            updateHubLightningVideo(video);
+        }
+    });
+}
+
+function unmountHubLightningVideos(container) {
+    if (!container) return;
+    container.querySelectorAll('.hub-lr-lightning').forEach((video) => {
+        hubLightningObserver?.unobserve(video);
+        video.pause();
+    });
+}
+
+function syncHubLightningPlayback() {
+    document.querySelectorAll('.hub-lr-lightning').forEach(updateHubLightningVideo);
+}
+
+document.addEventListener('visibilitychange', syncHubLightningPlayback);
+
+function canPlaySbaLrLwf() {
+    return currentAppStyle === 'sba' &&
+        currentFxMode !== 'no-lightning' &&
+        currentFxMode !== 'static' &&
+        !document.hidden;
+}
+
+function updateSbaLrLwf(canvas) {
+    if (!canvas?.isConnected) return;
+    const shouldPlay = canPlaySbaLrLwf() && canvas.dataset.sbaLrVisible === 'true';
+
+    if (!shouldPlay) {
+        if (canvas.id) window.DokkanLWF?.pause?.(canvas.id);
+        return;
+    }
+
+    if (canvas.dataset.lwfReady === 'true' && canvas.id) {
+        window.DokkanLWF?.play?.(canvas.id);
+        return;
+    }
+
+    if (typeof window.DokkanLWF?.attachDokkanModeLrEffect !== 'function') {
+        setTimeout(() => updateSbaLrLwf(canvas), 120);
+        return;
+    }
+
+    window.DokkanLWF.attachDokkanModeLrEffect(canvas)
+        .then((attached) => {
+            if (attached) updateSbaLrLwf(canvas);
+        })
+        .catch(() => {});
+}
+
+function ensureSbaLrLwfObserver() {
+    if (sbaLrLwfObserver || typeof IntersectionObserver === 'undefined') return;
+    sbaLrLwfObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+            entry.target.dataset.sbaLrVisible = String(entry.isIntersecting);
+            updateSbaLrLwf(entry.target);
+        });
+    }, { root: null, rootMargin: '20px', threshold: 0.01 });
+}
+
+function mountSbaLrLwfEffects(container = document) {
+    ensureSbaLrLwfObserver();
+    container.querySelectorAll?.('.sba-lr-lwf-canvas').forEach((canvas) => {
+        if (canvas.dataset.sbaLrObserved === 'true') {
+            updateSbaLrLwf(canvas);
+            return;
+        }
+        canvas.dataset.sbaLrObserved = 'true';
+        canvas.dataset.sbaLrVisible = 'false';
+        if (sbaLrLwfObserver) {
+            sbaLrLwfObserver.observe(canvas);
+        } else {
+            canvas.dataset.sbaLrVisible = 'true';
+            updateSbaLrLwf(canvas);
+        }
+    });
+}
+
+function unmountSbaLrLwfEffects(container) {
+    if (!container) return;
+    container.querySelectorAll('.sba-lr-lwf-canvas').forEach((canvas) => {
+        sbaLrLwfObserver?.unobserve(canvas);
+        if (canvas.id) window.DokkanLWF?.destroy?.(canvas.id);
+        delete canvas.dataset.lwfReady;
+        delete canvas.dataset.lwfRequest;
+        delete canvas.dataset.lwfLoading;
+    });
+}
+
+function syncSbaLrLwfPlayback() {
+    document.querySelectorAll('.sba-lr-lwf-canvas').forEach(updateSbaLrLwf);
+}
+
+document.addEventListener('visibilitychange', syncSbaLrLwfPlayback);
 
 function syncFxModeControls(fxMode) {
     document.querySelectorAll('[data-fx-mode]').forEach((button) => {
@@ -50,21 +224,172 @@ window.handleHubThumbError = function(img, folderId, parentFolderId) {
     };
 };
 
+window.handleHubCircleError = function(img, folderId, parentFolderId) {
+    img.classList.add('is-fallback-thumb');
+    img.onerror = function() {
+        window.handleHubThumbError(this, folderId, parentFolderId);
+    };
+    img.src = `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+};
+
 function setAppStyle(styleKey) {
+    styleKey = HUB_THEME_KEYS.has(styleKey) ? styleKey : 'sba';
+    const settingsDrawer = document.getElementById('settingsDrawer');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const keepSettingsOpen = Boolean(
+        settingsDrawer?.classList.contains('open') ||
+        document.body.classList.contains('sba-side-settings-open')
+    );
+
+    document.body.classList.add('hub-style-transitioning');
     currentAppStyle = styleKey;
     localStorage.setItem('hub_selected_style', styleKey);
+    localStorage.setItem('hub_theme_schema', 'sba-v1');
     window.updateSiteFavicon?.(styleKey);
 
-    document.querySelectorAll('.abs-hud-theme-btn').forEach(btn => btn.classList.remove('active'));
-    if (styleKey === 'abs-style') {
-        document.getElementById('theme-btn-abs')?.classList.add('active');
-        document.body.classList.remove('theme-placeholder');
-        document.body.classList.add('theme-abs-style');
-    } else {
-        document.getElementById('theme-btn-placeholder')?.classList.add('active');
-        document.body.classList.remove('theme-abs-style');
-        document.body.classList.add('theme-placeholder');
+    document.documentElement.dataset.hubTheme = styleKey;
+    document.querySelectorAll('.abs-hud-theme-btn').forEach((btn) => {
+        btn.classList.remove('active');
+        btn.setAttribute('aria-pressed', 'false');
+    });
+    const themeButton = document.getElementById(`theme-btn-${styleKey === 'sba' ? 'abs' : styleKey}`);
+    themeButton?.classList.add('active');
+    themeButton?.setAttribute('aria-pressed', 'true');
+
+    document.body.classList.remove('theme-abs-style', 'theme-sba', 'theme-placeholder');
+    document.body.classList.add(`theme-${styleKey}`);
+    syncSbaCardsFilterPlacement();
+    // The SBA home ticker and the ABS home news card use different markup.
+    // Rebuild it after the body theme changes so ticker elements can never
+    // remain behind when the user returns to ABS (or vice versa).
+    if (currentHubView === 'home') window.dokkanNews?.renderHomeSnippet?.();
+    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
+
+    // The SBA rail uses its own compact identity mark. Keep the shared header
+    // image in the other themes untouched rather than maintaining duplicate navs.
+    const hubLogo = document.getElementById('nav-center-logo');
+    if (hubLogo?.dataset.sbaSrc) {
+        const defaultSource = 'https://abscustom.github.io/assets/images/abs.custom.png';
+        hubLogo.src = styleKey === 'sba' ? hubLogo.dataset.sbaSrc : defaultSource;
     }
+
+    // Settings is the control surface for changing themes. Preserve it across
+    // a theme change so the interface does not flash closed and then reopen.
+    document.body.classList.remove('sba-side-settings-open', 'sba-side-filters-open');
+    document.getElementById('sidebarDrawer')?.classList.remove('open');
+    document.getElementById('sidebarOverlay')?.classList.remove('open');
+
+    if (keepSettingsOpen) {
+        settingsDrawer?.classList.add('open');
+        if (styleKey === 'sba') {
+            document.body.classList.add('sba-side-settings-open');
+            settingsOverlay?.classList.remove('open');
+            document.body.dataset.sbaPanelOpenedAt = String(Date.now());
+        } else {
+            settingsOverlay?.classList.add('open');
+            delete document.body.dataset.sbaPanelOpenedAt;
+        }
+    } else {
+        settingsDrawer?.classList.remove('open');
+        settingsOverlay?.classList.remove('open');
+        delete document.body.dataset.sbaPanelOpenedAt;
+    }
+
+    if (styleKey === 'sba') {
+        document.querySelectorAll('.seza-lwf-border-canvas').forEach((canvas) => {
+            window.DokkanLWF?.destroy?.(canvas.id);
+            canvas.remove();
+        });
+    } else if (currentFxMode !== 'no-seza' && currentFxMode !== 'static') {
+        mountGridSezaFlames();
+    }
+
+    syncHubLightningPlayback();
+    mountSbaLrLwfEffects();
+    syncSbaLrLwfPlayback();
+    window.dispatchEvent(new CustomEvent('abs-hub-theme-change', { detail: { style: styleKey } }));
+    requestAnimationFrame(() => {
+        setTimeout(() => document.body.classList.remove('hub-style-transitioning'), 280);
+    });
+}
+
+function setCardsLayout(layoutKey) {
+    const nextLayout = CARD_LAYOUT_KEYS.has(layoutKey) ? layoutKey : 'simple';
+    currentCardsLayout = nextLayout;
+    localStorage.setItem('hub_cards_layout', nextLayout);
+    localStorage.setItem('hub_cards_layout_schema', CARD_LAYOUT_SCHEMA);
+    document.body.classList.remove('cards-layout-dokkan', 'cards-layout-simple');
+    document.body.classList.add(`cards-layout-${nextLayout}`);
+
+    document.querySelectorAll('[data-cards-layout]').forEach((button) => {
+        const isActive = button.dataset.cardsLayout === nextLayout;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+
+    // The Dokkan view restores every linked card, whereas Simple can condense
+    // related forms. Re-render the active Cards grid when this choice changes.
+    if (currentHubView === 'cards' && allCardItems.length) {
+        // Start with an empty grid so a previous mode's relationship stacks,
+        // alternate portraits, and effects cannot overlap the new mode.
+        const cardGrid = document.getElementById('cardGrid');
+        if (cardGrid) cardGrid.replaceChildren();
+        filterCards(true);
+    }
+}
+
+function syncSbaCardsFilterPlacement() {
+    const filters = document.querySelector('.cards-inline-filter-bar');
+    const sbaSlot = document.getElementById('sbaCardFiltersSlot');
+    const origin = document.getElementById('cardsInlineFiltersOrigin');
+    const categoryFilter = document.getElementById('categoryFilterGroup');
+    const categorySlot = document.getElementById('sbaCategoryFilterSlot');
+    const categoryOrigin = document.getElementById('sbaCategoryFilterOrigin');
+    const advancedFilters = document.querySelector('.advanced-animation-filter-group');
+    const advancedSlot = document.getElementById('sbaAdvancedFilterSlot');
+    const advancedOrigin = document.getElementById('sbaAdvancedFilterOrigin');
+    if (!filters || !sbaSlot || !origin) return;
+
+    if (document.body.classList.contains('theme-sba')) {
+        if (filters.parentElement !== sbaSlot) sbaSlot.append(filters);
+        if (categoryFilter && categorySlot && categoryFilter.parentElement !== categorySlot) {
+            categorySlot.append(categoryFilter);
+        }
+        if (advancedFilters && advancedSlot && advancedFilters.parentElement !== advancedSlot) {
+            advancedSlot.append(advancedFilters);
+        }
+    } else if (filters.parentElement !== origin.parentElement) {
+        origin.insertAdjacentElement('afterend', filters);
+        if (categoryFilter && categoryOrigin) categoryOrigin.insertAdjacentElement('afterend', categoryFilter);
+        if (advancedFilters && advancedOrigin) advancedOrigin.insertAdjacentElement('afterend', advancedFilters);
+    }
+}
+
+function getCardsPerPage() {
+    return document.body.classList.contains('theme-sba') ? SBA_CARDS_PER_PAGE : CARDS_PER_PAGE;
+}
+
+function syncSbaBottomNavVisibility() {
+    document.body.classList.remove('sba-bottom-nav-visible');
+    if (sbaBottomNavHideTimer) {
+        clearTimeout(sbaBottomNavHideTimer);
+        sbaBottomNavHideTimer = null;
+    }
+}
+
+function revealSbaBottomNav() {
+    if (!document.body.classList.contains('theme-sba')) return;
+    if (sbaBottomNavHideTimer) clearTimeout(sbaBottomNavHideTimer);
+    document.body.classList.add('sba-bottom-nav-visible');
+}
+
+function scheduleSbaBottomNavHide(delay = 800) {
+    if (!document.body.classList.contains('theme-sba')) return;
+    if (sbaBottomNavHideTimer) clearTimeout(sbaBottomNavHideTimer);
+    sbaBottomNavHideTimer = setTimeout(() => {
+        document.body.classList.remove('sba-bottom-nav-visible');
+        sbaBottomNavHideTimer = null;
+    }, delay);
 }
 
 function setFxAnimationMode(fxMode) {
@@ -102,20 +427,87 @@ function setFxAnimationMode(fxMode) {
 
     syncFxModeControls(fxMode);
     syncAutoScrollForFxMode();
+    syncHubLightningPlayback();
+    mountSbaLrLwfEffects();
+    syncSbaLrLwfPlayback();
+    if (currentHubView === 'home' && document.body.classList.contains('theme-sba')) {
+        renderHomeShowcaseGrid();
+    }
     window.dispatchEvent(new CustomEvent('abs-fx-mode-change', { detail: { mode: fxMode } }));
 }
 
 window.setFxAnimationMode = setFxAnimationMode;
+
+// Background-shader settings are deliberately separate from Card FX. Keep the
+// persisted choice as a body class so every page can restore its own original
+// background immediately when the shader is switched off.
+function setFlutedGlassEnabled(value) {
+    const enabled = value === true || value === 'on';
+    localStorage.setItem('fluted_glass_enabled', enabled ? 'on' : 'off');
+    document.body.classList.toggle('fluted-glass-disabled', !enabled);
+    document.querySelectorAll('[data-fluted-glass-mode]').forEach((button) => {
+        const isActive = (button.dataset.flutedGlassMode === 'on') === enabled;
+        button.classList.toggle('active', isActive);
+        button.setAttribute('aria-pressed', String(isActive));
+    });
+}
+
+window.setFlutedGlassEnabled = setFlutedGlassEnabled;
+document.addEventListener('click', (event) => {
+    const button = event.target.closest?.('[data-fluted-glass-mode]');
+    if (!button) return;
+    event.preventDefault();
+    setFlutedGlassEnabled(button.dataset.flutedGlassMode);
+});
 
 function handleSourceChange(source) {
     currentSourceFilter = source;
     filterCards(true);
 }
 
+function positionSettingsMiniGui() {
+    const drawer = document.getElementById('settingsDrawer');
+    const btn = document.getElementById('sba-side-settings-button') || document.querySelector('.hud-nav-link[aria-label="Settings"]');
+    if (!drawer || !btn) return;
+    const btnRect = btn.getBoundingClientRect();
+    const drawerWidth = Math.min(290, window.innerWidth - 24);
+
+    // Position horizontally centered above the Settings button (or clamped to screen edge)
+    let left = btnRect.left + (btnRect.width / 2) - (drawerWidth / 2);
+    left = Math.max(12, Math.min(window.innerWidth - drawerWidth - 12, left));
+
+    const bottom = Math.max(16, window.innerHeight - btnRect.top + 10);
+    drawer.style.setProperty('position', 'fixed', 'important');
+    drawer.style.setProperty('left', `${Math.round(left)}px`, 'important');
+    drawer.style.setProperty('bottom', `${Math.round(bottom)}px`, 'important');
+    drawer.style.setProperty('top', 'auto', 'important');
+    drawer.style.setProperty('right', 'auto', 'important');
+    drawer.style.setProperty('width', `${drawerWidth}px`, 'important');
+    drawer.style.setProperty('height', 'auto', 'important');
+    drawer.style.setProperty('max-height', `${Math.round(window.innerHeight - bottom - 16)}px`, 'important');
+}
+
 function toggleSettingsDrawer() {
     const drawer = document.getElementById('settingsDrawer');
     const overlay = document.getElementById('settingsOverlay');
     if (drawer && overlay) {
+        if (document.body.classList.contains('theme-sba')) {
+            const isOpen = document.body.classList.contains('sba-side-settings-open');
+            const willOpen = !isOpen;
+            document.body.classList.toggle('sba-side-settings-open', willOpen);
+            document.body.classList.remove('sba-side-filters-open');
+            drawer.classList.toggle('open', willOpen);
+            document.getElementById('sidebarDrawer')?.classList.remove('open');
+            overlay.classList.remove('open');
+            document.getElementById('sidebarOverlay')?.classList.remove('open');
+            document.getElementById('sba-side-settings-button')?.setAttribute('aria-expanded', String(willOpen));
+            document.getElementById('sba-side-filter-button')?.setAttribute('aria-expanded', 'false');
+            if (willOpen) {
+                document.body.dataset.sbaPanelOpenedAt = String(Date.now());
+                positionSettingsMiniGui();
+            }
+            return;
+        }
         const isOpen = drawer.classList.contains('open');
         if (isOpen) {
             drawer.classList.remove('open');
@@ -131,6 +523,22 @@ function toggleSidebar() {
     const drawer = document.getElementById('sidebarDrawer');
     const overlay = document.getElementById('sidebarOverlay');
     if (drawer && overlay) {
+        if (document.body.classList.contains('theme-sba')) {
+            const popover = document.getElementById('sbaCardsFilterPopover');
+            const isOpen = popover?.classList.contains('is-open');
+            popover?.classList.toggle('is-open', !isOpen);
+            popover?.setAttribute('aria-hidden', String(isOpen));
+            document.body.classList.remove('sba-side-filters-open');
+            document.body.classList.remove('sba-side-settings-open');
+            drawer.classList.remove('open');
+            document.getElementById('settingsDrawer')?.classList.remove('open');
+            overlay.classList.remove('open');
+            document.getElementById('settingsOverlay')?.classList.remove('open');
+            document.getElementById('sba-side-filter-button')?.setAttribute('aria-expanded', String(!isOpen));
+            document.getElementById('sba-side-settings-button')?.setAttribute('aria-expanded', 'false');
+            document.getElementById('cardsAdvancedFilterBtn')?.setAttribute('aria-expanded', String(!isOpen));
+            return;
+        }
         const isOpen = drawer.classList.contains('open');
         if (isOpen) {
             drawer.classList.remove('open');
@@ -139,12 +547,30 @@ function toggleSidebar() {
             drawer.classList.add('open');
             overlay.classList.add('open');
         }
+        document.getElementById('cardsAdvancedFilterBtn')?.setAttribute('aria-expanded', String(!isOpen));
     }
 }
 
+// The Filters button is declared in the page markup, so expose its handler
+// explicitly even when this script is evaluated in an isolated scope.
+window.toggleSidebar = toggleSidebar;
+
 function switchHubView(viewKey, sourceKey = null) {
+    // A click on the already-open workspace does not rebuild anything.  In
+    // particular, do not create another loading-screen transition for it.
+    if (currentHubView === viewKey && (!sourceKey || sourceKey === currentSourceFilter)) {
+        requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
+        return;
+    }
+    // Tab content is already rendered in the DOM; switching is an instant
+    // display toggle. No full-screen loader - keeps Home/Cards/News snappy.
     currentHubView = viewKey;
     currentPage = 1;
+    document.body.classList.toggle('hub-cards-nav-static', viewKey === 'cards');
+    document.body.classList.toggle('hub-news-active', viewKey === 'news');
+    // SBA's Filters entry belongs to the Cards workspace, not the Home dock.
+    document.body.classList.toggle('hub-cards-active', viewKey === 'cards');
+    syncSbaCardsFilterPlacement();
 
     if (sourceKey) {
         currentSourceFilter = sourceKey;
@@ -181,7 +607,10 @@ function switchHubView(viewKey, sourceKey = null) {
     const cardsSubtitle = document.getElementById('cardsViewSubtitle');
 
     if (viewKey === 'home') {
-        if (homeSection) homeSection.style.display = 'block';
+        // Removing the temporary display:none lets SBA's responsive flex home
+        // layout take control again. Restoring it as display:block was the
+        // cause of the misplaced Timeline/showcase until a page refresh.
+        if (homeSection) homeSection.style.removeProperty('display');
         if (cardsSection) cardsSection.style.display = 'none';
         if (newsSection) newsSection.style.display = 'none';
         renderTimelineView();
@@ -194,14 +623,14 @@ function switchHubView(viewKey, sourceKey = null) {
 
         if (cardsTitle && cardsSubtitle) {
             if (currentSourceFilter === 'official') {
-                cardsTitle.textContent = 'Official Dokkan Database';
-                cardsSubtitle.textContent = 'Complete official archive of characters and awakenings';
+                cardsTitle.textContent = 'Cards';
+                cardsSubtitle.textContent = 'Official characters and awakenings';
             } else if (currentSourceFilter === 'custom') {
-                cardsTitle.textContent = 'Custom Dokkan Cards';
-                cardsSubtitle.textContent = 'Exclusive community and fan-made Dokkan creations';
+                cardsTitle.textContent = 'Cards';
+                cardsSubtitle.textContent = 'Custom community creations';
             } else {
-                cardsTitle.textContent = 'Complete Dokkan Database';
-                cardsSubtitle.textContent = 'Search and filter across official and custom creations';
+                cardsTitle.textContent = 'Cards';
+                cardsSubtitle.textContent = 'Official and custom characters';
             }
         }
 
@@ -218,6 +647,8 @@ function switchHubView(viewKey, sourceKey = null) {
             }
         }
     }
+
+    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
 }
 
 function handleSearchInput(val) {
@@ -251,7 +682,469 @@ function getCardClassAndType(elementId) {
     };
 }
 
-function generateCardHtml(c) {
+function normalizeCustomCardReference(reference) {
+    const raw = String(reference || '').trim();
+    if (!raw || raw === '#' || /^javascript:/i.test(raw)) return '';
+
+    try {
+        const parsed = new URL(raw, window.location.href);
+        if (/card\.html$/i.test(parsed.pathname)) return '';
+        return decodeURIComponent(parsed.pathname).replace(/^\/+|\/+$/g, '').toLowerCase();
+    } catch (e) {
+        return raw.replace(/^\/+|\/+$/g, '').toLowerCase();
+    }
+}
+
+function getCustomCardReferenceKeys(card) {
+    const keys = new Set();
+    const add = (value) => {
+        const key = normalizeCustomCardReference(value);
+        if (key) keys.add(key);
+    };
+
+    add(card?.repoPath);
+    add(card?.id);
+    if (card?.id) add(`Custom Cards/${card.id}`);
+    return keys;
+}
+
+const HUB_CARD_TYPE_COLORS = {
+    agl: '#36a8ff',
+    teq: '#46db72',
+    int: '#a86cff',
+    str: '#ff5364',
+    phy: '#f4cf3f'
+};
+
+function customCardReferencesTarget(fromCard, targetCard) {
+    const targetKeys = getCustomCardReferenceKeys(targetCard);
+    return (fromCard?.linkedCardReferences || []).some((reference) => {
+        const normalizedReference = normalizeCustomCardReference(reference);
+        return normalizedReference && [...targetKeys].some((key) => (
+            normalizedReference === key || normalizedReference.endsWith(`/${key}`) || key.endsWith(`/${normalizedReference}`)
+        ));
+    });
+}
+
+function normalizeRelationshipName(name) {
+    return String(name || '')
+        .replace(/\s*\(EZA\)\s*$/i, '')
+        .replace(/\s+/g, ' ')
+        .trim()
+        .toLowerCase();
+}
+
+function isTemporaryReturningRelationship(firstCard, secondCard) {
+    const firstName = normalizeRelationshipName(firstCard?.name);
+    const secondName = normalizeRelationshipName(secondCard?.name);
+    if (!firstName || !secondName) return false;
+
+    const advancesAfterTemporaryForm = firstCard.transformsAfterTemporaryEnds || secondCard.transformsAfterTemporaryEnds;
+    return !advancesAfterTemporaryForm && (
+        firstCard.isTemporaryTransformation || secondCard.isTemporaryTransformation ||
+        /\b(?:giant form|giant ape|great ape|rage mode)\b/i.test(`${firstName} ${secondName}`)
+    );
+}
+
+function isReversibleExchangeRelationship(firstCard, secondCard) {
+    const firstName = normalizeRelationshipName(firstCard?.name);
+    const secondName = normalizeRelationshipName(secondCard?.name);
+    if (!firstName || !secondName) return false;
+
+    // Only an actual reversible exchange receives the custom reversible logo.
+    // Temporary standby/rage/giant states are handled separately so they keep
+    // the normal pair of directional arrows.
+    if (firstCard.isReversibleExchange && secondCard.isReversibleExchange) return true;
+
+    // Custom cards may predate the saved passive metadata. Their reversed
+    // A + B / B + A names remain a safe compatibility fallback.
+    if (firstCard.source !== 'custom' || secondCard.source !== 'custom') return false;
+    const firstParts = firstName.split(/\s+\+\s+/).map(part => part.trim()).filter(Boolean);
+    const secondParts = secondName.split(/\s+\+\s+/).map(part => part.trim()).filter(Boolean);
+    return firstParts.length > 1 && firstParts.length === secondParts.length &&
+        firstParts.every((part, index) => part === secondParts[secondParts.length - 1 - index]);
+}
+
+function getAdjacentCardRelationship(firstCard, secondCard) {
+    if (!firstCard || !secondCard || firstCard === secondCard) return null;
+
+    if (firstCard.source === 'official' && secondCard.source === 'official') {
+        const firstParent = Number(firstCard.parentId || getCardParentId(firstCard.id));
+        const secondParent = Number(secondCard.parentId || getCardParentId(secondCard.id));
+        if (!firstParent || firstParent !== secondParent || String(firstCard.id) === String(secondCard.id)) return null;
+
+        if (isReversibleExchangeRelationship(firstCard, secondCard)) {
+            return { direction: 'both', connector: 'reversible' };
+        }
+        if (isTemporaryReturningRelationship(firstCard, secondCard)) {
+            return { direction: 'both', connector: 'standard' };
+        }
+
+        const firstId = Number(firstCard.id);
+        const secondId = Number(secondCard.id);
+        const firstIsTransformation = firstId >= 4000000 && firstId < 5000000;
+        const secondIsTransformation = secondId >= 4000000 && secondId < 5000000;
+        return { direction: firstIsTransformation && !secondIsTransformation ? 'backward' : 'forward' };
+    }
+
+    if (firstCard.source !== 'custom' || secondCard.source !== 'custom') return null;
+    const pointsForward = customCardReferencesTarget(firstCard, secondCard);
+    const pointsBackward = customCardReferencesTarget(secondCard, firstCard);
+    if (!pointsForward && !pointsBackward) return null;
+
+    if (isReversibleExchangeRelationship(firstCard, secondCard)) {
+        return { direction: 'both', connector: 'reversible' };
+    }
+    if (isTemporaryReturningRelationship(firstCard, secondCard)) {
+        return { direction: 'both', connector: 'standard' };
+    }
+    if (pointsBackward && !pointsForward) return { direction: 'backward' };
+    return { direction: 'forward' };
+}
+
+function arrangeLinkedCardsForDisplay(cards) {
+    const list = Array.from(cards || []);
+    const customCards = list.filter(card => card?.source === 'custom');
+    if (customCards.length < 2) return list;
+
+    const originalIndex = new Map(list.map((card, index) => [card, index]));
+    const neighbors = new Map(customCards.map(card => [card, new Set()]));
+
+    for (let firstIndex = 0; firstIndex < customCards.length - 1; firstIndex += 1) {
+        for (let secondIndex = firstIndex + 1; secondIndex < customCards.length; secondIndex += 1) {
+            const firstCard = customCards[firstIndex];
+            const secondCard = customCards[secondIndex];
+            if (!getAdjacentCardRelationship(firstCard, secondCard)) continue;
+            neighbors.get(firstCard).add(secondCard);
+            neighbors.get(secondCard).add(firstCard);
+        }
+    }
+
+    const componentByCard = new Map();
+    const orderedComponentByCard = new Map();
+    const visited = new Set();
+
+    customCards.forEach(startCard => {
+        if (visited.has(startCard) || neighbors.get(startCard).size === 0) return;
+        const component = [];
+        const queue = [startCard];
+        visited.add(startCard);
+        while (queue.length) {
+            const card = queue.shift();
+            component.push(card);
+            neighbors.get(card).forEach(neighbor => {
+                if (visited.has(neighbor)) return;
+                visited.add(neighbor);
+                queue.push(neighbor);
+            });
+        }
+
+        const remaining = new Set(component);
+        const ordered = [];
+        let current = component.slice().sort((first, second) => (
+            neighbors.get(first).size - neighbors.get(second).size ||
+            originalIndex.get(first) - originalIndex.get(second)
+        ))[0];
+
+        while (remaining.size) {
+            ordered.push(current);
+            remaining.delete(current);
+            const linkedChoices = Array.from(neighbors.get(current)).filter(card => remaining.has(card));
+            if (linkedChoices.length) {
+                current = linkedChoices.sort((first, second) => (
+                    Array.from(neighbors.get(second)).filter(card => remaining.has(card)).length -
+                    Array.from(neighbors.get(first)).filter(card => remaining.has(card)).length ||
+                    originalIndex.get(first) - originalIndex.get(second)
+                ))[0];
+            } else if (remaining.size) {
+                current = Array.from(remaining).sort((first, second) => (
+                    neighbors.get(first).size - neighbors.get(second).size ||
+                    originalIndex.get(first) - originalIndex.get(second)
+                ))[0];
+            }
+        }
+
+        component.forEach(card => {
+            componentByCard.set(card, component);
+            orderedComponentByCard.set(card, ordered);
+        });
+    });
+
+    const emitted = new Set();
+    const arranged = [];
+    list.forEach(card => {
+        const component = componentByCard.get(card);
+        if (!component) {
+            arranged.push(card);
+            return;
+        }
+        if (emitted.has(component)) return;
+        emitted.add(component);
+        arranged.push(...orderedComponentByCard.get(card));
+    });
+    return arranged;
+}
+
+function isLinkedPairInsideVisibleRow(container, firstElement, secondElement) {
+    const containerRect = container.getBoundingClientRect();
+    const firstRect = firstElement.getBoundingClientRect();
+    const secondRect = secondElement.getBoundingClientRect();
+    const rowTolerance = Math.max(8, Math.min(firstRect.height, secondRect.height) * 0.2);
+    const sameRow = Math.abs(firstRect.top - secondRect.top) <= rowTolerance;
+    const secondIsToTheRight = secondRect.left > firstRect.right;
+    const edgePadding = 6;
+    const bothFullyVisible = firstRect.left >= containerRect.left + edgePadding &&
+        secondRect.right <= containerRect.right - edgePadding;
+
+    return sameRow && secondIsToTheRight && bothFullyVisible;
+}
+
+function refreshLinkedCardEffects(container) {
+    const renderedCards = container?._linkedCardItems || [];
+    const cardElements = Array.from(container?.querySelectorAll(':scope > .char-box') || []);
+    cardElements.forEach(cardElement => {
+        cardElement.classList.remove(
+            'has-linked-neighbor',
+            'linked-from-previous',
+            'link-direction-forward',
+            'link-direction-backward',
+            'link-direction-reversible'
+        );
+        cardElement.style.removeProperty('--linked-from-color');
+        cardElement.style.removeProperty('--linked-to-color');
+        cardElement.style.removeProperty('--linked-glow-color');
+    });
+
+    for (let index = 0; index < cardElements.length - 1; index += 1) {
+        const relationship = getAdjacentCardRelationship(renderedCards[index], renderedCards[index + 1]);
+        if (!relationship || !isLinkedPairInsideVisibleRow(container, cardElements[index], cardElements[index + 1])) continue;
+
+        const firstColor = HUB_CARD_TYPE_COLORS[renderedCards[index]?.type] || '#7dd3fc';
+        const secondColor = HUB_CARD_TYPE_COLORS[renderedCards[index + 1]?.type] || '#7dd3fc';
+        const cardElement = cardElements[index];
+        cardElement.classList.add('has-linked-neighbor');
+        if (relationship.direction === 'forward') cardElement.classList.add('link-direction-forward');
+        if (relationship.direction === 'backward') cardElement.classList.add('link-direction-backward');
+        if (relationship.connector === 'reversible') cardElement.classList.add('link-direction-reversible');
+        cardElements[index + 1].classList.add('linked-from-previous');
+        cardElement.style.setProperty('--linked-from-color', firstColor);
+        cardElement.style.setProperty('--linked-to-color', secondColor);
+        cardElement.style.setProperty('--linked-glow-color', secondColor);
+    }
+}
+
+function clearSbaLinkedCardPresentation(container) {
+    const cardElements = Array.from(container?.querySelectorAll(':scope > .char-box') || []);
+    cardElements.forEach((cardElement) => {
+        cardElement.classList.remove(
+            'sba-linked-primary',
+            'sba-linked-secondary',
+            'sba-reversible-stack',
+            'sba-custom-reversible-stack',
+            'sba-transform-cycle',
+            'sba-special-count-1',
+            'sba-special-count-2'
+        );
+        Array.from(cardElement.classList).forEach((className) => {
+            if (className.startsWith('sba-cycle-count-')) cardElement.classList.remove(className);
+        });
+        cardElement.style.removeProperty('--sba-linked-type');
+        cardElement.removeAttribute('data-sba-form-count');
+        cardElement.querySelectorAll('.sba-generated-portrait').forEach((portrait) => portrait.remove());
+        cardElement.querySelectorAll('.sba-generated-status-badge').forEach((badge) => badge.remove());
+
+        const basePortrait = cardElement.querySelector('.hub-circle-img:not(.sba-generated-portrait)');
+        if (basePortrait) {
+            Array.from(basePortrait.classList).forEach((className) => {
+                if (className.startsWith('sba-cycle-index-')) basePortrait.classList.remove(className);
+            });
+            basePortrait.classList.remove('sba-cycle-portrait');
+        }
+    });
+}
+
+function getSummonBrand(unitTag) {
+    const normalizedTag = String(unitTag || '').toUpperCase();
+    if (normalizedTag.includes('CARNIVAL')) return 'carnival';
+    if (normalizedTag.includes('DOKKAN FESTIVAL') || normalizedTag.includes('DOKKAN FEST')) return 'festival';
+    return '';
+}
+
+function applySbaLinkedCardPresentation(container, renderedCards) {
+    if (!container) return;
+    clearSbaLinkedCardPresentation(container);
+
+    const cardElements = Array.from(container.querySelectorAll(':scope > .char-box'));
+    const cards = Array.from(renderedCards || []);
+    let groupStart = 0;
+
+    while (groupStart < Math.min(cards.length, cardElements.length)) {
+        const groupEdges = [];
+        let groupEnd = groupStart;
+        while (groupEnd + 1 < cards.length && groupEnd + 1 < cardElements.length) {
+            const relationship = getAdjacentCardRelationship(cards[groupEnd], cards[groupEnd + 1]);
+            if (!relationship) break;
+            groupEdges.push({ from: groupEnd, to: groupEnd + 1, relationship });
+            groupEnd += 1;
+        }
+
+        if (!groupEdges.length) {
+            groupStart += 1;
+            continue;
+        }
+
+        const groupIndices = Array.from(
+            { length: groupEnd - groupStart + 1 },
+            (_, offset) => groupStart + offset
+        );
+        const officialBaseIndex = groupIndices.find((index) => {
+            if (cards[index]?.source !== 'official') return false;
+            const cardId = Number(cards[index]?.id);
+            return !(cardId >= 4000000 && cardId < 5000000);
+        });
+        const primaryIndex = officialBaseIndex ?? groupStart;
+        const reversibleEdge = groupEdges.find(({ relationship }) => relationship.connector === 'reversible');
+        let reversibleIndex = -1;
+        if (reversibleEdge) {
+            reversibleIndex = reversibleEdge.from === primaryIndex
+                ? reversibleEdge.to
+                : (reversibleEdge.to === primaryIndex ? reversibleEdge.from : reversibleEdge.to);
+        }
+
+        const primaryElement = cardElements[primaryIndex];
+        const primaryIcon = primaryElement?.querySelector('.card-icon');
+        const primaryPortrait = primaryIcon?.querySelector('.hub-circle-img:not(.sba-generated-portrait)');
+        if (!primaryElement || !primaryIcon || !primaryPortrait) {
+            groupStart = groupEnd + 1;
+            continue;
+        }
+
+        primaryElement.classList.add('sba-linked-primary');
+        groupIndices.forEach((index) => {
+            if (index !== primaryIndex) cardElements[index]?.classList.add('sba-linked-secondary');
+        });
+
+        let reversibleMiniGrid = null;
+        const addReversibleMini = (cardIndex, kind) => {
+            const sourceElement = cardElements[cardIndex];
+            const sourcePortrait = sourceElement?.querySelector('.hub-circle-img');
+            if (!sourceElement || !sourcePortrait) return false;
+
+            if (!reversibleMiniGrid) {
+                reversibleMiniGrid = document.createElement('span');
+                reversibleMiniGrid.className = 'sba-generated-portrait sba-reversible-mini-grid';
+                reversibleMiniGrid.setAttribute('aria-hidden', 'true');
+                primaryIcon.appendChild(reversibleMiniGrid);
+            }
+
+            const isCustom = cards[cardIndex]?.source === 'custom';
+            const mini = document.createElement('span');
+            mini.className = `sba-reversible-mini sba-reversible-mini--${kind}${isCustom ? ' sba-custom-reversible-mini' : ''}`;
+            mini.style.setProperty(
+                '--sba-mini-ring-color',
+                HUB_CARD_TYPE_COLORS[cards[cardIndex]?.type] || '#7dd3fc'
+            );
+            const portraitClone = sourcePortrait.cloneNode(true);
+            portraitClone.classList.add('sba-reversible-portrait');
+            portraitClone.removeAttribute('loading');
+            portraitClone.alt = '';
+            portraitClone.setAttribute('aria-hidden', 'true');
+            mini.appendChild(portraitClone);
+            reversibleMiniGrid.appendChild(mini);
+            return true;
+        };
+
+        if (reversibleIndex >= 0 && addReversibleMini(reversibleIndex, 'partner')) {
+            primaryElement.classList.add('sba-reversible-stack');
+            if (cards[primaryIndex]?.source === 'custom') primaryElement.classList.add('sba-custom-reversible-stack');
+        }
+
+        const cyclingIndices = groupIndices.filter((index) => index !== reversibleIndex);
+        const statusBadges = [];
+        if (cyclingIndices.length > 1) {
+            const orderedCycleIndices = [primaryIndex, ...cyclingIndices.filter((index) => index !== primaryIndex)];
+            if (reversibleMiniGrid) {
+                // A reversible exchange uses its compact left-side grid for one
+                // additional form, instead of layering that form over the main unit.
+                orderedCycleIndices.slice(1, 2).forEach((cardIndex) => addReversibleMini(cardIndex, 'form'));
+            } else {
+                const cycleCount = Math.min(orderedCycleIndices.length, 6);
+                primaryElement.classList.add('sba-transform-cycle', `sba-cycle-count-${cycleCount}`);
+                primaryElement.dataset.sbaFormCount = String(cycleCount);
+                primaryPortrait.classList.add('sba-cycle-portrait', 'sba-cycle-index-0');
+
+                orderedCycleIndices.slice(1, cycleCount).forEach((cardIndex, cycleIndex) => {
+                    const sourcePortrait = cardElements[cardIndex]?.querySelector('.hub-circle-img');
+                    if (!sourcePortrait) return;
+                    const portraitClone = sourcePortrait.cloneNode(true);
+                    portraitClone.classList.add(
+                        'sba-generated-portrait',
+                        'sba-cycle-portrait',
+                        `sba-cycle-index-${cycleIndex + 1}`
+                    );
+                    portraitClone.setAttribute('aria-hidden', 'true');
+                    primaryIcon.appendChild(portraitClone);
+                });
+            }
+        }
+
+        if (statusBadges.length) {
+            const badgeCount = Math.min(statusBadges.length, 2);
+            primaryElement.classList.add(`sba-special-count-${badgeCount}`);
+            statusBadges.slice(0, badgeCount).forEach((badge, badgeIndex) => {
+                const badgeImage = document.createElement('img');
+                badgeImage.className = `sba-generated-status-badge sba-status-badge sba-status-badge-${badgeIndex + 1}`;
+                badgeImage.src = `${CENTRAL_ASSET_URL}${badge.file}`;
+                badgeImage.alt = '';
+                badgeImage.title = badge.label;
+                badgeImage.setAttribute('aria-hidden', 'true');
+                badgeImage.dataset.sbaStatus = badge.label.toLowerCase().replaceAll(' ', '-');
+                primaryIcon.appendChild(badgeImage);
+            });
+        }
+
+        groupStart = groupEnd + 1;
+    }
+}
+
+function applyLinkedCardEffects(container, renderedCards) {
+    if (!container) return;
+    container._linkedCardItems = renderedCards;
+    container._refreshLinkedCardEffects = () => refreshLinkedCardEffects(container);
+    const isDokkanCardsView = container.id === 'cardGrid' && currentCardsLayout === 'dokkan';
+    if (currentAppStyle === 'sba' && !isDokkanCardsView) {
+        applySbaLinkedCardPresentation(container, renderedCards);
+    } else {
+        clearSbaLinkedCardPresentation(container);
+    }
+
+    if (!container.dataset.linkedCardFxBound) {
+        container.dataset.linkedCardFxBound = 'true';
+        let animationFrame = 0;
+        const scheduleRefresh = () => {
+            cancelAnimationFrame(animationFrame);
+            animationFrame = requestAnimationFrame(() => container._refreshLinkedCardEffects?.());
+        };
+        container.addEventListener('scroll', scheduleRefresh, { passive: true });
+        window.addEventListener('resize', scheduleRefresh, { passive: true });
+    }
+
+    refreshLinkedCardEffects(container);
+    requestAnimationFrame(() => refreshLinkedCardEffects(container));
+}
+
+// Carry an awakening-marked official card's highest available state into the
+// viewer. Hub items use the base seven-digit id, so the viewer needs the mode
+// query to select the EZA/SEZA record instead of defaulting to BASE.
+function getCardViewerUrl(card) {
+    if (!card || card.source === 'custom') return card?.cardUrl || '#';
+
+    const mode = card.isSeza ? 'seza' : (card.isEza ? 'eza' : '');
+    const id = encodeURIComponent(String(card.id));
+    return mode ? `card.html?viewer=1&id=${id}&mode=${mode}` : `card.html?viewer=1&id=${id}`;
+}
+
+function generateCardHtml(c, useCssBadges = false) {
     const folderId = getCardFolderId(c.id);
     const parentFolderId = Math.floor(getCardParentId(c.id) / 10) * 10;
     const { cardClass } = getCardClassAndType(c.element !== undefined ? c.element : 0);
@@ -264,35 +1157,69 @@ function generateCardHtml(c) {
     const rarityFilename = rarityKey === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarityKey}.png`;
     const raritySrc = `${CENTRAL_ASSET_URL}${rarityFilename}`;
     const frameSrc = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
-    const typeSrc = (rarityKey === 'SSR') ? `${CENTRAL_ASSET_URL}type_${cardType}.png` : `${CENTRAL_ASSET_URL}${cardClass}_type_${cardType}.png`;
+    const typeSrc = rarityKey === 'SSR'
+        ? `${CENTRAL_ASSET_URL}type_${cardType}.png`
+        : `${CENTRAL_ASSET_URL}${cardClass}_type_${cardType}.png`;
+    const rarityBadgeHtml = useCssBadges
+        ? `<span class="custom-badge rarity-badge" data-rarity="${rarityKey.toLowerCase()}" aria-label="${rarityKey} rarity"><span class="custom-badge-text">${rarityKey}</span></span>`
+        : `<img class="rarity" src="${raritySrc}" loading="lazy">`;
+    const typeBadgeHtml = useCssBadges
+        ? `<span class="custom-badge type-badge" data-type="${cardType}" data-card-class="${cardClass}" aria-label="${cardClass} ${cardType.toUpperCase()} type"><span class="custom-badge-text">${cardType.toUpperCase()}</span></span>`
+        : `<img class="type" src="${typeSrc}" loading="lazy">`;
 
-    const thumbUrl = c.thumbUrl || `./assets/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
-
+    const thumbUrl = c.thumbUrl || `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+    const circleUrl = c.source === 'custom'
+        ? thumbUrl
+        : `./assets/card-art/cards/${folderId}/card_${folderId}_circle.png`;
+    const circleError = c.source === 'custom'
+        ? `window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')`
+        : `window.handleHubCircleError(this, '${folderId}', '${parentFolderId}')`;
     let lrOverlayHtml = '';
     if (isLR) {
-        lrOverlayHtml = `<img class="lr-dial" src="${CENTRAL_ASSET_URL}lr_spin_dial.png" loading="lazy">`;
+        lrOverlayHtml = `
+            <img class="lr-dial" src="${CENTRAL_ASSET_URL}lr_spin_dial.png" loading="lazy">`;
     }
 
     let awakeningBadgeHtml = '';
     if (isSeza) {
-        awakeningBadgeHtml = `<img class="hub-eza-badge" src="${CENTRAL_ASSET_URL}superza_abs.png">`;
+        awakeningBadgeHtml = useCssBadges
+            ? `<span class="hub-eza-badge custom-awakening-badge hub-eza-badge--seza" data-awakening="seza" aria-label="Super EZA"><span class="hub-eza-badge-text">SEZA</span></span>`
+            : `<img class="hub-eza-badge" src="${CENTRAL_ASSET_URL}superza_abs.png">`;
     } else if (isEza) {
-        awakeningBadgeHtml = `<img class="hub-eza-badge" src="${CENTRAL_ASSET_URL}eza_abs.png">`;
+        awakeningBadgeHtml = useCssBadges
+            ? `<span class="hub-eza-badge custom-awakening-badge hub-eza-badge--eza" data-awakening="eza" aria-label="Extreme Z-Awaken"><span class="hub-eza-badge-text">EZA</span></span>`
+            : `<img class="hub-eza-badge" src="${CENTRAL_ASSET_URL}eza_abs.png">`;
     }
 
+    const awakeningLabel = isSeza ? 'SEZA' : (isEza ? 'EZA' : '');
+    const arcLabel = [rarityKey, cardType.toUpperCase(), awakeningLabel].filter(Boolean).join(' • ');
+    const arcId = `hub-card-meta-arc-${String(c.source || 'official').replace(/[^a-z0-9_-]/gi, '')}-${String(c.id).replace(/[^a-z0-9_-]/gi, '')}`;
+    const cardBadgeHtml = useCssBadges
+        ? `<svg class="hub-card-meta-arc" viewBox="0 0 150 48" role="img" aria-label="${arcLabel}">
+            <defs><path id="${arcId}" d="M 18 38 A 80 80 0 0 1 132 38" /></defs>
+            <text><textPath href="#${arcId}" startOffset="50%" text-anchor="middle">${arcLabel}</textPath></text>
+        </svg>`
+        : `${rarityBadgeHtml}${typeBadgeHtml}${awakeningBadgeHtml}`;
+
+    const awakeningFxMode = isSeza ? 'seza' : (isEza ? 'eza' : '');
+    const sbaRingEffectsHtml = `
+        ${isLR ? '<canvas class="sba-lr-lwf-canvas sba-lr-lwf-aura-canvas" width="640" height="1136" aria-hidden="true"></canvas>' : ''}
+        ${isLR ? '<canvas class="sba-lr-lwf-canvas sba-lr-lwf-lightning-canvas" data-lwf-pack="lightning" width="640" height="1136" aria-hidden="true"></canvas>' : ''}
+        ${awakeningFxMode ? `<canvas class="sba-ring-effect sba-${awakeningFxMode}-ring-effect" data-awakening-fx="${awakeningFxMode}" width="180" height="180" aria-hidden="true"></canvas>` : ''}`;
+
     const sezaGlowClass = isSeza ? 'seza-glow-card' : '';
-    const targetUrl = c.source === 'custom' ? c.cardUrl : `card.html?id=${c.id}`;
+    const targetUrl = getCardViewerUrl(c);
     const targetAttr = c.source === 'custom' ? 'target="_blank"' : '';
 
     return `
-<a href="${targetUrl}" ${targetAttr} class="char-box" data-source="${c.source}" data-type="${cardType}" data-seza="${isSeza ? 'true' : 'false'}" data-rarity="${rarityKey.toLowerCase()}">
+<a href="${targetUrl}" ${targetAttr} class="char-box" data-source="${c.source}" data-class="${cardClass}" data-type="${cardType}" data-seza="${isSeza ? 'true' : 'false'}" data-rarity="${rarityKey.toLowerCase()}">
     <div class="card-icon ${sezaGlowClass}">
         <img class="frame" src="${frameSrc}" loading="lazy">
         ${lrOverlayHtml}
         <img class="char-img" src="${thumbUrl}" loading="lazy" onerror="window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')">
-        <img class="rarity" src="${raritySrc}" loading="lazy">
-        <img class="type" src="${typeSrc}" loading="lazy">
-        ${awakeningBadgeHtml}
+        <img class="hub-circle-img${c.source === 'custom' ? ' is-fallback-thumb' : ''}" src="${circleUrl}" loading="lazy" onerror="${circleError}">
+        ${sbaRingEffectsHtml}
+        ${cardBadgeHtml}
     </div>
     <div class="name-container">
         <div class="char-name-wrapper">
@@ -317,7 +1244,13 @@ function generateTimelineRowHtml(c) {
     const frameSrc = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
     const typeSrc = (rarityKey === 'SSR') ? `${CENTRAL_ASSET_URL}type_${cardType}.png` : `${CENTRAL_ASSET_URL}${cardClass}_type_${cardType}.png`;
 
-    const thumbUrl = c.thumbUrl || `./assets/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+    const thumbUrl = c.thumbUrl || `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+    const circleUrl = c.source === 'custom'
+        ? thumbUrl
+        : `./assets/card-art/cards/${folderId}/card_${folderId}_circle.png`;
+    const circleError = c.source === 'custom'
+        ? `window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')`
+        : `window.handleHubCircleError(this, '${folderId}', '${parentFolderId}')`;
 
     let lrOverlayHtml = '';
     if (isLR) {
@@ -331,24 +1264,28 @@ function generateTimelineRowHtml(c) {
         awakeningBadgeHtml = `<img class="tl-eza-badge" src="${CENTRAL_ASSET_URL}eza_abs.png">`;
     }
 
-    const targetUrl = c.source === 'custom' ? c.cardUrl : `card.html?id=${c.id}`;
+    const targetUrl = getCardViewerUrl(c);
     const targetAttr = c.source === 'custom' ? 'target="_blank"' : '';
     // The row color communicates why this exact card is on the timeline.
     // Awakening states win over its source so a custom EZA/SEZA stays clear.
     const timelineStatus = isSeza
         ? 'seza'
         : (isEza ? 'eza' : (c.source === 'custom' ? 'custom' : 'new'));
+    const timelineStatusLabel = timelineStatus === 'seza'
+        ? 'SEZA'
+        : (timelineStatus === 'eza' ? 'EZA' : (timelineStatus === 'custom' ? 'NEW CUSTOM' : 'NEW'));
 
     return `
-    <a href="${targetUrl}" ${targetAttr} class="timeline-entry-row timeline-entry-row--${timelineStatus}" data-timeline-status="${timelineStatus}">
+    <a href="${targetUrl}" ${targetAttr} class="timeline-entry-row timeline-entry-row--${timelineStatus}" data-timeline-status="${timelineStatus}" data-timeline-type="${cardType}" data-timeline-name="${c.name}" title="${c.name}">
         <div class="timeline-composed-icon">
             <img class="tl-frame" src="${frameSrc}" loading="lazy">
             ${lrOverlayHtml}
-            <img class="tl-char-img" src="${thumbUrl}" loading="lazy" onerror="window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')">
+            <img class="tl-char-img${c.source === 'custom' ? ' is-custom-timeline-portrait' : ''}" src="${circleUrl}" loading="lazy" onerror="${circleError}">
             <img class="tl-rarity" src="${raritySrc}" loading="lazy">
             <img class="tl-type" src="${typeSrc}" loading="lazy">
             ${awakeningBadgeHtml}
         </div>
+        <span class="timeline-entry-status">${timelineStatusLabel}</span>
         <div class="timeline-row-name-box">
             <span class="timeline-row-name">${c.name}</span>
             <span class="timeline-row-sub">${rarityKey} • ${cardType.toUpperCase()} ${isSeza ? '• SUPER EZA' : (isEza ? '• EZA' : '')}</span>
@@ -357,7 +1294,7 @@ function generateTimelineRowHtml(c) {
 }
 
 function mountGridSezaFlames() {
-    if (currentFxMode === 'no-seza' || currentFxMode === 'static') return;
+    if (currentAppStyle === 'sba' || currentFxMode === 'no-seza' || currentFxMode === 'static') return;
     if (typeof window.DokkanLWF === 'undefined' || !window.DokkanLWF.attachSezaFlameBorder) {
         setTimeout(mountGridSezaFlames, 120);
         return;
@@ -422,6 +1359,114 @@ function formatTimelineDateTime(timestamp) {
     };
 }
 
+function formatTimelineCountdown(timestamp) {
+    const remaining = Number(timestamp) - Date.now();
+    if (!Number.isFinite(remaining) || remaining <= 0) return '';
+    const totalMinutes = Math.ceil(remaining / 60000);
+    const days = Math.floor(totalMinutes / 1440);
+    const hours = Math.floor((totalMinutes % 1440) / 60);
+    const minutes = totalMinutes % 60;
+    const seconds = Math.max(0, Math.ceil(remaining / 1000) % 60);
+    if (days > 0) return `${days}d ${hours}h ${minutes}m ${seconds}s`;
+    if (hours > 0) return `${hours}h ${minutes}m ${seconds}s`;
+    return `${Math.max(1, minutes)}m ${seconds}s`;
+}
+
+function refreshTimelineCountdowns() {
+    document.querySelectorAll('.timeline-node-countdown[data-release-at]').forEach((node) => {
+        const countdown = formatTimelineCountdown(Number(node.dataset.releaseAt));
+        if (!countdown) {
+            node.remove();
+            return;
+        }
+        node.textContent = `IN ${countdown}`;
+        node.setAttribute('aria-label', `Releases in ${countdown}`);
+    });
+}
+
+function bindTimelineCarouselControls() {
+    const track = document.getElementById('timelineScrollTrack');
+    const previous = document.getElementById('timelinePrevBtn');
+    const next = document.getElementById('timelineNextBtn');
+    if (!track || !previous || !next || track.dataset.carouselBound === 'true') return;
+    track.dataset.carouselBound = 'true';
+    const move = (direction) => track.scrollBy({ left: direction * Math.max(260, Math.round(track.clientWidth * 0.72)), behavior: 'smooth' });
+    previous.addEventListener('click', () => move(-1));
+    next.addEventListener('click', () => move(1));
+}
+
+function getTimelineBaseCards(cards) {
+    const baseByFamily = new Map();
+    cards.forEach(card => {
+        // Official transformation forms are stored as 4xxxxxx IDs. Keep the
+        // release's normal/base member when its family is also present. Custom
+        // cards remain independent because their uploaded forms are explicit.
+        const numericId = Number(card.id) || 0;
+        const isTransformationForm = card.source === 'official' && numericId >= 4000000 && numericId < 10000000;
+        const familyKey = card.source === 'official'
+            ? `official:${card.parentId || getCardParentId(card.id)}`
+            : `custom:${card.id}`;
+        const existing = baseByFamily.get(familyKey);
+        if (!existing) {
+            baseByFamily.set(familyKey, card);
+            return;
+        }
+        const existingId = Number(existing.id) || 0;
+        const existingIsTransformation = existing.source === 'official' && existingId >= 4000000 && existingId < 10000000;
+        if ((existingIsTransformation && !isTransformationForm) ||
+            (existingIsTransformation === isTransformationForm && numericId < existingId)) {
+            baseByFamily.set(familyKey, card);
+        }
+    });
+    return Array.from(baseByFamily.values());
+}
+
+function bindSbaTimelineHoverTooltips(timelineStream) {
+    if (!timelineStream || timelineStream.dataset.sbaTooltipBound === 'true') return;
+    timelineStream.dataset.sbaTooltipBound = 'true';
+
+    let tooltip = document.getElementById('sbaTimelineFloatingTooltip');
+    if (!tooltip) {
+        tooltip = document.createElement('div');
+        tooltip.id = 'sbaTimelineFloatingTooltip';
+        tooltip.className = 'sba-timeline-floating-tooltip';
+        tooltip.setAttribute('role', 'tooltip');
+        document.body.appendChild(tooltip);
+    }
+
+    const hideTooltip = () => {
+        tooltip.classList.remove('is-visible');
+    };
+
+    const placeTooltip = (event) => {
+        if (!tooltip.classList.contains('is-visible')) return;
+        const margin = 12;
+        const bounds = tooltip.getBoundingClientRect();
+        let left = event.clientX - bounds.width - margin;
+        if (left < margin) left = Math.min(window.innerWidth - bounds.width - margin, event.clientX + margin);
+        const top = Math.max(margin, Math.min(window.innerHeight - bounds.height - margin, event.clientY - (bounds.height / 2)));
+        tooltip.style.left = `${Math.round(left)}px`;
+        tooltip.style.top = `${Math.round(top)}px`;
+    };
+
+    timelineStream.addEventListener('pointerover', (event) => {
+        const row = event.target.closest('.timeline-entry-row');
+        if (!row || !timelineStream.contains(row) || !document.body.classList.contains('theme-sba')) return;
+        tooltip.textContent = row.dataset.timelineName || row.textContent.trim();
+        tooltip.classList.add('is-visible');
+        placeTooltip(event);
+    });
+
+    timelineStream.addEventListener('pointermove', (event) => {
+        if (event.target.closest('.timeline-entry-row')) placeTooltip(event);
+    });
+
+    timelineStream.addEventListener('pointerout', (event) => {
+        const row = event.target.closest('.timeline-entry-row');
+        if (row && !row.contains(event.relatedTarget)) hideTooltip();
+    });
+}
+
 function renderTimelineView() {
     const timelineStream = document.getElementById('timelineNodesStream');
     if (!timelineStream) return;
@@ -434,6 +1479,9 @@ function renderTimelineView() {
 
     // On Home view, timeline shows all official and custom releases chronologically
     const validCards = sourceList.filter(item => {
+        // SBA's release rail is the official Dokkan timeline. Community cards
+        // stay in the showcase rather than being mixed into release batches.
+        if (document.body.classList.contains('theme-sba') && item.source === 'custom') return false;
         if (!item.sortTime || item.sortTime < dokkanMinTime) return false;
         return true;
     });
@@ -466,30 +1514,38 @@ function renderTimelineView() {
     // panel still feels populated.
     const currentYearStart = new Date(new Date().getFullYear(), 0, 1).getTime();
     const currentYearBatchCount = timelineGroups.filter(batch => batch.sortTime >= currentYearStart).length;
-    const renderBatches = timelineGroups.slice(0, Math.max(60, currentYearBatchCount));
+    const minimumBatchCount = Math.max(60, currentYearBatchCount);
+    // A custom card should remain visible at its entered release date even
+    // when that date falls before the normal recent-release window.
+    const renderBatches = timelineGroups.filter((batch, index) => (
+        index < minimumBatchCount || batch.cards.some(card => card.source === 'custom')
+    ));
 
     let timelineHtml = '';
 
     renderBatches.forEach(batch => {
-        const hasCustom = batch.cards.some(c => c.source === 'custom');
-        const hasSeza = batch.cards.some(c => c.isSeza);
-        const hasEza = batch.cards.some(c => c.isEza && !c.isSeza);
-        const hasNew = batch.cards.some(c => !c.isEza && !c.isSeza);
+        const baseCards = getTimelineBaseCards(batch.cards);
+        const hasCustom = baseCards.some(c => c.source === 'custom');
+        const hasSeza = baseCards.some(c => c.isSeza);
+        const hasEza = baseCards.some(c => c.isEza && !c.isSeza);
+        const hasNew = baseCards.some(c => !c.isEza && !c.isSeza);
 
         let badgesHtml = '';
-        if (hasCustom) badgesHtml += `<span class="timeline-tag tag-custom">CUSTOM</span>`;
+        if (hasCustom) badgesHtml += `<span class="timeline-tag tag-new-cc">NEW CUSTOM</span>`;
         if (hasSeza) badgesHtml += `<span class="timeline-tag tag-seza">SEZA</span>`;
         if (hasEza) badgesHtml += `<span class="timeline-tag tag-eza">EZA</span>`;
         if (hasNew) badgesHtml += `<span class="timeline-tag tag-new">NEW</span>`;
 
-        const entriesHtml = batch.cards.map(c => generateTimelineRowHtml(c)).join('\n');
+        const entriesHtml = baseCards.map(c => generateTimelineRowHtml(c)).join('\n');
 
+        const countdown = formatTimelineCountdown(batch.sortTime);
         timelineHtml += `
         <div class="timeline-node-item">
             <div class="timeline-node-marker"></div>
             <div class="timeline-node-card">
                 <div class="timeline-node-header">
                     <span class="timeline-node-date">${batch.dateLabel}</span>
+                    ${countdown ? `<span class="timeline-node-countdown" data-release-at="${batch.sortTime}" aria-label="Releases in ${countdown}">IN ${countdown}</span>` : ''}
                     <div class="timeline-node-tags">${badgesHtml}</div>
                 </div>
                 <div class="timeline-entries-list">
@@ -500,6 +1556,9 @@ function renderTimelineView() {
     });
 
     timelineStream.innerHTML = timelineHtml;
+    bindSbaTimelineHoverTooltips(timelineStream);
+    bindTimelineCarouselControls();
+    refreshTimelineCountdowns();
 }
 
 window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
@@ -646,41 +1705,237 @@ window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
 let currentInlineType = 'all';
 let currentInlineRarity = 'all';
 
-function setInlineSourceFilter(sourceVal, btnEl) {
-    currentSourceFilter = sourceVal;
-    if (btnEl && btnEl.parentElement) {
-        btnEl.parentElement.querySelectorAll('.filter-pill-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
+function normalizeCategoryNames(values) {
+    return (Array.isArray(values) ? values : [])
+        .map(value => String(value || '').trim().toLocaleLowerCase())
+        .filter(Boolean);
+}
+
+// Keep category counts in lockstep with the Cards view's filter source. The
+// detail/editor pages use their own database fallback, but the hub already
+// has the merged official + custom card index that its category filters read.
+window.getCardHubCategoryCharacterCount = function(categoryId, categoryName) {
+    if (!Array.isArray(allCardItems) || !allCardItems.length) return null;
+
+    const targetId = String(categoryId ?? '').trim();
+    const targetName = String(categoryName ?? '').trim().toLocaleLowerCase();
+    const matchingCharacters = new Set();
+
+    allCardItems.forEach(item => {
+        if (!item) return;
+
+        const itemCategoryIds = (Array.isArray(item.categoryIds) ? item.categoryIds : []).map(String);
+        const itemCategoryNames = normalizeCategoryNames(item.categoryNames);
+        const matchesId = targetId && itemCategoryIds.includes(targetId);
+        const matchesName = targetName && itemCategoryNames.includes(targetName);
+        if (!matchesId && !matchesName) return;
+
+        // A single character can have multiple indexed states. Prefer the
+        // parent identity so the badge reports characters, not variants.
+        const identity = item.characterId ?? item.parentId ?? item.id;
+        if (identity !== undefined && identity !== null && String(identity).trim()) {
+            matchingCharacters.add(String(identity));
+        }
+    });
+
+    return matchingCharacters.size;
+};
+
+function setCategoryDefinitions(rawCategories) {
+    const records = Array.isArray(rawCategories) ? rawCategories : Object.values(rawCategories || {});
+    categoryDefinitions = records
+        .map(category => ({
+            id: String(category?.id ?? '').trim(),
+            name: String(category?.name ?? '').trim(),
+            priority: Number(category?.priority) || 0
+        }))
+        .filter(category => category.id && category.name)
+        .sort((first, second) => first.name.localeCompare(second.name));
+    renderCategoryFilterOptions();
+}
+
+function renderCategoryFilterOptions(searchTerm = document.getElementById('categoryFilterSearch')?.value || '') {
+    const list = document.getElementById('categoryFilterList');
+    const status = document.getElementById('categoryFilterStatus');
+    const clearButton = document.getElementById('categoryFilterClear');
+    if (!list || !status || !clearButton) return;
+
+    const normalizedSearch = String(searchTerm || '').trim().toLocaleLowerCase();
+    const selectedCategories = categoryDefinitions.filter(category => selectedCategoryFilters.has(category.id));
+    const visibleCategories = categoryDefinitions.filter(category =>
+        !normalizedSearch || category.name.toLocaleLowerCase().includes(normalizedSearch)
+    );
+
+    list.replaceChildren();
+    clearButton.hidden = selectedCategories.length === 0;
+    clearButton.disabled = selectedCategories.length === 0;
+
+    if (!categoryDefinitions.length) {
+        status.textContent = 'Categories are loading...';
+        return;
+    }
+
+    status.textContent = selectedCategories.length
+        ? `${selectedCategories.length} selected • ${visibleCategories.length} matching categories`
+        : `${visibleCategories.length} of ${categoryDefinitions.length} categories`;
+
+    if (!visibleCategories.length) {
+        const empty = document.createElement('p');
+        empty.className = 'category-filter-empty';
+        empty.textContent = 'No categories match that search.';
+        list.append(empty);
+        return;
+    }
+
+    visibleCategories.forEach(category => {
+        const button = document.createElement('button');
+        const isSelected = selectedCategoryFilters.has(category.id);
+        button.type = 'button';
+        button.className = 'category-filter-option';
+        button.dataset.categoryId = category.id;
+        button.setAttribute('role', 'option');
+        button.setAttribute('aria-selected', String(isSelected));
+        button.classList.toggle('active', isSelected);
+        button.title = category.name;
+        button.textContent = category.name;
+        button.addEventListener('click', () => setCategoryFilter(category.id));
+        list.append(button);
+    });
+}
+
+function handleCategoryFilterSearch(searchTerm) {
+    renderCategoryFilterOptions(searchTerm);
+}
+
+function setCategoryFilter(categoryId) {
+    if (categoryId === null || categoryId === undefined || categoryId === '') {
+        selectedCategoryFilters.clear();
+    } else {
+        const normalizedCategoryId = String(categoryId);
+        if (selectedCategoryFilters.has(normalizedCategoryId)) {
+            selectedCategoryFilters.delete(normalizedCategoryId);
+        } else {
+            selectedCategoryFilters.add(normalizedCategoryId);
+        }
+    }
+    renderCategoryFilterOptions();
+    syncAdvancedFilterControls();
+    filterCards(true);
+
+    const selectedCategories = categoryDefinitions.filter(category => selectedCategoryFilters.has(category.id));
+    window.CardHubToast?.show(selectedCategories.length ? 'Category filters updated' : 'Category filters cleared', {
+        detail: selectedCategories.length
+            ? `Showing characters in any of ${selectedCategories.length} selected categories`
+            : 'Showing every character category',
+        duration: 2100
+    });
+}
+
+window.handleCategoryFilterSearch = handleCategoryFilterSearch;
+window.setCategoryFilter = setCategoryFilter;
+
+function syncAdvancedFilterControls() {
+    const checkbox = document.getElementById('koScreenFilter');
+    if (checkbox) checkbox.checked = requireKoScreen;
+
+    const selectedType = document.getElementById('typeFilter')?.value || currentInlineType || 'all';
+    const selectedRarity = document.getElementById('rarityFilter')?.value || currentInlineRarity || 'all';
+    const activeCount = (currentSourceFilter === 'all' ? 0 : 1)
+        + (selectedType === 'all' ? 0 : 1)
+        + (selectedRarity === 'all' ? 0 : 1)
+        + (requireKoScreen ? 1 : 0)
+        + selectedCategoryFilters.size;
+    const button = document.getElementById('cardsAdvancedFilterBtn');
+    button?.classList.toggle('active', activeCount > 0);
+
+    const count = document.getElementById('advancedFilterCount');
+    if (count) {
+        count.textContent = String(activeCount);
+        count.hidden = activeCount === 0;
+    }
+}
+
+async function setKoScreenFilter(enabled) {
+    requireKoScreen = Boolean(enabled);
+    syncAdvancedFilterControls();
+    if (requireKoScreen) {
+        const toastId = window.CardHubToast?.loading('Finding KO screens…', {
+            detail: 'Checking the local animation index'
+        });
+        await loadKoScreenIndex();
+        if (toastId) {
+            window.CardHubToast?.update(toastId, 'KO screen filter ready', {
+                type: 'success',
+                detail: 'Showing cards with detected KO screens'
+            });
+        }
     }
     filterCards(true);
+}
+
+window.setKoScreenFilter = setKoScreenFilter;
+
+function setInlineSourceFilter(sourceVal, btnEl) {
+    // Filter chips are toggles: clicking the active choice again returns to
+    // the unfiltered card collection, so an extra "All" chip is unnecessary.
+    currentSourceFilter = btnEl && sourceVal === currentSourceFilter ? 'all' : sourceVal;
+    if (btnEl && btnEl.parentElement) {
+        btnEl.parentElement.querySelectorAll('.filter-pill-btn').forEach((button) => {
+            button.classList.toggle('active', button.dataset.value === currentSourceFilter);
+        });
+    }
+    syncAdvancedFilterControls();
+    filterCards(true);
+    window.CardHubToast?.show('Source filter applied', {
+        detail: currentSourceFilter === 'all' ? 'Showing official and custom cards' : `Showing ${currentSourceFilter} cards`,
+        duration: 2100
+    });
 }
 
 function setInlineTypeFilter(typeVal, btnEl) {
-    currentInlineType = typeVal;
+    const nextType = btnEl && typeVal === currentInlineType ? 'all' : typeVal;
+    currentInlineType = nextType;
     const typeSelect = document.getElementById('typeFilter');
-    if (typeSelect) typeSelect.value = typeVal;
-    if (btnEl && btnEl.parentElement) {
-        btnEl.parentElement.querySelectorAll('.filter-pill-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
+    if (typeSelect) typeSelect.value = nextType;
+    const typeGroup = btnEl?.parentElement || document.querySelector('.cards-inline-filter-bar .type-pill-group');
+    if (typeGroup) {
+        typeGroup.querySelectorAll('.filter-pill-btn').forEach((button) => {
+            button.classList.toggle('active', button.dataset.value === nextType);
+        });
     }
+    syncAdvancedFilterControls();
     filterCards(true);
+    window.CardHubToast?.show('Type filter applied', {
+        detail: nextType === 'all' ? 'Showing every type' : `${nextType.toUpperCase()} cards`,
+        duration: 2100
+    });
 }
 
 function setInlineRarityFilter(rarityVal, btnEl) {
-    currentInlineRarity = rarityVal;
+    const nextRarity = btnEl && rarityVal === currentInlineRarity ? 'all' : rarityVal;
+    currentInlineRarity = nextRarity;
     const rarSelect = document.getElementById('rarityFilter');
-    if (rarSelect) rarSelect.value = rarityVal;
-    if (btnEl && btnEl.parentElement) {
-        btnEl.parentElement.querySelectorAll('.filter-pill-btn').forEach(b => b.classList.remove('active'));
-        btnEl.classList.add('active');
+    if (rarSelect) rarSelect.value = nextRarity;
+    const rarityGroup = btnEl?.parentElement || document.querySelector('.cards-inline-filter-bar .rarity-pill-group');
+    if (rarityGroup) {
+        rarityGroup.querySelectorAll('.filter-pill-btn').forEach((button) => {
+            button.classList.toggle('active', button.dataset.value === nextRarity);
+        });
     }
+    syncAdvancedFilterControls();
     filterCards(true);
+    window.CardHubToast?.show('Rarity filter applied', {
+        detail: nextRarity === 'all' ? 'Showing every rarity' : `${nextRarity.toUpperCase()} cards`,
+        duration: 2100
+    });
 }
 
 function resetAllInlineFilters() {
     currentSourceFilter = 'all';
     currentInlineType = 'all';
     currentInlineRarity = 'all';
+    requireKoScreen = false;
+    selectedCategoryFilters.clear();
     searchQuery = '';
 
     const searchInput = document.getElementById('cardSearchInput');
@@ -692,6 +1947,10 @@ function resetAllInlineFilters() {
     const rarSelect = document.getElementById('rarityFilter');
     if (rarSelect) rarSelect.value = 'all';
 
+    const categorySearch = document.getElementById('categoryFilterSearch');
+    if (categorySearch) categorySearch.value = '';
+    renderCategoryFilterOptions('');
+
     document.querySelectorAll('.cards-inline-filter-bar .filter-pill-group').forEach(group => {
         group.querySelectorAll('.filter-pill-btn').forEach(btn => {
             if (btn.dataset.value === 'all') btn.classList.add('active');
@@ -699,7 +1958,13 @@ function resetAllInlineFilters() {
         });
     });
 
+    syncAdvancedFilterControls();
+
     filterCards(true);
+    window.CardHubToast?.success('Filters cleared', {
+        detail: 'Showing the full card collection',
+        duration: 2200
+    });
 }
 
 function renderHomeShowcaseGrid() {
@@ -707,12 +1972,255 @@ function renderHomeShowcaseGrid() {
     if (!homeGrid) return;
 
     const customOnly = allCardItems.filter(c => c.source === 'custom');
-    const baseList = customOnly.length > 0 ? customOnly : allCardItems.slice(0, 48);
+    const rawBaseList = customOnly.length > 0 ? customOnly : allCardItems.slice(0, 48);
+    const baseList = arrangeLinkedCardsForDisplay(rawBaseList);
+    const escapeShowcaseHtml = (value) => String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+    })[char]);
+
+    // SBA has its own intentional showcase treatment: a small full-art carousel
+    // rather than the ABS endless thumbnail rail. The selected card stays sharp
+    // and centered while its neighbours become supporting, blurred artwork.
+    if (document.body.classList.contains('theme-sba')) {
+        unmountHubLightningVideos(homeGrid);
+        unmountSbaLrLwfEffects(homeGrid);
+
+        const previousIndex = Number(homeGrid.dataset.sbaShowcaseIndex || 0);
+        const activeIndex = baseList.length ? ((previousIndex % baseList.length) + baseList.length) % baseList.length : 0;
+        const visibleOffsets = [-2, -1, 0, 1, 2];
+        const isStaticFx = currentFxMode === 'static' || document.body.classList.contains('fx-static');
+        const activeItem = baseList[activeIndex];
+        const activeArtUrl = activeItem ? (activeItem.cardArtImageUrl || activeItem.thumbUrl || `./assets/card-art/thumbnails/card_${getCardFolderId(activeItem.id)}_thumb/card_${getCardFolderId(activeItem.id)}_thumb.png`) : '';
+        const hasLongActiveName = String(activeItem?.name || '').length > 28;
+        const activeType = String(activeItem?.type || 'AGL').toUpperCase();
+        const activeRarity = activeItem?.rarity === 5 || String(activeItem?.rarity).toLowerCase() === 'lr'
+            ? 'LR'
+            : (activeItem?.rarity === 4 || String(activeItem?.rarity).toLowerCase() === 'tur' ? 'TUR' : 'SSR');
+        const activeShowcaseLabel = activeItem?.summonBrand === 'festival'
+            ? 'Dokkan Festival Unit'
+            : (activeItem?.summonBrand === 'carnival' ? 'Carnival Unit' : 'Custom Card Showcase');
+        const formatShowcaseReleaseDate = (value) => {
+            const rawDate = String(value || '').trim();
+            if (!rawDate) return 'Release date unavailable';
+            const numericDate = rawDate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
+            const isoDate = rawDate.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
+            const parts = numericDate
+                ? [Number(numericDate[3]), Number(numericDate[1]) - 1, Number(numericDate[2])]
+                : (isoDate ? [Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3])] : null);
+            const parsed = parts ? new Date(Date.UTC(...parts)) : new Date(rawDate.replace(' ', 'T'));
+            if (Number.isNaN(parsed.getTime())) return rawDate;
+            return new Intl.DateTimeFormat('en-US', {
+                month: 'long',
+                day: 'numeric',
+                year: 'numeric',
+                timeZone: 'UTC'
+            }).format(parsed);
+        };
+        const activeReleaseDate = escapeShowcaseHtml(formatShowcaseReleaseDate(activeItem?.releaseDate));
+        const slides = baseList.length ? visibleOffsets.map((offset) => {
+            const itemIndex = (activeIndex + offset + baseList.length * 3) % baseList.length;
+            const item = baseList[itemIndex];
+            const folderId = getCardFolderId(item.id);
+            const parentFolderId = Math.floor(getCardParentId(item.id) / 10) * 10;
+            const iconUrl = item.thumbUrl || `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+            const artUrl = item.cardArtImageUrl || iconUrl;
+            const videoUrl = item.cardArtVideoUrl || '';
+            const rarityKey = item.rarity === 5 || String(item.rarity).toLowerCase() === 'lr'
+                ? 'LR'
+                : (item.rarity === 4 || String(item.rarity).toLowerCase() === 'tur' ? 'TUR' : 'SSR');
+            const raritySrc = `${CENTRAL_ASSET_URL}${rarityKey === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarityKey}.png`}`;
+            const targetUrl = getCardViewerUrl(item);
+            // Focused-card clicks redirect in the same tab to the card's page.
+            const targetAttr = '';
+            const label = escapeShowcaseHtml(item.name || 'Custom card');
+            const isFocused = offset === 0;
+            const needsVideoStill = videoUrl && (!item.cardArtImageUrl || (isFocused && !isStaticFx));
+            const artMedia = isFocused && !isStaticFx && videoUrl
+                ? `<img class="sba-showcase-art-poster" src="${artUrl}" alt="" loading="lazy" onerror="this.style.display='none'">
+                   <video class="sba-showcase-art-video" autoplay muted loop playsinline preload="metadata" aria-label="${label}"><source src="${videoUrl}" type="video/mp4"></video>`
+                : (needsVideoStill
+                    ? `<video class="sba-showcase-art-video is-static-frame" muted playsinline preload="metadata" data-sba-static-frame aria-label="${label}"><source src="${videoUrl}" type="video/mp4"></video>`
+                    : `<img class="sba-showcase-art-image" src="${artUrl}" alt="${label}" loading="${offset === 0 ? 'eager' : 'lazy'}" onerror="window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')">`);
+            return `<a class="sba-showcase-slide${offset === 0 ? ' is-active' : ''}" href="${targetUrl}"${targetAttr} data-sba-showcase-offset="${offset}" data-sba-type="${String(item.type || 'agl').toLowerCase()}" aria-label="${label}" title="${label}">
+                ${artMedia}
+                <span class="sba-showcase-rarity"><img src="${raritySrc}" alt="${rarityKey}"></span>
+                <span class="sba-showcase-card-label">${label}</span>
+                ${isFocused ? `<span class="sba-showcase-active-copy"><strong class="${hasLongActiveName ? 'is-marquee' : ''}"><span class="sba-showcase-name-track"><span>${label}</span>${hasLongActiveName ? `<span aria-hidden="true">${label}</span>` : ''}</span></strong><small>${activeRarity} · ${activeType}</small><span class="sba-showcase-release-date">${activeReleaseDate}</span></span>` : ''}
+            </a>`;
+        }).join('') : '<p class="sba-showcase-empty">No custom cards have been uploaded yet.</p>';
+        const navigationDots = baseList.length ? baseList.map((item, itemIndex) => {
+            const isCurrent = itemIndex === activeIndex;
+            const itemName = escapeShowcaseHtml(item?.name || 'Custom card');
+            return `<button type="button" class="sba-showcase-dot${isCurrent ? ' is-active' : ''}" data-sba-showcase-index="${itemIndex}" aria-label="${isCurrent ? `Current card: ${itemName}` : `View ${itemName}`}"${isCurrent ? ' aria-current="true"' : ''}></button>`;
+        }).join('') : '';
+
+        homeGrid.classList.add('sba-showcase-carousel');
+        homeGrid.tabIndex = 0;
+        homeGrid.dataset.sbaShowcaseIndex = String(activeIndex);
+        homeGrid.dataset.setLength = String(baseList.length);
+        homeGrid.innerHTML = `
+            <div class="sba-showcase-ambience" aria-hidden="true">${activeArtUrl ? `<img src="${activeArtUrl}" alt="">` : ''}</div>
+            <div class="sba-showcase-eyebrow" aria-hidden="true"><span></span><strong>${escapeShowcaseHtml(activeShowcaseLabel)}</strong><span></span></div>
+            ${slides}
+            <div class="sba-showcase-pagination" aria-label="Custom-card carousel navigation">${navigationDots}</div>`;
+        // Do not call scrollIntoView here. Re-rendering the carousel (including
+        // its automatic card rotation) was pulling the entire document down to
+        // the active dot even when the user had not opened the showcase.
+
+        // Side cards remain visual previews. Keeping their videos paused avoids
+        // five simultaneous MP4 decoders and makes the centered card the only
+        // animated focal point.
+        homeGrid.querySelectorAll('.sba-showcase-art-video').forEach((video) => {
+            const isFocused = video.closest('.sba-showcase-slide')?.classList.contains('is-active');
+            if (isFocused && !isStaticFx) video.play().catch(() => {});
+            else video.pause();
+        });
+
+        homeGrid.querySelectorAll('video[data-sba-static-frame]').forEach((video) => {
+            video.addEventListener('loadedmetadata', () => {
+                if (Number.isFinite(video.duration) && video.duration > 0) video.currentTime = video.duration / 2;
+            }, { once: true });
+        });
+
+        homeGrid._advanceSbaShowcase = (amount) => {
+            if (!amount || homeGrid.dataset.sbaShowcaseChanging === 'true') return;
+            homeGrid.dataset.sbaShowcaseChanging = 'true';
+            const update = () => {
+                homeGrid.dataset.sbaShowcaseIndex = String(Number(homeGrid.dataset.sbaShowcaseIndex || 0) + amount);
+                renderHomeShowcaseGrid();
+            };
+
+            // Animate just the outgoing/incoming focused card. Rebuilding the
+            // carousel under a document View Transition snapshots the whole
+            // page, which is what made the site blink on every card change.
+            const direction = Math.sign(amount) || 1;
+            const outgoingSlide = homeGrid.querySelector('.sba-showcase-slide.is-active');
+            outgoingSlide?.animate([
+                { opacity: 1, transform: 'translateX(-50%) scale(1)' },
+                { opacity: 0, transform: `translateX(calc(-50% - ${direction * 18}px)) scale(.975)` }
+            ], { duration: 105, easing: 'ease-in', fill: 'both' });
+            homeGrid.querySelector('.sba-showcase-active-copy')?.animate([
+                { opacity: 1, transform: 'translateY(0)' },
+                { opacity: 0, transform: 'translateY(7px)' }
+            ], { duration: 95, easing: 'ease-in', fill: 'both' });
+
+            window.setTimeout(() => {
+                update();
+                const incomingSlide = homeGrid.querySelector('.sba-showcase-slide.is-active');
+                incomingSlide?.animate([
+                    { opacity: 0, transform: `translateX(calc(-50% + ${direction * 18}px)) scale(.975)` },
+                    { opacity: 1, transform: 'translateX(-50%) scale(1)' }
+                ], { duration: 300, easing: 'cubic-bezier(.22,.82,.2,1)', fill: 'both' });
+                homeGrid.querySelector('.sba-showcase-active-copy')?.animate([
+                    { opacity: 0, transform: 'translateY(7px)' },
+                    { opacity: 1, transform: 'translateY(0)' }
+                ], { duration: 300, delay: 45, easing: 'cubic-bezier(.22,.82,.2,1)', fill: 'both' });
+                window.setTimeout(() => {
+                    homeGrid.dataset.sbaShowcaseChanging = 'false';
+                }, 300);
+            }, 105);
+        };
+
+        // Bind the preview cards themselves, rather than relying only on the
+        // carousel's delegated listener. This keeps their focus action ahead
+        // of their anchor navigation and makes a left/right-card click always
+        // bring that exact preview to center.
+        homeGrid.querySelectorAll('.sba-showcase-slide:not(.is-active)').forEach((slide) => {
+            slide.addEventListener('click', (event) => {
+                const offset = Number(slide.dataset.sbaShowcaseOffset || 0);
+                if (!offset) return;
+                event.preventDefault();
+                event.stopPropagation();
+                homeGrid._advanceSbaShowcase?.(offset);
+            });
+        });
+
+        // The focused card redirects to its page. Bound directly on the
+        // anchor (not only delegated) so the navigation survives overlay
+        // or re-render timing edge cases. Re-bound every render because
+        // the carousel rebuilds its slides.
+        homeGrid.querySelector('.sba-showcase-slide.is-active')?.addEventListener('click', (event) => {
+            const anchor = event.currentTarget;
+            const destination = anchor?.getAttribute?.('href') || '';
+            if (!destination || destination === '#') return;
+            event.preventDefault();
+            event.stopPropagation();
+            window.location.href = anchor.href;
+        });
+
+        if (!homeGrid.dataset.sbaShowcaseBound) {
+            homeGrid.dataset.sbaShowcaseBound = 'true';
+            homeGrid.addEventListener('click', (event) => {
+                const dot = event.target.closest('[data-sba-showcase-index]');
+                if (dot) {
+                    event.preventDefault();
+                    const targetIndex = Number(dot.dataset.sbaShowcaseIndex);
+                    const currentIndex = Number(homeGrid.dataset.sbaShowcaseIndex || 0);
+                    if (Number.isFinite(targetIndex) && targetIndex !== currentIndex) {
+                        homeGrid._advanceSbaShowcase?.(targetIndex - currentIndex);
+                    }
+                    return;
+                }
+                const slide = event.target.closest('.sba-showcase-slide');
+                if (slide && !slide.classList.contains('is-active')) {
+                    event.preventDefault();
+                    homeGrid._advanceSbaShowcase?.(Number(slide.dataset.sbaShowcaseOffset || 0));
+                    return;
+                }
+                const activeSlide = event.target.closest('.sba-showcase-slide.is-active');
+                if (activeSlide) {
+                    const destination = activeSlide.getAttribute('href') || '';
+                    if (destination && destination !== '#') {
+                        event.preventDefault();
+                        window.location.href = activeSlide.href;
+                    }
+                    return;
+                }
+                const button = event.target.closest('[data-sba-showcase-step]');
+                const nextOffset = Number(button?.dataset.sbaShowcaseStep || 0);
+                if (nextOffset) {
+                    event.preventDefault();
+                    homeGrid._advanceSbaShowcase?.(nextOffset);
+                }
+            });
+            homeGrid.addEventListener('mouseenter', () => { homeGrid._sbaShowcasePaused = true; });
+            homeGrid.addEventListener('mouseleave', () => { homeGrid._sbaShowcasePaused = false; });
+            homeGrid.addEventListener('touchstart', (event) => {
+                homeGrid._sbaShowcaseTouchStart = event.touches[0]?.clientX || 0;
+                homeGrid._sbaShowcasePaused = true;
+            }, { passive: true });
+            homeGrid.addEventListener('touchend', (event) => {
+                const startX = Number(homeGrid._sbaShowcaseTouchStart || 0);
+                const distance = (event.changedTouches[0]?.clientX || startX) - startX;
+                homeGrid._sbaShowcasePaused = false;
+                if (Math.abs(distance) > 45) homeGrid._advanceSbaShowcase?.(distance < 0 ? 1 : -1);
+            }, { passive: true });
+            homeGrid.addEventListener('keydown', (event) => {
+                if (event.key === 'ArrowLeft') { event.preventDefault(); homeGrid._advanceSbaShowcase?.(-1); }
+                if (event.key === 'ArrowRight') { event.preventDefault(); homeGrid._advanceSbaShowcase?.(1); }
+            });
+        }
+        if (!homeGrid._sbaShowcaseAutoTimer) {
+            homeGrid._sbaShowcaseAutoTimer = window.setInterval(() => {
+                if (!document.hidden && !homeGrid._sbaShowcasePaused && document.body.classList.contains('theme-sba') && currentHubView === 'home') {
+                    homeGrid._advanceSbaShowcase?.(1);
+                }
+            }, 7000);
+        }
+        return;
+    }
+
+    homeGrid.classList.remove('sba-showcase-carousel');
 
     // Quadruple cards for an expansive buffer and seamless infinite loop
     const displayList = [...baseList, ...baseList, ...baseList, ...baseList];
 
-    homeGrid.innerHTML = displayList.map(item => generateCardHtml(item)).join('\n');
+    unmountHubLightningVideos(homeGrid);
+    unmountSbaLrLwfEffects(homeGrid);
+    homeGrid.innerHTML = displayList.map(item => generateCardHtml(item, false)).join('\n');
+    applyLinkedCardEffects(homeGrid, displayList);
+    mountHubLightningVideos(homeGrid);
+    mountSbaLrLwfEffects(homeGrid);
     homeGrid.dataset.setLength = String(baseList.length);
 
     const measureAndAttach = () => {
@@ -744,11 +2252,22 @@ function filterCards(resetPage = true) {
 
     const selectedType = document.getElementById('typeFilter')?.value || currentInlineType || 'all';
     const selectedRarity = document.getElementById('rarityFilter')?.value || currentInlineRarity || 'all';
+    const selectedCategories = categoryDefinitions.filter(category => selectedCategoryFilters.has(category.id));
 
     filteredCardItems = allCardItems.filter(item => {
         const matchesSource = (currentSourceFilter === 'all' || item.source === currentSourceFilter);
         const matchesType = (selectedType === 'all' || item.type === selectedType);
         const matchesRarity = (selectedRarity === 'all' || item.rarity === selectedRarity);
+        const itemCategoryIds = (Array.isArray(item.categoryIds) ? item.categoryIds : []).map(String);
+        const itemCategoryNames = normalizeCategoryNames(item.categoryNames);
+        // Multiple category chips use OR matching: a card appears when it
+        // belongs to at least one selected category.
+        const matchesCategory = selectedCategories.length === 0 || selectedCategories.some(category =>
+            itemCategoryIds.includes(category.id) ||
+            itemCategoryNames.includes(category.name.toLocaleLowerCase())
+        );
+        const matchesKoScreen = !requireKoScreen ||
+            (item.source === 'official' && koScreenCardIds.has(String(item.id)));
 
         let matchesSearch = true;
         if (searchQuery.length > 0) {
@@ -757,41 +2276,87 @@ function filterCards(resetPage = true) {
             matchesSearch = nameMatch || idMatch;
         }
 
-        return matchesSource && matchesType && matchesRarity && matchesSearch;
+        return matchesSource && matchesType && matchesRarity && matchesCategory && matchesKoScreen && matchesSearch;
     });
+    filteredCardItems = arrangeLinkedCardsForDisplay(filteredCardItems);
 
     renderCurrentPage();
 }
 
+function getCardDisplayUnits(cards) {
+    if (!cards || !cards.length) return [];
+    const isSbaCollapsed = document.body.classList.contains('theme-sba') && currentCardsLayout !== 'dokkan';
+    if (!isSbaCollapsed) {
+        return cards.map(c => [c]);
+    }
+
+    const units = [];
+    let groupStart = 0;
+    while (groupStart < cards.length) {
+        let groupEnd = groupStart;
+        while (groupEnd + 1 < cards.length) {
+            const relationship = getAdjacentCardRelationship(cards[groupEnd], cards[groupEnd + 1]);
+            if (!relationship) break;
+            groupEnd += 1;
+        }
+
+        const group = [];
+        for (let i = groupStart; i <= groupEnd; i += 1) {
+            group.push(cards[i]);
+        }
+        units.push(group);
+        groupStart = groupEnd + 1;
+    }
+    return units;
+}
+
 function renderCurrentPage() {
-    const totalPages = Math.max(1, Math.ceil(filteredCardItems.length / CARDS_PER_PAGE));
+    const cardsPerPage = getCardsPerPage();
+    const displayUnits = getCardDisplayUnits(filteredCardItems);
+    const totalPages = Math.max(1, Math.ceil(displayUnits.length / cardsPerPage));
     if (currentPage > totalPages) currentPage = totalPages;
 
-    const startIndex = (currentPage - 1) * CARDS_PER_PAGE;
-    const endIndex = startIndex + CARDS_PER_PAGE;
-    const pageSlice = filteredCardItems.slice(startIndex, endIndex);
+    const startIndex = (currentPage - 1) * cardsPerPage;
+    const endIndex = startIndex + cardsPerPage;
+    const pageUnits = displayUnits.slice(startIndex, endIndex);
+    const pageSlice = pageUnits.flat();
 
     const grid = document.getElementById('cardGrid');
     if (!grid) return;
 
     if (pageSlice.length === 0) {
+        unmountHubLightningVideos(grid);
+        unmountSbaLrLwfEffects(grid);
         grid.innerHTML = `<div style="grid-column: 1/-1; padding: 50px 20px; color: #94a3b8; font-weight: 800; font-size: 15px;">No cards found matching your search.</div>`;
     } else {
-        grid.innerHTML = pageSlice.map(item => generateCardHtml(item)).join('\n');
+        unmountHubLightningVideos(grid);
+        unmountSbaLrLwfEffects(grid);
+        const useCssBadges = currentCardsLayout !== 'dokkan';
+        const cardsHtml = pageSlice.map(item => generateCardHtml(item, useCssBadges)).join('\n');
+        grid.innerHTML = cardsHtml;
+        applyLinkedCardEffects(grid, pageSlice);
+        mountHubLightningVideos(grid);
+        mountSbaLrLwfEffects(grid);
         mountGridSezaFlames();
         checkAndEnableTextScrolling();
     }
 
     renderPaginationControls(totalPages);
+    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
 }
 
 function renderPaginationControls(totalPages) {
     const topContainer = document.getElementById('paginationTop');
     const bottomContainer = document.getElementById('paginationBottom');
 
-    if (filteredCardItems.length <= CARDS_PER_PAGE) {
-        if (topContainer) topContainer.innerHTML = '';
-        if (bottomContainer) bottomContainer.innerHTML = '';
+    if (bottomContainer) bottomContainer.innerHTML = '';
+
+    if (totalPages <= 1) {
+        const singlePageHtml = `
+        <div class="hub-pagination-control">
+            <span class="hub-page-status">1 of 1</span>
+        </div>`;
+        if (topContainer) topContainer.innerHTML = singlePageHtml;
         return;
     }
 
@@ -803,7 +2368,7 @@ function renderPaginationControls(totalPages) {
             </svg>
         </button>
 
-        <span class="hub-page-status">Page ${currentPage} of ${totalPages} (${filteredCardItems.length} Cards)</span>
+        <span class="hub-page-status">${currentPage} of ${totalPages}</span>
 
         <button type="button" aria-label="next" class="hub-page-nav-btn" onclick="changePage(1)" ${currentPage >= totalPages ? 'disabled' : ''}>
             <svg class="flip-right" width="22" height="22" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -813,39 +2378,59 @@ function renderPaginationControls(totalPages) {
     </div>`;
 
     if (topContainer) topContainer.innerHTML = html;
-    if (bottomContainer) bottomContainer.innerHTML = html;
+    if (bottomContainer && !document.body.classList.contains('theme-sba')) {
+        bottomContainer.innerHTML = html;
+    }
 }
 
 function changePage(delta) {
-    const totalPages = Math.ceil(filteredCardItems.length / CARDS_PER_PAGE);
+    const displayUnits = getCardDisplayUnits(filteredCardItems);
+    const totalPages = Math.max(1, Math.ceil(displayUnits.length / getCardsPerPage()));
     const newPage = currentPage + delta;
 
     if (newPage >= 1 && newPage <= totalPages) {
         currentPage = newPage;
         renderCurrentPage();
-        window.scrollTo({ top: 0, behavior: 'smooth' });
+        const cardsTop = document.querySelector('.hub-cards-view')?.offsetTop || 0;
+        window.scrollTo({ top: cardsTop - 20, behavior: 'smooth' });
     }
 }
 
 function resetFilters() {
-    if (document.getElementById('typeFilter')) document.getElementById('typeFilter').value = 'all';
-    if (document.getElementById('rarityFilter')) document.getElementById('rarityFilter').value = 'all';
-    if (document.getElementById('cardSearchInput')) document.getElementById('cardSearchInput').value = '';
-    searchQuery = '';
-    handleSourceChange('all');
+    resetAllInlineFilters();
 }
 
-function parseReleaseTime(dateStr) {
-    if (!dateStr || typeof dateStr !== 'string') return 0;
-    if (dateStr.includes('2015-10-30') || dateStr.startsWith('2010') || dateStr.startsWith('1970') || dateStr === 'TBD') return 0;
-    try {
-        const iso = dateStr.replace(" ", "T") + (dateStr.includes("Z") ? "" : "Z");
-        const t = new Date(iso).getTime();
-        const dokkanMinEpoch = new Date("2015-01-30T00:00:00Z").getTime();
-        return (!isNaN(t) && t >= dokkanMinEpoch) ? t : 0;
-    } catch(e) {
-        return 0;
+function parseReleaseTime(dateValue) {
+    // The editor accepts several human-friendly date formats (for example
+    // "9/14/2026 1:00:00 AM EDT"), so do not force every value into ISO.
+    // Doing that made valid custom-card release dates turn into Invalid Date
+    // and caused those cards to be omitted from the timeline.
+    const dateStr = String(dateValue || '').replace(/\u00a0/g, ' ').trim();
+    if (!dateStr || /^tbd$/i.test(dateStr)) return 0;
+
+    const dokkanMinEpoch = new Date('2015-01-30T00:00:00Z').getTime();
+    const isUsable = (time) => Number.isFinite(time) && time >= dokkanMinEpoch;
+
+    const nativeTime = Date.parse(dateStr);
+    if (isUsable(nativeTime)) return nativeTime;
+
+    // Saved card markup can contain labels around the date. Extract the two
+    // date-only formats the editor and imported cards commonly produce.
+    const ymdMatch = dateStr.match(/\b(\d{4})[./-](\d{1,2})[./-](\d{1,2})\b/);
+    if (ymdMatch) {
+        const [, year, month, day] = ymdMatch;
+        const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
+        if (isUsable(time)) return time;
     }
+
+    const mdyMatch = dateStr.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/);
+    if (mdyMatch) {
+        const [, month, day, year] = mdyMatch;
+        const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
+        if (isUsable(time)) return time;
+    }
+
+    return 0;
 }
 
 async function fetchJsonWithFallback(filename) {
@@ -859,14 +2444,38 @@ async function fetchJsonWithFallback(filename) {
     return null;
 }
 
+async function loadKoScreenIndex() {
+    if (koScreenIndexPromise) return koScreenIndexPromise;
+
+    koScreenIndexPromise = (async () => {
+        const rawIndex = await fetchJsonWithFallback('ko_screen_index.json');
+        const cardIds = Array.isArray(rawIndex?.card_ids)
+            ? rawIndex.card_ids
+            : Object.keys(rawIndex?.cards || {});
+        koScreenCardIds = new Set(cardIds.map((cardId) => String(cardId)));
+        return koScreenCardIds;
+    })().catch((error) => {
+        console.warn('Could not load the KO screen filter index:', error);
+        koScreenCardIds = new Set();
+        return koScreenCardIds;
+    });
+
+    return koScreenIndexPromise;
+}
+
 async function loadOfficialDatabaseCards() {
     try {
-        const [rawCards, rawRoutes] = await Promise.all([
+        const [rawCards, rawRoutes, rawPassives, rawActiveSkills, unitProvenance, rawCategories] = await Promise.all([
             fetchJsonWithFallback('cards.json'),
-            fetchJsonWithFallback('awakening_routes.json')
+            fetchJsonWithFallback('awakening_routes.json'),
+            fetchJsonWithFallback('passive_skills.json'),
+            fetchJsonWithFallback('active_skills.json'),
+            fetchJsonWithFallback('unit-provenance.json'),
+            fetchJsonWithFallback('card_categories.json')
         ]);
 
         if (!rawCards) return [];
+        setCategoryDefinitions(rawCategories);
 
         const unawakenedSourceCardIds = new Set();
         const cardEzaRouteDates = new Map();
@@ -905,6 +2514,13 @@ async function loadOfficialDatabaseCards() {
 
         const ezaMap = new Map();
         const sezaMap = new Map();
+        const curatedDfeLrStems = new Set(
+            Array.isArray(unitProvenance?.dfe_lr_stems) ? unitProvenance.dfe_lr_stems : []
+        );
+        const passiveMap = new Map((Array.isArray(rawPassives) ? rawPassives : Object.values(rawPassives || {}))
+            .map(passive => [Number(passive.id), passive]));
+        const activeSkillMap = new Map((Array.isArray(rawActiveSkills) ? rawActiveSkills : Object.values(rawActiveSkills || {}))
+            .map(activeSkill => [Number(activeSkill.id), activeSkill]));
 
         rawCards.forEach(c => {
             const cid = parseInt(c.id, 10);
@@ -952,6 +2568,23 @@ async function loadOfficialDatabaseCards() {
             const hasSeza = !!sezaCard || sezaTime > 0 || c.is_seza === true;
             const hasEza = !!ezaCard || ezaTime > 0 || hasSeza || c.is_eza === true;
             const isFuture = (baseTime > nowPlus30Days || ezaTime > nowPlus30Days || sezaTime > nowPlus30Days);
+            const passive = passiveMap.get(Number(c.pass_id));
+            const activeSkill = activeSkillMap.get(Number(c.active_id));
+            const passiveText = [
+                passive?.itemized_description,
+                passive?.sougou_only_itemized_description,
+                passive?.kobetu_only_itemized_description
+            ].filter(Boolean).join(' ');
+            const activeText = [activeSkill?.name, activeSkill?.effect_description, activeSkill?.condition_description]
+                .filter(Boolean).join(' ');
+            const mechanicsText = `${passiveText} ${activeText}`;
+            const isReversibleExchange = /reversible exchange/i.test(passiveText);
+            const isTemporaryTransformation = Boolean(c.standby_id) ||
+                (Array.isArray(c.finish_ids) && c.finish_ids.length > 0) ||
+                /\b(?:rages?|turns? into (?:giant form|giant ape)|(?:exchange|switch)(?:s|es)? with.{0,80}for \d+ turns?)\b/i.test(mechanicsText);
+            const transformsAfterTemporaryEnds = /\bwhen (?:giant ape|giant form) transformation ends\b[\s\S]{0,240}\btransforms? into\b/i.test(mechanicsText);
+            const cardStem = Math.floor((rawId > 10000000 ? Math.floor(rawId / 10) : rawId) / 10);
+            const isCuratedDfeLr = rarityKey === 'lr' && curatedDfeLrStems.has(cardStem);
 
             let effectiveTime = Math.max(
                 baseTime < nowPlus30Days ? baseTime : 0,
@@ -964,16 +2597,22 @@ async function loadOfficialDatabaseCards() {
             return {
                 id: c.id,
                 parentId: parentId,
+                characterId: c.character_id,
                 name: c.name,
                 source: 'official',
                 type: cardType,
                 rarity: rarityKey,
+                categoryIds: (Array.isArray(c.categories) ? c.categories : []).map(categoryId => String(categoryId)),
                 element: c.element,
                 cardClass: cardClass,
+                summonBrand: isCuratedDfeLr ? 'festival' : getSummonBrand(c.tag),
                 sortTime: effectiveTime,
                 isFuture: isFuture,
                 isEza: hasEza,
-                isSeza: hasSeza
+                isSeza: hasSeza,
+                isReversibleExchange,
+                isTemporaryTransformation,
+                transformsAfterTemporaryEnds
             };
         });
     } catch (err) {
@@ -1044,6 +2683,19 @@ async function loadCustomCards() {
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : (isSSR ? '#img-ssr' : '#img-tur')) || doc.querySelector('#abs-thumb-img');
                 const charImgSrc = fixUrl(iconEl?.getAttribute('src'), `${CENTRAL_ASSET_URL}SSR_Icon.png`);
 
+                // The SBA showcase is art-led. Read the published art layers
+                // rather than using the header thumbnail as its hero image.
+                const rawCardArtImage = [
+                    doc.querySelector('#myOverlayImage')?.getAttribute('src'),
+                    doc.querySelector('#abs-art-img')?.getAttribute('src'),
+                    doc.querySelector('.card-art-canvas img')?.getAttribute('src')
+                ].find(src => src && !/Card(?:%20| )Art(?:%20| )Template\.png/i.test(src)) || '';
+                const rawCardArtVideo = doc.querySelector('#myOverlayVideo source')?.getAttribute('src') ||
+                    doc.querySelector('#myOverlayVideo')?.getAttribute('src') ||
+                    doc.querySelector('video.card-art-canvas source')?.getAttribute('src') || '';
+                const cardArtImageUrl = rawCardArtImage ? fixUrl(rawCardArtImage, '') : '';
+                const cardArtVideoUrl = rawCardArtVideo ? fixUrl(rawCardArtVideo, '') : '';
+
                 const frameAttr = doc.querySelector('.card-frame')?.getAttribute('src') || 'frame_agl.png';
                 const typeImgAttr = doc.querySelector('.typing-icon')?.getAttribute('src') || 'super_type_agl.png';
                 
@@ -1058,26 +2710,42 @@ async function loadCustomCards() {
                 // editor. It is the source of truth for a custom card's place
                 // on the timeline; a GitHub upload date is never used here.
                 let dateText = '';
+                let unitTag = '';
                 try {
                     const cardDataRes = await fetch(`https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/card.json`, { cache: 'no-store' });
                     if (cardDataRes.ok) {
                         const cardData = await cardDataRes.json();
-                        dateText = cardData?.inputs?.dateInput || cardData?.releaseDate || cardData?.release_date || '';
+                        dateText = cardData?.inputs?.dateInput || cardData?.inputs?.releaseDate || cardData?.releaseDate || cardData?.release_date || '';
+                        unitTag = cardData?.inputs?.absUnitTag || cardData?.absUnitTag || cardData?.unitTag || '';
                     }
                 } catch (e) {}
 
                 if (!dateText) {
                     dateText = doc.querySelector('#dateInput')?.getAttribute('value') || doc.querySelector('#dateInput')?.value || '';
                 }
+                if (!unitTag) {
+                    unitTag = doc.querySelector('#abs-art-header-text')?.textContent?.trim() || '';
+                }
                 if (!dateText) {
-                    const releasePanelText = doc.querySelector('#release-dates-container')?.textContent || '';
-                    const releaseDateMatch = releasePanelText.match(/release\s+date\s*([A-Za-z]{3,9}\s+\d{1,2},?\s+\d{4}|\d{4}[./-]\d{1,2}[./-]\d{1,2})/i);
-                    if (releaseDateMatch) dateText = releaseDateMatch[1];
+                    // Keep the whole panel text: parseReleaseTime can extract
+                    // a labelled date such as "Release Date 9/14/2026".
+                    dateText = doc.querySelector('#release-dates-container')?.textContent || '';
                 }
                 const parsedTime = parseReleaseTime(String(dateText));
+                const linkedCardReferences = Array.from(doc.querySelectorAll(
+                    '#forms-container [data-admin-linked-slug], #forms-container .form-link[href], #abs-transformations-container .abs-transform-link[href]'
+                )).map(node => (
+                    node.getAttribute('data-admin-linked-slug') || node.getAttribute('href') || ''
+                )).filter(Boolean);
 
                 const isEzaCustom = htmlText.includes('eza_abs.png') || htmlText.includes('eza_img.png');
                 const isSezaCustom = htmlText.includes('superza_abs.png') || htmlText.includes('supereza_img.png');
+                const isReversibleExchange = /reversible exchange/i.test(htmlText);
+                const isTemporaryTransformation = /\b(?:rages?|turns? into (?:giant form|giant ape)|(?:exchange|switch)(?:s|es)? with.{0,80}for \d+ turns?)\b/i.test(htmlText);
+                const transformsAfterTemporaryEnds = /\bwhen (?:giant ape|giant form) transformation ends\b[\s\S]{0,240}\btransforms? into\b/i.test(htmlText);
+                const categoryNames = Array.from(doc.querySelectorAll(
+                    '#card-category-container [data-category-name], #abs-category-container [data-category-name]'
+                )).map(node => node.dataset.categoryName || '').filter(Boolean);
 
                 freshCards.push({
                     id: folderName,
@@ -1086,13 +2754,22 @@ async function loadCustomCards() {
                     source: 'custom',
                     type: cardType,
                     rarity: rarityKey,
+                    categoryNames,
                     cardUrl: cardUrl,
                     thumbUrl: charImgSrc,
+                    cardArtImageUrl,
+                    cardArtVideoUrl,
                     cardClass: cardClass,
+                    summonBrand: getSummonBrand(unitTag),
                     sortTime: parsedTime,
+                    releaseDate: String(dateText || '').trim(),
+                    linkedCardReferences,
                     isFuture: false,
                     isEza: isEzaCustom,
-                    isSeza: isSezaCustom
+                    isSeza: isSezaCustom,
+                    isReversibleExchange,
+                    isTemporaryTransformation,
+                    transformsAfterTemporaryEnds
                 });
             } catch (e) {}
         }
@@ -1120,7 +2797,8 @@ async function updateCharacterBox() {
 
         const [officialCards, customCards] = await Promise.all([
             loadOfficialDatabaseCards(),
-            loadCustomCards()
+            loadCustomCards(),
+            loadKoScreenIndex()
         ]);
 
         const merged = [...officialCards, ...customCards];
@@ -1268,6 +2946,24 @@ function toggleStreamerPreview(index) {
     renderSelectedStreamerPreview();
 }
 
+// SBA uses the compact streamer strip as a direct channel launcher. The
+// full ABS Home view keeps its existing selectable multi-player behaviour.
+function handleStreamerPillClick(index) {
+    if (currentAppStyle !== 'sba') {
+        toggleStreamerPreview(index);
+        return;
+    }
+
+    const streamer = latestStreamerData.find((item) => item.originalIndex === index)
+        || DOKKAN_STREAMER_CHANNELS[index];
+    if (!streamer) return;
+
+    const channelUrl = streamer.youtubeOnly || !streamer.twitch
+        ? `https://www.youtube.com/@${encodeURIComponent(streamer.youtube)}`
+        : `https://www.twitch.tv/${encodeURIComponent(streamer.twitch)}`;
+    window.open(channelUrl, '_blank', 'noopener,noreferrer');
+}
+
 function renderStreamerPills(streamerData) {
     const track = document.getElementById('streamersHorizontalTrack');
     if (!track) return;
@@ -1287,7 +2983,7 @@ function renderStreamerPills(streamerData) {
         const isSelected = selectedStreamerIndexes.includes(streamer.originalIndex);
 
         return `
-            <button type="button" class="streamer-card-pill ${streamer.youtubeOnly ? 'is-youtube-pill' : ''} ${streamer.isLive ? 'live-pill-glow' : ''} ${isSelected ? 'is-selected' : ''}" data-streamer-index="${streamer.originalIndex}" onclick="toggleStreamerPreview(${streamer.originalIndex})" aria-label="${isSelected ? 'Hide' : 'Show'} ${streamer.displayName}'s stream" aria-pressed="${isSelected}">
+            <button type="button" class="streamer-card-pill ${streamer.youtubeOnly ? 'is-youtube-pill' : ''} ${streamer.isLive ? 'live-pill-glow' : ''} ${isSelected ? 'is-selected' : ''}" data-streamer-index="${streamer.originalIndex}" onclick="handleStreamerPillClick(${streamer.originalIndex})" aria-label="Open ${streamer.displayName}'s ${streamer.youtubeOnly ? 'YouTube' : 'Twitch'} channel" aria-pressed="${isSelected}">
                 ${avatarHtml}
                 <span class="streamer-pill-name">${streamer.displayName}</span>
                 ${statusBadge}
@@ -1298,6 +2994,7 @@ function renderStreamerPills(streamerData) {
 }
 
 window.toggleStreamerPreview = toggleStreamerPreview;
+window.handleStreamerPillClick = handleStreamerPillClick;
 
 async function updateTwitchStreamersStatus() {
     const track = document.getElementById('streamersHorizontalTrack');
@@ -1360,10 +3057,190 @@ async function updateTwitchStreamersStatus() {
     }
 }
 
+function initializeSbaLiquidGlass() {
+    const displacementImage = document.getElementById('sba-liquid-displacement-map');
+    if (displacementImage) {
+        const size = 128;
+        const canvas = document.createElement('canvas');
+        canvas.width = size;
+        canvas.height = size;
+        const context = canvas.getContext('2d', { willReadFrequently: false });
+        const pixels = context?.createImageData(size, size);
+
+        if (context && pixels) {
+            for (let y = 0; y < size; y += 1) {
+                for (let x = 0; x < size; x += 1) {
+                    const nx = ((x + 0.5) / size - 0.5) * 2;
+                    const ny = ((y + 0.5) / size - 0.5) * 2;
+                    const radius = Math.min(1, Math.hypot(nx, ny));
+                    const edge = Math.max(0, Math.min(1, (radius - 0.38) / 0.62));
+                    const easedEdge = edge * edge * (3 - (2 * edge));
+                    const inverseRadius = radius > 0.0001 ? 1 / radius : 0;
+                    const offset = (y * size + x) * 4;
+
+                    // R/G encode horizontal/vertical refraction. The vector
+                    // points inward, producing a convex circular lens bezel.
+                    pixels.data[offset] = Math.round(128 - (nx * inverseRadius * easedEdge * 112));
+                    pixels.data[offset + 1] = Math.round(128 - (ny * inverseRadius * easedEdge * 112));
+                    pixels.data[offset + 2] = 128;
+                    pixels.data[offset + 3] = 255;
+                }
+            }
+            context.putImageData(pixels, 0, 0);
+            displacementImage.setAttribute('href', canvas.toDataURL('image/png'));
+        }
+    }
+
+    const glassControls = document.querySelectorAll([
+        '.hud-nav-link',
+        '#sidebarDrawer .reset-btn',
+    ].join(','));
+
+    glassControls.forEach((control) => {
+        control.addEventListener('pointermove', (event) => {
+            if (!document.body.classList.contains('theme-sba')) return;
+            const bounds = control.getBoundingClientRect();
+            const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+            const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+            control.style.setProperty('--sba-glass-x', `${Math.max(0, Math.min(100, x))}%`);
+            control.style.setProperty('--sba-glass-y', `${Math.max(0, Math.min(100, y))}%`);
+        });
+
+        control.addEventListener('pointerleave', () => {
+            control.style.removeProperty('--sba-glass-x');
+            control.style.removeProperty('--sba-glass-y');
+        });
+    });
+
+    // The SBA navigation is one larger piece of glass. Keep its highlight tied
+    // to the pointer so the light appears to travel beneath the icon buttons.
+    document.querySelectorAll('.hud-nav-group').forEach((dock) => {
+        dock.addEventListener('pointermove', (event) => {
+            if (!document.body.classList.contains('theme-sba')) return;
+            const bounds = dock.getBoundingClientRect();
+            const x = ((event.clientX - bounds.left) / bounds.width) * 100;
+            const y = ((event.clientY - bounds.top) / bounds.height) * 100;
+            dock.style.setProperty('--sba-dock-x', `${Math.max(0, Math.min(100, x))}%`);
+            dock.style.setProperty('--sba-dock-y', `${Math.max(0, Math.min(100, y))}%`);
+        });
+
+        dock.addEventListener('pointerleave', () => {
+            dock.style.removeProperty('--sba-dock-x');
+            dock.style.removeProperty('--sba-dock-y');
+        });
+    });
+}
+
 window.addEventListener('DOMContentLoaded', async () => {
+    chooseHomeLogoVariant();
+    initializeSbaLiquidGlass();
     setAppStyle(currentAppStyle);
+    setCardsLayout(currentCardsLayout);
+    // Inline handlers can be blocked by a strict page policy, so bind the
+    // Cards Filters action directly. This also keeps its SBA popover behavior
+    // independent from the legacy sidebar markup.
+    document.getElementById('cardsAdvancedFilterBtn')?.addEventListener('click', (event) => {
+        event.preventDefault();
+        toggleSidebar();
+    });
+    document.addEventListener('pointerdown', (event) => {
+        if (!document.body.classList.contains('theme-sba')) return;
+        const popover = document.getElementById('sbaCardsFilterPopover');
+        const trigger = document.getElementById('cardsAdvancedFilterBtn');
+        if (popover?.classList.contains('is-open')) {
+            if (!popover.contains(event.target) && !trigger?.contains(event.target)) {
+                popover.classList.remove('is-open');
+                popover.setAttribute('aria-hidden', 'true');
+                trigger?.setAttribute('aria-expanded', 'false');
+            }
+        }
+        const settingsDrawer = document.getElementById('settingsDrawer');
+        const settingsBtn = document.getElementById('sba-side-settings-button');
+        if (document.body.classList.contains('sba-side-settings-open') || settingsDrawer?.classList.contains('open')) {
+            if (!settingsDrawer?.contains(event.target) && !settingsBtn?.contains(event.target)) {
+                toggleSettingsDrawer();
+            }
+        }
+    });
+    document.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape') return;
+        const popover = document.getElementById('sbaCardsFilterPopover');
+        if (popover?.classList.contains('is-open')) {
+            popover.classList.remove('is-open');
+            popover.setAttribute('aria-hidden', 'true');
+            document.getElementById('cardsAdvancedFilterBtn')?.setAttribute('aria-expanded', 'false');
+        }
+        if (document.body.classList.contains('sba-side-settings-open')) {
+            toggleSettingsDrawer();
+        }
+    });
+    window.setInterval(refreshTimelineCountdowns, 1000);
+    window.addEventListener('resize', () => {
+        syncSbaBottomNavVisibility();
+        if (document.body.classList.contains('sba-side-settings-open')) {
+            positionSettingsMiniGui();
+        }
+    }, { passive: true });
+    let sbaCardsResizeTimer = null;
+    window.addEventListener('resize', () => {
+        if (currentHubView === 'cards' && document.body.classList.contains('theme-sba')) {
+            clearTimeout(sbaCardsResizeTimer);
+            sbaCardsResizeTimer = setTimeout(renderCurrentPage, 100);
+        }
+    }, { passive: true });
+    document.addEventListener('pointermove', (event) => {
+        if (!document.body.classList.contains('theme-sba')) return;
+        const nav = document.querySelector('.hud-nav-group');
+        const isInsideNav = Boolean(nav?.contains(event.target));
+        const isNearBottom = event.clientY >= window.innerHeight - 112;
+        if (isNearBottom || isInsideNav) revealSbaBottomNav();
+        else scheduleSbaBottomNavHide();
+    }, { passive: true });
+
+    // SBA panels are intentionally transient. Tracking the cursor relative to
+    // the panel edge avoids the panel immediately closing during its own slide-in.
+    document.addEventListener('mousemove', (event) => {
+        if (!document.body.classList.contains('theme-sba')) return;
+        const openedAt = Number(document.body.dataset.sbaPanelOpenedAt || 0);
+        if (openedAt && Date.now() - openedAt < 350) return;
+
+        const panel = document.body.classList.contains('sba-side-filters-open')
+            ? ['sidebarDrawer', 'sba-side-filters-open', 'sba-side-filter-button']
+            : null;
+        if (!panel) return;
+
+        const [drawerId, openClass, triggerId] = panel;
+        const drawer = document.getElementById(drawerId);
+        const dock = document.querySelector('.apple-hud-wrapper');
+        if (!drawer) return;
+
+        const drawerBounds = drawer.getBoundingClientRect();
+        const dockBounds = dock?.getBoundingClientRect();
+        const within = (bounds, padding = 0) => bounds
+            && event.clientX >= bounds.left - padding
+            && event.clientX <= bounds.right + padding
+            && event.clientY >= bounds.top - padding
+            && event.clientY <= bounds.bottom + padding;
+        const inDrawer = within(drawerBounds, 8);
+        const inDock = within(dockBounds, 8);
+        const inPopoverBridge = dockBounds
+            && event.clientX >= Math.min(drawerBounds.left, dockBounds.left) - 8
+            && event.clientX <= Math.max(drawerBounds.right, dockBounds.right) + 8
+            && event.clientY >= drawerBounds.bottom
+            && event.clientY <= dockBounds.top;
+        if (inDrawer || inDock || inPopoverBridge) return;
+
+        document.body.classList.remove(openClass);
+        delete document.body.dataset.sbaPanelOpenedAt;
+        drawer.classList.remove('open');
+        document.getElementById(triggerId)?.setAttribute('aria-expanded', 'false');
+        if (drawerId === 'sidebarDrawer') {
+            document.getElementById('cardsAdvancedFilterBtn')?.setAttribute('aria-expanded', 'false');
+        }
+    });
     
     setFxAnimationMode(currentFxMode);
+    syncAdvancedFilterControls();
 
     const urlParams = new URLSearchParams(window.location.search);
     const viewParam = urlParams.get('view');
@@ -1371,7 +3248,7 @@ window.addEventListener('DOMContentLoaded', async () => {
     const newsSourceParam = urlParams.get('source');
 
     if (viewParam === 'news') {
-        switchHubView('news', newsSourceParam || subParam || 'discord');
+        switchHubView('news', newsSourceParam || subParam || 'all');
     } else if (viewParam === 'cards' || localStorage.getItem('hub_force_cards_view') === 'true') {
         localStorage.removeItem('hub_force_cards_view');
         switchHubView('cards');

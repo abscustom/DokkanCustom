@@ -14,6 +14,7 @@ var lightningColors = window.lightningColors;
 // Exact 6-digit stems for DFE LRs (card_id // 10)
 const DFE_LR_STEMS = new Set([
     101215, 101216, // 3rd Anniv Vegito & Gogeta
+    101862, 101865, // 5th Anniv AGL Gogeta & STR Vegito
     101589, 101590, // 4th Anniv SS4 Goku & Vegeta
     101737, 101738, // 300M AGL Gohan & INT Cell
     101889, 101890, // 5th Anniv STR Gogeta & TEQ Vegito
@@ -30,6 +31,12 @@ const DFE_LR_STEMS = new Set([
     102941,         // 2024 WWC INT Vegito (DFE)
     102943          // 2024 WWC STR Broly (DFE)
 ]);
+
+function hasCuratedDfeLrStem(stem) {
+    const manifestStems = window.DB?.unitProvenance?.dfe_lr_stems;
+    return DFE_LR_STEMS.has(stem)
+        || (Array.isArray(manifestStems) && manifestStems.includes(stem));
+}
 
 // Verified Exact 6-digit stems for F2P LRs
 const F2P_LR_STEMS = new Set([
@@ -64,7 +71,6 @@ const F2P_LR_STEMS = new Set([
     102636, // Babidi (AGL Story Event LR)
     102685, // Bulma & Goku (STR WT)
     102715, // King Cold & Frieza (PHY)
-    102798, // Ribrianne, Kakunsa, Rozie (STR Story)
     102871, // Ginyu Force (PHY)
     102980  // Bio-Broly (TEQ Story Event LR)
 ]);
@@ -118,14 +124,17 @@ var LINK_SKILL_LV10_BUFFS = {
 
 function getLinkSkillBuffs(linkName, linkObj) {
     if (LINK_SKILL_LV10_BUFFS[linkName]) return LINK_SKILL_LV10_BUFFS[linkName];
-    let desc = (linkObj ? (linkObj.description || linkObj.level_10_description || linkObj.effect || '') : '').toLowerCase();
+    let desc = (linkObj ? (linkObj.levels?.['10'] || linkObj.description || linkObj.level_10_description || linkObj.effect || '') : '').toLowerCase();
     let buffs = { atk: 0, def: 0, ki: 0, hp: 0, enemyDef: 0 };
     if (!desc) return buffs;
 
-    let atkM = desc.match(/atk\s*\+?\s*(\d+)%/i);
-    if (atkM) buffs.atk = parseInt(atkM[1], 10);
-    let defM = desc.match(/def\s*\+?\s*(\d+)%/i);
-    if (defM) buffs.def = parseInt(defM[1], 10);
+    // Support both separate clauses ("ATK +15% and DEF +15%") and the
+    // compact shared form ("ATK & DEF +15%").
+    const sharedStatMatch = desc.match(/\b(?:atk|def)\b\s*(?:&|and)\s*\b(?:atk|def)\b\s*\+?\s*(\d+(?:\.\d+)?)%/i);
+    const atkM = desc.match(/\batk\b\s*\+?\s*(\d+(?:\.\d+)?)%/i) || sharedStatMatch;
+    const defM = desc.match(/\bdef\b\s*\+?\s*(\d+(?:\.\d+)?)%/i) || sharedStatMatch;
+    if (atkM) buffs.atk = parseFloat(atkM[1]);
+    if (defM) buffs.def = parseFloat(defM[1]);
     let kiM = desc.match(/ki\s*\+?\s*(\d+)/i);
     if (kiM) buffs.ki = parseInt(kiM[1], 10);
     let hpM = desc.match(/hp\s*(?:recovers?|recovery|\+)?\s*(\d+)%/i) || desc.match(/recovers?\s*(\d+)%\s*hp/i);
@@ -133,6 +142,25 @@ function getLinkSkillBuffs(linkName, linkObj) {
 
     return buffs;
 }
+
+// Small clean-mode effect chips shown at the end of each Link Skill row.
+// Keep this helper limited to ATK/DEF because those are the two requested
+// stat boxes; other link effects remain available through the hover tooltip.
+window.renderAbsCleanLinkEffectBadges = function(linkBuffs = {}) {
+    const effects = [
+        { key: 'atk', label: 'ATK', className: 'atk' },
+        { key: 'def', label: 'DEF', className: 'def' }
+    ].map(({ key, label, className }) => {
+        const amount = Number(linkBuffs[key]);
+        if (!Number.isFinite(amount) || amount <= 0) return '';
+        const formatted = Number.isInteger(amount) ? String(amount) : String(amount).replace(/(\.\d*?[1-9])0+$/, '$1');
+        return `<span class="abs-link-effect-badge ${className}"><span class="abs-link-effect-label">${label}</span><strong class="abs-link-effect-value">+${formatted}%</strong></span>`;
+    }).filter(Boolean);
+
+    return effects.length
+        ? `<span class="abs-link-effect-badges" aria-label="Link Skill effects">${effects.join('')}</span>`
+        : '';
+};
 
 window.normalizeLinkSkillName = function(linkName, loose = false) {
     let normalized = String(linkName || '')
@@ -178,6 +206,406 @@ window.escapeLinkTooltipAttribute = function(value) {
         .replace(/"/g, '&quot;')
         .replace(/</g, '&lt;')
         .replace(/>/g, '&gt;');
+};
+
+window.DOKKAN_CATEGORY_COLORS = {
+    // Saiyans & Lineage (Gold / Amber / Orange)
+    "Pure Saiyans": "#eab308",
+    "Super Saiyans": "#f59e0b",
+    "Super Saiyan 2": "#eab308",
+    "Super Saiyan 3": "#ca8a04",
+    "Power Beyond Super Saiyan": "#eab308",
+    "Saiyan Saga": "#ca8a04",
+    "Goku's Family": "#f97316",
+    "Vegeta's Family": "#3b82f6",
+    "Hybrid Saiyans": "#ea580c",
+    "Team Bardock": "#b45309",
+    "Low-Class Warrior": "#b45309",
+    "Giant Ape Power": "#b45309",
+    "Giant Form": "#92400e",
+
+    // Gods, Universes & Dimensions (Cyan / Sky / Royal Blue / Indigo)
+    "Realm of Gods": "#06b6d4",
+    "Universe Survival Saga": "#6366f1",
+    "Representatives of Universe 7": "#3b82f6",
+    "Universe 6": "#8b5cf6",
+    "Universe 11": "#ef4444",
+    "Space-Traveling Warriors": "#6366f1",
+    "Otherworld Warriors": "#06b6d4",
+
+    // Time & Future (Sky Blue / Azure)
+    "Future Saga": "#0284c7",
+    "Time Travelers": "#0284c7",
+    "Time Limit": "#0284c7",
+    "Connected Hope": "#0ea5e9",
+    "Entrusted Will": "#059669",
+    "Accelerated Battle": "#0ea5e9",
+
+    // Iconic Moves & Schools (Cyan / Blue / Orange)
+    "Kamehameha": "#38bdf8",
+    "Turtle School": "#ea580c",
+
+    // Fusion & Potara (Gold / Violet / Indigo)
+    "Fusion": "#f59e0b",
+    "Potara": "#8b5cf6",
+    "Fused Fighters": "#a855f7",
+    "Final Trump Card": "#e11d48",
+
+    // Movie Arcs (Sky Blue / Violet / Rose)
+    "Movie Heroes": "#0ea5e9",
+    "Movie Bosses": "#9333ea",
+    "Super Heroes": "#06b6d4",
+
+    // Majin & Special (Hot Pink / Magenta / Rose)
+    "Majin Buu Saga": "#ec4899",
+    "Majin Power": "#db2777",
+    "Power Absorption": "#db2777",
+    "Special Pose": "#ec4899",
+    "Peppy Gals": "#f43f5e",
+
+    // Villains & Conquerors (Crimson / Deep Purple / Dark Red)
+    "Wicked Bloodline": "#a855f7",
+    "Terrifying Conquerors": "#b91c1c",
+    "Inhuman Deeds": "#7f1d1d",
+    "Planetary Destruction": "#991b1b",
+    "Worldwide Chaos": "#831843",
+    "Sworn Enemies": "#991b1b",
+    "Revenge": "#991b1b",
+    "Exploding Rage": "#dc2626",
+    "Corroded Body and Mind": "#701a75",
+    "GT Bosses": "#7e22ce",
+
+    // Androids & Artificial (Emerald / Mint / Teal)
+    "Androids": "#10b981",
+    "Androids/Cell Saga": "#059669",
+    "Artificial Life Forms": "#0d9488",
+    "Target: Goku": "#047857",
+
+    // Namek & Earth (Green / Forest / Amber)
+    "Planet Namek Saga": "#059669",
+    "Namekians": "#16a34a",
+    "Earthlings": "#16a34a",
+    "Earth-Bred Fighters": "#15803d",
+    "DB Saga": "#ca8a04",
+    "World Tournament": "#ca8a04",
+    "Dragon Ball Seekers": "#eab308",
+    "Youth": "#10b981",
+
+    // Bonds & Family (Warm Amber / Coral / Teal)
+    "Siblings' Bond": "#f97316",
+    "Bond of Parent and Child": "#f97316",
+    "Bond of Master and Disciple": "#0d9488",
+    "Bond of Friendship": "#06b6d4",
+    "Worthy Rivals": "#3b82f6",
+    "Defenders of Justice": "#059669",
+
+    // Power, Evolution & Battle (Ruby / Amber / Gold / Teal)
+    "Full Power": "#e11d48",
+    "All-Out Struggle": "#e11d48",
+    "Battle of Fate": "#e11d48",
+    "Battle of Wits": "#0d9488",
+    "Mastered Evolution": "#2563eb",
+    "Transformation Boost": "#8b5cf6",
+    "Rapid Growth": "#10b981",
+    "Powerful Comeback": "#f59e0b",
+    "Gifted Warriors": "#a855f7",
+    "Legendary Existence": "#d97706",
+    "Miraculous Awakening": "#38bdf8",
+    "Power of Wishes": "#f59e0b",
+    "Saviors": "#0284c7",
+    "Storied Figures": "#ca8a04",
+    "Heavenly Events": "#06b6d4",
+    "Joined Forces": "#10b981",
+    "Resurrected Warriors": "#64748b",
+    "Shadow Dragon Saga": "#0284c7",
+    "GT Heroes": "#0284c7",
+    "Dragon Ball Heroes": "#dc2626",
+    "Crossover": "#7c3aed"
+};
+
+window.getDokkanCategoryColor = function(name) {
+    if (!name) return '#38bdf8';
+    const clean = String(name).trim();
+    if (window.DOKKAN_CATEGORY_COLORS[clean]) return window.DOKKAN_CATEGORY_COLORS[clean];
+    const lower = clean.toLowerCase();
+    for (const [k, v] of Object.entries(window.DOKKAN_CATEGORY_COLORS)) {
+        if (k.toLowerCase() === lower) return v;
+    }
+    const palette = ['#38bdf8', '#eab308', '#f97316', '#10b981', '#a855f7', '#ec4899', '#06b6d4', '#ef4444', '#14b8a6', '#f59e0b'];
+    let hash = 0;
+    for (let i = 0; i < clean.length; i++) hash = (hash * 31 + clean.charCodeAt(i)) >>> 0;
+    return palette[hash % palette.length];
+};
+
+// Hex (any case, 3 or 6 digit) to HSL so categories group by visual hue
+// instead of raw hex-string order (which scatters golds among pinks, etc.).
+window.dokkanHexToHsl = function(hex) {
+    let clean = String(hex || '').trim().replace(/^#/, '');
+    if (/^[0-9a-fA-F]{3}$/.test(clean)) clean = clean.split('').map(c => c + c).join('');
+    if (!/^[0-9a-fA-F]{6}$/.test(clean)) return { h: 0, s: 0, l: 0.5 };
+    const r = parseInt(clean.slice(0, 2), 16) / 255;
+    const g = parseInt(clean.slice(2, 4), 16) / 255;
+    const b = parseInt(clean.slice(4, 6), 16) / 255;
+    const max = Math.max(r, g, b), min = Math.min(r, g, b);
+    const l = (max + min) / 2;
+    if (max === min) return { h: 0, s: 0, l };
+    const d = max - min;
+    const s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    let h = 0;
+    if (max === r) h = ((g - b) / d + (g < b ? 6 : 0)) * 60;
+    else if (max === g) h = ((b - r) / d + 2) * 60;
+    else h = ((r - g) / d + 4) * 60;
+    return { h, s, l };
+};
+
+// Comparator: same visual color family sits together, then lightness, then name.
+window.compareDokkanCategoryColors = function(aColor, aName, bColor, bName) {
+    const A = String(aColor || '#38bdf8').toLowerCase();
+    const B = String(bColor || '#38bdf8').toLowerCase();
+    if (A === B) return String(aName || '').localeCompare(String(bName || ''));
+    const ha = window.dokkanHexToHsl(A), hb = window.dokkanHexToHsl(B);
+    // Near-grays carry no family hue; park them after chromatic colors by lightness.
+    const ea = ha.s < 0.12 ? 1000 + ha.l : ha.h;
+    const eb = hb.s < 0.12 ? 1000 + hb.l : hb.h;
+    if (Math.abs(ea - eb) > 0.5) return ea - eb;
+    if (ha.l !== hb.l) return ha.l - hb.l;
+    if (ha.s !== hb.s) return ha.s - hb.s;
+    return String(aName || '').localeCompare(String(bName || ''));
+};
+
+// Category labels in older custom-card exports are not consistent: some keep
+// the real name in data-category-name, some keep it in a hidden fallback span,
+// and some only preserve the numeric label image. Keep all of those formats
+// on the same binding path so a generic image alt such as "Category" cannot
+// replace the imported name in the clean frontend.
+function normalizeDokkanCategoryText(value) {
+    return String(value ?? '').replace(/\s+/g, ' ').trim();
+}
+
+function isGenericDokkanCategoryText(value) {
+    const text = normalizeDokkanCategoryText(value);
+    return !text || /^category(?:\s+(?:name|#?\d+))?$/i.test(text);
+}
+
+function readDokkanCategoryId(value) {
+    if (value === undefined || value === null) return '';
+    if (typeof value === 'object') {
+        return readDokkanCategoryId(
+            value.id ?? value.category_id ?? value.categoryId ?? value.cat_id ?? value.category
+        );
+    }
+
+    const text = String(value).trim();
+    if (!text) return '';
+    const labelMatch = text.match(/card_category_label_(\d+)_/i);
+    const placeholderMatch = text.match(/^category\s+#?(\d+)$/i);
+    const numericValue = labelMatch
+        ? labelMatch[1]
+        : (placeholderMatch ? placeholderMatch[1] : (/^\d+$/.test(text) ? text : ''));
+    if (!numericValue) return '';
+
+    const parsed = parseInt(numericValue, 10);
+    return Number.isFinite(parsed) && parsed > 0 ? String(parsed) : '';
+}
+
+function findDokkanCategoryRecord(categoryId) {
+    if (!categoryId) return null;
+    const categories = window.DB?.categories;
+    if (!categories) return null;
+    if (Array.isArray(categories)) {
+        return categories.find(category => String(category?.id ?? '') === String(categoryId)) || null;
+    }
+    return categories[String(categoryId)] || categories[categoryId] ||
+        Object.values(categories).find(category => String(category?.id ?? '') === String(categoryId)) || null;
+}
+
+function resolveDokkanCategoryDisplay(source) {
+    const isDomNode = source && typeof source.getAttribute === 'function';
+    const image = isDomNode
+        ? (source.matches?.('img') ? source : source.querySelector?.('img'))
+        : null;
+
+    const nameCandidates = [];
+    const idCandidates = [];
+    const addName = value => {
+        const text = normalizeDokkanCategoryText(value);
+        if (text && !nameCandidates.includes(text)) nameCandidates.push(text);
+    };
+    const addId = value => {
+        const id = readDokkanCategoryId(value);
+        if (id && !idCandidates.includes(id)) idCandidates.push(id);
+    };
+
+    if (source && typeof source === 'object' && !isDomNode) {
+        addName(source.name);
+        addName(source.category_name);
+        addName(source.categoryName);
+        addId(source.id ?? source.category_id ?? source.categoryId ?? source.cat_id ?? source.category);
+        addId(source.imageSrc ?? source.image ?? source.src);
+    } else if (!isDomNode) {
+        // Published card data commonly stores categories as numeric IDs or
+        // numeric strings rather than objects.
+        addId(source);
+        if (!readDokkanCategoryId(source)) addName(source);
+    }
+
+    if (isDomNode) {
+        addName(source.dataset?.categoryName);
+        addName(source.getAttribute('data-category-name'));
+        addName(source.getAttribute('data-name'));
+        addName(source.getAttribute('aria-label'));
+
+        ['data-category-id', 'data-id', 'data-cat-id', 'data-category'].forEach(attribute => {
+            addId(source.getAttribute(attribute));
+        });
+
+        const fallback = source.querySelector?.('.category-name-fallback');
+        const namedElement = source.querySelector?.('.category-name, .abs-category-name');
+        addName(fallback?.textContent);
+        addName(namedElement?.textContent);
+
+        // A few hand-authored cards use a plain text span instead of the
+        // editor's fallback class. Read direct text children, but still reject
+        // generic labels and controls through the normal candidate filter.
+        source.querySelectorAll?.(':scope > span, :scope > a').forEach(element => {
+            addName(element.textContent);
+        });
+
+        addId(image?.dataset?.categoryId);
+        addId(image?.getAttribute('data-category-id'));
+        addId(image?.getAttribute('data-id'));
+        addId(image?.getAttribute('src'));
+        addId(image?.currentSrc);
+        addName(image?.dataset?.categoryName);
+        addName(image?.getAttribute('data-category-name'));
+        addName(image?.getAttribute('alt'));
+        addName(image?.getAttribute('title'));
+    }
+
+    let categoryId = idCandidates[0] || '';
+    let categoryRecord = findDokkanCategoryRecord(categoryId);
+    const importedName = nameCandidates.find(name => !isGenericDokkanCategoryText(name)) || '';
+
+    // Some published JSON stores the category name directly. Resolve that
+    // name back to its record when possible so the label image can still use
+    // the correct numeric ID.
+    if (!categoryRecord && importedName) {
+        const categories = window.DB?.categories;
+        const categoryValues = Array.isArray(categories) ? categories : Object.values(categories || {});
+        categoryRecord = categoryValues.find(category =>
+            normalizeDokkanCategoryText(category?.name).toLocaleLowerCase() === importedName.toLocaleLowerCase()
+        ) || null;
+        if (categoryRecord) categoryId = readDokkanCategoryId(categoryRecord.id);
+    }
+    const databaseName = normalizeDokkanCategoryText(categoryRecord?.name);
+    const categoryName = importedName || databaseName || (categoryId ? `Category ${categoryId}` : '');
+    const categorySource = isDomNode
+        ? (image?.getAttribute('src') || image?.currentSrc || '')
+        : normalizeDokkanCategoryText(source?.imageSrc ?? source?.image ?? source?.src);
+
+    return {
+        id: categoryId,
+        name: categoryName,
+        source: categorySource,
+        hasResolvedName: Boolean(categoryName && !isGenericDokkanCategoryText(categoryName))
+    };
+}
+
+function getEditorCategoryItems(container) {
+    if (!container) return [];
+
+    let items = Array.from(container.querySelectorAll?.('.editor-category-item') || []);
+    if (!items.length) {
+        // Imported markup may omit the editor class. Each category label is
+        // represented by one image, so its nearest parent is the safest item
+        // boundary even when an export added an extra wrapper.
+        items = Array.from(container.querySelectorAll?.('img') || [])
+            .map(image => image.closest?.('.editor-category-item') || image.parentElement)
+            .filter(Boolean);
+    }
+    if (!items.length) {
+        items = Array.from(container.children || [])
+            .filter(item => item.dataset?.categoryName || item.querySelector?.('.category-name-fallback'));
+    }
+
+    return Array.from(new Set(items));
+}
+
+window.resolveDokkanCategoryDisplay = resolveDokkanCategoryDisplay;
+window.getEditorCategoryItems = getEditorCategoryItems;
+
+// Count unique characters represented by a category. Official card data uses
+// numeric category IDs, while custom/imported data may carry category names;
+// support both forms and de-duplicate transformed cards by character_id (or
+// the safest available parent/card identity).
+window.getDokkanCategoryCharacterCount = function(categoryId, categoryName) {
+    const hubCount = window.getCardHubCategoryCharacterCount?.(categoryId, categoryName);
+    if (Number.isFinite(hubCount)) return hubCount;
+
+    const rawCards = window.DB?.cards;
+    const cards = Array.isArray(rawCards) ? rawCards : Object.values(rawCards || {});
+    if (!cards.length) return 0;
+
+    const targetId = readDokkanCategoryId(categoryId);
+    const targetName = normalizeDokkanCategoryText(categoryName).toLocaleLowerCase();
+    const asArray = value => Array.isArray(value)
+        ? value
+        : (value === undefined || value === null || value === '' ? [] : [value]);
+    const sameName = value => normalizeDokkanCategoryText(
+        typeof value === 'object'
+            ? (value?.name ?? value?.category_name ?? value?.categoryName ?? '')
+            : value
+    ).toLocaleLowerCase() === targetName;
+    const matchingCharacters = new Set();
+
+    cards.forEach(card => {
+        if (!card) return;
+        const categoryValues = [
+            ...asArray(card.categories),
+            ...asArray(card.category_ids),
+            ...asArray(card.categoryIds)
+        ];
+        const categoryNames = [
+            ...asArray(card.category_names),
+            ...asArray(card.categoryNames)
+        ];
+        const matchesId = targetId && categoryValues.some(value => readDokkanCategoryId(value) === targetId);
+        const matchesName = targetName && (
+            categoryValues.some(sameName) || categoryNames.some(sameName)
+        );
+        if (!matchesId && !matchesName) return;
+
+        const identity = card.character_id ?? card.characterId ?? card.characterID ??
+            card.parent_id ?? card.parentId ?? card.id;
+        if (identity !== undefined && identity !== null && String(identity).trim()) {
+            matchingCharacters.add(String(identity));
+        }
+    });
+
+    return matchingCharacters.size;
+};
+
+window.normalizeEditorCategoryItems = function(container = document.getElementById('card-category-container')) {
+    getEditorCategoryItems(container).forEach(item => {
+        const resolved = resolveDokkanCategoryDisplay(item);
+        if (!resolved.name) return;
+
+        item.classList.add('editor-category-item');
+        if (resolved.id) item.dataset.categoryId = resolved.id;
+        item.dataset.categoryName = resolved.name;
+
+        const image = item.querySelector?.('img');
+        if (image) image.alt = resolved.name;
+
+        let fallback = item.querySelector?.('.category-name-fallback');
+        if (!fallback) {
+            fallback = document.createElement('span');
+            fallback.className = 'category-name-fallback';
+            fallback.style.display = 'none';
+            item.appendChild(fallback);
+        }
+        fallback.textContent = resolved.name;
+    });
 };
 
 function getCardFolderId(card) {
@@ -322,13 +750,15 @@ function resolveCardAssets(card) {
         };
     }
 
+    const basePrefix = './';
+
     return {
-        bgUrl: `assets/card/${bgFolderId}/card_${bgFolderId}_bg.png`,
-        charUrl: `assets/card/${folderId}/card_${folderId}_character.png`,
-        effectUrl: `assets/card/${folderId}/card_${folderId}_effect.png`,
-        thumbUrl: `assets/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`,
-        parentThumbUrl: `assets/thumb/card_${parentFolderId}_thumb/card_${parentFolderId}_thumb.png`,
-        artUrl: `assets/card/${folderId}/card_${folderId}_character.png`
+        bgUrl: `${basePrefix}assets/card-art/cards/${bgFolderId}/card_${bgFolderId}_bg.png`,
+        charUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_character.png`,
+        effectUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_effect.png`,
+        thumbUrl: `${basePrefix}assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`,
+        parentThumbUrl: `${basePrefix}assets/card-art/thumbnails/card_${parentFolderId}_thumb/card_${parentFolderId}_thumb.png`,
+        artUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_character.png`
     };
 }
 
@@ -342,17 +772,187 @@ function getCardClassAndType(elementId) {
     };
 }
 
+// Banner provenance belongs to an entire physical awakening route, not to a
+// single rarity within it. The game stores SSR -> TUR -> LR as separate card
+// IDs, so looking only at an SSR can otherwise label a Dokkan Festival unit as
+// free-to-play. Transformed forms are deliberately excluded because they can
+// have their own provenance.
+const AWAKENING_FAMILY_TAG_PRIORITY = [
+    'DOKKAN FESTIVAL EXCLUSIVE',
+    'PRIME BATTLE (F2P LR)',
+    'LEGENDARY SUMMON CARNIVAL',
+    'GENERAL POOL (BANNER UNIT)',
+    'FREE TO PLAY (LR)',
+    'FREE TO PLAY'
+];
+
+let awakeningFamilyTagCache = null;
+
+function normalizeCardIdForFamily(cardId) {
+    const parsed = parseInt(cardId || 0, 10);
+    return parsed > 10000000 ? Math.floor(parsed / 10) : parsed;
+}
+
+function isTransformCardId(cardId) {
+    const normalizedId = normalizeCardIdForFamily(cardId);
+    return normalizedId >= 4000000 && normalizedId < 5000000;
+}
+
+function isFamilyLrCard(card) {
+    return parseInt(card?.rarity || 0, 10) === 5
+        || parseInt(card?.max_level || 0, 10) >= 150
+        || [77, 99].includes(parseInt(card?.cost || 0, 10));
+}
+
+function getLeaderCategoryCount(card) {
+    const leaderId = parseInt(card?.lead_id || card?.leader_skill_set_id || 0, 10);
+    const leader = leaderId && DB.leaders ? (DB.leaders[String(leaderId)] || DB.leaders[leaderId]) : null;
+    const description = String(leader?.description || leader?.effect || '').replace(/\s+/g, ' ');
+    const beforeStatClause = description.split(/\bcategory\s+ki\b/i)[0];
+    const categoryNames = beforeStatClause.match(/"[^"]+"/g) || [];
+    return new Set(categoryNames.map(name => name.toLowerCase())).size;
+}
+
+function getAwakeningFamilyTag(card) {
+    if (!card || !window.DB || !Array.isArray(DB.cards) || !Array.isArray(DB.awakeningRoutes)) return '';
+
+    const startId = normalizeCardIdForFamily(card.id);
+    if (!startId || isTransformCardId(startId)) return '';
+
+    if (!awakeningFamilyTagCache) {
+        const adjacent = new Map();
+        const addEdge = (left, right) => {
+            if (!left || !right || left === right || isTransformCardId(left) || isTransformCardId(right)) return;
+            if (!adjacent.has(left)) adjacent.set(left, new Set());
+            if (!adjacent.has(right)) adjacent.set(right, new Set());
+            adjacent.get(left).add(right);
+            adjacent.get(right).add(left);
+        };
+
+        DB.awakeningRoutes.forEach(route => {
+            addEdge(
+                normalizeCardIdForFamily(route.card_id),
+                normalizeCardIdForFamily(route.awaked_card_id)
+            );
+        });
+
+        const cardTags = new Map();
+        const cardData = new Map();
+        DB.cards.forEach(candidate => {
+            const candidateId = normalizeCardIdForFamily(candidate.id);
+            if (!candidateId || isTransformCardId(candidateId)) return;
+            const tag = String(candidate.tag || '').trim().toUpperCase();
+            if (AWAKENING_FAMILY_TAG_PRIORITY.includes(tag)) {
+                if (!cardTags.has(candidateId)) cardTags.set(candidateId, new Set());
+                cardTags.get(candidateId).add(tag);
+            }
+            if (!cardData.has(candidateId)) cardData.set(candidateId, []);
+            cardData.get(candidateId).push(candidate);
+        });
+
+        awakeningFamilyTagCache = { adjacent, cardTags, cardData, resolved: new Map() };
+    }
+
+    const cached = awakeningFamilyTagCache.resolved.get(startId);
+    if (cached !== undefined) return cached;
+
+    const visited = new Set([startId]);
+    const pending = [startId];
+    const tags = new Set();
+    const familyCards = [];
+    while (pending.length) {
+        const current = pending.pop();
+        const currentTags = awakeningFamilyTagCache.cardTags.get(current);
+        if (currentTags) currentTags.forEach(tag => tags.add(tag));
+        const currentCards = awakeningFamilyTagCache.cardData.get(current);
+        if (currentCards) familyCards.push(...currentCards);
+        const neighbors = awakeningFamilyTagCache.adjacent.get(current);
+        if (!neighbors) continue;
+        neighbors.forEach(neighbor => {
+            if (!visited.has(neighbor)) {
+                visited.add(neighbor);
+                pending.push(neighbor);
+            }
+        });
+    }
+
+    const lrCards = familyCards.filter(isFamilyLrCard);
+    const lrTags = new Set(lrCards.map(candidate => String(candidate.tag || '').trim().toUpperCase()));
+    let resolvedTag = '';
+
+    if (lrCards.length) {
+        // Cost alone marks many pre-LR SSR/TUR cards as DFE in an older export.
+        // For a route that reaches LR, use the final LR evidence instead. A
+        // three-category leader is an extra DFE signal; Yellow Coin/Carnival
+        // LRs never use that three-category leader format.
+        const hasDfeLrEvidence = lrCards.some(candidate => {
+            const stem = Math.floor(normalizeCardIdForFamily(candidate.id) / 10);
+            return String(candidate.tag || '').trim().toUpperCase() === 'DOKKAN FESTIVAL EXCLUSIVE'
+                || hasCuratedDfeLrStem(stem)
+                || getLeaderCategoryCount(candidate) >= 3;
+        });
+        if (hasDfeLrEvidence) resolvedTag = 'DOKKAN FESTIVAL EXCLUSIVE';
+        else resolvedTag = AWAKENING_FAMILY_TAG_PRIORITY.find(tag => lrTags.has(tag)) || '';
+    }
+
+    if (!resolvedTag) resolvedTag = AWAKENING_FAMILY_TAG_PRIORITY.find(tag => tags.has(tag)) || '';
+    // Cache each member of this connected awakening route for later cards.
+    visited.forEach(cardId => awakeningFamilyTagCache.resolved.set(cardId, resolvedTag));
+    return resolvedTag;
+}
+
 function getCardUnitTag(card) {
     if (!card) return "CHARACTER DETAILS";
 
-    const rootId = getRootParentId(card);
+    const cardId = parseInt(card.id || 0, 10);
+    const normalizedCardId = cardId > 10000000 ? Math.floor(cardId / 10) : cardId;
+    // A transformed form can have its own banner classification.  Following
+    // parent_id here incorrectly replaces that classification with the unit
+    // which happens to own the transform (for example, SSB Vegito inherited
+    // Super Saiyan Vegeta's general-pool tag).
+    const rootId = normalizedCardId >= 4000000 && normalizedCardId < 5000000
+        ? normalizedCardId
+        : getRootParentId(card);
     const rootCard = (window.DB && Array.isArray(DB.cards)) 
         ? (DB.cards.find(c => parseInt(c.id, 10) === rootId) || card) 
         : card;
 
+    // The game database does not preserve historical banner provenance. Keep
+    // only confirmed exceptions here; this corrects data exported before the
+    // extractor's expanded DFE-LR stem list is run again.
+    const confirmedTagByStem = {
+        101862: 'DOKKAN FESTIVAL EXCLUSIVE', // 5th Anniversary AGL Gogeta
+        101865: 'DOKKAN FESTIVAL EXCLUSIVE', // 5th Anniversary STR Vegito
+    };
+    const exactStem = Math.floor(normalizedCardId / 10);
+    const physicalStem = Math.floor(rootId / 10);
+    // transform_parent_id is written only after strict identity validation by
+    // the extractor. Unlike the older generic parent_id, it is safe to use
+    // for a confirmed banner-provenance override on an alternate form.
+    const transformParentId = parseInt(card.transform_parent_id || 0, 10);
+    const normalizedTransformParentId = transformParentId > 10000000
+        ? Math.floor(transformParentId / 10)
+        : transformParentId;
+    const transformStem = Math.floor(normalizedTransformParentId / 10);
+    const confirmedTag = confirmedTagByStem[exactStem]
+        || confirmedTagByStem[physicalStem]
+        || confirmedTagByStem[transformStem];
+    if (confirmedTag) return confirmedTag;
+
+    const awakeningFamilyTag = getAwakeningFamilyTag(card);
+    if (awakeningFamilyTag) return awakeningFamilyTag;
+
     if (rootCard && rootCard.tag && typeof rootCard.tag === 'string' && rootCard.tag.trim() && rootCard.tag !== 'CHARACTER DETAILS') {
         const t = rootCard.tag.trim();
-        if (t !== 'SUMMONABLE UNIT') return t;
+        const leader = findLeaderObj(rootCard, 'base');
+        const leaderText = String(leader?.description || leader?.effect || rootCard.leader_skill || '').toLowerCase();
+        const staleF2pClassification = /free to play/i.test(t)
+            && isCardLR(rootCard)
+            // A full 200% category leader is a summonable LR.  This catches
+            // corrupt hand-maintained stem lists without downgrading genuine
+            // event LRs with low-percentage leaders.
+            && /\b(?:170|180|200)%/.test(leaderText);
+        if (t !== 'SUMMONABLE UNIT' && !staleF2pClassification) return t;
     }
 
     const isLR = isCardLR(card);
@@ -389,7 +989,7 @@ function getCardUnitTag(card) {
 
         const isDfeLead = rawLeader.includes('plus an additional') || (rawLeader.includes('170%') && (rawLeader.includes('30%') || rawLeader.includes('50%')));
 
-        if (DFE_LR_STEMS.has(stemCurrent) || DFE_LR_STEMS.has(stemParent) || isDfeLead) {
+        if (hasCuratedDfeLrStem(stemCurrent) || hasCuratedDfeLrStem(stemParent) || isDfeLead) {
             return "DOKKAN FESTIVAL EXCLUSIVE";
         }
 
@@ -493,15 +1093,25 @@ function getCardExactReleaseDate(card, mode = 'base') {
         if (validSeza.length > 0) return validSeza[validSeza.length - 1];
     }
 
+    const fallback = card.release_date || card.open_at;
+    if (fallback && typeof fallback === 'string' && fallback !== 'TBD' && !fallback.startsWith('2010') && !fallback.startsWith('1970')) {
+        return fallback;
+    }
+
     return "TBD";
 }
 
 function formatESTDateWithTime(utcDateStr) {
     if (!utcDateStr || utcDateStr === 'TBD' || utcDateStr.trim() === '') return "TBD";
     try {
-        const cleanedStr = utcDateStr.replace(" ", "T") + (utcDateStr.includes("Z") ? "" : "Z");
-        const date = new Date(cleanedStr);
-        if (isNaN(date.getTime())) return "TBD";
+        const raw = String(utcDateStr).trim();
+        if (/EST|EDT/i.test(raw)) return raw;
+        const cleanedStr = raw.replace(" ", "T") + (raw.includes("Z") ? "" : "Z");
+        let date = new Date(cleanedStr);
+        if (isNaN(date.getTime())) {
+            date = new Date(raw);
+        }
+        if (isNaN(date.getTime())) return raw;
         return date.toLocaleString("en-US", { 
             timeZone: "America/New_York", 
             year: "numeric", 
@@ -513,7 +1123,7 @@ function formatESTDateWithTime(utcDateStr) {
             hour12: true 
         }) + " EST";
     } catch (e) { 
-        return "TBD"; 
+        return String(utcDateStr || "TBD"); 
     }
 }
 
@@ -739,7 +1349,19 @@ function isCardLR(card) {
     const cid = typeof card === 'number' ? card : parseInt(card.id || 0, 10);
     const normId = cid > 10000000 ? Math.floor(cid / 10) : cid;
 
-    // Transformed forms (4000000..4999999): inherit from parent
+    // The inspected form is authoritative.  A transformed card can be an LR
+    // even when the physical unit referenced by parent_id is only a TUR (for
+    // example the anniversary Blue Vegito/Gogeta transformations).  Looking
+    // at the parent first made those real LRs fall into the TUR sticker path.
+    const maxLvl = parseInt(card.max_level || card.lv_max || card.max_lv || 0, 10);
+    const cost = parseInt(card.cost || 0, 10);
+    const rarityStr = String(card.rarity || '').toUpperCase();
+    if (rarityStr === 'LR' || maxLvl >= 150 || cost === 77 || cost === 99) {
+        return true;
+    }
+
+    // Some older exports omit the transformed form's final rarity data.  Only
+    // then use its parent as a conservative fallback.
     if (normId >= 4000000 && normId < 5000000) {
         const rootId = getRootParentId(card);
         if (rootId && window.DB && Array.isArray(DB.cards)) {
@@ -750,46 +1372,50 @@ function isCardLR(card) {
         }
     }
 
-    const maxLvl = parseInt(card.max_level || card.lv_max || card.max_lv || 0, 10);
-    const cost = parseInt(card.cost || 0, 10);
-    const rarityStr = String(card.rarity || '').toUpperCase();
-
-    // Only this exact card
-    return rarityStr === 'LR' || maxLvl >= 150 || cost === 77 || cost === 99;
+    return false;
 }
 
-function buildComposedIcon(c, usePlainType = false, forceAwakenedMode = null) {
+function buildComposedIcon(c, usePlainType = false, forceAwakenedMode = null, extraClass = '') {
     const { thumbUrl } = resolveCardAssets(c);
     const { cardClass: cClass, cardType: cType } = getCardClassAndType(c.element !== undefined ? c.element : c.attribute);
     
     const exactRarity = getCardExactRarity(c);
     const isLR = exactRarity === 'LR';
     const isTUR = exactRarity === 'TUR';
-
     let raritySrc = `${CENTRAL_ASSET_URL}rarity_ssr_abs.png`;
     if (isLR) raritySrc = `${CENTRAL_ASSET_URL}rarity_lr_abs.png`;
     else if (isTUR) raritySrc = `${CENTRAL_ASSET_URL}rarity_TUR_abs.png`;
-
-    const typeSrc = (exactRarity === 'SSR' || usePlainType) ? `${CENTRAL_ASSET_URL}type_${cType}.png` : `${CENTRAL_ASSET_URL}${cClass}_type_${cType}.png`;
+    const typeSrc = (exactRarity === 'SSR' || usePlainType)
+        ? `${CENTRAL_ASSET_URL}type_${cType}.png`
+        : `${CENTRAL_ASSET_URL}${cClass}_type_${cType}.png`;
     const frameSrc = `${CENTRAL_ASSET_URL}frame_${cType}.png`;
 
     const isSEZA = forceAwakenedMode === 'seza' || (forceAwakenedMode === null && isSezaCard(c));
     const isEZA = isSEZA || forceAwakenedMode === 'eza' || (forceAwakenedMode === null && isEzaCard(c));
 
-    const lrSpinHtml = isLR ? `<img src="${CENTRAL_ASSET_URL}lr_spin_dial.png" class="lr-spin-dial">` : '';
+    const isCleanForm = Boolean(extraClass && extraClass.includes('abs-clean-form-icon'));
+    const lrSpinHtml = (!isCleanForm && isLR) ? `<img src="${CENTRAL_ASSET_URL}lr_spin_dial.png" class="lr-spin-dial">` : '';
     
-    const lrLightningHtml = isLR ? `
+    const lrLightningHtml = (!isCleanForm && isLR) ? `
         <video class="lightning-overlay" autoplay muted loop playsinline style="--lightning-color: ${lightningColors[cType] || 'rgb(0, 150, 255)'};">
             <source src="${CENTRAL_ASSET_URL}lightningfx.webm" type="video/webm">
         </video>` : '';
 
-    let ezaIconSrc = isSEZA ? `${CENTRAL_ASSET_URL}superza_abs.png` : (isEZA && forceAwakenedMode !== 'base' ? `${CENTRAL_ASSET_URL}eza_abs.png` : null);
-    const ezaHtml = ezaIconSrc ? `<img src="${ezaIconSrc}" class="eza-icon">` : '';
+    const ezaIconSrc = isSEZA
+        ? `${CENTRAL_ASSET_URL}superza_abs.png`
+        : (isEZA && forceAwakenedMode !== 'base' ? `${CENTRAL_ASSET_URL}eza_abs.png` : '');
+    const ezaHtml = (ezaIconSrc && isEZA && forceAwakenedMode !== 'base')
+        ? `<img src="${ezaIconSrc}" class="eza-icon" alt="${isSEZA ? 'SUPER EZA' : 'EZA'}">`
+        : '';
     const sezaGlowClass = isSEZA ? 'seza-glow-card' : '';
     const sezaFlameCanvasHtml = isSEZA ? `<canvas class="seza-lwf-border-canvas" data-seza-type="${cType}"></canvas>` : '';
 
+    const iconClassName = ['abs-composed-icon', sezaGlowClass, extraClass]
+        .filter(Boolean)
+        .join(' ');
+
     return `
-        <div class="abs-composed-icon ${sezaGlowClass}" data-card-type="${cType}" ${isSEZA ? `data-seza="true" data-type="${cType}"` : ''}>
+        <div class="${iconClassName}" data-card-type="${cType}" ${isSEZA ? `data-seza="true" data-type="${cType}"` : ''}>
             <img class="card-frame" src="${frameSrc}">
             ${lrSpinHtml}
             ${lrLightningHtml}
@@ -1081,6 +1707,220 @@ function renderPassiveIconsStrip(passiveText, card = null) {
     `;
 }
 
+function getAbsCleanPassiveTotals(rawText) {
+    const totals = {
+        atk: 0,
+        def: 0,
+        damageReduction: 0,
+        evasion: 0,
+        critical: 0
+    };
+    const explicit = new Set();
+    const chanceMaximums = { evasion: 0, critical: 0 };
+    const source = String(rawText ?? '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/\{[^}]*\}/g, ' ')
+        .replace(/\u00a0/g, ' ');
+    const lines = source.split(/\r?\n/)
+        .map(line => line.replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+
+    const rateKeys = new Set(['damageReduction', 'evasion', 'critical']);
+    const add = (key, value, markExplicit = true) => {
+        const numericValue = Number.parseFloat(String(value).replace(/,/g, ''));
+        if (!Number.isFinite(numericValue) || numericValue < 0) return;
+        totals[key] += numericValue;
+        if (markExplicit) explicit.add(key);
+    };
+
+    const targetsFor = (context) => {
+        const lower = String(context || '').toLowerCase();
+        const targets = [];
+        if (/\batk\b/.test(lower)) targets.push('atk');
+        if (/\bdef\b/.test(lower)) targets.push('def');
+        if (
+            /damage\s+reduction(?:\s+rate)?/.test(lower) ||
+            /reduces?\s+(?:damage|damage\s+received)/.test(lower) ||
+            /damage\s+(?:received|taken)\s+(?:is\s+)?(?:reduced|decreased)/.test(lower) ||
+            /(?:receives?|takes?)\s+.*?\bless\s+damage\b/.test(lower)
+        ) {
+            targets.push('damageReduction');
+        }
+        if (/evad|dodg/.test(lower)) targets.push('evasion');
+        if (/\bcritical\b|\bcrit\b/.test(lower)) targets.push('critical');
+        return targets;
+    };
+
+    const contextBefore = (line, index) => {
+        const prefix = line.slice(0, index);
+        const delimiters = [...prefix.matchAll(/[,;]|\b(?:and|plus|also|or|as well as)\b/gi)];
+        const last = delimiters[delimiters.length - 1];
+        return last ? prefix.slice(last.index + last[0].length) : prefix;
+    };
+
+    const contextAfter = (line, index) => {
+        const suffix = line.slice(index);
+        const nextDelimiter = suffix.search(/[,;]|\b(?:and|plus|also|or|as well as)\b/i);
+        return nextDelimiter >= 0 ? suffix.slice(0, nextDelimiter) : suffix;
+    };
+
+    const addTargets = (line, match, targets, lastAddByKey) => {
+        const numericValue = Number.parseFloat(String(match[1]).replace(/,/g, ''));
+        if (!Number.isFinite(numericValue) || numericValue < 0 || !targets.length) return;
+
+        // “ATK 10% (up to 50%)” describes a 50% maximum, not 10% + 50%.
+        // Replace only the immediately preceding value for the same stat on
+        // this line; independent clauses remain additive.
+        const isUpperBound = /\bup\s+to\s*$/i.test(line.slice(0, match.index).trim());
+        targets.forEach(key => {
+            if (isUpperBound) {
+                const previous = lastAddByKey.get(key);
+                if (previous && match.index - previous.index <= 120) totals[key] -= previous.value;
+            }
+            add(key, numericValue);
+            lastAddByKey.set(key, { index: match.index, value: numericValue });
+        });
+    };
+
+    const percentPattern = /([+-]?\d+(?:,\d{3})*(?:\.\d+)?)\s*%/g;
+    lines.forEach(line => {
+        const matches = [...line.matchAll(percentPattern)];
+        let previousTargets = [];
+        const lastAddByKey = new Map();
+        matches.forEach(match => {
+            const before = contextBefore(line, match.index);
+            const after = contextAfter(line, match.index + match[0].length);
+            let targets = targetsFor(before);
+
+            // “50% chance to evade” puts the target after the percentage. Only
+            // special rates use this suffix form so condition percentages such
+            // as “HP is 50% or less, ATK 200%” cannot become ATK 50%.
+            targetsFor(after)
+                .filter(key => rateKeys.has(key))
+                .forEach(key => {
+                    if (!targets.includes(key)) targets.push(key);
+                });
+
+            // When one percentage follows a coordinated list, that one value
+            // belongs to each listed special rate: “critical, evasion & damage
+            // reduction rate 25%”. Do not apply this broad rule to a line with
+            // multiple percentages, where each clause has its own value.
+            if (matches.length === 1) {
+                targetsFor(line).filter(key => rateKeys.has(key)).forEach(key => {
+                    if (!targets.includes(key)) targets.push(key);
+                });
+            }
+
+            // Preserve the previous target for abbreviated clauses such as
+            // “ATK & DEF +15% and an additional +10%”.
+            if (!targets.length && /additional|another|further|more/i.test(before)) {
+                targets = previousTargets.slice();
+            }
+
+            addTargets(line, match, targets, lastAddByKey);
+            if (targets.length) previousTargets = targets;
+        });
+    });
+
+    const chanceValue = (line, key) => {
+        const lower = line.toLowerCase();
+        if (key === 'critical') {
+            if (/all\s+attacks?\s+(?:become|are)\s+critical|performs?\s+(?:a\s+)?critical\s+hit/.test(lower)) return 100;
+            if (!/critical|crit/.test(lower)) return 0;
+        } else {
+            if (/guaranteed\s+to\s+(?:evade|dodge)|evades?\s+(?:the\s+)?enemy/.test(lower)) return 100;
+            if (!/evad|dodg/.test(lower)) return 0;
+        }
+        if (/great\s+chance/.test(lower)) return 70;
+        if (/high\s+chance/.test(lower)) return 50;
+        if (/medium\s+chance/.test(lower)) return 30;
+        if (/low\s+chance/.test(lower)) return 20;
+        if (/rare\s+chance/.test(lower)) return 10;
+        return /\bchance\b/.test(lower) ? 30 : 0;
+    };
+
+    // Chance-based effects are alternatives, not percentages to multiply or
+    // blindly add once for every repeated phrase. Keep the strongest chance
+    // descriptor and let explicit numeric rates remain additive below.
+    lines.forEach(line => {
+        chanceMaximums.critical = Math.max(chanceMaximums.critical, chanceValue(line, 'critical'));
+        chanceMaximums.evasion = Math.max(chanceMaximums.evasion, chanceValue(line, 'evasion'));
+    });
+    // An explicit numeric rate is authoritative. A plain “chance” phrase is
+    // only a fallback when that stat has no numeric percentage of its own.
+    totals.critical = Math.min(100, explicit.has('critical')
+        ? totals.critical
+        : Math.max(totals.critical, chanceMaximums.critical));
+    totals.evasion = Math.min(100, explicit.has('evasion')
+        ? totals.evasion
+        : Math.max(totals.evasion, chanceMaximums.evasion));
+    totals.damageReduction = Math.min(100, totals.damageReduction);
+
+    return totals;
+}
+
+// Read the editor's effect text instead of parsing the rendered card markup.
+// This prevents summary totals from counting decorative headers, hidden copies,
+// or duplicated DOM fragments created while switching card themes.
+window.getAbsCleanPassiveSource = function() {
+    const sidebar = document.getElementById('sidebar-sections-area');
+    const editorBodies = Array.from(sidebar?.querySelectorAll('textarea[id^="input-sec-"]') || [])
+        .map(textarea => String(textarea.value || textarea.textContent || textarea.getAttribute('value') || '').trim())
+        .filter(value => value && !/^-\s*new effect\.\.\.$/i.test(value));
+    if (editorBodies.length) return editorBodies.join('\n');
+
+    const listText = container => Array.from(container?.querySelectorAll('li') || [])
+        .map(item => String(item.textContent || '').replace(/\s+/g, ' ').trim())
+        .filter(Boolean);
+    const renderedItems = listText(document.getElementById('abs-passive-container'));
+    if (renderedItems.length) return renderedItems.join('\n');
+
+    const legacyItems = listText(document.getElementById('card-passive-container'));
+    if (legacyItems.length) return legacyItems.join('\n');
+
+    return document.getElementById('abs-passive-container')?.innerText ||
+        document.getElementById('card-passive-container')?.innerText || '';
+};
+
+function renderAbsCleanPassiveSummary(rawText) {
+    const text = String(rawText ?? '').trim();
+    if (!text) return '';
+
+    const totals = getAbsCleanPassiveTotals(text);
+    const items = [
+        ['ATK', totals.atk, true],
+        ['DEF', totals.def, true],
+        ['DMG RED', totals.damageReduction, false],
+        ['DODGE', totals.evasion, false],
+        ['CRIT', totals.critical, false]
+    ];
+
+    return `
+        <div class="abs-passive-summary-grid">
+            ${items.map(([label, value, signed]) => `
+                <div class="abs-passive-summary-item" data-stat="${label.toLowerCase().replace(/\s+/g, '-')}">
+                    <span>${label}</span>
+                    <strong>${signed ? '+' : ''}${Math.round(value)}%</strong>
+                </div>
+            `).join('')}
+        </div>
+    `;
+}
+
+window.syncAbsCleanPassiveSummary = function(rawText = null) {
+    const summary = document.getElementById('abs-passive-summary');
+    if (!summary) return;
+
+    const isClean = document.body?.classList.contains('theme-abs-clean');
+    const fallback = window.getAbsCleanPassiveSource?.() || '';
+    const source = rawText === null || rawText === undefined ? fallback : rawText;
+    const html = isClean ? renderAbsCleanPassiveSummary(source) : '';
+    summary.innerHTML = html;
+    summary.hidden = !html;
+    window.syncAbsCleanAbilityDockPlacement?.();
+};
+
 (function setupGlobalFloatingTooltip() {
     if (typeof document === 'undefined') return;
     let tooltipEl = null;
@@ -1129,7 +1969,9 @@ function renderPassiveIconsStrip(passiveText, card = null) {
 
     document.addEventListener('mouseout', function(e) {
         const badge = e.target.closest('[data-tooltip]');
-        if (badge) {
+        if (!badge) return;
+        if (e.relatedTarget && badge.contains(e.relatedTarget)) return;
+        if (tooltipEl) {
             tooltipEl.style.opacity = '0';
             tooltipEl.style.display = 'none';
         }
@@ -1343,3 +2185,804 @@ window.getSaIconUrl = getSaIconUrl;
 window.getSaCategoryName = getSaCategoryName;
 window.detectPassiveSkillIcons = detectPassiveSkillIcons;
 window.renderPassiveIconsStrip = renderPassiveIconsStrip;
+
+// Keep the live HP/ATK/DEF summary outside the clean card-art container as its
+// own side-column surface. In clean mode it follows the complete art dock so
+// the Stats panel is visibly below the artwork while the Card Art/Animation
+// controls remain owned by the dock itself.
+window.syncAbsCleanStatsAndArtPlacement = function() {
+    const statsBox = document.getElementById('abs-stats-box');
+    const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
+    const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
+    const categoryBox = document.getElementById('abs-category-container')?.closest('.abs-box');
+    const artDock = sideCol?.querySelector(':scope > #abs-art-dock-wrapper') ||
+        document.getElementById('abs-art-dock-wrapper');
+    const isClean = document.body?.classList.contains('theme-abs-clean');
+
+    if (!statsBox || !sideCol) return;
+
+    // Card view does not run the editor's header-composition pass, so keep a
+    // safe native home here as well. This lets the stats shell move into the
+    // clean utility column and return without ever creating a DOM cycle.
+    if (!window.__absCleanStatsHome && !window.__absCleanStatsPlacementHome) {
+        const nativeParent = statsBox.parentElement;
+        if (nativeParent && nativeParent !== statsBox && !statsBox.contains(nativeParent)) {
+            window.__absCleanStatsPlacementHome = {
+                parent: nativeParent,
+                next: statsBox.nextElementSibling
+            };
+        }
+    }
+
+    if (!isClean) {
+        statsBox.classList.remove('abs-clean-stats-above-art', 'abs-clean-stats-under-art');
+        statsBox.classList.remove('abs-clean-stats-above-categories');
+        const savedHome = window.__absCleanStatsHome || window.__absCleanStatsPlacementHome;
+        const restoreParent = savedHome?.parent?.isConnected ? savedHome.parent : sideCol;
+        if (restoreParent && restoreParent !== statsBox && !statsBox.contains(restoreParent) && statsBox.parentElement !== restoreParent) {
+            const restoreAnchor = savedHome?.next &&
+                savedHome.next !== statsBox &&
+                savedHome.next.parentElement === restoreParent &&
+                !statsBox.contains(savedHome.next)
+                ? savedHome.next
+                : null;
+            try { restoreParent.insertBefore(statsBox, restoreAnchor); }
+            catch (error) { try { restoreParent.appendChild(statsBox); } catch (fallbackError) {} }
+        }
+        sideCol.style.removeProperty('--abs-clean-art-flow-offset-y');
+        artDock?.style.removeProperty('--abs-clean-stats-dock-height');
+        return;
+    }
+
+    // A stale cached layout can briefly leave the art dock nested inside the
+    // old Stats shell or portrait stage. Detach that invalid shape before
+    // moving Stats, otherwise the art is not a real sibling and the panel can
+    // never land directly below it. The guard also prevents inserting an
+    // ancestor into its own descendant during hot reloads.
+    if (artDock && artDock.parentElement !== sideCol && !artDock.contains(sideCol)) {
+        sideCol.appendChild(artDock);
+    }
+
+    // The clean utility column owns Stats, Categories, and Links. Put Stats
+    // directly above Categories once that column exists; Links remains in
+    // its established section below Categories.
+    if (categoryLinksColumn && categoryBox && categoryBox.parentElement === categoryLinksColumn &&
+        !statsBox.contains(categoryLinksColumn)) {
+        if (statsBox.parentElement !== categoryLinksColumn) {
+            categoryLinksColumn.insertBefore(statsBox, categoryBox);
+        } else if (statsBox.nextElementSibling !== categoryBox) {
+            categoryLinksColumn.insertBefore(statsBox, categoryBox);
+        }
+        statsBox.hidden = false;
+        statsBox.classList.remove('abs-clean-stats-under-art', 'abs-clean-stats-above-art');
+        statsBox.classList.add('abs-clean-stats-above-categories');
+        sideCol.style.removeProperty('--abs-clean-art-flow-offset-y');
+        artDock?.style.removeProperty('--abs-clean-stats-dock-height');
+        return;
+    }
+
+    // Stats is a direct sibling of the art dock. Put it immediately after the
+    // dock when that anchor is available; this keeps the DOM order explicit
+    // without ever inserting an ancestor into its own descendant.
+    const artAnchor = artDock?.parentElement === sideCol ? artDock : null;
+    const nextAfterArt = artAnchor?.nextElementSibling || null;
+    const safeNextAfterArt = nextAfterArt &&
+        nextAfterArt !== statsBox &&
+        nextAfterArt.parentElement === sideCol &&
+        !statsBox.contains(nextAfterArt)
+        ? nextAfterArt
+        : null;
+    if (statsBox.parentElement !== sideCol) {
+        if (artAnchor && !statsBox.contains(artAnchor)) sideCol.insertBefore(statsBox, safeNextAfterArt);
+        else sideCol.appendChild(statsBox);
+    } else if (artAnchor && statsBox !== nextAfterArt) {
+        sideCol.insertBefore(statsBox, safeNextAfterArt);
+    }
+
+    statsBox.classList.remove('abs-clean-stats-under-art');
+    statsBox.classList.remove('abs-clean-stats-above-categories');
+    statsBox.classList.add('abs-clean-stats-above-art');
+
+    // Stats has its own side-column footprint; it must not offset or resize the
+    // art surface inside the card container.
+    sideCol.style.removeProperty('--abs-clean-art-flow-offset-y');
+    artDock?.style.removeProperty('--abs-clean-stats-dock-height');
+};
+
+// Resolve the clean-only homes for the live passive utility pieces. In abs.clean
+// both the ability badges and the percentage totals sit in the top utility row
+// of the Passive Skill box, outside the title header. Keeping the native homes
+// lets the editor and published card layouts converge on the same DOM shape
+// without changing the other themes.
+window.ensureAbsCleanHeaderBadgeRail = function() {
+    const abilityDocks = document.getElementById('abs-clean-ability-docks');
+    const passiveSummary = document.getElementById('abs-passive-summary');
+    const passiveBox = document.getElementById('abs-passive-skill-box');
+    const passiveName = passiveBox?.querySelector(':scope > #abs-passive-name') ||
+        document.getElementById('abs-passive-name');
+    if (!passiveBox || !passiveName) return null;
+
+    const legacyRail = document.getElementById('abs-clean-header-badges-rail');
+    if (abilityDocks && !window.__absCleanAbilityDocksHome) {
+        const currentParent = abilityDocks.parentElement;
+        const wasCleanMoved = currentParent === legacyRail ||
+            currentParent === passiveName ||
+            currentParent === passiveBox;
+        const nativeParent = wasCleanMoved
+            ? (document.querySelector('#layout-abs-style .abs-header-left') ||
+                document.querySelector('#layout-abs-style .abs-side-col'))
+            : currentParent;
+        if (nativeParent && nativeParent !== passiveBox && !abilityDocks.contains(nativeParent)) {
+            const nativeNext = wasCleanMoved
+                ? (nativeParent.classList.contains('abs-header-left')
+                    ? nativeParent.firstElementChild
+                    : nativeParent.querySelector(':scope > #abs-stats-box'))
+                : abilityDocks.nextElementSibling;
+            window.__absCleanAbilityDocksHome = {
+                parent: nativeParent,
+                next: nativeNext
+            };
+        }
+    }
+
+    // The totals start in the Passive box in the native markup. Remember that
+    // home before moving them into the clean utility row, including the
+    // original header as the restore anchor.
+    if (passiveSummary && !window.__absCleanPassiveSummaryHome) {
+        const currentParent = passiveSummary.parentElement;
+        const wasCleanMoved = currentParent === passiveName;
+        const nativeParent = wasCleanMoved ? passiveBox : currentParent;
+        if (nativeParent && nativeParent !== passiveName && !passiveSummary.contains(nativeParent)) {
+            window.__absCleanPassiveSummaryHome = {
+                parent: nativeParent,
+                next: wasCleanMoved ? passiveName : passiveSummary.nextElementSibling
+            };
+        }
+    }
+
+    if (!document.body?.classList.contains('theme-abs-clean')) return passiveName;
+
+    const moveIntoPassiveTop = (node, anchor = passiveName) => {
+        if (!node || node === passiveName || node.contains(passiveBox)) return;
+        const safeAnchor = anchor && anchor.parentElement === passiveBox &&
+            anchor !== node && !node.contains(anchor)
+            ? anchor
+            : passiveName;
+        try {
+            passiveBox.insertBefore(node, safeAnchor);
+        } catch (error) {
+            try { passiveBox.appendChild(node); } catch (fallbackError) {}
+        }
+    };
+
+    // Keep the utility row above the title. The renderer can call this while
+    // either node is still in the old header, so insert the badge dock first,
+    // then put the totals immediately before the title, and finally repair the
+    // left-to-right order if both nodes were already direct children.
+    moveIntoPassiveTop(abilityDocks, passiveSummary?.parentElement === passiveBox
+        ? passiveSummary
+        : passiveName);
+    moveIntoPassiveTop(passiveSummary, passiveName);
+    if (abilityDocks?.parentElement === passiveBox && passiveSummary?.parentElement === passiveBox) {
+        try { passiveBox.insertBefore(abilityDocks, passiveSummary); } catch (error) {}
+    }
+
+    // Remove the obsolete middle-column shell after its live child has been
+    // safely relocated. This is also safe for stale cached clean markup.
+    legacyRail?.remove();
+    abilityDocks?.querySelectorAll(':scope > .abs-clean-header-badges-label')
+        .forEach(label => label.remove());
+    return passiveName;
+};
+
+// Keep both passive utility pieces as direct children at the top of the actual
+// Passive Skill box after every clean-mode layout pass. Several renderers update
+// Forms, Partners, or Stats independently, so one shared placement guard keeps
+// the top row out of the title header, art column, and obsolete rail.
+window.syncAbsCleanAbilityDockPlacement = function() {
+    const abilityDocks = document.getElementById('abs-clean-ability-docks');
+    const passiveSummary = document.getElementById('abs-passive-summary');
+    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const passiveBox = document.getElementById('abs-passive-skill-box');
+    if (!document.body?.classList.contains('theme-abs-clean')) {
+        const home = window.__absCleanAbilityDocksHome;
+        if (abilityDocks && home?.parent?.isConnected && abilityDocks.parentElement !== home.parent && !abilityDocks.contains(home.parent)) {
+            const anchor = home.next &&
+                home.next !== abilityDocks &&
+                home.next.parentElement === home.parent &&
+                !abilityDocks.contains(home.next)
+                ? home.next
+                : null;
+            try { home.parent.insertBefore(abilityDocks, anchor); }
+            catch (error) { try { home.parent.appendChild(abilityDocks); } catch (fallbackError) {} }
+        }
+        const summaryHome = window.__absCleanPassiveSummaryHome || {
+            parent: passiveBox,
+            next: passiveBox?.querySelector(':scope > #abs-passive-name')
+        };
+        if (passiveSummary && summaryHome?.parent?.isConnected &&
+            passiveSummary.parentElement !== summaryHome.parent &&
+            summaryHome.parent !== passiveSummary &&
+            !passiveSummary.contains(summaryHome.parent)) {
+            const anchor = summaryHome.next &&
+                summaryHome.next !== passiveSummary &&
+                summaryHome.next.parentElement === summaryHome.parent &&
+                !passiveSummary.contains(summaryHome.next)
+                ? summaryHome.next
+                : null;
+            try { summaryHome.parent.insertBefore(passiveSummary, anchor); }
+            catch (error) { try { summaryHome.parent.appendChild(passiveSummary); } catch (fallbackError) {} }
+        }
+        if (passiveSummary) {
+            passiveSummary.innerHTML = '';
+            passiveSummary.hidden = true;
+        }
+        const timeline = document.getElementById('abs-clean-bottom-timeline');
+        if (timeline) {
+            timeline.hidden = true;
+        }
+        document.getElementById('abs-clean-header-badges-rail')?.remove();
+        abilityDocks?.classList.remove('abs-clean-ability-docks-under-passive');
+        window.syncAbsCleanStatsAndArtPlacement?.();
+        return;
+    }
+
+    const timeline = document.getElementById('abs-clean-bottom-timeline');
+    if (timeline) {
+        timeline.hidden = false;
+    }
+
+    const passiveUtilityHost = window.ensureAbsCleanHeaderBadgeRail?.();
+
+    // Clear inline geometry left by the short-lived nested-badge experiment if
+    // the page was updated without a full reload. The stable clean contract is
+    // the actual Passive Skill box with a top utility row, not a second grid
+    // template or a rail nested inside the title header.
+    if (mainCol?.dataset.absCleanPassiveUtilityInline === 'true') {
+        ['grid-template-columns', 'grid-template-areas', 'justify-content', 'column-gap', 'row-gap']
+            .forEach(prop => mainCol.style.removeProperty(prop));
+        delete mainCol.dataset.absCleanPassiveUtilityInline;
+    }
+    if (passiveBox?.dataset.absCleanPassiveUtilityInline === 'true') {
+        ['grid-area', 'grid-column', 'grid-row'].forEach(prop => passiveBox.style.removeProperty(prop));
+        delete passiveBox.dataset.absCleanPassiveUtilityInline;
+    }
+    const utilityColumn = document.getElementById('abs-clean-category-links-column');
+    if (utilityColumn?.dataset.absCleanPassiveUtilityInline === 'true') {
+        ['grid-area', 'grid-column', 'grid-row', 'justify-self', 'width', 'min-width', 'max-width']
+            .forEach(prop => utilityColumn.style.removeProperty(prop));
+        delete utilityColumn.dataset.absCleanPassiveUtilityInline;
+    }
+
+    // Stats keeps its own explicit position below the art, even while the
+    // badge rail is being created or refreshed.
+    window.syncAbsCleanStatsAndArtPlacement?.();
+
+    // The clean theme owns the actual Passive Skill box. The placement helper
+    // moves both live nodes into its top row and keeps their render/editor state.
+    if (passiveUtilityHost) {
+        abilityDocks?.classList.remove('abs-clean-ability-docks-under-art');
+        abilityDocks?.classList.remove('abs-clean-ability-docks-under-passive');
+        passiveSummary?.classList.remove('abs-clean-passive-summary-under-passive');
+    }
+};
+
+// abs.clean promotes the existing Awakening and Transformation render targets
+// into one panel under the card-art rail. The source boxes stay in their native
+// side-column homes, so switching away from abs.clean restores every other
+// theme without recreating or duplicating any card data.
+window.syncAbsCleanAwakeningFormsPlacement = function() {
+    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
+    const headerLeft = document.querySelector('#layout-abs-style .abs-header-left');
+    const categoryContainer = document.getElementById('abs-category-container');
+    const categoryBox = categoryContainer?.closest('.abs-box') || null;
+    const awakeningContainer = document.getElementById('abs-awakenings-container');
+    const transformationsContainer = document.getElementById('abs-transformations-container');
+    const headerAwakeningPortraits = document.getElementById('abs-clean-awakening-portraits');
+    if (!mainCol || !categoryBox || (!awakeningContainer && !transformationsContainer)) return;
+
+    const isClean = document.body.classList.contains('theme-abs-clean');
+    const awakeningsBox = document.getElementById('abs-awakenings-box');
+    const transformationsBox = document.getElementById('abs-transformations-box');
+    const oldSplitRow = document.getElementById('abs-clean-category-awakenings-row');
+    const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
+
+    if (!window.__absCleanAwakeningFormsHome) window.__absCleanAwakeningFormsHome = {};
+    const home = window.__absCleanAwakeningFormsHome;
+    const rememberHome = (key, node, nativeParent = null) => {
+        if (!node) return;
+        // A previous helper revision could have recorded the node itself (or
+        // one of its descendants) as the parent. Discard that unsafe record
+        // so a hot reload can repair the in-memory home without a page reset.
+        // When the native source box is known, it is the only valid home for
+        // that live content container.
+        const savedParent = home[key]?.parent;
+        const savedParentIsSafe = savedParent &&
+            savedParent !== node &&
+            !node.contains(savedParent) &&
+            (!nativeParent || savedParent === nativeParent);
+        if (savedParentIsSafe) return;
+        if (home[key]) delete home[key];
+        const parent = nativeParent || node.parentElement;
+        if (!parent || parent === node || node.contains(parent)) return;
+        home[key] = { parent, next: parent === node.parentElement ? node.nextElementSibling : null };
+    };
+
+    // Always remember the original source-box parents. This also repairs a
+    // page that still has the previous clean-only split row in the DOM.
+    // The live containers are themselves `.abs-content` elements. Their
+    // native restore parents are the surrounding source boxes, not a query
+    // for a descendant `.abs-content` node.
+    rememberHome('awakening', awakeningContainer, awakeningsBox);
+    rememberHome('forms', transformationsContainer, transformationsBox);
+    // The SSR/TUR portrait rail starts in the shared header, but abs.clean
+    // owns it in the Awakening surface. Remember that real header home before
+    // moving it so theme switches never try to insert a node into its former
+    // descendant (the source of the old HierarchyRequestError).
+    rememberHome('awakeningPortraits', headerAwakeningPortraits, headerLeft);
+    if (headerAwakeningPortraits && !Object.prototype.hasOwnProperty.call(home, 'awakeningPortraitsInitiallyHidden')) {
+        home.awakeningPortraitsInitiallyHidden = headerAwakeningPortraits.hidden;
+    }
+    if (!isClean && categoryBox.parentElement !== oldSplitRow) rememberHome('categories', categoryBox);
+
+    const restoreHome = (node, record, fallbackParent, fallbackAnchor = null) => {
+        if (!node) return;
+        const parent = record?.parent;
+        if (parent?.isConnected && parent !== node && !node.contains(parent)) {
+            const anchor = record.next &&
+                record.next !== node &&
+                record.next.parentElement === parent &&
+                !node.contains(record.next)
+                ? record.next
+                : null;
+            parent.insertBefore(node, anchor);
+            return;
+        }
+        if (fallbackParent?.isConnected && fallbackParent !== node && !node.contains(fallbackParent)) {
+            const anchor = fallbackAnchor &&
+                fallbackAnchor !== node &&
+                fallbackAnchor.parentElement === fallbackParent &&
+                !node.contains(fallbackAnchor)
+                ? fallbackAnchor
+                : null;
+            fallbackParent.insertBefore(node, anchor);
+        }
+    };
+
+    let panel = document.getElementById('abs-clean-awakening-forms-box');
+
+    if (!isClean) {
+        // Links/Categories may have been wrapped by the clean-only utility
+        // column. Unwrap that column before restoring the native theme homes.
+        window.restoreAbsCleanCategoryLinksColumn?.();
+        const splitCategoryBox = oldSplitRow?.querySelector?.('.abs-clean-category-box, .abs-box:has(#abs-category-container)') || categoryBox;
+        restoreHome(awakeningContainer, home.awakening, awakeningsBox);
+        restoreHome(transformationsContainer, home.forms, transformationsBox);
+        restoreHome(headerAwakeningPortraits, home.awakeningPortraits, headerLeft);
+        if (awakeningsBox) {
+            awakeningsBox.style.display = '';
+            awakeningsBox.classList.remove('d-none');
+            awakeningsBox.hidden = false;
+        }
+        if (headerAwakeningPortraits) {
+            headerAwakeningPortraits.classList.remove('abs-clean-awakening-box-portraits');
+            headerAwakeningPortraits.hidden = home.awakeningPortraitsInitiallyHidden !== false;
+        }
+        awakeningContainer?.classList.remove('abs-clean-legacy-awakening-source');
+        if (splitCategoryBox?.parentElement === oldSplitRow) {
+            restoreHome(splitCategoryBox, home.categories, mainCol, oldSplitRow);
+        }
+        panel?.remove?.();
+        oldSplitRow?.remove?.();
+        categoryBox.classList.remove('abs-clean-category-box');
+        return;
+    }
+
+    if (!panel) {
+        panel = document.createElement('section');
+        panel.id = 'abs-clean-awakening-forms-box';
+    }
+
+    // Replace any older combined-panel markup once.  The live awakening/forms
+    // containers are held by local references above, so rebuilding this shell
+    // cannot duplicate data or leave the legacy abs.style panel visible.
+    const cleanFormsLayoutVersion = 'circles-v3';
+    const needsCleanFormsShell = panel.dataset.absCleanFormsLayout !== cleanFormsLayoutVersion
+        || !panel.querySelector('#abs-clean-awakening-forms-awakenings-slot')
+        || !panel.querySelector('#abs-clean-awakening-forms-forms-slot')
+        || !panel.querySelector('.abs-clean-awakening-forms-section-container');
+    if (needsCleanFormsShell) {
+        panel.className = 'abs-clean-awakening-forms-box';
+        panel.dataset.absCleanFormsLayout = cleanFormsLayoutVersion;
+        panel.innerHTML = `
+            <div class="abs-clean-awakening-forms-content">
+                <section class="abs-clean-awakening-forms-section" data-abs-clean-section="awakenings">
+                    <div class="abs-clean-awakening-forms-section-title">Awakenings</div>
+                    <div class="abs-clean-awakening-forms-section-container">
+                        <div id="abs-clean-awakening-forms-awakenings-slot"></div>
+                    </div>
+                </section>
+                <section class="abs-clean-awakening-forms-section" data-abs-clean-section="forms" data-edit="forms">
+                    <div class="abs-clean-awakening-forms-section-title">Forms</div>
+                    <div class="abs-clean-awakening-forms-section-container">
+                        <div id="abs-clean-awakening-forms-forms-slot"></div>
+                    </div>
+                </section>
+                <p class="abs-clean-awakening-forms-empty">No awakening path or alternate forms.</p>
+            </div>
+        `;
+    }
+
+    const awakeningSlot = panel.querySelector('#abs-clean-awakening-forms-awakenings-slot');
+    const formsSlot = panel.querySelector('#abs-clean-awakening-forms-forms-slot');
+    const emptyState = panel.querySelector('.abs-clean-awakening-forms-empty');
+
+    // Put the combined panel immediately below the complete layered art.
+    // In the editor the dock overlays the fixed portrait stage; in card view
+    // the dock is the art surface itself. If the dock is temporarily nested
+    // during an animation preview, fall back to the direct stage anchor.
+    const portraitStage = sideCol?.querySelector('#abs-clean-portrait-stage');
+    const artDock = sideCol?.querySelector('#abs-art-dock-wrapper');
+    const artAnchor = artDock?.parentElement === sideCol ? artDock : portraitStage;
+    if (sideCol) {
+        const directArtAnchor = artAnchor?.parentElement === sideCol ? artAnchor : null;
+        if (panel.parentElement !== sideCol) {
+            if (directArtAnchor) directArtAnchor.insertAdjacentElement('afterend', panel);
+            else sideCol.appendChild(panel);
+        } else if (directArtAnchor && panel !== directArtAnchor.nextElementSibling) {
+            directArtAnchor.insertAdjacentElement('afterend', panel);
+        }
+    } else if (panel.parentElement !== mainCol) {
+        mainCol.appendChild(panel);
+    }
+
+    // The Forms/Awakenings panel is inserted after the art anchor on every
+    // clean-layout pass. Keep the passive ability badges in their one stable
+    // home as well: the dedicated top row of the Passive Skill box. Without
+    // this second authoritative sync, a later Forms pass can move the live
+    // node back to an obsolete art-side rail.
+    if (isClean) window.syncAbsCleanAbilityDockPlacement?.();
+
+    // Categories is a direct main-grid sibling of Passive, using the narrow
+    // second track. The old lower split row is removed after both live nodes leave.
+    const passiveBox = document.getElementById('abs-passive-skill-box');
+    categoryBox.classList.add('abs-clean-category-box');
+    const categoryIsInUtilityColumn = categoryBox.parentElement === categoryLinksColumn ||
+        categoryBox.closest('#abs-clean-category-links-column') === categoryLinksColumn;
+    if (passiveBox?.parentElement === mainCol && !categoryIsInUtilityColumn) {
+        if (categoryBox.parentElement !== mainCol) passiveBox.insertAdjacentElement('afterend', categoryBox);
+        else if (passiveBox.nextElementSibling !== categoryBox) passiveBox.insertAdjacentElement('afterend', categoryBox);
+    } else if (!categoryIsInUtilityColumn && categoryBox.parentElement !== mainCol) {
+        mainCol.appendChild(categoryBox);
+    }
+
+    if (awakeningContainer && awakeningSlot && awakeningContainer.parentElement !== awakeningSlot && !awakeningContainer.contains(awakeningSlot)) {
+        awakeningSlot.appendChild(awakeningContainer);
+    }
+    if (transformationsContainer && formsSlot && transformationsContainer.parentElement !== formsSlot && !transformationsContainer.contains(formsSlot)) {
+        formsSlot.appendChild(transformationsContainer);
+    }
+
+    if (transformationsContainer) {
+        transformationsContainer.querySelectorAll('.abs-transform-row').forEach(row => {
+            if (isClean) {
+                if (!row.hasAttribute('data-tooltip')) {
+                    const nameEl = row.querySelector('.abs-transform-name');
+                    const text = nameEl?.textContent?.trim() || '';
+                    if (text) row.setAttribute('data-tooltip', text);
+                }
+            } else {
+                row.removeAttribute('data-tooltip');
+            }
+        });
+    }
+
+    // Replace the tall legacy Awakening rows with the compact SSR/TUR art that
+    // was previously floating in the header. The legacy renderer remains in
+    // the DOM as a fallback for cards that have no usable progression art,
+    // but it cannot compete with the clean portrait surface when art exists.
+    let headerPortraitsVisible = false;
+    if (headerAwakeningPortraits && awakeningSlot) {
+        headerAwakeningPortraits.classList.add('abs-clean-awakening-box-portraits');
+        headerPortraitsVisible = Boolean(headerAwakeningPortraits.querySelector('.abs-clean-awakening-portrait:not([hidden])'));
+        headerAwakeningPortraits.hidden = !headerPortraitsVisible;
+        if (headerAwakeningPortraits.parentElement !== awakeningSlot && !headerAwakeningPortraits.contains(awakeningSlot)) {
+            awakeningSlot.prepend(headerAwakeningPortraits);
+        }
+    }
+    if (awakeningContainer) {
+        awakeningContainer.classList.toggle('abs-clean-legacy-awakening-source', headerPortraitsVisible);
+    }
+
+    if (oldSplitRow && !oldSplitRow.contains(panel) && !oldSplitRow.contains(categoryBox)) oldSplitRow.remove();
+
+    const legacyAwakeningsVisible = Boolean(awakeningContainer?.children.length) &&
+        !awakeningsBox?.hidden &&
+        awakeningsBox?.style.display !== 'none' &&
+        !awakeningsBox?.classList.contains('d-none');
+    const awakeningsVisible = headerPortraitsVisible || (legacyAwakeningsVisible && !awakeningContainer?.classList.contains('abs-clean-legacy-awakening-source'));
+    // The native Forms host is intentionally hidden in abs.clean after its
+    // live content is moved into the dedicated Forms section. Its old
+    // d-none/display state must therefore never decide whether the moved
+    // content is visible.
+    // Keep the dedicated Forms surface present in clean mode even before the
+    // first form is added. The moved container, rather than the hidden native
+    // host or its current child count, is the source of truth here.
+    const formsVisible = Boolean(transformationsContainer);
+
+    const setSectionVisibility = (slot, visible) => {
+        const section = slot?.closest('.abs-clean-awakening-forms-section');
+        if (section) section.hidden = !visible;
+        else if (slot?.parentElement) slot.parentElement.hidden = !visible;
+    };
+    setSectionVisibility(awakeningSlot, awakeningsVisible);
+    setSectionVisibility(formsSlot, formsVisible);
+    if (emptyState) emptyState.hidden = awakeningsVisible || formsVisible;
+    panel.classList.toggle('has-awakenings', awakeningsVisible);
+    panel.classList.toggle('has-forms', formsVisible);
+};
+
+// abs.clean gives Active and Domain a real wrapper in the live DOM. This
+// prevents either container from ever becoming a descendant of the
+// Categories box while leaving the native theme structure untouched.
+window.syncAbsCleanRightRail = function() {
+    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const ids = ['abs-active-container', 'abs-standby-container', 'abs-finish-container', 'abs-field-container'];
+    const found = ids.map(id => document.getElementById(id)).filter(Boolean);
+    if (!mainCol || !found.length) return;
+
+    const cleanInlineProps = [
+        'display', 'flex-direction', 'align-items', 'align-self', 'gap', 'column-gap', 'row-gap', 'grid-template-columns',
+        'grid-column', 'grid-row', 'position', 'top', 'left', 'width', 'min-width', 'height', 'margin', 'padding'
+    ];
+    const clearCleanInlineLayout = (node) => {
+        if (!node?.dataset?.absCleanInlineLayout) return;
+        cleanInlineProps.forEach(prop => node.style.removeProperty(prop));
+        delete node.dataset.absCleanInlineLayout;
+    };
+    const setCleanInlineLayout = (node, prop, value) => {
+        if (!node?.style) return;
+        node.style.setProperty(prop, value, 'important');
+        node.dataset.absCleanInlineLayout = 'true';
+    };
+
+    const activeContainer = document.getElementById('abs-active-container');
+    const standbyContainer = document.getElementById('abs-standby-container');
+    const fieldContainer = document.getElementById('abs-field-container');
+    const ordered = found.slice().sort((a, b) => {
+        const pos = a.compareDocumentPosition(b);
+        if (pos & 4) return -1;
+        if (pos & 2) return 1;
+        return 0;
+    });
+
+    if (!window.__absCleanRailHome) {
+        window.__absCleanRailHome = {
+            parent: mainCol,
+            nodes: ordered.slice(),
+            anchor: ordered[ordered.length - 1].nextElementSibling
+        };
+    }
+
+    const home = window.__absCleanRailHome;
+    const isClean = document.body.classList.contains('theme-abs-clean');
+    const isNarrow = Boolean(window.matchMedia?.('(max-width: 680px)')?.matches);
+    const categoryBox = document.getElementById('abs-category-container')?.closest('.abs-box') ||
+        Array.from(mainCol.children).find(child => child.querySelector?.('#abs-category-container')) || null;
+    let rail = document.getElementById('abs-clean-right-rail');
+    let pairRow = document.getElementById('abs-clean-active-domain-row');
+    const categoryAwakeningsRow = document.getElementById('abs-clean-category-awakenings-row');
+    const categoryIsInAwakeningsRow = categoryBox?.parentElement === categoryAwakeningsRow;
+    const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
+    const categoryIsInUtilityColumn = categoryBox?.parentElement === categoryLinksColumn;
+
+    if (!isClean) {
+        mainCol.classList.remove('abs-clean-has-active-domain');
+        mainCol.classList.remove('abs-clean-has-standby');
+        categoryBox?.classList.remove('abs-clean-category-box');
+        [activeContainer, fieldContainer, standbyContainer, pairRow].forEach(clearCleanInlineLayout);
+
+        // Unwrap the clean-only row so the other themes receive their native
+        // direct-child containers and cannot inherit clean layout structure.
+        const restoreAnchor = home?.parent && home.anchor?.parentElement === home.parent
+            ? home.anchor
+            : null;
+        [activeContainer, fieldContainer, standbyContainer].filter(Boolean).forEach(node => {
+            if (home?.parent && node.parentElement !== home.parent) home.parent.insertBefore(node, restoreAnchor);
+        });
+        pairRow?.remove?.();
+
+        if (home?.parent) {
+            home.nodes.forEach(node => {
+                if (node.parentElement !== home.parent) home.parent.insertBefore(node, restoreAnchor);
+            });
+        }
+        if (rail?.parentElement) rail.parentElement.removeChild(rail);
+        return;
+    }
+
+    const passiveBox = document.getElementById('abs-passive-skill-box');
+    categoryBox?.classList.add('abs-clean-category-box');
+    const fallbackAnchor = Array.from(mainCol.children).find(child =>
+        child !== activeContainer &&
+        child !== fieldContainer &&
+        child !== standbyContainer &&
+        child !== categoryBox &&
+        child !== categoryAwakeningsRow &&
+        child.id === 'abs-partners-box'
+    ) || null;
+
+    if (!pairRow) {
+        pairRow = document.createElement('div');
+        pairRow.id = 'abs-clean-active-domain-row';
+        pairRow.className = 'abs-clean-active-domain-row';
+    }
+    pairRow.setAttribute('aria-label', 'Active Skills, Dokkan Fields, and Standby Skills');
+
+    // Put the wrapper directly in the main ABS Clean column before moving any
+    // content into it. If an older pass nested one of these nodes in
+    // Categories, this extracts the wrapper and the containers together.
+    if (pairRow.parentElement !== mainCol) {
+        const categoryAnchor = categoryBox?.parentElement === mainCol
+            ? categoryBox
+            : (categoryAwakeningsRow?.parentElement === mainCol ? categoryAwakeningsRow : null);
+        const anchor = categoryAnchor ||
+            (fallbackAnchor?.parentElement === mainCol ? fallbackAnchor : null);
+        if (anchor && anchor !== pairRow) mainCol.insertBefore(pairRow, anchor);
+        else mainCol.appendChild(pairRow);
+    }
+
+    // Normalize stale renderer output before applying the clean wrapper. Each
+    // skill kind has one deterministic home, even if a previous render pass
+    // left a box in a different generated container.
+    const skillContainers = [activeContainer, fieldContainer, standbyContainer].filter(Boolean);
+    const classifySkillNode = (node) => {
+        if (node.matches?.('[data-active-kind="domain"], .abs-clean-domain-rendered')) return 'domain';
+        if (node.matches?.('[data-active-kind="standby"], .abs-clean-standby-rendered, .abs-standby-rendered')) return 'standby';
+        return 'active';
+    };
+    const skillHomes = {
+        active: activeContainer,
+        domain: fieldContainer,
+        standby: standbyContainer
+    };
+    skillContainers.forEach(source => {
+        Array.from(source.children).forEach(node => {
+            const target = skillHomes[classifySkillNode(node)];
+            if (target && target !== source) target.appendChild(node);
+        });
+    });
+
+    skillContainers.forEach(node => {
+        if (node.parentElement !== pairRow) pairRow.appendChild(node);
+    });
+    [activeContainer, fieldContainer, standbyContainer].filter(Boolean).forEach((node, index, nodes) => {
+        if (node.parentElement !== pairRow) pairRow.appendChild(node);
+        const previous = nodes[index - 1];
+        if (previous && previous.nextElementSibling !== node) pairRow.insertBefore(node, previous.nextElementSibling);
+    });
+
+    // Categories must never be a parent or child of either ability container.
+    // Its own clean-only Categories/Awakening row is the one intentional
+    // nested home, and must be preserved during subsequent sync passes.
+    if (categoryBox && categoryBox.parentElement !== mainCol &&
+        !categoryIsInAwakeningsRow && !categoryIsInUtilityColumn) {
+        mainCol.insertBefore(categoryBox, pairRow);
+    } else if (categoryBox && categoryBox !== pairRow && pairRow.parentElement === mainCol) {
+        const categoryAnchor = categoryIsInAwakeningsRow
+            ? categoryAwakeningsRow
+            : (categoryIsInUtilityColumn ? categoryLinksColumn : categoryBox);
+        if (categoryAnchor?.parentElement === mainCol) mainCol.insertBefore(pairRow, categoryAnchor);
+    }
+
+    const railNodes = ordered.filter(node => !skillContainers.includes(node));
+    if (railNodes.length) {
+        if (!rail) {
+            rail = document.createElement('div');
+            rail.id = 'abs-clean-right-rail';
+            rail.setAttribute('aria-label', 'Skills');
+        }
+        if (rail.parentElement !== mainCol) {
+            if (passiveBox && passiveBox.parentElement === mainCol) passiveBox.insertAdjacentElement('afterend', rail);
+            else mainCol.appendChild(rail);
+        }
+        railNodes.forEach(node => { if (node.parentElement !== rail) rail.appendChild(node); });
+    } else if (rail?.parentElement) {
+        rail.remove();
+    }
+
+    const hasActive = Boolean(activeContainer?.children.length);
+    const hasDomain = Boolean(fieldContainer?.children.length);
+    const hasStandby = Boolean(standbyContainer?.children.length);
+    const hasActiveDomainContent = hasActive || hasDomain || hasStandby;
+    const hasTwoColumnSkillRow = hasActive && hasDomain && !hasStandby && !isNarrow;
+    pairRow.classList.toggle('has-active', hasActive);
+    pairRow.classList.toggle('has-domain', hasDomain);
+    pairRow.classList.toggle('has-standby', hasStandby);
+    pairRow.classList.toggle('has-both', hasActive && hasDomain);
+    pairRow.classList.toggle('has-active-domain-standby', hasActive && hasDomain && hasStandby);
+    pairRow.classList.toggle('has-content', hasActiveDomainContent);
+    mainCol.classList.toggle('abs-clean-has-active-domain', hasActive && hasDomain);
+    mainCol.classList.toggle('abs-clean-has-standby', hasStandby);
+    mainCol.classList.toggle('abs-clean-no-active-domain', !hasActiveDomainContent);
+
+    // Inline geometry is a deliberate clean-mode guardrail. It prevents a
+    // late-loaded legacy rule from moving Domain to the next grid row between
+    // the renderer pass and the final stylesheet pass.
+    // Keep the named grid area as a stable insertion anchor, but do not let an
+    // empty Active/Domain wrapper reserve a visible row between Super Attack
+    // and Passive.  The next render can switch it back to grid as soon as a
+    // real Active Skill or Domain is moved into the wrapper.
+    setCleanInlineLayout(pairRow, 'display', hasActiveDomainContent ? 'grid' : 'none');
+    setCleanInlineLayout(pairRow, 'grid-template-columns', hasTwoColumnSkillRow ? 'minmax(0, 1fr) minmax(0, 1fr)' : 'minmax(0, 1fr)');
+    setCleanInlineLayout(pairRow, 'column-gap', '14px');
+    setCleanInlineLayout(pairRow, 'row-gap', '14px');
+    setCleanInlineLayout(pairRow, 'align-items', 'stretch');
+    const populatedSkillContainers = skillContainers.filter(node => node.children.length);
+    skillContainers.forEach(node => {
+        const isPopulated = node.children.length > 0;
+        const populatedIndex = populatedSkillContainers.indexOf(node);
+        setCleanInlineLayout(node, 'display', isPopulated ? 'flex' : 'none');
+        setCleanInlineLayout(node, 'flex-direction', 'column');
+        setCleanInlineLayout(node, 'align-items', 'stretch');
+        setCleanInlineLayout(node, 'align-self', 'stretch');
+        setCleanInlineLayout(node, 'gap', '14px');
+        setCleanInlineLayout(node, 'grid-row', hasTwoColumnSkillRow ? '1' : String(Math.max(1, populatedIndex + 1)));
+        setCleanInlineLayout(node, 'grid-column', hasTwoColumnSkillRow && node === fieldContainer ? '2' : '1');
+        setCleanInlineLayout(node, 'position', 'relative');
+        setCleanInlineLayout(node, 'top', '0');
+        setCleanInlineLayout(node, 'left', '0');
+        setCleanInlineLayout(node, 'width', '100%');
+        setCleanInlineLayout(node, 'min-width', '0');
+        setCleanInlineLayout(node, 'height', hasTwoColumnSkillRow ? '100%' : 'auto');
+        setCleanInlineLayout(node, 'margin', '0');
+        setCleanInlineLayout(node, 'padding', '0');
+    });
+
+    if (!window.__absCleanRailResizeBound) {
+        window.__absCleanRailResizeBound = true;
+        window.addEventListener('resize', () => window.syncAbsCleanRightRail?.(), { passive: true });
+    }
+
+    window.syncAbsCleanAbilityDockPlacement?.();
+};
+
+// Super Attacks get their own full-width row directly beneath the Leader
+// Skill in abs.clean. The original position is restored for every other theme.
+window.syncAbsCleanSuperAttackPlacement = function() {
+    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const saContainer = document.getElementById('abs-sa-container');
+    const passiveBox = document.getElementById('abs-passive-skill-box');
+    const activeContainer = document.getElementById('abs-active-container');
+    const activeDomainRow = document.getElementById('abs-clean-active-domain-row');
+    if (!mainCol || !saContainer) return;
+
+    if (!window.__absCleanSuperAttackHome) {
+        window.__absCleanSuperAttackHome = {
+            parent: saContainer.parentElement,
+            anchor: saContainer.nextElementSibling
+        };
+    }
+
+    if (!document.body.classList.contains('theme-abs-clean')) {
+        const home = window.__absCleanSuperAttackHome;
+        if (home?.parent && saContainer.parentElement !== home.parent) {
+            const anchor = home.anchor?.parentElement === home.parent ? home.anchor : null;
+            home.parent.insertBefore(saContainer, anchor);
+        }
+        // Native ABS Style order is Passive → Super Attack. Do not depend on
+        // an old clean-mode anchor, which may have been recorded mid-move.
+        if (passiveBox?.parentElement && passiveBox.parentElement === saContainer.parentElement && passiveBox.nextElementSibling !== saContainer) {
+            passiveBox.insertAdjacentElement('afterend', saContainer);
+        }
+        return;
+    }
+
+    const cleanAnchor = activeDomainRow?.parentElement === mainCol
+        ? activeDomainRow
+        : (activeContainer?.parentElement === mainCol ? activeContainer : passiveBox);
+    if (saContainer.parentElement !== mainCol || saContainer.nextElementSibling !== cleanAnchor) {
+        mainCol.insertBefore(saContainer, cleanAnchor || mainCol.firstChild);
+    }
+};

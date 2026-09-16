@@ -9,12 +9,19 @@ function formatOfficialText(text, highlightQuotes = true) {
     if (highlightQuotes) {
         formatted = formatted.replace(/["“”]([^"”]+)["”]/g, '<span class="abs-category-quote">"$1"</span>');
     }
-    
-    const upArrow = `<img src="${CENTRAL_ASSET_URL}passive_skill_dialog_arrow01.png" style="height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
-    const downRed = `<img src="${CENTRAL_ASSET_URL}passive_skill_dialog_arrow02.png" style="height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
-    const downYellow = `<img src="${CENTRAL_ASSET_URL}passive_skill_dialog_arrow03.png" style="height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
-    const onceIcon = `<img src="${CENTRAL_ASSET_URL}passive_skill_dialog_icon_01.png" style="height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
-    const foreverIcon = `<img src="${CENTRAL_ASSET_URL}passive_skill_dialog_icon_02.png" style="height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
+
+    // Default dialog images (base files) for every theme. The abs.clean
+    // `_clean` arrow and typed once/inf variants were retired.
+    const dialogIcon = (filename) => {
+        const style = 'height:14px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);';
+        return `<img src="${CENTRAL_ASSET_URL}${filename}" style="${style}">`;
+    };
+
+    const upArrow = dialogIcon('passive_skill_dialog_arrow01.png');
+    const downRed = dialogIcon('passive_skill_dialog_arrow02.png');
+    const downYellow = dialogIcon('passive_skill_dialog_arrow03.png');
+    const onceIcon = dialogIcon('passive_skill_dialog_icon_01.png');
+    const foreverIcon = dialogIcon('passive_skill_dialog_icon_02.png');
 
     const atkDownIcon = `<img src="${CENTRAL_ASSET_URL}st_0011.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const defDownIcon = `<img src="${CENTRAL_ASSET_URL}st_0012.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
@@ -306,12 +313,16 @@ function autoDetectSAStats(text, saName = "", specObj = null) {
 
 function renderAbsSpecialEffects(stats) {
     if (!stats || stats.length === 0) return '';
+    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
 
     const selfStats = stats.filter(s => s.target === 'self');
     const allyStats = stats.filter(s => s.target === 'ally' || s.target === 'allies');
     const enemyStats = stats.filter(s => s.target === 'enemy');
 
     const getFloatingTagSvg = (typeClass) => {
+        if (isAbsCleanTheme) {
+            return '';
+        }
         if (typeClass === 'allies') {
             return `
                 <div class="abs-floating-target-tag allies" title="Allies (+)">
@@ -353,9 +364,22 @@ function renderAbsSpecialEffects(stats) {
 
     const renderGroup = (typeClass, statList) => {
         if (statList.length === 0) return '';
+        const isNegative = typeClass === 'enemy';
+        const tooltipTitle = isNegative ? 'Target: Enemy (-)' : (typeClass === 'allies' ? 'Target: Allies (+)' : 'Target: Self (+)');
 
         const badgesHtml = statList.map(stat => {
-            const cleanVal = stat.value ? String(stat.value).replace(/%/g, '') : '';
+            const cleanVal = stat.value ? String(stat.value).replace(/%/g, '').trim() : '';
+            const turns = stat.turns || '1 turn';
+            if (isAbsCleanTheme) {
+                return `
+                    <div class="abs-effect-badge">
+                        <img src="${stat.icon}" alt="stat">
+                        ${cleanVal ? `<span class="abs-badge-val">${cleanVal}%</span>` : ''}
+                        ${cleanVal && turns ? `<span class="abs-badge-sep">|</span>` : ''}
+                        <span class="abs-badge-turns">${turns}</span>
+                    </div>
+                `;
+            }
             return `
                 <div class="abs-effect-badge">
                     <div class="abs-badge-top">
@@ -363,10 +387,20 @@ function renderAbsSpecialEffects(stats) {
                         ${cleanVal ? `<span>${cleanVal}%</span>` : ''}
                     </div>
                     <div class="abs-badge-fading-divider"></div>
-                    <div class="abs-badge-bottom">${stat.turns || '1 turn'}</div>
+                    <div class="abs-badge-bottom">${turns}</div>
                 </div>
             `;
         }).join('');
+
+        if (isAbsCleanTheme) {
+            return `
+                <div class="abs-effect-group ${typeClass}" data-tooltip="${tooltipTitle}" title="${tooltipTitle}">
+                    <div class="abs-group-badges-row">
+                        ${badgesHtml}
+                    </div>
+                </div>
+            `;
+        }
 
         return `
             <div class="abs-effect-group ${typeClass}">
@@ -380,7 +414,7 @@ function renderAbsSpecialEffects(stats) {
 
     return `
         <div class="abs-special-effects-section">
-            <div class="abs-special-effects-title">SPECIAL EFFECTS</div>
+            <div class="abs-special-effects-title">${isAbsCleanTheme ? 'EFFECTS' : 'SPECIAL EFFECTS'}</div>
             <div class="abs-special-effects-groups">
                 ${renderGroup('self', selfStats)}
                 ${renderGroup('allies', allyStats)}
@@ -390,7 +424,240 @@ function renderAbsSpecialEffects(stats) {
     `;
 }
 
-function renderAbsDamageMultiplier(text, typeLabel = '', isActive = false, kiText = '') {
+function normalizeAbsDokkanFieldText(value) {
+    return String(value || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/(?:p|div|li)>/gi, '\n')
+        .replace(/<[^>]*>/g, ' ')
+        .replace(/&nbsp;/gi, ' ')
+        .replace(/\r\n?/g, '\n')
+        .replace(/[ \t]*\n[ \t]*/g, ' ')
+        .replace(/\s+/g, ' ')
+        .trim();
+}
+
+/* Some field payloads expose a short prefix and the extended effect under
+   different keys. Select the longest candidate, then append any meaningful
+   non-duplicate fragments so secondary clauses are never discarded. */
+function getAbsDokkanFieldEffectText(source, fallback = '') {
+    const candidates = [];
+    if (source && typeof source === 'object') {
+        [
+            source.description,
+            source.effect_description,
+            source.field_effect_description,
+            source.field_effect,
+            source.effect_text,
+            source.itemized_description,
+            source.effect
+        ].forEach(value => {
+            if (value !== null && value !== undefined && value !== '') candidates.push(value);
+        });
+    }
+    if (fallback !== null && fallback !== undefined && fallback !== '') candidates.push(fallback);
+
+    const normalizedCandidates = candidates
+        .map(value => ({
+            raw: String(value).trim(),
+            plain: normalizeAbsDokkanFieldText(value)
+        }))
+        .filter(candidate => candidate.plain);
+    if (!normalizedCandidates.length) return '';
+
+    const best = normalizedCandidates.reduce((winner, candidate) =>
+        candidate.plain.length > winner.plain.length ? candidate : winner
+    );
+    const base = normalizedCandidates.find(candidate =>
+        !/^\s*(?:(?:plus|and|also)\s+)?an?\s+additional\b/i.test(candidate.plain)
+    ) || best;
+    let merged = base.raw;
+    let mergedPlain = base.plain;
+    normalizedCandidates.forEach(candidate => {
+        const candidatePlain = candidate.plain.toLowerCase();
+        if (candidatePlain.includes(mergedPlain.toLowerCase())) {
+            merged = candidate.raw;
+            mergedPlain = candidate.plain;
+            return;
+        }
+        if (mergedPlain.toLowerCase().includes(candidatePlain)) return;
+        merged = `${merged}\n${candidate.raw}`;
+        mergedPlain = normalizeAbsDokkanFieldText(merged);
+    });
+    return merged;
+}
+
+function formatAbsCleanDokkanFieldEffect(value) {
+    const raw = String(value || '').trim();
+    if (!raw) return '';
+    return formatOfficialText(raw, true)
+        .replace(/\r\n?/g, '\n')
+        .replace(/\n+/g, '<br>');
+}
+
+/* Build the Self / Enemy stat rail and separate Damage Received badges used by
+   Dokkan Fields in abs.clean. The prose effect remains the source of truth;
+   explicit percentage fields are supported when a newer payload provides them. */
+function renderAbsCleanFieldStatBadges(text, source = null) {
+    const normalized = normalizeAbsDokkanFieldText(text);
+    if (!normalized && (!source || typeof source !== 'object')) return '';
+
+    const readPercentList = value => {
+        if (value === null || value === undefined || value === '') return [];
+        const raw = String(value);
+        const matches = raw.match(/[+-]?\d+(?:\.\d+)?\s*%/g) ||
+            (/^[+-]?\d+(?:\.\d+)?\s*%?$/.test(raw.trim()) ? [raw.trim()] : []);
+        return matches.map(token => {
+            const numberMatch = token.match(/[+-]?\d+(?:\.\d+)?/);
+            if (!numberMatch) return '';
+            const number = numberMatch[0].replace(/^[+-]/, '');
+            const sign = numberMatch[0].startsWith('-') ? '-' : '+';
+            return `${sign}${number}%`;
+        }).filter(Boolean);
+    };
+
+    const uniquePercentValues = values => Array.from(new Set(
+        values.flatMap(value => Array.isArray(value) ? value : readPercentList(value))
+    ));
+    const formatStatPercentValues = values => values.map((value, index) =>
+        index === 0 ? value : value.replace(/^\+/, '')
+    ).join(' + ');
+    const formatDamagePercentValues = values => {
+        const cleanValues = values.map(value => value.replace(/^\+/, ''));
+        return cleanValues.join(' + ');
+    };
+
+    const readSourcePercents = keys => {
+        if (!source || typeof source !== 'object') return [];
+        return uniquePercentValues(keys.flatMap(key => readPercentList(source[key])));
+    };
+
+    const clauses = normalized
+        .split(/\s*;\s*|\s*,\s*(?=(?:plus|increases?|decreases?|lowers?|raises?)\b)/i)
+        .map(clause => clause.trim())
+        .filter(Boolean);
+    const statClauses = [];
+    const damageClauses = [];
+    let lastEffectFamily = '';
+    clauses.forEach(clause => {
+        if (/damage\s+received/i.test(clause)) lastEffectFamily = 'damage';
+        else if (/\b(?:atk|def)\b/i.test(clause)) lastEffectFamily = 'stat';
+
+        if (!/\d+(?:\.\d+)?\s*%/.test(clause)) return;
+        if (lastEffectFamily === 'damage') damageClauses.push(clause);
+        else if (lastEffectFamily === 'stat') statClauses.push(clause);
+    });
+    const statText = statClauses.join(' ');
+    const damageText = damageClauses.join(' ');
+
+    const getClauseTargets = clause => {
+        const targets = [];
+        if (/\b(?:self|ally|allies|allied)\b/i.test(clause)) targets.push('self');
+        if (/\b(?:enemy|enemies)\b/i.test(clause)) targets.push('enemy');
+        return targets;
+    };
+    const findTargetPercents = (items, target) => {
+        const values = [];
+        let inheritedTargets = [];
+        items.forEach(item => {
+            const explicitTargets = getClauseTargets(item);
+            if (explicitTargets.length) inheritedTargets = explicitTargets;
+            const clauseTargets = explicitTargets.length
+                ? explicitTargets
+                : (inheritedTargets.length ? inheritedTargets : ['self', 'enemy']);
+            if (clauseTargets.includes(target)) values.push(...readPercentList(item));
+        });
+        return values;
+    };
+
+    const textSelfValues = findTargetPercents(statClauses, 'self');
+    const textEnemyValues = findTargetPercents(statClauses, 'enemy');
+    const sourceSelfValues = readSourcePercents(['self_percentage', 'self_percent', 'self_value', 'ally_percentage', 'allies_percentage']);
+    const sourceEnemyValues = readSourcePercents(['enemy_percentage', 'enemy_percent', 'enemy_value']);
+    const selfValues = textSelfValues.length ? textSelfValues : sourceSelfValues;
+    const enemyValues = textEnemyValues.length ? textEnemyValues : sourceEnemyValues;
+    const selfValue = formatStatPercentValues(selfValues);
+    const enemyValue = formatStatPercentValues(enemyValues);
+
+    const statScopeClause = statClauses.find(item => /\d+(?:\.\d+)?\s*%/.test(item)) || statText;
+    const statScope = /\batk\b\s*(?:&|and)\s*\bdef\b/i.test(statScopeClause)
+        ? 'ATK / DEF'
+        : (/\batk\b/i.test(statScopeClause) ? 'ATK' : 'DEF');
+
+    const textDamageSelfValues = findTargetPercents(damageClauses, 'self');
+    const textDamageEnemyValues = findTargetPercents(damageClauses, 'enemy');
+    const sourceDamageValues = readSourcePercents([
+        'damage_received_percentage',
+        'damage_received_percent',
+        'damage_received_value',
+        'damage_percentage',
+        'damage_percent'
+    ]);
+    const damageSelfValues = textDamageSelfValues.length ? textDamageSelfValues : sourceDamageValues;
+    const damageEnemyValues = textDamageEnemyValues.length ? textDamageEnemyValues : sourceDamageValues;
+    const damageValues = damageSelfValues.length ? damageSelfValues : damageEnemyValues;
+    const damageValue = formatDamagePercentValues(damageValues);
+    const hasDamageSelfTarget = /\b(?:self|ally|allies|allied)\b/i.test(damageText);
+    const hasDamageEnemyTarget = /\b(?:enemy|enemies)\b/i.test(damageText);
+    const damageHasExplicitTarget = hasDamageSelfTarget || hasDamageEnemyTarget;
+    const damageSelfValue = damageSelfValues.length && (hasDamageSelfTarget || !damageHasExplicitTarget) ? formatDamagePercentValues(damageSelfValues) : '';
+    const damageEnemyValue = damageEnemyValues.length && (hasDamageEnemyTarget || !damageHasExplicitTarget) ? formatDamagePercentValues(damageEnemyValues) : '';
+
+    const renderTrendIcon = kind => `<svg class="abs-clean-target-trend-icon${kind === 'enemy' ? ' is-negative' : ''}" width="100%" height="100%" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M17 18L12 13L7 18M17 11L12 6L7 11" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>`;
+    const renderLabel = (className, kind, label) => {
+        const labelText = `<span class="abs-clean-field-label-text">${label}</span>`;
+        const trendIcon = renderTrendIcon(kind);
+        // Keep the positive/self arrow before its label and put the negative/enemy
+        // arrow after its label so both target groups can remain centered.
+        return `
+            <span class="${className}">${kind === 'enemy' ? `${labelText}${trendIcon}` : `${trendIcon}${labelText}`}</span>
+        `;
+    };
+    const renderStatBadge = (kind, label, value) => `
+        <div class="abs-clean-field-stat-badge ${kind}" data-field-target="${kind}">
+            ${renderLabel('abs-clean-field-stat-label', kind, label)}
+            <strong class="abs-clean-field-stat-value">${value}</strong>
+            <span class="abs-clean-field-stat-scope">${statScope}</span>
+        </div>
+    `;
+    const renderDamageBadge = (kind, label, value) => `
+        <div class="abs-clean-field-damage-badge ${kind}" data-field-target="${kind}" data-field-stat="damage-received">
+            ${renderLabel('abs-clean-field-damage-label', kind, label)}
+            <strong class="abs-clean-field-stat-value abs-clean-field-damage-value">${value}</strong>
+            <span class="abs-clean-field-stat-scope abs-clean-field-damage-scope">Damage Received</span>
+        </div>
+    `;
+
+    let statSection = '';
+    if ((statText || selfValue || enemyValue) && (selfValue || enemyValue)) {
+        statSection = `
+            <div class="abs-clean-field-stat-row" role="group" aria-label="Dokkan Field stat badges">
+                ${selfValue ? renderStatBadge('self', 'self', selfValue) : ''}
+                ${enemyValue ? renderStatBadge('enemy', 'enemy', enemyValue) : ''}
+            </div>
+        `;
+    }
+    let damageSection = '';
+    if (damageValue && (damageSelfValue || damageEnemyValue)) {
+        damageSection = `
+            <div class="abs-clean-field-damage-section" role="group" aria-label="Additional stat metrics">
+                <div class="abs-clean-field-damage-row">
+                    ${damageSelfValue ? renderDamageBadge('self', 'self', damageSelfValue) : ''}
+                    ${damageEnemyValue ? renderDamageBadge('enemy', 'enemy', damageEnemyValue) : ''}
+                </div>
+            </div>
+        `;
+    }
+    if (!statSection && !damageSection) return '';
+
+    return `
+        <div class="abs-clean-field-metric-row" role="group" aria-label="Dokkan Field stat metrics">
+            ${statSection}
+            ${damageSection}
+        </div>
+    `;
+}
+
+function renderAbsDamageMultiplier(text, typeLabel = '', isActive = false, kiText = '', special = null) {
     if (!text) return '';
     const low = text.toLowerCase();
     const lowLabel = typeLabel.toLowerCase().trim();
@@ -410,6 +677,13 @@ function renderAbsDamageMultiplier(text, typeLabel = '', isActive = false, kiTex
         'low':           { 10: 220, 15: 290, 20: 320, 25: 350 }
     };
 
+    const exactMultiplier = Number(
+        special?.exact_multiplier
+        ?? special?.damage_multiplier
+        ?? special?.multiplier
+        ?? 0,
+    );
+
     let matchedTier = null;
     if (low.includes('mega-colossal')) matchedTier = 'mega-colossal';
     else if (low.includes('colossal')) matchedTier = 'colossal';
@@ -422,7 +696,7 @@ function renderAbsDamageMultiplier(text, typeLabel = '', isActive = false, kiTex
     else if (low.includes('huge')) matchedTier = 'huge';
     else if (low.includes('low')) matchedTier = 'low';
 
-    if (!matchedTier) return '';
+    if (!matchedTier && !(Number.isFinite(exactMultiplier) && exactMultiplier > 0)) return '';
 
     const isEZA = (typeof currentEzaMode !== 'undefined' && (currentEzaMode === 'eza' || currentEzaMode === 'seza')) ||
                   (selectedCard && (selectedCard.is_eza || selectedCard.is_seza));
@@ -436,7 +710,14 @@ function renderAbsDamageMultiplier(text, typeLabel = '', isActive = false, kiTex
         maxLv = isEZA ? 15 : 10;
     }
 
-    const maxVal = (baseMultipliers[matchedTier][maxLv] || baseMultipliers[matchedTier][10] || 430) + '%';
+    // card_specials already carries the exact multiplier for this card's
+    // current mode.  EZA/SEZA attacks often share the same damage wording as
+    // their base version, so deriving the number from "colossal" alone loses
+    // the database's real EZA value.  Use the exported value whenever it is
+    // available and keep the text formula only as a legacy fallback.
+    const maxVal = (Number.isFinite(exactMultiplier) && exactMultiplier > 0
+        ? exactMultiplier
+        : (baseMultipliers[matchedTier]?.[maxLv] || baseMultipliers[matchedTier]?.[10] || 430)) + '%';
     const cleanKi = kiText ? kiText.replace(/[\(\)]/g, '').trim() : '';
 
     return `
@@ -461,4 +742,7 @@ window.formatCategoryQuotes = function(t) { return formatOfficialText(t, true); 
 window.parsePassiveSections = parsePassiveSections;
 window.autoDetectSAStats = autoDetectSAStats;
 window.renderAbsSpecialEffects = renderAbsSpecialEffects;
+window.getAbsDokkanFieldEffectText = getAbsDokkanFieldEffectText;
+window.formatAbsCleanDokkanFieldEffect = formatAbsCleanDokkanFieldEffect;
+window.renderAbsCleanFieldStatBadges = renderAbsCleanFieldStatBadges;
 window.renderAbsDamageMultiplier = renderAbsDamageMultiplier;

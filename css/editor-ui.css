@@ -1,8 +1,33 @@
+/* Shared markup defaults: abs.clean slots are present in the common card DOM,
+   but must stay out of dokkan.info and abs.style until abs.clean enables them. */
+#abs-clean-release-date,
+#abs-clean-info-bar,
+#abs-clean-leader-bar,
+#abs-clean-identity-icons,
+#abs-clean-name-badges,
+#abs-clean-ability-docks,
+#abs-clean-passive-icons,
+#abs-clean-awakening-portraits,
+#abs-clean-summon-logo,
+#abs-clean-type-matchups,
+#abs-clean-portrait-stage,
+#abs-clean-ascii-bg {
+    display: none !important;
+}
+
+#abs-clean-grid-circuit {
+    display: none;
+    position: fixed;
+    inset: 0;
+    width: 100vw;
+    height: 100vh;
+    pointer-events: none;
+    z-index: 0;
+}
+
 /* ======================================================================= */
 /* 1. TYPING COLOR VARIABLES & BASE RESET                                   */
 /* ======================================================================= */
-
-
 
 :root {
     --type-main: #27272a;
@@ -25,6 +50,7 @@ html, body {
 #top-content {
     width: 100% !important;
     box-sizing: border-box !important;
+    margin-top: 14px !important;
 }
 
 .bg-none { background-color: #000000 !important; }
@@ -64,9 +90,10 @@ body:not(.is-published) #ssr-row:hover,
 body:not(.is-published) #tur-row:hover,
 body:not(.is-published) #forms-card-wrapper:hover {
     cursor: pointer !important;
-    outline: 2px solid #ffffff !important;
+    outline: 2px solid #f59e0b !important;
     outline-offset: -2px !important;
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.8) !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.65), inset 0 0 8px rgba(251, 191, 36, 0.2) !important;
+    border-radius: 0px !important;
 }
 
 /* Disable Hover Outlines when Published and Admin Mode is OFF */
@@ -161,13 +188,16 @@ body.is-published:not(.admin-mode-active) #abs-awakenings-box {
   display: inline-block !important;
 }
 
-/* HIDE UPLOAD BUTTON ON PUBLISHED SITES (UNLESS ADMIN MODE IS ACTIVE) */
-body.is-published:not(.admin-mode-active) #topbar-upload-dock-wrap {
+/* HIDE UPLOAD & QUICK EDIT BUTTONS ON PUBLISHED SITES (UNLESS ADMIN MODE IS ACTIVE) */
+body.is-published:not(.admin-mode-active) #topbar-upload-dock-wrap,
+body.is-published:not(.admin-mode-active) #topbar-quick-edit-btn {
     display: none !important;
 }
 
-body.admin-mode-active #topbar-upload-dock-wrap {
-    display: inline-block !important;
+body.admin-mode-active #topbar-upload-dock-wrap,
+body.is-published.admin-mode-active #topbar-quick-edit-btn,
+body.admin-mode-active #topbar-quick-edit-btn {
+    display: inline-flex !important;
 }
 
 .glass-btn-wrap .button-shadow {
@@ -822,14 +852,19 @@ input[type="file"][hidden] {
 /* 4. FLOATING CLICK-TO-EDIT POPUP GUI (#context-gui)                      */
 /* ======================================================================= */
 
+:root {
+    --click-to-edit-zoom: 0.8;
+}
+
 #context-gui {
     position: fixed !important;
     z-index: 999999 !important;
+    zoom: var(--click-to-edit-zoom, 0.8) !important;
     width: 540px;
     min-width: 380px;
-    max-width: 92vw;
+    max-width: calc(92vw / var(--click-to-edit-zoom, 0.8));
     height: auto;
-    max-height: 85vh;
+    max-height: calc(88vh / var(--click-to-edit-zoom, 0.8));
     display: none;
     flex-direction: column;
     resize: both;
@@ -878,7 +913,7 @@ input[type="file"][hidden] {
 #gui-content {
     flex: 1 1 auto !important;
     overflow-y: auto !important;
-    max-height: 72vh !important;
+    max-height: calc(76vh / var(--click-to-edit-zoom, 0.8)) !important;
     padding-top: 8px !important;
     padding-bottom: 8px !important;
     padding-left: 4px !important;
@@ -1480,17 +1515,217 @@ body.theme-abs-style .gui-add-btn,
     border-radius: 6px !important;
 }
 
+/* --- 3. SBA / ABS CLEAN THEME: SHARP SQUARED EDGES & SEMI-GRID GLASSY FEEL --- */
+body.theme-abs-clean .modern-top-bar.scouter-hud-bar,
+.theme-abs-clean .modern-top-bar.scouter-hud-bar,
+body.theme-sba .modern-top-bar.scouter-hud-bar,
+.theme-sba .modern-top-bar.scouter-hud-bar {
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.7), inset 0 -1px 0 rgba(255, 255, 255, 0.1) !important;
+    backdrop-filter: blur(24px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
+}
+
+body.theme-abs-clean .glass-btn-wrap,
+body.theme-abs-clean .glass-btn,
+body.theme-abs-clean .glass-btn span::after,
+body.theme-abs-clean .glass-btn::after,
+.theme-abs-clean .glass-btn-wrap,
+.theme-abs-clean .glass-btn,
+.theme-abs-clean .glass-btn span::after,
+.theme-abs-clean .glass-btn::after,
+body.theme-sba .glass-btn-wrap,
+body.theme-sba .glass-btn,
+body.theme-sba .glass-btn span::after,
+body.theme-sba .glass-btn::after,
+.theme-sba .glass-btn-wrap,
+.theme-sba .glass-btn,
+.theme-sba .glass-btn span::after,
+.theme-sba .glass-btn::after {
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .scouter-menu-btn,
+.theme-abs-clean .scouter-menu-btn,
+body.theme-abs-clean .topbar-menu-btn,
+.theme-abs-clean .topbar-menu-btn,
+body.theme-abs-clean .hud-theme-stack,
+.theme-abs-clean .hud-theme-stack,
+body.theme-sba .scouter-menu-btn,
+.theme-sba .scouter-menu-btn,
+body.theme-sba .topbar-menu-btn,
+.theme-sba .topbar-menu-btn,
+body.theme-sba .hud-theme-stack,
+.theme-sba .hud-theme-stack {
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .abs-hud-theme-btn,
+.theme-abs-clean .abs-hud-theme-btn,
+body.theme-abs-clean #admin-quick-save-btn,
+.theme-abs-clean #admin-quick-save-btn,
+body.theme-abs-clean #admin-export-json-btn,
+.theme-abs-clean #admin-export-json-btn,
+body.theme-sba .abs-hud-theme-btn,
+.theme-sba .abs-hud-theme-btn,
+body.theme-sba #admin-quick-save-btn,
+.theme-sba #admin-quick-save-btn,
+body.theme-sba #admin-export-json-btn,
+.theme-sba #admin-export-json-btn {
+    border-radius: 0px !important;
+}
+
+/* Auto Save Indicator in Clean Theme */
+body.theme-abs-clean .main-autosave-ui,
+.theme-abs-clean .main-autosave-ui,
+body.theme-sba .main-autosave-ui,
+.theme-sba .main-autosave-ui {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.82) 0%, rgba(4, 7, 14, 0.92) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.82) 0%, rgba(4, 7, 14, 0.92) 100%) !important;
+    background-size: 10px 10px, 10px 10px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+    backdrop-filter: blur(20px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(140%) !important;
+}
+
+body.theme-abs-clean .main-autosave-ui .autosave-label,
+.theme-abs-clean .main-autosave-ui .autosave-label,
+body.theme-sba .main-autosave-ui .autosave-label,
+.theme-sba .main-autosave-ui .autosave-label {
+    color: rgba(255, 255, 255, 0.92) !important;
+    letter-spacing: 0.8px !important;
+    font-weight: 700 !important;
+    text-transform: uppercase !important;
+}
+
+/* Click-to-Edit Floating GUI (#context-gui) in Clean Theme */
+body.theme-abs-clean #context-gui,
+.theme-abs-clean #context-gui,
+body.theme-sba #context-gui,
+.theme-sba #context-gui {
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.88) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.02) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.88) 0%, rgba(4, 7, 14, 0.96) 100%) !important;
+    background-size: 20px 20px, 20px 20px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.24) !important;
+    box-shadow: 0 20px 50px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(28px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(150%) !important;
+    padding: 16px !important;
+}
+
+body.theme-abs-clean .gui-header,
+.theme-abs-clean .gui-header,
+body.theme-sba .gui-header,
+.theme-sba .gui-header {
+    background: transparent !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16) !important;
+    border-radius: 0px !important;
+    padding-bottom: 10px !important;
+    margin: 0 0 12px 0 !important;
+}
+
+body.theme-abs-clean .gui-title,
+.theme-abs-clean .gui-title,
+body.theme-sba .gui-title,
+.theme-sba .gui-title {
+    color: #ffffff !important;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5) !important;
+    font-size: 13.5px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.8px !important;
+}
+
+body.theme-abs-clean .gui-close,
+.theme-abs-clean .gui-close,
+body.theme-sba .gui-close,
+.theme-sba .gui-close {
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .gui-section-box,
+.theme-abs-clean .gui-section-box,
+body.theme-sba .gui-section-box,
+.theme-sba .gui-section-box {
+    border-radius: 0px !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
+}
+
+body.theme-abs-clean #context-gui .form-control,
+.theme-abs-clean #context-gui .form-control,
+body.theme-sba #context-gui .form-control,
+.theme-sba #context-gui .form-control {
+    border-radius: 0px !important;
+    background: rgba(0, 0, 0, 0.5) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5) !important;
+    color: #ffffff !important;
+}
+
+body.theme-abs-clean #context-gui .form-control:focus,
+.theme-abs-clean #context-gui .form-control:focus,
+body.theme-sba #context-gui .form-control:focus,
+.theme-sba #context-gui .form-control:focus {
+    border-color: rgba(255, 255, 255, 0.6) !important;
+    box-shadow: 0 0 10px rgba(255, 255, 255, 0.25) !important;
+}
+
+body.theme-abs-clean .gui-preset-btn,
+.theme-abs-clean .gui-preset-btn,
+body.theme-abs-clean .gui-add-btn,
+.theme-abs-clean .gui-add-btn,
+body.theme-abs-clean #context-gui .btn-primary,
+.theme-abs-clean #context-gui .btn-primary,
+body.theme-abs-clean #context-gui .btn-danger,
+.theme-abs-clean #context-gui .btn-danger,
+body.theme-abs-clean .gui-header-save-btn,
+.theme-abs-clean .gui-header-save-btn,
+body.theme-abs-clean .gui-remove-btn,
+.theme-abs-clean .gui-remove-btn,
+body.theme-sba .gui-preset-btn,
+.theme-sba .gui-preset-btn,
+body.theme-sba .gui-add-btn,
+.theme-sba .gui-add-btn,
+body.theme-sba #context-gui .btn-primary,
+.theme-sba #context-gui .btn-primary,
+body.theme-sba #context-gui .btn-danger,
+.theme-sba #context-gui .btn-danger,
+body.theme-sba .gui-header-save-btn,
+.theme-sba .gui-header-save-btn,
+body.theme-sba .gui-remove-btn,
+.theme-sba .gui-remove-btn {
+    border-radius: 0px !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
+}
 
 /* ======================================================================= */
-/* GLASSMORPHISM ADMIN BUTTONS (HIDDEN BY DEFAULT, SHOWN IN ADMIN MODE)    */
+/* TOP BAR SAVE QUICK EDIT BUTTON (GLOWING OUTLINE BOX)                    */
 /* ======================================================================= */
 
-#admin-export-json-btn,
-#admin-quick-save-btn {
+#admin-quick-save-btn.quick-save-special.top-hud-btn,
+.hud-quick-save-btn.quick-save-special,
+#admin-quick-save-btn.quick-save-special {
     all: unset !important;
     cursor: pointer !important;
     position: relative !important;
-    display: none !important; /* HIDDEN BY DEFAULT ON EDITOR & PUBLISHED SITE */
+    display: none; /* HIDDEN BY DEFAULT UNTIL ADMIN MODE OR QUICK EDIT IS ACTIVE */
     align-items: center !important;
     justify-content: center !important;
     gap: 6px !important;
@@ -1502,47 +1737,73 @@ body.theme-abs-style .gui-add-btn,
     text-transform: uppercase !important;
     letter-spacing: 0.5px !important;
     border-radius: 8px !important;
+    border: 1.5px solid #ffffff !important;
+    outline: 2px solid rgba(255, 255, 255, 0.9) !important;
+    outline-offset: 1px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.65), inset 0 0 8px rgba(255, 255, 255, 0.25) !important;
     backdrop-filter: blur(10px) !important;
     -webkit-backdrop-filter: blur(10px) !important;
-    transition: all 0.3s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    transition: all 0.2s cubic-bezier(0.25, 1, 0.5, 1) !important;
     margin: 0 !important;
     box-sizing: border-box !important;
 }
 
-/* REVEAL ONLY WHEN ADMIN MODE IS UNLOCKED ON PUBLISHED SITE */
-body.admin-mode-active #admin-export-json-btn,
-body.admin-mode-active #admin-quick-save-btn {
+body.admin-mode-active #admin-quick-save-btn,
+body.quick-edit-open #admin-quick-save-btn,
+body.is-published.admin-mode-active #admin-quick-save-btn,
+body.is-published.quick-edit-open #admin-quick-save-btn,
+body.admin-mode-active .hud-quick-save-btn,
+body.quick-edit-open .hud-quick-save-btn,
+body.is-published.admin-mode-active .hud-quick-save-btn,
+body.is-published.quick-edit-open .hud-quick-save-btn {
     display: inline-flex !important;
 }
 
-#admin-export-json-btn {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.25) 0%, rgba(15, 23, 42, 0.8) 100%) !important;
-    border: 1px solid rgba(59, 130, 246, 0.5) !important;
-    color: #93c5fd !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
-}
-
-#admin-export-json-btn:hover {
-    background: linear-gradient(135deg, rgba(37, 99, 235, 0.45) 0%, rgba(30, 41, 59, 0.9) 100%) !important;
-    border-color: #60a5fa !important;
+#admin-quick-save-btn.quick-save-special:hover,
+.hud-quick-save-btn.quick-save-special:hover {
+    background: rgba(255, 255, 255, 0.20) !important;
+    border-color: #ffffff !important;
+    outline-color: #ffffff !important;
     color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(59, 130, 246, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
+    box-shadow: 0 0 24px rgba(255, 255, 255, 0.95), inset 0 0 12px rgba(255, 255, 255, 0.4) !important;
     transform: translateY(-1px) !important;
 }
 
-#admin-quick-save-btn {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.25) 0%, rgba(20, 25, 38, 0.8) 100%) !important;
-    border: 1px solid rgba(245, 158, 11, 0.5) !important;
-    color: #fde047 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4), inset 0 1px 0 rgba(255, 255, 255, 0.2) !important;
+body.theme-dokkaninfo #admin-quick-save-btn,
+body.theme-abs-clean #admin-quick-save-btn,
+body.theme-sba #admin-quick-save-btn {
+    border-radius: 0px !important;
 }
 
-#admin-quick-save-btn:hover {
-    background: linear-gradient(135deg, rgba(245, 158, 11, 0.45) 0%, rgba(30, 38, 55, 0.9) 100%) !important;
-    border-color: #facc15 !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 15px rgba(245, 158, 11, 0.6), inset 0 1px 0 rgba(255, 255, 255, 0.4) !important;
-    transform: translateY(-1px) !important;
+/* Quick Edit GUI header save button */
+.gui-header-save-btn {
+    all: unset;
+    cursor: pointer;
+    display: none;
+    align-items: center;
+    gap: 4px;
+    height: 24px;
+    padding: 0 10px;
+    font-family: 'Inter', system-ui, sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    color: #fde047;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.3) 0%, rgba(20, 25, 38, 0.85) 100%);
+    border: 1px solid rgba(245, 158, 11, 0.55);
+    border-radius: 6px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    transition: all 0.2s ease;
+    box-sizing: border-box;
+}
+
+.gui-header-save-btn:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.5) 0%, rgba(30, 38, 55, 0.95) 100%);
+    border-color: #facc15;
+    color: #ffffff;
+    box-shadow: 0 0 12px rgba(245, 158, 11, 0.6);
+    transform: translateY(-1px);
 }
 
 /* --- HUD SPINNER BADGE --- */
@@ -1730,6 +1991,7 @@ body.admin-mode-active #admin-quick-save-btn {
     z-index: 5 !important;
     display: block !important;
 }
+
 
 
 /* ======================================================================= */
@@ -2126,6 +2388,61 @@ body.admin-mode-active #admin-quick-save-btn {
 /* 11. STATS WEIGHT & DOKKAN INFO TITLE / NAME TYPOGRAPHY                  */
 /* ======================================================================= */
 
+/* ======================================================================= */
+/* PUBLISHED UPLOAD LOCK                                                   */
+/*
+   Uploaded pages keep the editor runtime so the owner can unlock it with
+   Ctrl/Cmd+Shift+A plus the admin password, but they render as published
+   viewers until that happens. The high-specificity selectors intentionally
+   win over the theme/nav hover rules above, so moving to the top or bottom
+   edge cannot reveal editor chrome while locked.
+*/
+body.editor-tool-page.is-published:not(.admin-mode-active) #editor-top-bar,
+body.editor-tool-page.is-published:not(.admin-mode-active) #editor-top-bar-trigger,
+body.editor-tool-page.is-published:not(.admin-mode-active) .apple-hud-wrapper,
+body.editor-tool-page.is-published:not(.admin-mode-active) .top-left-dock,
+body.editor-tool-page.is-published:not(.admin-mode-active) .modern-top-bar.scouter-hud-bar,
+body.editor-tool-page.is-published:not(.admin-mode-active) .scouter-menu-btn,
+body.editor-tool-page.is-published:not(.admin-mode-active) .topbar-menu-btn {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}
+
+body.editor-tool-page.is-published:not(.admin-mode-active) #context-gui,
+body.editor-tool-page.is-published:not(.admin-mode-active) #settingsDrawer,
+body.editor-tool-page.is-published:not(.admin-mode-active) #settingsOverlay,
+body.editor-tool-page.is-published:not(.admin-mode-active) #admin-quick-save-btn,
+body.editor-tool-page.is-published:not(.admin-mode-active) #topbar-quick-edit-btn,
+body.editor-tool-page.is-published:not(.admin-mode-active) .hud-quick-save-btn,
+body.editor-tool-page.is-published:not(.admin-mode-active) #main-autosave-indicator,
+body.editor-tool-page.is-published:not(.admin-mode-active) #glass-quicksave-modal,
+body.editor-tool-page.is-published:not(.admin-mode-active) #glass-upload-modal,
+body.editor-tool-page.is-published:not(.admin-mode-active) #card-admin-modal,
+body.editor-tool-page.is-published:not(.admin-mode-active) #character-importer-modal {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+body.editor-tool-page.is-published.admin-mode-active #editor-top-bar,
+body.editor-tool-page.is-published.admin-mode-active #editor-top-bar-trigger,
+body.editor-tool-page.is-published.admin-mode-active .apple-hud-wrapper,
+body.editor-tool-page.is-published.admin-mode-active #settingsDrawer,
+body.editor-tool-page.is-published.admin-mode-active #settingsOverlay {
+    visibility: visible !important;
+}
+
+/* The normal editor uses direct editing controls. Quick Edit/Admin/Save Quick
+   Edit are publish-site controls and remain available only after an uploaded
+   card is unlocked. */
+body.editor-tool-page:not(.is-published) #topbar-quick-edit-btn,
+body.editor-tool-page:not(.is-published) #admin-quick-save-btn,
+body.editor-tool-page:not(.is-published) .published-editor-actions-divider {
+    display: none !important;
+}
+
 /* 1. Stat Numbers Weight (Larger & Bolder) */
 #layout-dokkaninfo table td,
 #layout-dokkaninfo table td b {
@@ -2257,6 +2574,273 @@ body:not(.is-published) #abs-partners-box:hover {
     box-shadow: none !important;
 }
 
+/* =======================================================================
+   DOKKAN INFO SQUARED ORANGE / YELLOW EDITING OUTLINES & SELECTED GLOW
+   ======================================================================= */
+#layout-dokkaninfo .dokkan-card,
+#layout-dokkaninfo [data-edit],
+#layout-dokkaninfo .sa-block,
+#layout-dokkaninfo .active-block,
+#layout-dokkaninfo .card-art-canvas,
+#layout-dokkaninfo #forms-card-wrapper,
+#layout-dokkaninfo #awakening-progression-wrapper,
+#layout-dokkaninfo #ssr-row,
+#layout-dokkaninfo #tur-row,
+#layout-dokkaninfo .card-icon {
+    border-radius: 0px !important;
+}
+
+body.admin-mode-active #layout-dokkaninfo [data-edit]:hover,
+body:not(.is-published) #layout-dokkaninfo [data-edit]:hover,
+body.admin-mode-active #layout-dokkaninfo .dokkan-card:hover,
+body:not(.is-published) #layout-dokkaninfo .dokkan-card:hover,
+body.admin-mode-active #layout-dokkaninfo .sa-block:hover,
+body:not(.is-published) #layout-dokkaninfo .sa-block:hover,
+body.admin-mode-active #layout-dokkaninfo .active-block:hover,
+body:not(.is-published) #layout-dokkaninfo .active-block:hover,
+body.admin-mode-active #layout-dokkaninfo .card-art-canvas:hover,
+body:not(.is-published) #layout-dokkaninfo .card-art-canvas:hover,
+body.admin-mode-active #layout-dokkaninfo #forms-card-wrapper:hover,
+body:not(.is-published) #layout-dokkaninfo #forms-card-wrapper:hover,
+body.admin-mode-active #layout-dokkaninfo #awakening-progression-wrapper:hover,
+body:not(.is-published) #layout-dokkaninfo #awakening-progression-wrapper:hover,
+body.admin-mode-active #layout-dokkaninfo #ssr-row:hover,
+body:not(.is-published) #layout-dokkaninfo #ssr-row:hover,
+body.admin-mode-active #layout-dokkaninfo #tur-row:hover,
+body:not(.is-published) #layout-dokkaninfo #tur-row:hover,
+body.admin-mode-active #layout-dokkaninfo .card-icon:hover,
+body:not(.is-published) #layout-dokkaninfo .card-icon:hover {
+    cursor: pointer !important;
+    outline: 2px solid #f59e0b !important;
+    outline-offset: -2px !important;
+    box-shadow: 0 0 14px rgba(245, 158, 11, 0.65), inset 0 0 8px rgba(251, 191, 36, 0.2) !important;
+    border-radius: 0px !important;
+}
+
+#layout-dokkaninfo .active-selected-glow,
+#layout-dokkaninfo [data-edit].active-selected-glow,
+#layout-dokkaninfo .dokkan-card.active-selected-glow,
+#layout-dokkaninfo .sa-block.active-selected-glow,
+#layout-dokkaninfo .active-block.active-selected-glow,
+#layout-dokkaninfo .card-art-canvas.active-selected-glow,
+#layout-dokkaninfo #forms-card-wrapper.active-selected-glow,
+#layout-dokkaninfo #awakening-progression-wrapper.active-selected-glow,
+#layout-dokkaninfo #ssr-row.active-selected-glow,
+#layout-dokkaninfo #tur-row.active-selected-glow,
+#layout-dokkaninfo .card-icon.active-selected-glow {
+    outline: 2px solid #fbbf24 !important;
+    outline-offset: -2px !important;
+    box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.35), 0 0 20px rgba(245, 158, 11, 0.9) !important;
+    border-radius: 0px !important;
+    transition: outline 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#layout-dokkaninfo [data-edit] .dokkan-card:not([data-edit]):not(.active-selected-glow),
+#layout-dokkaninfo #forms-container .dokkan-card,
+#layout-dokkaninfo #forms-container .row,
+#layout-dokkaninfo .abs-transform-row,
+#layout-dokkaninfo .card-icon-item,
+#layout-dokkaninfo .form-link {
+    outline: none !important;
+    box-shadow: none !important;
+    border-radius: 0px !important;
+}
+
+/* =======================================================================
+   ABS STYLE GREEN HOVER OUTLINES & SELECTED GLOW
+   ======================================================================= */
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-edit]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-edit]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style .card-icon:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style .card-icon:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style .abs-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style .abs-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style .abs-header-text:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style .abs-header-text:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-art-dock-wrapper:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-art-dock-wrapper:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-composed-icon:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-composed-icon:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-awakenings-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-awakenings-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-transformations-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-transformations-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-stats-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-stats-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #forms-card-wrapper:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #forms-card-wrapper:hover,
+body.theme-abs-style.admin-mode-active [data-edit]:hover,
+body.theme-abs-style:not(.is-published) [data-edit]:hover,
+body.theme-abs-style.admin-mode-active .card-icon:hover,
+body.theme-abs-style:not(.is-published) .card-icon:hover,
+body.theme-abs-style.admin-mode-active .abs-box:hover,
+body.theme-abs-style:not(.is-published) .abs-box:hover,
+body.theme-abs-style.admin-mode-active .abs-header-text:hover,
+body.theme-abs-style:not(.is-published) .abs-header-text:hover,
+body.theme-abs-style.admin-mode-active #abs-art-dock-wrapper:hover,
+body.theme-abs-style:not(.is-published) #abs-art-dock-wrapper:hover,
+body.theme-abs-style.admin-mode-active #abs-composed-icon:hover,
+body.theme-abs-style:not(.is-published) #abs-composed-icon:hover,
+body.theme-abs-style.admin-mode-active #abs-awakenings-box:hover,
+body.theme-abs-style:not(.is-published) #abs-awakenings-box:hover,
+body.theme-abs-style.admin-mode-active #abs-transformations-box:hover,
+body.theme-abs-style:not(.is-published) #abs-transformations-box:hover,
+body.theme-abs-style.admin-mode-active #abs-stats-box:hover,
+body.theme-abs-style:not(.is-published) #abs-stats-box:hover,
+body.theme-abs-style.admin-mode-active #forms-card-wrapper:hover,
+body.theme-abs-style:not(.is-published) #forms-card-wrapper:hover {
+    outline: 2px solid #22c55e !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.55), inset 0 0 10px rgba(34, 197, 94, 0.18) !important;
+}
+
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-awakenings-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-awakenings-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-transformations-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-transformations-box:hover,
+body.theme-abs-style.admin-mode-active #abs-awakenings-box:hover,
+body.theme-abs-style:not(.is-published) #abs-awakenings-box:hover,
+body.theme-abs-style.admin-mode-active #abs-transformations-box:hover,
+body.theme-abs-style:not(.is-published) #abs-transformations-box:hover {
+    position: relative !important;
+    z-index: 10 !important;
+    outline: 2px solid #22c55e !important;
+    outline-offset: 3px !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.55), inset 0 0 10px rgba(34, 197, 94, 0.18) !important;
+}
+
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) #layout-abs-style .active-selected-glow,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) #layout-abs-style [data-edit].active-selected-glow,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) #layout-abs-style .abs-box.active-selected-glow,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) #layout-abs-style .abs-header-text.active-selected-glow,
+body.theme-abs-style #layout-abs-style .active-selected-glow,
+body.theme-abs-style #layout-abs-style [data-edit].active-selected-glow,
+body.theme-abs-style #layout-abs-style .abs-box.active-selected-glow,
+body.theme-abs-style #layout-abs-style .abs-header-text.active-selected-glow {
+    outline: 2px solid #22c55e !important;
+    outline-offset: 3px !important;
+    box-shadow: inset 0 0 10px rgba(34, 197, 94, 0.25), 0 0 20px rgba(34, 197, 94, 0.85) !important;
+}
+
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) #abs-partners-box:hover,
+body.theme-abs-style #abs-partners-box:hover {
+    cursor: default !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
+/* =======================================================================
+   ABS CLEAN WHITE HOVER OUTLINES & SELECTED GLOW (ALL MAIN CONTAINERS)
+   ======================================================================= */
+body.theme-abs-clean.admin-mode-active [data-edit]:hover,
+body.theme-abs-clean:not(.is-published) [data-edit]:hover,
+body.theme-abs-clean.admin-mode-active .abs-box:hover,
+body.theme-abs-clean:not(.is-published) .abs-box:hover,
+body.theme-abs-clean.admin-mode-active .sa-block:hover,
+body.theme-abs-clean:not(.is-published) .sa-block:hover,
+body.theme-abs-clean.admin-mode-active #abs-sa-container > div:hover,
+body.theme-abs-clean:not(.is-published) #abs-sa-container > div:hover,
+body.theme-abs-clean.admin-mode-active #abs-sa-container:hover,
+body.theme-abs-clean:not(.is-published) #abs-sa-container:hover,
+body.theme-abs-clean.admin-mode-active #abs-stats-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-stats-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-header-stats:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-header-stats:hover,
+body.theme-abs-clean.admin-mode-active .abs-stat-cards-row:hover,
+body.theme-abs-clean:not(.is-published) .abs-stat-cards-row:hover,
+body.theme-abs-clean.admin-mode-active .abs-stat-slider-wrapper:hover,
+body.theme-abs-clean:not(.is-published) .abs-stat-slider-wrapper:hover,
+body.theme-abs-clean.admin-mode-active #abs-category-container:hover,
+body.theme-abs-clean:not(.is-published) #abs-category-container:hover,
+body.theme-abs-clean.admin-mode-active #abs-categories-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-categories-box:hover,
+body.theme-abs-clean.admin-mode-active .abs-category-switcher-content:hover,
+body.theme-abs-clean:not(.is-published) .abs-category-switcher-content:hover,
+body.theme-abs-clean.admin-mode-active #abs-passive-skill-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-passive-skill-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-passive-container:hover,
+body.theme-abs-clean:not(.is-published) #abs-passive-container:hover,
+body.theme-abs-clean.admin-mode-active #abs-leader-skill-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-leader-skill-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-leader-bar:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-leader-bar:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-leader-banner-slot:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-leader-banner-slot:hover,
+body.theme-abs-clean.admin-mode-active #abs-link-skills-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-link-skills-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-link-container:hover,
+body.theme-abs-clean:not(.is-published) #abs-link-container:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-link-skills-slot:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-link-skills-slot:hover,
+body.theme-abs-clean.admin-mode-active #abs-active-container > div:hover,
+body.theme-abs-clean:not(.is-published) #abs-active-container > div:hover,
+body.theme-abs-clean.admin-mode-active #abs-field-container > div:hover,
+body.theme-abs-clean:not(.is-published) #abs-field-container > div:hover,
+body.theme-abs-clean.admin-mode-active #abs-standby-container > div:hover,
+body.theme-abs-clean:not(.is-published) #abs-standby-container > div:hover,
+body.theme-abs-clean.admin-mode-active .active-block:hover,
+body.theme-abs-clean:not(.is-published) .active-block:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-portrait-stage:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-portrait-stage:hover,
+body.theme-abs-clean.admin-mode-active #abs-art-dock-wrapper:hover,
+body.theme-abs-clean:not(.is-published) #abs-art-dock-wrapper:hover,
+body.theme-abs-clean.admin-mode-active #abs-awakenings-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-awakenings-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-transformations-box:hover,
+body.theme-abs-clean:not(.is-published) #abs-transformations-box:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-awakening-portraits:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-awakening-portraits:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-bottom-timeline:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-bottom-timeline:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-identity-icons:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-identity-icons:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-name-badges:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-name-badges:hover,
+body.theme-abs-clean.admin-mode-active #abs-clean-info-bar:hover,
+body.theme-abs-clean:not(.is-published) #abs-clean-info-bar:hover,
+body.theme-abs-clean.admin-mode-active .abs-header-text:hover,
+body.theme-abs-clean:not(.is-published) .abs-header-text:hover,
+body.theme-abs-clean.admin-mode-active .card-icon:hover,
+body.theme-abs-clean:not(.is-published) .card-icon:hover {
+    outline: 2px solid #ffffff !important;
+    outline-offset: -2px !important;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.75), inset 0 0 10px rgba(255, 255, 255, 0.25) !important;
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean .active-selected-glow,
+body.theme-abs-clean [data-edit].active-selected-glow,
+body.theme-abs-clean .dokkan-card.active-selected-glow,
+body.theme-abs-clean .abs-box.active-selected-glow,
+body.theme-abs-clean .sa-block.active-selected-glow,
+body.theme-abs-clean .active-block.active-selected-glow,
+body.theme-abs-clean #abs-sa-container > div.active-selected-glow,
+body.theme-abs-clean #abs-sa-container.active-selected-glow,
+body.theme-abs-clean #abs-stats-box.active-selected-glow,
+body.theme-abs-clean #abs-clean-header-stats.active-selected-glow,
+body.theme-abs-clean #abs-categories-box.active-selected-glow,
+body.theme-abs-clean #abs-category-container.active-selected-glow,
+body.theme-abs-clean #abs-passive-skill-box.active-selected-glow,
+body.theme-abs-clean #abs-passive-container.active-selected-glow,
+body.theme-abs-clean #abs-leader-skill-box.active-selected-glow,
+body.theme-abs-clean #abs-clean-leader-bar.active-selected-glow,
+body.theme-abs-clean #abs-link-skills-box.active-selected-glow,
+body.theme-abs-clean #abs-link-container.active-selected-glow,
+body.theme-abs-clean #abs-clean-portrait-stage.active-selected-glow,
+body.theme-abs-clean #abs-art-dock-wrapper.active-selected-glow,
+body.theme-abs-clean .abs-header-text.active-selected-glow {
+    outline: 2px solid #ffffff !important;
+    outline-offset: -2px !important;
+    box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.5), 0 0 24px rgba(255, 255, 255, 0.95) !important;
+    border-radius: 0px !important;
+}
+
+body.theme-abs-clean #abs-partners-box:hover {
+    cursor: default !important;
+    outline: none !important;
+    box-shadow: none !important;
+}
+
 /* --- PASSIVE HEADER ABILITY BADGES TOGGLE TOOLBAR --- */
 .passive-badge-toggle-btn {
     display: inline-flex !important;
@@ -2355,7 +2939,7 @@ body:not(.is-published) #abs-partners-box:hover {
 }
 
 /* ======================================================================= */
-/* 13. DOKKAN CHARACTER IMPORTER MODAL STYLING                            */
+/* 13. DOKKAN CHARACTER IMPORTER MODAL STYLING (ABS.CLEAN STYLE)         */
 /* ======================================================================= */
 .calc-unit-picker-backdrop {
     position: fixed !important;
@@ -2363,7 +2947,7 @@ body:not(.is-published) #abs-partners-box:hover {
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.82) !important;
+    background: rgba(0, 0, 0, 0.85) !important;
     backdrop-filter: blur(20px) !important;
     -webkit-backdrop-filter: blur(20px) !important;
     z-index: 999999 !important;
@@ -2381,12 +2965,17 @@ body:not(.is-published) #abs-partners-box:hover {
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: rgba(10, 15, 29, 0.96) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-    border-radius: 18px !important;
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(32px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
 }
 
 .calc-picker-header {
@@ -2394,15 +2983,15 @@ body:not(.is-published) #abs-partners-box:hover {
     justify-content: center;
     align-items: center;
     position: relative;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.04) !important;
+    padding: 13px 20px;
+    background: rgba(255, 255, 255, 0.03) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 
 .calc-picker-title-text {
-    font-size: 13px;
+    font-size: 12.5px;
     font-weight: 900;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: #ffffff;
     text-align: center;
@@ -2418,23 +3007,24 @@ body:not(.is-published) #abs-partners-box:hover {
     transform: translateY(-50%);
     width: 28px;
     height: 28px;
-    border-radius: 50%;
+    border-radius: 0px !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.12) !important;
     color: #cbd5e1;
     font-size: 18px;
     line-height: 1;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
 }
 
 .calc-picker-close-btn:hover {
-    background: rgba(239, 68, 68, 0.25);
-    border-color: rgba(239, 68, 68, 0.6);
+    background: rgba(239, 68, 68, 0.3) !important;
+    border-color: rgba(239, 68, 68, 0.7) !important;
     color: #ffffff;
-    transform: translateY(-50%) scale(1.08);
+    transform: translateY(-50%) scale(1.04);
 }
 
 .calc-picker-toolbar {
@@ -2443,8 +3033,8 @@ body:not(.is-published) #abs-partners-box:hover {
     justify-content: space-between;
     gap: 10px;
     padding: 10px 16px;
-    background: rgba(0, 0, 0, 0.35) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     flex-wrap: wrap;
 }
 
@@ -2468,19 +3058,19 @@ body:not(.is-published) #abs-partners-box:hover {
 .picker-search-wrapper input {
     width: 100%;
     background: rgba(15, 23, 42, 0.75) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 0px !important;
     padding: 6px 14px 6px 34px !important;
     color: #ffffff !important;
     font-size: 11.5px !important;
     outline: none !important;
     transition: all 0.2s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .picker-search-wrapper input:focus {
-    border-color: rgba(56, 189, 248, 0.6) !important;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.35), inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(56, 189, 248, 0.7) !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .picker-controls-row {
@@ -2494,10 +3084,10 @@ body:not(.is-published) #abs-partners-box:hover {
     display: flex;
     align-items: center;
     gap: 2px;
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
     padding: 3px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 0px !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 
 .picker-source-tab {
@@ -2507,7 +3097,7 @@ body:not(.is-published) #abs-partners-box:hover {
     align-items: center;
     gap: 4px;
     padding: 4px 10px;
-    border-radius: 16px;
+    border-radius: 0px !important;
     font-size: 11px;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.7);
@@ -2516,12 +3106,13 @@ body:not(.is-published) #abs-partners-box:hover {
 
 .picker-source-tab:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .picker-source-tab.active {
     background: #ffffff !important;
-    color: #0f172a !important;
+    color: #090e17 !important;
+    font-weight: 900 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -2532,7 +3123,7 @@ body:not(.is-published) #abs-partners-box:hover {
     align-items: center;
     gap: 5px;
     padding: 5px 12px;
-    border-radius: 20px;
+    border-radius: 0px !important;
     font-size: 11px;
     font-weight: 800;
     background: rgba(16, 185, 129, 0.15) !important;
@@ -2555,6 +3146,8 @@ body:not(.is-published) #abs-partners-box:hover {
     overflow-y: auto; 
     padding: 14px; 
     max-height: 58vh; 
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .calc-picker-grid { 
@@ -2563,81 +3156,142 @@ body:not(.is-published) #abs-partners-box:hover {
     gap: 10px; 
 }
 
+/* --- PICKER UNIT CARDS (ABS.CLEAN SQUARED) --- */
 .picker-unit-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px;
-    padding: 8px 4px;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0px !important;
+    padding: 10px 5px 8px 5px;
     cursor: pointer;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     position: relative;
     box-sizing: border-box;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.06), 0 4px 10px rgba(0, 0, 0, 0.25) !important;
 }
 
 .picker-unit-card:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
 .picker-unit-card.picker-type-agl:hover {
-    background: rgba(0, 168, 255, 0.15) !important;
-    border-color: rgba(0, 168, 255, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(0, 168, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(56, 189, 248, 0.8) !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4), inset 0 0 0 1px rgba(56, 189, 248, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-teq:hover {
-    background: rgba(46, 204, 113, 0.15) !important;
-    border-color: rgba(46, 204, 113, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(34, 197, 94, 0.8) !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.4), inset 0 0 0 1px rgba(34, 197, 94, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-int:hover {
-    background: rgba(155, 89, 182, 0.15) !important;
-    border-color: rgba(155, 89, 182, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(155, 89, 182, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(168, 85, 247, 0.8) !important;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4), inset 0 0 0 1px rgba(168, 85, 247, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-str:hover {
-    background: rgba(231, 76, 60, 0.15) !important;
-    border-color: rgba(231, 76, 60, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(239, 68, 68, 0.8) !important;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4), inset 0 0 0 1px rgba(239, 68, 68, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-phy:hover {
-    background: rgba(241, 196, 15, 0.15) !important;
-    border-color: rgba(241, 196, 15, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(241, 196, 15, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(234, 179, 8, 0.8) !important;
+    box-shadow: 0 0 16px rgba(234, 179, 8, 0.4), inset 0 0 0 1px rgba(234, 179, 8, 0.3) !important;
+}
+
+/* --- CIRCLE PORTRAITS --- */
+.calc-unit-picker-dialog .picker-frame {
+    display: none !important;
 }
 
 .picker-thumb-wrapper { 
-    position: relative; 
-    width: 50px; 
-    height: 50px; 
-    margin-bottom: 4px; 
+    position: relative !important; 
+    width: 64px !important; 
+    height: 64px !important; 
+    border-radius: 50% !important;
+    margin: 2px auto 8px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    border: 2px solid rgba(255, 255, 255, 0.28) !important;
+    background: radial-gradient(circle, rgba(20, 26, 40, 0.9) 0%, rgba(5, 8, 16, 0.98) 100%) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 0 6px rgba(0, 0, 0, 0.6) !important;
+    overflow: visible !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
 }
 
-.picker-frame { 
-    position: absolute; 
-    top: 0; 
-    left: 0; 
-    width: 50px; 
-    height: 50px; 
-    z-index: 1; 
+.picker-unit-card:hover .picker-thumb-wrapper {
+    transform: scale(1.06) !important;
+}
+
+/* Type colored portrait outer rings & subtle glows */
+.picker-unit-card.picker-type-agl .picker-thumb-wrapper {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45), 0 0 10px rgba(56, 189, 248, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-teq .picker-thumb-wrapper {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.45), 0 0 10px rgba(34, 197, 94, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-int .picker-thumb-wrapper {
+    border-color: #a855f7 !important;
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.45), 0 0 10px rgba(168, 85, 247, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-str .picker-thumb-wrapper {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.45), 0 0 10px rgba(239, 68, 68, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-phy .picker-thumb-wrapper {
+    border-color: #eab308 !important;
+    box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.45), 0 0 10px rgba(234, 179, 8, 0.35) !important;
 }
 
 .picker-thumb { 
-    position: absolute; 
-    height: 60px; 
-    bottom: -3px; 
-    left: 50%; 
-    transform: translateX(-50%); 
-    z-index: 2; 
+    position: absolute !important;
+    top: -2px !important;
+    left: -2px !important;
+    bottom: auto !important;
+    width: calc(100% + 4px) !important;
+    height: calc(100% + 4px) !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+.picker-thumb.is-fallback-thumb {
+    clip-path: circle(50% at 50% 50%) !important;
+    transform: scale(1.15) !important;
+}
+
+
+/* Badges always above portrait */
+.picker-thumb-wrapper > span {
+    z-index: 15 !important;
+}
+/* Sharp Squared Badges on Circle Rim */
+.picker-thumb-wrapper span {
+    border-radius: 4px !important;
+    font-size: 6.5px !important;
+    padding: 1px 3.5px !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6) !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    line-height: 1.1 !important;
 }
 
 .picker-name { 
-    font-size: 9.5px; 
+    font-size: 10px; 
     font-weight: 800; 
     color: #ffffff; 
     white-space: nowrap; 
@@ -2645,12 +3299,15 @@ body:not(.is-published) #abs-partners-box:hover {
     text-overflow: ellipsis; 
     width: 100%; 
     text-align: center; 
+    letter-spacing: 0.2px;
 }
 
 .picker-sub { 
-    font-size: 8px; 
+    font-size: 8.5px; 
     font-weight: 700; 
     color: #94a3b8; 
+    text-transform: uppercase;
+    margin-top: 1px;
 }
 
 .importer-variant-btn {
@@ -2660,8 +3317,8 @@ body:not(.is-published) #abs-partners-box:hover {
     align-items: center;
     justify-content: space-between;
     background: rgba(255, 255, 255, 0.05);
-    border: 1.5px solid rgba(255, 255, 255, 0.14);
-    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 0px !important;
     padding: 12px 16px;
     color: #ffffff;
     transition: all 0.2s ease;
@@ -2741,4 +3398,324 @@ body:not(.is-published) #abs-partners-box:hover {
 .gui-progression-column {
     width: 130px;
     flex: 0 0 130px;
+}
+
+
+/* ======================================================================= */
+/* 8B. ABS.CLEAN MODAL SYSTEM — Upload / QuickSave / Card Admin / Unlock   */
+/* ======================================================================= */
+
+.clean-modal-backdrop {
+    position: fixed !important;
+    top: 0; left: 0;
+    width: 100vw; height: 100vh;
+    background: rgba(0, 0, 0, 0.88) !important;
+    backdrop-filter: blur(22px) !important;
+    -webkit-backdrop-filter: blur(22px) !important;
+    z-index: 999990 !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: cleanModalFadeIn 0.22s ease forwards;
+}
+
+@keyframes cleanModalFadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.clean-modal-panel {
+    width: 100%;
+    max-width: 500px;
+    max-height: 90vh;
+    overflow-y: auto;
+    display: flex;
+    flex-direction: column;
+    border-radius: 0px !important;
+    background:
+        linear-gradient(rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.022) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8,14,26,0.94) 0%, rgba(4,7,14,0.99) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255,255,255,0.22) !important;
+    box-shadow: 0 24px 60px rgba(0,0,0,0.9), inset 0 1px 0 rgba(255,255,255,0.2) !important;
+    backdrop-filter: blur(32px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(160%) !important;
+    animation: cleanPanelSlideIn 0.22s ease forwards;
+}
+
+@keyframes cleanPanelSlideIn {
+    from { transform: translateY(10px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+}
+
+.clean-modal-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    padding: 14px 20px;
+    background: rgba(255,255,255,0.03) !important;
+    border-bottom: 1px solid rgba(255,255,255,0.14) !important;
+    flex-shrink: 0;
+}
+
+.clean-modal-title {
+    font-size: 11.5px;
+    font-weight: 900;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: #ffffff;
+    text-align: center;
+    text-shadow: 0 2px 8px rgba(0,0,0,0.6);
+}
+
+.clean-modal-close {
+    all: unset;
+    cursor: pointer;
+    position: absolute;
+    right: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 26px;
+    height: 26px;
+    border-radius: 0px !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.06) !important;
+    border: 1px solid rgba(255,255,255,0.2) !important;
+    box-shadow: inset 1px 1px 0 rgba(255,255,255,0.1) !important;
+    color: #94a3b8;
+    font-size: 18px;
+    line-height: 1;
+    transition: all 0.18s ease;
+}
+
+.clean-modal-close:hover {
+    background: rgba(239,68,68,0.28) !important;
+    border-color: rgba(239,68,68,0.65) !important;
+    color: #ffffff;
+}
+
+.clean-modal-body {
+    padding: 20px 22px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.clean-modal-desc {
+    color: #94a3b8;
+    font-size: 12px;
+    line-height: 1.55;
+    margin: 0;
+}
+
+.clean-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.clean-label {
+    font-size: 10.5px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+    color: #94a3b8;
+}
+
+.clean-input {
+    width: 100%;
+    background: rgba(0,0,0,0.55) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    border-radius: 0px !important;
+    color: #ffffff !important;
+    padding: 10px 13px;
+    font-size: 13px;
+    transition: all 0.2s ease;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4) !important;
+    outline: none;
+    box-sizing: border-box;
+}
+
+.clean-input:focus {
+    border-color: rgba(255,255,255,0.55) !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.15), inset 0 2px 5px rgba(0,0,0,0.5) !important;
+    background: rgba(0,0,0,0.7) !important;
+}
+
+.clean-status-msg {
+    font-size: 11px;
+    font-weight: 600;
+    color: #64748b;
+    min-height: 14px;
+    transition: color 0.3s ease;
+}
+
+.clean-checkbox-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    color: #94a3b8;
+    cursor: pointer;
+    user-select: none;
+    margin-top: 4px;
+}
+
+.clean-modal-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.16), transparent);
+    margin: 0 -4px;
+}
+
+.clean-modal-actions {
+    display: flex;
+    justify-content: space-between;
+    gap: 10px;
+}
+
+.clean-modal-actions .gui-preset-btn {
+    flex: 1;
+    border-radius: 0px !important;
+}
+
+/* Specific accent button colours */
+.clean-btn-success {
+    background: linear-gradient(135deg, rgba(5,150,105,0.9) 0%, rgba(4,120,87,0.9) 100%) !important;
+    border: 1px solid rgba(16,185,129,0.5) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(5,150,105,0.3) !important;
+}
+.clean-btn-success:not([disabled]):hover {
+    background: linear-gradient(135deg, #059669 0%, #047857 100%) !important;
+    box-shadow: 0 0 18px rgba(5,150,105,0.5) !important;
+}
+
+.clean-btn-amber {
+    background: linear-gradient(135deg, rgba(217,119,6,0.9) 0%, rgba(180,83,9,0.9) 100%) !important;
+    border: 1px solid rgba(245,158,11,0.5) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(217,119,6,0.3) !important;
+}
+.clean-btn-amber:not([disabled]):hover {
+    background: linear-gradient(135deg, #d97706 0%, #b45309 100%) !important;
+    box-shadow: 0 0 18px rgba(217,119,6,0.5) !important;
+}
+
+.clean-btn-red {
+    background: linear-gradient(135deg, rgba(239,68,68,0.9) 0%, rgba(185,28,28,0.9) 100%) !important;
+    border: 1px solid rgba(248,113,113,0.5) !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 10px rgba(239,68,68,0.3) !important;
+}
+.clean-btn-red:not([disabled]):hover {
+    background: linear-gradient(135deg, #ef4444 0%, #b91c1c 100%) !important;
+    box-shadow: 0 0 18px rgba(239,68,68,0.5) !important;
+}
+
+/* Disabled state for clean buttons */
+.clean-btn-success[disabled],
+.clean-btn-amber[disabled],
+.clean-btn-red[disabled] {
+    opacity: 0.4 !important;
+    cursor: not-allowed !important;
+    filter: grayscale(30%) !important;
+}
+
+
+/* Abs.Clean glass-form-control overrides (upload/admin modals) */
+.clean-modal-panel .glass-form-control,
+.clean-modal-panel input[type="text"],
+.clean-modal-panel input[type="password"],
+.clean-modal-panel input[type="search"] {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.55) !important;
+    border: 1px solid rgba(255,255,255,0.18) !important;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.4) !important;
+    color: #ffffff !important;
+}
+
+.clean-modal-panel .glass-form-control:focus,
+.clean-modal-panel input[type="text"]:focus,
+.clean-modal-panel input[type="password"]:focus,
+.clean-modal-panel input[type="search"]:focus {
+    border-color: rgba(255,255,255,0.5) !important;
+    box-shadow: 0 0 0 1px rgba(255,255,255,0.12), inset 0 2px 5px rgba(0,0,0,0.5) !important;
+}
+
+/* Modal fade-out animation */
+@keyframes cleanModalFadeOut {
+    from { opacity: 1; }
+    to { opacity: 0; pointer-events: none; }
+}
+
+@keyframes cleanPanelSlideOut {
+    from { transform: translateY(0); opacity: 1; }
+    to { transform: translateY(8px); opacity: 0; }
+}
+
+.clean-modal-backdrop.is-closing {
+    animation: cleanModalFadeOut 0.2s ease forwards !important;
+}
+
+.clean-modal-backdrop.is-closing .clean-modal-panel {
+    animation: cleanPanelSlideOut 0.18s ease forwards !important;
+}
+
+/* ABS Clean High-Specificity SA, Active, and Forms Container Outlines */
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-sa-container > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-sa-container > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-sa-container:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-sa-container:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style [data-edit="sa"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style [data-edit="sa"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-active-container > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-active-container > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-active-container:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-active-container:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style [data-edit="active"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style [data-edit="active"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style .abs-clean-active-rendered:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style .abs-clean-active-rendered:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-field-container > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-field-container > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-standby-container > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-standby-container > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style [data-abs-clean-section="forms"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style [data-abs-clean-section="forms"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-clean-awakening-forms-forms-slot:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-clean-awakening-forms-forms-slot:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-transformations-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-transformations-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-transformations-container:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-transformations-container:hover {
+    outline: 2px solid #ffffff !important;
+    outline-offset: -2px !important;
+    box-shadow: 0 0 16px rgba(255, 255, 255, 0.75), inset 0 0 10px rgba(255, 255, 255, 0.25) !important;
+    border-radius: 0px !important;
+    cursor: pointer !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-sa-container.active-selected-glow,
+body.theme-abs-clean #layout-abs-style [data-edit="sa"].active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-active-container.active-selected-glow,
+body.theme-abs-clean #layout-abs-style [data-edit="active"].active-selected-glow,
+body.theme-abs-clean #layout-abs-style .abs-clean-active-rendered.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-style [data-abs-clean-section="forms"].active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-forms-slot.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-transformations-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-style #abs-transformations-container.active-selected-glow {
+    outline: 2px solid #ffffff !important;
+    outline-offset: -2px !important;
+    border-radius: 0px !important;
+    box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.5), 0 0 24px rgba(255, 255, 255, 0.95) !important;
 }

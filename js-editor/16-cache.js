@@ -28,6 +28,11 @@ async function blobUrlToDataUrl(url) {
 window.autoSaveToCache = async function() {
     if (window.IS_RESETTING) return;
 
+    // A published upload is read-only until the admin keybind + password
+    // unlocks it.  This keeps the published page from creating or overwriting
+    // a local editor autosave while it is being viewed.
+    if (window.IS_PUBLISHED && window.ADMIN_MODE !== true) return false;
+
     try {
         let inputData = {};
         if (typeof savedInputs !== 'undefined') {
@@ -37,6 +42,7 @@ window.autoSaveToCache = async function() {
             });
         }
 
+        window.normalizeActiveSkillBlocks?.();
         const saHTMLBlocks = Array.from(document.querySelectorAll(".sa-block")).map(b => b.outerHTML);
         const activeHTMLBlocks = Array.from(document.querySelectorAll(".active-block")).map(b => b.outerHTML);
 
@@ -66,6 +72,17 @@ window.autoSaveToCache = async function() {
         const cardArtImageSrc = cardArtImage?.src && !window.isPlaceholderCardArtUrl?.(cardArtImage.src)
             ? await blobUrlToDataUrl(cardArtImage.src)
             : "";
+        // Layered official art (bg/character/effect) must be persisted too:
+        // only the flat overlay above is restored otherwise, so after a
+        // reload the static guards see empty layers and the bg + effect
+        // stay hidden. Remote CDN URLs are stored as-is (tiny strings);
+        // blob:/data: sources cannot survive a reload and are skipped.
+        const layerEntry = id => {
+            const el = document.getElementById(id);
+            const rawSrc = el?.getAttribute('src') || '';
+            if (!rawSrc || /^(blob:|data:)/i.test(rawSrc) || /placeholder|none\.png$/i.test(rawSrc)) return null;
+            return { src: el.src, official: el.dataset.officialCardArt === 'true' };
+        };
 
         const lrEl = document.getElementById("img-lr");
         const turEl = document.getElementById("img-tur");
@@ -102,24 +119,44 @@ window.autoSaveToCache = async function() {
             formsData: formsData,
             passiveName: passiveName,
             passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
-            absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
+            absUnitTag: window.absUnitTag ?? '',
             showAwakeningProgression: window.showAwakeningProgression !== false,
             showSsrProgression: window.showSsrProgression !== false,
             showTurProgression: window.showTurProgression !== false,
             isVideoActive: isVideoActive,
             cardArtImage: cardArtImageSrc,
             cardArtVideo: cardArtVideo,
+            layerArt: {
+                bg: layerEntry("abs-art-bg"),
+                char: layerEntry("abs-art-char"),
+                effect: layerEntry("abs-art-effect")
+            },
             editorArtMode: window.currentEditorArtMode || (isVideoActive ? 'animated' : 'static'),
-            themeStyle: window.currentCardThemeStyle
+            themeStyle: window.currentCardThemeStyle,
+            themeVariant: window.currentCardThemeVariant || window.currentCardThemeStyle || 'dokkaninfo',
+            // LWF players are in-memory objects, so retain the official card
+            // identity needed to rebuild them after a browser refresh.
+            cardSource: window.currentCardSource === 'official' ? 'official' : 'custom',
+            officialCardId: window.currentCardSource === 'official'
+                ? (window.currentOfficialCardId || window.editorPartnerCardId || '')
+                : '',
+            officialCardAwakeningMode: window.currentCardSource === 'official'
+                ? (window.currentOfficialCardAwakeningMode || window.currentAwakeningMode || '')
+                : ''
         };
 
         if (!window.IS_RESETTING) {
             localStorage.setItem('dokkan_autosave', JSON.stringify(projectData));
 
-            const mainIndicator = document.getElementById('main-autosave-indicator');
-            if (mainIndicator) {
-                mainIndicator.classList.add('show');
-                setTimeout(() => { mainIndicator.classList.remove('show'); }, 2000);
+            // Use toast if available, otherwise fall back to the legacy indicator
+            if (window.CardHubToast) {
+                window.CardHubToast.success('Autosaved', { duration: 2000 });
+            } else {
+                const mainIndicator = document.getElementById('main-autosave-indicator');
+                if (mainIndicator) {
+                    mainIndicator.classList.add('show');
+                    setTimeout(() => { mainIndicator.classList.remove('show'); }, 2000);
+                }
             }
         }
     } catch (e) { 
@@ -138,6 +175,22 @@ window.loadFromCache = function() {
         if (!cacheData) return; 
 
         const data = JSON.parse(cacheData);
+
+        const cachedImageInput = String(data.inputs?.imageInput || '');
+        const cachedOfficialArt = /(?:dokkaninfo\.com|images\.weserv\.nl).*\/character\/card\/\d+/i.test(cachedImageInput);
+        window.currentCardSource = data.cardSource === 'official' || (!data.cardSource && cachedOfficialArt) ? 'official' : 'custom';
+        window.currentOfficialCardId = window.currentCardSource === 'official' && data.officialCardId
+            ? String(data.officialCardId)
+            : '';
+        window.currentOfficialCardAwakeningMode = window.currentCardSource === 'official'
+            ? (data.officialCardAwakeningMode || data.currentAwakeningMode || '')
+            : '';
+        if (window.currentOfficialCardId) window.editorPartnerCardId = window.currentOfficialCardId;
+        // Prefer the theme stored with this project.  Only fall back to the
+        // site-wide preference for legacy caches that have no theme metadata;
+        // otherwise a stale SBA preference could silently change an ABS
+        // project while it is being rehydrated.
+        window.currentCardThemeVariant = data.themeVariant || data.themeStyle || (localStorage.getItem('dokkan_selected_theme') === 'sba' ? 'sba' : 'dokkaninfo');
 
         currentType = data.currentType || "agl"; 
         currentClass = data.currentClass || "super";
@@ -161,7 +214,10 @@ window.loadFromCache = function() {
             if (data.containers.passiveCard) document.getElementById("card-passive-container").innerHTML = norm(data.containers.passiveCard);
             if (data.containers.passiveSidebar) document.getElementById("sidebar-sections-area").innerHTML = norm(data.containers.passiveSidebar);
             if (data.containers.links) document.getElementById("card-link-container").innerHTML = norm(data.containers.links);
-            if (data.containers.categories) document.getElementById("card-category-container").innerHTML = norm(data.containers.categories);
+            if (data.containers.categories) {
+                document.getElementById("card-category-container").innerHTML = norm(data.containers.categories);
+                window.normalizeEditorCategoryItems?.(document.getElementById("card-category-container"));
+            }
             if (data.containers.forms) document.getElementById("forms-container").innerHTML = norm(data.containers.forms);
         }
 
@@ -171,6 +227,7 @@ window.loadFromCache = function() {
             const actSpot = document.getElementById("active-skill-insert-spot");
             if (actSpot) data.activeBlocksHTML.forEach(html => actSpot.insertAdjacentHTML('beforebegin', norm(html)));
         }
+        window.normalizeActiveSkillBlocks?.();
 
         if (data.saBlocksHTML) {
             const saSpot = document.getElementById("sa-insert-spot");
@@ -191,7 +248,10 @@ window.loadFromCache = function() {
             if(data.icons.lrIcon && document.getElementById("img-lr")) document.getElementById("img-lr").src = data.icons.lrIcon;
             if(data.icons.turIcon && document.getElementById("img-tur")) document.getElementById("img-tur").src = data.icons.turIcon;
             if(data.icons.ssrIcon && document.getElementById("img-ssr")) document.getElementById("img-ssr").src = data.icons.ssrIcon;
-            if(data.icons.mainRarityIcon && document.getElementById("main-rarity-icon")) document.getElementById("main-rarity-icon").src = data.icons.mainRarityIcon;
+            if(data.icons.mainRarityIcon && document.getElementById("main-rarity-icon")) {
+                let mIcon = data.icons.mainRarityIcon.replace('rarity_lr.png', 'rarity_LR.png').replace('rarity_tur.png', 'rarity_TUR.png').replace('rarity_SSR.png', 'rarity_ssr.png');
+                document.getElementById("main-rarity-icon").src = mIcon;
+            }
         }
 
         const vidOverlay = document.getElementById("myOverlayVideo");
@@ -217,6 +277,38 @@ window.loadFromCache = function() {
             if (dbArtVideo) dbArtVideo.src = data.cardArtVideo;
         }
         if (artImg) artImg.style.display = preferredArtMode === 'static' && cachedStaticArt ? 'block' : 'none';
+        // Rebuild the layered art BEFORE switchEditorArtMode runs: its
+        // guards decide flat vs layered purely from these sources.
+        const applyLayerArt = (id, entry) => {
+            if (!entry?.src) return;
+            const el = document.getElementById(id);
+            if (!el) return;
+            delete el.dataset.failed;
+            el.src = entry.src;
+            if (entry.official) el.dataset.officialCardArt = 'true';
+        };
+        const savedLayers = data.layerArt || null;
+        if (savedLayers && (savedLayers.bg || savedLayers.char || savedLayers.effect)) {
+            applyLayerArt('abs-art-bg', savedLayers.bg);
+            applyLayerArt('abs-art-char', savedLayers.char);
+            applyLayerArt('abs-art-effect', savedLayers.effect);
+        } else if (cachedStaticArt && /^https?:/i.test(cachedStaticArt) && /(?:_character|character\.png)/i.test(cachedStaticArt)) {
+            // Legacy autosaves predate layerArt: derive the siblings from the
+            // flat character URL (same pattern the importer uses). The bg
+            // guess only holds for non-transfer cards, so it is skipped for
+            // transfer folders; a wrong guess would just mark that layer
+            // failed while character + effect still restore.
+            const folderMatch = cachedStaticArt.match(/\/card\/(\d+)\//i);
+            const folderNumber = folderMatch ? Number(folderMatch[1]) : 0;
+            if (folderNumber > 0) {
+                const folder = String(folderMatch[1]);
+                const base = cachedStaticArt.slice(0, cachedStaticArt.lastIndexOf('/') + 1);
+                const isTransferFolder = folderNumber >= 4000000 && folderNumber < 5000000;
+                applyLayerArt('abs-art-char', { src: cachedStaticArt, official: true });
+                applyLayerArt('abs-art-effect', { src: `${base}card_${folder}_effect.png`, official: true });
+                if (!isTransferFolder) applyLayerArt('abs-art-bg', { src: `${base}card_${folder}_bg.png`, official: true });
+            }
+        }
         if (vidOverlay) {
             vidOverlay.style.display = preferredArtMode === 'animated' && data.cardArtVideo ? 'block' : 'none';
             if (vidOverlay.style.display === 'block') vidOverlay.play().catch(() => {});
@@ -258,8 +350,12 @@ window.loadFromCache = function() {
             window.passiveHeaderIconsOverride = data.passiveHeaderIconsOverride;
         }
 
-        // BULLETPROOF THEME LOADER
-        if (data.themeStyle === 'abs-style') {
+        // Restore the actual theme (including abs.clean/SBA).  Calling only
+        // toggleCardTheme for abs.clean leaves its LWF type glow unmounted on
+        // reload because the clean-theme class is applied afterwards.
+        if (window.currentCardThemeVariant === 'sba' || window.currentCardThemeVariant === 'abs.clean' || window.currentCardThemeVariant === 'abs-clean') {
+            window.switchCardTheme?.('sba');
+        } else if (data.themeStyle === 'abs-style') {
             window.toggleCardTheme(true);
         } else {
             window.toggleCardTheme(false);
@@ -282,6 +378,9 @@ window.loadFromCache = function() {
         window.refreshFormList();
         window.updateCardDisplay(); 
         window.switchEditorArtMode?.(preferredArtMode);
+        // Rebuild imported card-background LWFs after the cached artwork and
+        // theme have been restored.  The player cannot survive a page reload.
+        window.scheduleEditorLwfHydration?.();
 
     } catch (err) {
         console.error("Cache restoration failed:", err);

@@ -7,10 +7,19 @@ window.uploadIcon = function(event, targetId) {
     if (file && targetImg) {
         const reader = new FileReader();
         reader.onload = function(e) { 
+            // A manual thumbnail replaces the official progression artwork, so
+            // its ABS Clean circle must use the uploaded image rather than a
+            // previous card's resolved circle asset.
+            delete targetImg.dataset.absCleanCircleSrc;
             targetImg.src = e.target.result; 
             
+            if (targetId === 'img-lr') {
+                targetImg.dataset.savedLrSrc = e.target.result;
+            }
+
+            const activeRarity = String(window.currentRarity || currentRarity || 'none').toUpperCase();
             // If uploading TUR icon and it's a TUR card, update the main top-left slot too
-            if (targetId === 'img-tur' && currentRarity === 'TUR') {
+            if (targetId === 'img-tur' && activeRarity === 'TUR') {
                 const mainTopLeftIcon = document.getElementById('img-lr');
                 if (mainTopLeftIcon) mainTopLeftIcon.src = e.target.result;
             }
@@ -18,7 +27,6 @@ window.uploadIcon = function(event, targetId) {
             // Immediately live sync to ABS composed icon
             const dbThumbImg = document.getElementById('abs-thumb-img');
             if (dbThumbImg) {
-                const activeRarity = window.currentRarity || currentRarity;
                 const isLR = activeRarity === 'LR';
                 const lrThumb = document.getElementById('img-lr');
                 const turThumb = document.getElementById('img-tur');
@@ -27,6 +35,7 @@ window.uploadIcon = function(event, targetId) {
                 dbThumbImg.src = thumbSrc || e.target.result;
             }
 
+            if (window.updateRarityStats) window.updateRarityStats(activeRarity);
             if (window.syncToAbsLayout) window.syncToAbsLayout();
         };
         reader.readAsDataURL(file);
@@ -108,8 +117,14 @@ window.resetEditorCache = function() {
     const overlayImg = document.getElementById("myOverlayImage");
 
     if (imgLr) imgLr.src = "https://abscustom.github.io/assets/images/LR_Icon.png";
-    if (imgTur) imgTur.src = "https://abscustom.github.io/assets/images/TUR_Icon.png";
-    if (imgSsr) imgSsr.src = "https://abscustom.github.io/assets/images/SSR_Icon.png";
+    if (imgTur) {
+        delete imgTur.dataset.absCleanCircleSrc;
+        imgTur.src = "https://abscustom.github.io/assets/images/TUR_Icon.png";
+    }
+    if (imgSsr) {
+        delete imgSsr.dataset.absCleanCircleSrc;
+        imgSsr.src = "https://abscustom.github.io/assets/images/SSR_Icon.png";
+    }
     if (mainRarity) mainRarity.src = "https://abscustom.github.io/assets/images/rarity_none.png";
     if (overlayImg) overlayImg.src = "https://abscustom.github.io/assets/images/Card Art Template.png";
 
@@ -118,6 +133,9 @@ window.resetEditorCache = function() {
     window.currentClass = "none";
     window.currentRarity = "none";
     window.currentAwakeningMode = "none";
+    window.currentCardSource = "custom";
+    window.currentOfficialCardId = "";
+    window.currentOfficialCardAwakeningMode = "";
     window.autoDetectedFolderId = null;
     window.sIdx = 0;
     window.lIdx = 0;
@@ -136,6 +154,10 @@ window.resetEditorCache = function() {
  */
 window.clearEditorForCleanImport = function() {
     window.currentCardThumbnail = '';
+    window.currentCardSource = 'custom';
+    window.currentOfficialCardId = '';
+    window.currentOfficialCardAwakeningMode = '';
+    window.setAbsUnitTag?.('');
 
     // A blank editor template is not card art. Clear it and any previously
     // pinned published-card PNG so importing a custom card cannot leave an
@@ -186,6 +208,10 @@ window.clearEditorForCleanImport = function() {
         window.DokkanLWF?.destroy?.(canvasId);
         canvas.classList.remove('lwf-active');
         canvas.style.display = 'none';
+        delete canvas.dataset.lwfCardId;
+        delete canvas.dataset.lwfLoadedCardId;
+        delete canvas.dataset.lwfLoading;
+        delete canvas.dataset.lwfFailed;
     });
 
     window.uploadedArtFile = null;

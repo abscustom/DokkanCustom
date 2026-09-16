@@ -166,7 +166,7 @@ class DokkanBattleAnimator {
             await this.ensureLwfLoaded();
             if (typeof window.LWF === 'undefined') return;
 
-            this.bannerFiles = await this.loadPackFiles('assets/battle/battle_140000/', 'battle_140000.lwf', MANIFEST_140000);
+            this.bannerFiles = await this.loadPackFiles('assets/super-attacks/battle/battle_140000/', 'battle_140000.lwf', MANIFEST_140000);
             if (this.bannerFiles) {
                 this.bannerPlayer = this.setupPlayer(bannerCanvas);
                 const ingested = this.bannerPlayer.ingestFiles(this.bannerFiles);
@@ -220,10 +220,10 @@ class DokkanBattleAnimator {
         const isStatic = document.body.classList.contains('fx-static');
 
         // Determine correct static image based on type
-        let imgSrc = 'assets/battle/super_atk_static.png';
-        if (saType === 'ultra') imgSrc = 'assets/battle/u_super_atk_static.png';
-        if (saType === 'ex') imgSrc = 'assets/battle/ex_super_atk_static.png';
-        if (saType === 'unit') imgSrc = 'assets/battle/unit_super_atk.png';
+        let imgSrc = 'assets/super-attacks/battle/super_atk_static.png';
+        if (saType === 'ultra') imgSrc = 'assets/super-attacks/battle/u_super_atk_static.png';
+        if (saType === 'ex') imgSrc = 'assets/super-attacks/battle/ex_super_atk_static.png';
+        if (saType === 'unit') imgSrc = 'assets/super-attacks/battle/unit_super_atk.png';
 
         if (isStatic || saType === 'unit') {
             if (bannerCanvas) bannerCanvas.style.setProperty('display', 'none', 'important');
@@ -271,6 +271,19 @@ class DokkanBattleAnimator {
         const canvas = document.getElementById(canvasId);
         const imgId = canvasId.replace('lwf-canvas', 'img');
         const img = document.getElementById(imgId);
+        const container = canvas?.closest('.sa-banner-lwf-container');
+
+        let imgSrc = 'assets/super-attacks/battle/super_atk_static.png';
+        if (saType === 'ultra') imgSrc = 'assets/super-attacks/battle/u_super_atk_static.png';
+        else if (saType === 'ex') imgSrc = 'assets/super-attacks/battle/ex_super_atk_static.png';
+        else if (saType === 'unit') imgSrc = 'assets/super-attacks/battle/unit_super_atk.png';
+
+        if (img) img.src = imgSrc;
+
+        if (container) {
+            container.classList.remove('banner-standard', 'banner-ultra', 'banner-ex', 'banner-unit');
+            container.classList.add(`banner-${saType}`);
+        }
 
         if (isStatic) {
             const activePlayer = this.additionalPlayers.get(canvasId);
@@ -312,7 +325,7 @@ class DokkanBattleAnimator {
             }
         }
 
-        const targetMovie = this.findMovie(player, (saType === 'ex' ? 'ex' : 'standard'));
+        const targetMovie = this.findMovie(player, saType);
         if (targetMovie && player) {
             player.setMovie(targetMovie, { play: true });
             player.play();

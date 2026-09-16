@@ -47,7 +47,13 @@ window.updateAbsStatDisplay = function(pct) {
     const displayLabel = document.getElementById('abs-slider-percent-display');
     const idx = window.STAT_MILESTONES.indexOf(activePct);
 
-    if (slider && idx !== -1) slider.value = idx;
+    if (slider && idx !== -1) {
+        slider.value = idx;
+        slider.style.setProperty('--abs-stat-progress', `${(idx / (window.STAT_MILESTONES.length - 1)) * 100}%`);
+    }
+    document.querySelectorAll('.abs-slider-ticks span').forEach((tick, tickIndex) => {
+        tick.classList.toggle('is-active', tickIndex === idx);
+    });
     if (displayLabel) displayLabel.textContent = activePct;
 
     const hpVal = window.calculatedStats.hp[activePct] || 0;

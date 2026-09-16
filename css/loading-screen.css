@@ -1,4 +1,9 @@
-/* Shared opening loader: stark, retro game-over presentation. */
+/* abs.clean preloader — opaque from first paint so the site is never visible
+   until fully loaded. Random artwork displays zoomed out in the center while
+   an ambient blurred version fills all excess space; the abs.clean wordmark
+   and readout float centered above it with clean shadow and smooth fade-out. */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 #abs-loading-screen {
     position: fixed;
     inset: 0;
@@ -7,39 +12,334 @@
     place-items: center;
     overflow: hidden;
     color: #fff;
-    background: #000;
-    transition: opacity .34s ease, visibility .34s ease;
+    /* Solid cover: visible even before any script runs. */
+    background: #03060c;
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transition: opacity 0.65s cubic-bezier(0.25, 1, 0.5, 1), transform 0.65s cubic-bezier(0.25, 1, 0.5, 1), visibility 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+    will-change: opacity, transform;
 }
 
-#abs-loading-screen.is-hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-
-.abs-loader-card {
-    position: relative;
-    width: min(44vw, 180px);
-    height: min(44vw, 180px);
-    display: grid;
-    place-items: center;
-    padding: 0;
-    overflow: visible;
-    border: 0;
-    box-shadow: none;
-    background: transparent;
-    transform: none;
+html.abs-page-loading,
+html.abs-page-loading body {
+    overflow: hidden;
 }
 
-.abs-loader-card::before,
-.abs-loader-card::after {
-    display: none;
+/* Reserve scrollbar space at all times so releasing overflow:hidden at
+   teardown never shifts the page layout (reads as an abrupt jump). */
+html {
+    scrollbar-gutter: stable;
 }
 
+/* Entering (manual show): starts transparent, eases up. */
+#abs-loading-screen.is-entering {
+    opacity: 0;
+    visibility: visible;
+    pointer-events: none;
+}
+
+/* Exiting: guaranteed cinematic dissolve into the website */
+#abs-loading-screen.is-exiting {
+    opacity: 0;
+    visibility: visible;
+    pointer-events: none !important;
+    animation: abs-loader-exit-dissolve 0.85s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;
+    will-change: opacity, transform, filter;
+}
+
+#abs-loading-screen.is-exiting .abs-loader-stage {
+    transform: translateY(-8px);
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+#abs-loading-screen.is-exiting .abs-loader-art {
+    transform: scale(0.98);
+    transition: transform 0.85s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* Fully hidden — vanished from DOM tree, non-interactive */
+#abs-loading-screen.is-hidden {
+    opacity: 0 !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+    display: none !important;
+}
+
+#abs-loading-screen.is-complete .abs-loader-stage {
+    opacity: 0 !important;
+    transform: translateY(-8px) scale(0.96) !important;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    pointer-events: none;
+}
+
+/* ---- Tier 0: Background Blurred Art Fill (covers all excess space) ---- */
+.abs-loader-bg-art {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.abs-loader-art-backdrop {
+    position: absolute;
+    inset: -50px; /* Bleed outside bounds to eliminate transparent blur edge vignetting */
+    overflow: hidden;
+    pointer-events: none;
+    transform: scale(1.15);
+    filter: blur(48px) brightness(0.42) saturate(1.35);
+}
+
+.abs-loader-art-backdrop img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    image-rendering: auto;
+    will-change: filter;
+}
+
+/* ---- Tier 1: Stars ---- */
+.abs-loader-bg-stars {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 1;
+    background-image:
+        radial-gradient(1px 1px at 12% 22%, rgba(224, 242, 254, 0.9) 50%, transparent 51%),
+        radial-gradient(1px 1px at 28% 68%, rgba(224, 242, 254, 0.7) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 42% 18%, rgba(186, 230, 253, 0.85) 50%, transparent 51%),
+        radial-gradient(1px 1px at 55% 42%, rgba(224, 242, 254, 0.6) 50%, transparent 51%),
+        radial-gradient(1px 1px at 66% 74%, rgba(224, 242, 254, 0.75) 50%, transparent 51%),
+        radial-gradient(1.5px 1.5px at 78% 28%, rgba(186, 230, 253, 0.8) 50%, transparent 51%),
+        radial-gradient(1px 1px at 86% 58%, rgba(224, 242, 254, 0.65) 50%, transparent 51%),
+        radial-gradient(1px 1px at 8% 82%, rgba(224, 242, 254, 0.6) 50%, transparent 51%);
+    opacity: 0.35;
+    animation: abs-loader-stars-drift 14s ease-in-out infinite alternate;
+}
+
+/* ---- Tier 2: abs.clean Grid ---- */
+.abs-loader-bg-grid {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 2;
+    opacity: 0.85;
+    background-image:
+        linear-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
+        linear-gradient(rgba(56, 189, 248, 0.08) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(56, 189, 248, 0.08) 1px, transparent 1px);
+    background-size: 16px 16px, 16px 16px, 96px 96px, 96px 96px;
+    mask-image: radial-gradient(80% 80% at 50% 45%, #000 25%, transparent 100%);
+    -webkit-mask-image: radial-gradient(80% 80% at 50% 45%, #000 25%, transparent 100%);
+}
+
+/* ---- Tier 3: Liquid Glass Veil with Full-Page Ambient Darkening ---- */
+.abs-loader-bg-glass {
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    z-index: 3;
+    background: radial-gradient(ellipse 90% 90% at 50% 50%, rgba(3, 6, 12, 0.40) 0%, rgba(3, 6, 12, 0.82) 100%);
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.abs-loader-bg-glass::before {
+    content: "";
+    position: absolute;
+    inset: -30%;
+    background:
+        radial-gradient(40% 30% at 50% 0%, rgba(255, 255, 255, 0.05) 0%, transparent 70%),
+        radial-gradient(50% 36% at 50% 108%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+    animation: abs-loader-glass-sheen 7s ease-in-out infinite alternate;
+}
+
+/* Background Layers: softly blurred until progress reaches 100% */
+.abs-loader-bg-stars,
+.abs-loader-bg-grid,
+.abs-loader-bg-glass {
+    filter: blur(var(--abs-loader-bg-blur, 5px));
+    transition: filter 0.45s ease-out;
+    will-change: filter;
+}
+
+#abs-loading-screen.is-complete .abs-loader-bg-stars,
+#abs-loading-screen.is-complete .abs-loader-bg-grid,
+#abs-loading-screen.is-complete .abs-loader-bg-glass {
+    filter: blur(0px) !important;
+}
+
+/* ---- Tier 4: Zoomed-out Sharp Main Artwork ---- */
 .abs-loader-art {
-    width: min(44vw, 180px);
-    height: min(44vw, 180px);
-    display: grid;
-    place-items: center;
-    overflow: visible;
-    border: 0;
-    background: transparent;
+    position: absolute;
+    inset: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: transform 0.45s ease-out, opacity 0.45s ease-out;
 }
 
-.abs-loader-art img { width: 100%; height: 100%; object-fit: contain; image-rendering: auto; }
+.abs-loader-art img {
+    max-width: min(72vw, 540px);
+    max-height: min(62vh, 520px);
+    width: auto;
+    height: auto;
+    object-fit: contain;
+    object-position: center;
+    opacity: 0.95;
+    filter: drop-shadow(0 14px 38px rgba(0, 0, 0, 0.85));
+    border-radius: 0;
+    image-rendering: auto;
+    will-change: filter, transform;
+}
+
+/* Official Character Portrait: Crisp isolated character cutout with floating depth */
+#abs-loading-screen.is-character .abs-loader-art img {
+    max-width: min(76vw, 560px);
+    max-height: min(64vh, 540px);
+    filter: drop-shadow(0 18px 45px rgba(0, 0, 0, 0.95)) drop-shadow(0 4px 16px rgba(0, 0, 0, 0.75));
+}
+
+/* ---- Cinematic Official Card Cut-In: Leave grid & color, remove punch-in on edges ---- */
+#abs-loading-screen.is-cutin .abs-loader-bg-art,
+#abs-loading-screen.is-cutin .abs-loader-art-backdrop {
+    display: none !important;
+}
+
+#abs-loading-screen.is-cutin .abs-loader-bg-grid {
+    opacity: 0.95;
+}
+
+#abs-loading-screen.is-cutin .abs-loader-art {
+    position: absolute;
+    inset: 0;
+    width: 100vw;
+    max-width: 100vw;
+    left: 0;
+    right: 0;
+    z-index: 4;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    box-sizing: border-box;
+    pointer-events: none;
+    transition: transform 0.65s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+#abs-loading-screen.is-cutin .abs-loader-art img {
+    width: 100vw;
+    max-width: 100vw;
+    height: auto;
+    aspect-ratio: 852 / 266;
+    max-height: min(56vh, 600px);
+    object-fit: cover;
+    object-position: center;
+    border-radius: 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.16);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.16);
+    border-left: none;
+    border-right: none;
+    box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+    filter: drop-shadow(0 20px 45px rgba(0, 0, 0, 0.95)) drop-shadow(0 -20px 45px rgba(0, 0, 0, 0.95));
+    will-change: filter, transform;
+}
+
+/* ---- Tier 5: Stage (Logo + Progress, Centered) ---- */
+.abs-loader-stage {
+    position: relative;
+    top: -2vh;
+    z-index: 5;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    transition: transform 0.45s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.45s ease;
+}
+
+/* abs.clean wordmark hero — blue glow REMOVED, clean dark shadow only */
+.abs-loader-logo {
+    width: clamp(120px, 18vw, 170px);
+    height: auto;
+    object-fit: contain;
+    margin-bottom: 18px;
+    filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.75));
+    user-select: none;
+    -webkit-user-drag: none;
+    pointer-events: none;
+    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.abs-loader-percent {
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    font-size: clamp(20px, 2vw, 26px);
+    letter-spacing: 0.1em;
+    line-height: 1;
+    color: #ffffff;
+    text-shadow: 0 0 12px rgba(255, 255, 255, 0.35), 0 2px 8px rgba(0, 0, 0, 0.9);
+    user-select: none;
+    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+.abs-loader-sub {
+    margin-top: 10px;
+    font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif;
+    font-weight: 500;
+    font-size: 11px;
+    letter-spacing: 0.35em;
+    text-indent: 0.35em;
+    text-transform: lowercase;
+    color: rgba(255, 255, 255, 0.75);
+    text-shadow: 0 1px 6px rgba(0, 0, 0, 0.9);
+    user-select: none;
+    transition: opacity 0.6s cubic-bezier(0.25, 1, 0.5, 1), transform 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+}
+
+/* When saturation reaches max at 100%: cleanly remove abs logo, percentage & text before the transition */
+#abs-loading-screen.is-complete .abs-loader-logo,
+#abs-loading-screen.is-complete .abs-loader-percent,
+#abs-loading-screen.is-complete .abs-loader-sub {
+    opacity: 0 !important;
+    transform: translateY(-8px) scale(0.96) !important;
+    transition: opacity 0.4s cubic-bezier(0.25, 1, 0.5, 1), transform 0.4s cubic-bezier(0.25, 1, 0.5, 1) !important;
+    pointer-events: none;
+}
+
+@keyframes abs-loader-glass-sheen {
+    0% { transform: translate3d(-4%, -2%, 0) rotate(-1.5deg); opacity: 0.85; }
+    50% { transform: translate3d(3%, 2%, 0) rotate(1deg); opacity: 1; }
+    100% { transform: translate3d(-2%, 3%, 0) rotate(-0.5deg); opacity: 0.9; }
+}
+
+@keyframes abs-loader-stars-drift {
+    from { transform: translate3d(0, 0, 0); opacity: 0.3; }
+    to { transform: translate3d(-8px, 10px, 0); opacity: 0.45; }
+}
+
+@keyframes abs-loader-exit-dissolve {
+    0% {
+        opacity: 1;
+        transform: scale(1);
+        filter: blur(0px);
+    }
+    100% {
+        opacity: 0;
+        transform: scale(1.03);
+        filter: blur(6px);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .abs-loader-bg-stars,
+    .abs-loader-bg-glass::before {
+        animation: none;
+    }
+}

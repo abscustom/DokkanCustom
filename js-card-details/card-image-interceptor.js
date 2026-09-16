@@ -61,12 +61,13 @@ document.addEventListener('error', function(e) {
 
     // Multi-tier Fallback Pipeline
     if (isBg) {
+        const basePrefix = './';
         if (retries === 1 && parentFolderId !== folderId) {
-            // Retry with Base Parent Card ID in assets/card/
-            img.src = `assets/card/${parentFolderId}/card_${parentFolderId}_bg.png`;
+            // Retry with Base Parent Card ID in assets/card-art/cards/
+            img.src = `${basePrefix}assets/card-art/cards/${parentFolderId}/card_${parentFolderId}_bg.png`;
         } else if (retries <= 2) {
-            // Retry inside assets/card_bg/
-            img.src = `assets/card_bg/${parentFolderId}/card_bg_${parentFolderId}.png`;
+            // Retry inside assets/card-art/backgrounds/
+            img.src = `${basePrefix}assets/card-art/backgrounds/${parentFolderId}/card_bg_${parentFolderId}.png`;
         } else if (retries === 3) {
             // Online CDN Mirror fallback
             img.src = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/card/${parentFolderId}/card_${parentFolderId}_bg.png`;
@@ -81,7 +82,7 @@ document.addEventListener('error', function(e) {
             img.src = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${parentFolderId}_thumb/card_${parentFolderId}_thumb.png`;
         } else {
             img.dataset.failed = 'true';
-            img.src = './assets/images/SSR_Icon.png';
+            img.src = 'https://abscustom.github.io/assets/images/SSR_Icon.png';
         }
     } else {
         if (retries === 1) {

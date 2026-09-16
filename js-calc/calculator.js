@@ -123,11 +123,11 @@ window.exToggleState = {};
 function parseDokkanIcons(text) {
     if (!text) return '';
     return text
-        .replace(/:up:/g, '<img src="assets/up.png" class="dokkan-icon" alt="up">')
-        .replace(/:down:/g, '<img src="assets/down.png" class="dokkan-icon" alt="down">')
-        .replace(/:ydown:/g, '<img src="assets/ydown.png" class="dokkan-icon" alt="ydown">')
-        .replace(/:once:/g, '<img src="assets/once.png" class="dokkan-icon" alt="once">')
-        .replace(/:inf:/g, '<img src="assets/inf.png" class="dokkan-icon" alt="inf">');
+        .replace(/:up:/g, '<img src="https://abscustom.github.io/assets/images/passive_skill_dialog_arrow01.png" class="dokkan-icon" alt="up">')
+        .replace(/:down:/g, '<img src="https://abscustom.github.io/assets/images/passive_skill_dialog_arrow02.png" class="dokkan-icon" alt="down">')
+        .replace(/:ydown:/g, '<img src="https://abscustom.github.io/assets/images/passive_skill_dialog_arrow03.png" class="dokkan-icon" alt="ydown">')
+        .replace(/:once:/g, '<img src="https://abscustom.github.io/assets/images/passive_skill_dialog_icon_01.png" class="dokkan-icon" alt="once">')
+        .replace(/:inf:/g, '<img src="https://abscustom.github.io/assets/images/passive_skill_dialog_icon_02.png" class="dokkan-icon" alt="inf">');
 }
 
 function setCalcTab(tab) {
@@ -1188,6 +1188,7 @@ async function loadSelectedCardIntoCalculator() {
 
         activeBlocks.forEach(block => {
             const typeLabel = (block.querySelector('.active-type-label, .domain-type-label, b')?.textContent || '').toLowerCase();
+            const explicitKind = String(block.dataset?.activeKind || block.dataset?.skillKind || '').trim().toLowerCase();
             const name = block.querySelector('.active-display-name, .domain-display-name, #abs-active-title, #abs-domain-title, .active-title, .domain-title')?.textContent?.trim() || '';
             let effect = block.querySelector('.active-display-effect, .domain-display-effect, #abs-active-effect, #abs-domain-effect, .active-effect, .domain-effect')?.textContent?.trim() || '';
 
@@ -1195,7 +1196,10 @@ async function loadSelectedCardIntoCalculator() {
                 effect = block.textContent?.trim() || '';
             }
 
-            if (typeLabel.includes('domain') || name.toLowerCase().includes('domain') || effect.toLowerCase().includes('domain effect')) {
+            const isDomain = explicitKind
+                ? explicitKind === 'domain'
+                : (typeLabel.includes('domain') || name.toLowerCase().includes('domain') || effect.toLowerCase().includes('domain effect'));
+            if (isDomain) {
                 foundDomainTitle = name || "Domain Effect";
                 foundDomainDesc = effect;
             } else if (effect && effect.length > 3) {

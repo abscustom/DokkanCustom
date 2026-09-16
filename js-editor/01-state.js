@@ -13,6 +13,13 @@ window.selectedListItem = window.selectedListItem || null;
 window.currentActiveSkill = window.currentActiveSkill || null;
 window.isSwitchingActive = window.isSwitchingActive || false;
 window.currentAwakeningMode = window.currentAwakeningMode || 'none';
+// Official imports need a stable identifier so their animated card-background
+// LWF can be reattached after a full page reload.  The player itself lives in
+// memory and is intentionally recreated on each document load.
+window.currentCardSource = window.currentCardSource || 'custom';
+window.currentOfficialCardId = window.currentOfficialCardId || '';
+window.currentOfficialCardAwakeningMode = window.currentOfficialCardAwakeningMode || '';
+window.currentCardThemeVariant = window.currentCardThemeVariant || '';
 window.currentPartnerLimit = window.currentPartnerLimit || 9;
 // Individual progression controls replace the old all-or-nothing switch.
 // Keep the old value as a fallback for already-published cards and old backups.

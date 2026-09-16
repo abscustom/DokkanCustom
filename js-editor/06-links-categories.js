@@ -46,6 +46,7 @@ window.refreshEditorLinkingPartners = async function() {
     if (!links.length) {
         partnersBox.style.display = 'none';
         partnersContainer.innerHTML = '';
+        window.syncAbsCleanHeaderPartners?.();
         return;
     }
 
@@ -89,7 +90,7 @@ window.addCategory = function() {
     const catId = option.getAttribute('data-id');
     
     // NO inline onclick="this.remove()" - WILL NEVER AUTO-DELETE
-    const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 editor-category-item" data-category-name="${val}"><img src="https://abscustom.github.io/assets/images/card_category_label_${catId}_b_on.png" style="width:210px;" alt="${val}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="category-name-fallback" style="display:none;">${val}</span></div>`;
+    const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 editor-category-item" data-category-id="${catId}" data-category-name="${val}"><img src="https://abscustom.github.io/assets/images/card_category_label_${catId}_b_on.png" style="width:210px;" alt="${val}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="category-name-fallback" style="display:none;">${val}</span></div>`;
     document.getElementById('card-category-container').insertAdjacentHTML('beforeend', html);
     
     if (window.currentCardThemeStyle === 'abs-style') {

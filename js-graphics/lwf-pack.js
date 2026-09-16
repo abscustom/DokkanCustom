@@ -1,3 +1,5 @@
+import { ensureLwfCanvasBlendModes } from './lwf-blend.js?v=20260915-additive-reduction-v19';
+
 const TEX_RE = /[\w./\\-]+\.(?:png|jpe?g|webp|gif)/gi;
 
 export function readLwfHeader(bytes) {
@@ -175,6 +177,95 @@ function maxNestedMovieFrames(movie, depth = 0, seen = null) {
   return max;
 }
 
+// LWF scenes often split one visible timeline across a short parent and one
+// or more longer child movies. Seeking only the parent makes those children
+// restart out of phase, so bounded loops seek every live movie to the matching
+// logical frame in its own timeline.
+function seekMovieTree(movie, logicalFrame, play = true, depth = 0, seen = null) {
+  if (!movie || depth > 32) return;
+  const bag = seen || new Set();
+  if (bag.has(movie)) return;
+  bag.add(movie);
+
+  const total = Math.max(
+    coerceFrameCount(movie.totalFrames),
+    coerceFrameCount(movie.data?.frames),
+  );
+  if (total > 0) {
+    const target = ((Math.max(1, Math.floor(logicalFrame)) - 1) % total) + 1;
+    if (play) movie.gotoAndPlay?.(target);
+    else movie.gotoAndStop?.(target);
+    movie.playing = play;
+    movie.active = true;
+  }
+
+  const children = [];
+  for (let child = movie.z$ja; child; child = child.z$sa) children.push(child);
+  if (Array.isArray(movie.z$2)) children.push(...movie.z$2);
+  children.forEach((child) => {
+    if (child && (child.isMovie || child.totalFrames != null || child.data?.frames != null)) {
+      seekMovieTree(child, logicalFrame, play, depth + 1, bag);
+    }
+  });
+}
+
+// An attached LWF scene is often only a short container whose visible art
+// continues in child movies. Most previews wait for those children. Callers
+// such as the standalone KO viewer can opt out when ambient child loops would
+// otherwise prevent a non-looping root scene from ever reaching its final hold.
+function hasUnfinishedNestedMovie(movie, depth = 0, seen = null) {
+  if (!movie || depth > 32) return false;
+  const bag = seen || new Set();
+  if (bag.has(movie)) return false;
+  bag.add(movie);
+
+  const children = [];
+  for (let child = movie.z$ja; child; child = child.z$sa) children.push(child);
+  if (Array.isArray(movie.z$2)) children.push(...movie.z$2);
+
+  for (const child of children) {
+    if (!child || bag.has(child)) continue;
+    const isMovie = child.isMovie || child.totalFrames != null || child.data?.frames != null;
+    if (isMovie) {
+      const total = Math.max(coerceFrameCount(child.totalFrames), coerceFrameCount(child.data?.frames));
+      const current = Math.max(0, Number(child.currentFrame) || 0);
+      // A child which is still playing may contain its own authored loop. In
+      // that case leave it alone indefinitely; that loop is more accurate than
+      // seeking its parent to an arbitrary frame.
+      if (total > 1 && child.playing !== false && current < total - 1) return true;
+      if (hasUnfinishedNestedMovie(child, depth + 1, bag)) return true;
+    }
+  }
+  return false;
+}
+
+// Downsample a rendered LWF canvas to a tiny RGBA signature. This lets the
+// standalone KO viewer distinguish a real looping clip from a transition that
+// reaches a held final frame without reading millions of pixels every tick.
+function sampleCanvasSignature(canvas, sampleCanvas = null) {
+  if (!canvas || typeof document === 'undefined') return null;
+  const size = 16;
+  const target = sampleCanvas || document.createElement('canvas');
+  if (target.width !== size) target.width = size;
+  if (target.height !== size) target.height = size;
+  const ctx = target.getContext?.('2d', { willReadFrequently: true });
+  if (!ctx) return null;
+  try {
+    ctx.clearRect(0, 0, size, size);
+    ctx.drawImage(canvas, 0, 0, size, size);
+    return ctx.getImageData(0, 0, size, size).data;
+  } catch {
+    return null;
+  }
+}
+
+function canvasSignatureDifference(previous, next) {
+  if (!previous || !next || previous.length !== next.length) return Infinity;
+  let total = 0;
+  for (let i = 0; i < next.length; i++) total += Math.abs(next[i] - previous[i]);
+  return total / Math.max(1, next.length);
+}
+
 export function centerMovie(lwf, movie) {
   if (!lwf || !movie) return;
   if (movie.x === 0 && movie.y === 0 && lwf.width && lwf.height) {
@@ -327,10 +418,18 @@ function providedImageNames(filesByName) {
     .sort((a, b) => a.localeCompare(b, undefined, { numeric: true }));
 }
 
+// ActionBank scripts frequently open several scenes from the same LWF pack at
+// once (a character plate, background plate, and foreground effects). Keeping
+// a prepared URL/atlas set per logical pack prevents every scene from decoding
+// dozens of identical 1024px sheets again. Different texture-injection variants
+// receive different resource keys from the caller, so cut-ins remain isolated.
+const sharedPreparedPacks = new Map();
+
 export class LwfPackPlayer {
-  constructor(canvas, log = () => {}) {
+  constructor(canvas, log = () => {}, options = {}) {
     this.canvas = canvas;
     this.log = log;
+    this.resourceKey = String(options?.resourceKey || '');
     this.blobUrls = new Map();
     this.filesByName = new Map();
     this.lwf = null;
@@ -346,9 +445,63 @@ export class LwfPackPlayer {
     this._atlasFits = 0;
     this.playing = false;
     this.loopMovie = true;
+    // Optional per-player opacity for additive decorative layers. The normal
+    // LWF path stays at 1; the viewer motion player opts into a darker aura.
+    this.additiveAlphaScale = 1;
+    // Idle viewer scenes should wrap through the authored movie timeline as a
+    // unit. Recursive child seeking is still useful for bounded effect clips,
+    // but it can expose a one-frame child reset on character idle loops.
+    this.seamlessLoop = false;
+    this.loopStartFrame = 0;
+    this.loopEndFrame = 0;
+    this.loopTailFrames = 0;
+    this.freezeOnStaticTail = false;
+    this.staticTailMinFrames = 18;
+    this.staticTailDifferenceThreshold = 2.5;
+    this._sampleCanvas = null;
+    this._lastVisualSignature = null;
+    this._lastVisualFrame = 0;
+    this._staticTailFrames = 0;
+    this._sawVisualMotion = false;
+    this._frozenAtEnd = false;
+    this.playbackRate = 1;
+    // Match the battle-motion player clock: advance authored LWF timelines from
+    // a bounded external 60 FPS clock, then render at that cadence. The LWF
+    // runtime still performs its own frame skipping against the authored FPS.
+    this.maxFps = Math.max(1, Number(options?.maxFps) || 60);
+    this.maxDt = 0.25;
+    this.maxSubSteps = 6;
+    this.maxAccumulatedTime = 0.1;
+    this._accumulator = 0;
+    // The reference battle-motion player owns one rAF clock for all of its
+    // LWF layers and calls advance()/renderFrame() on each child. Keep that
+    // mode opt-in so the existing standalone previews remain self-running.
+    this.useExternalClock = options?.useExternalClock === true;
+    this.preferExistingMovie = options?.preferExistingMovie === true;
+    // Character idle linkages are attached to a one-frame root scene. Keep
+    // that root paused before attachment so its setup pass cannot clear the
+    // newly attached character body.
+    this.freezeRootMovie = options?.freezeRootMovie === true;
+    this.frameSkip = options?.frameSkip !== false;
+    this.premultipliedAlpha = options?.premultipliedAlpha !== false;
+    this.forceTexturePremultiply = options?.forceTexturePremultiply !== false;
+    this.additiveBlendScale = Number.isFinite(Number(options?.additiveBlendScale))
+      ? Math.max(0, Number(options.additiveBlendScale))
+      : 1;
+    this.disableAdditiveReduction = options?.disableAdditiveReduction === true;
+    this.patchCanvasBlendModes = options?.patchCanvasBlendModes !== false;
+    this.commandQueue = options?.commandQueue === true;
+    // Composite battle-motion timelines may keep a short entry linkage alive
+    // while a second linkage becomes visible. In that mode the primary movie
+    // is not the lifetime of the player, so do not let its local end stop the
+    // shared clock.
+    this.ignoreMovieEnd = options?.ignoreMovieEnd === true;
+    this._logicalFrame = 1;
+    this.waitForNestedMoviesAtEnd = true;
     this.autoProgress = false;
     this._raf = null;
     this._lastTs = null;
+    this._lastError = '';
     this._attachName = 'mc_preview';
     this._advancing = false;
     this._requested = new Set();
@@ -372,11 +525,20 @@ export class LwfPackPlayer {
     this.header = null;
     this.lwfName = '';
     this.textureMeta = [];
+    this.ignoreMovieEnd = false;
     this._lwfBytes = null;
     this._atlasFits = 0;
     this._requested.clear();
     this._misses.clear();
-    revokeMap(this.blobUrls);
+    this._logicalFrame = 1;
+    this._lastVisualSignature = null;
+    this._lastVisualFrame = 0;
+    this._staticTailFrames = 0;
+    this._sawVisualMotion = false;
+    this._frozenAtEnd = false;
+    this._accumulator = 0;
+    if (!this.resourceKey) revokeMap(this.blobUrls);
+    else this.blobUrls.clear();
     this.filesByName.clear();
     const ctx = this.canvas.getContext('2d');
     ctx?.clearRect(0, 0, this.canvas.width, this.canvas.height);
@@ -418,6 +580,23 @@ export class LwfPackPlayer {
     const bytes = new Uint8Array(await lwfFile.arrayBuffer());
     this._lwfBytes = bytes;
     this.header = readLwfHeader(bytes);
+
+    const shared = this.resourceKey ? sharedPreparedPacks.get(this.resourceKey) : null;
+    if (shared) {
+      this.header = { ...shared.header };
+      this.libraryLabels = [...shared.libraryLabels];
+      this.textureMeta = shared.textureMeta.map((entry) => ({ ...entry }));
+      this.requiredTextures = [...shared.requiredTextures];
+      this.blobUrls = new Map(shared.blobUrls);
+      this._atlasFits = shared.atlasFits;
+      return {
+        ...shared.result,
+        header: this.header,
+        requiredTextures: [...this.requiredTextures],
+        libraryLabels: [...this.libraryLabels],
+        providedImages: providedImageNames(this.filesByName),
+      };
+    }
 
     const allNames = scrapePngNames(bytes);
     this.libraryLabels = allNames.filter(isLibraryTextureName);
@@ -474,7 +653,7 @@ export class LwfPackPlayer {
       missing.length === 0 &&
       (this.requiredTextures.length > 0 || present.length > 0);
 
-    return {
+    const result = {
       ok,
       missing,
       present,
@@ -484,6 +663,23 @@ export class LwfPackPlayer {
       providedImages: providedImageNames(this.filesByName),
       atlasFits: this._atlasFits,
     };
+    if (this.resourceKey) {
+      sharedPreparedPacks.set(this.resourceKey, {
+        header: { ...this.header },
+        libraryLabels: [...this.libraryLabels],
+        textureMeta: this.textureMeta.map((entry) => ({ ...entry })),
+        requiredTextures: [...this.requiredTextures],
+        blobUrls: new Map(this.blobUrls),
+        atlasFits: this._atlasFits,
+        result: {
+          ok,
+          missing: [...missing],
+          present: [...present],
+          atlasFits: this._atlasFits,
+        },
+      });
+    }
+    return result;
   }
 
   _resolveImage(name) {
@@ -564,7 +760,16 @@ export class LwfPackPlayer {
     if (typeof window.LWF.useCanvasRenderer === 'function') {
       window.LWF.useCanvasRenderer();
     }
+    // Patch before ResourceCache creates its renderer factory. Some official
+    // effects use screen/multiply/subtract blend modes for background plates.
+    // The viewer can opt out when comparing the stock Canvas compositor to a
+    // reference player that already provides its own blend implementation.
+    if (this.patchCanvasBlendModes) ensureLwfCanvasBlendModes();
 
+    // Keep a renderer cache per player. ResourceCache also retains live LWF
+    // instances, so sharing it between simultaneous scenes from one pack can
+    // bind later scenes to the first canvas. The prepared blob URLs above are
+    // still shared, which lets the browser reuse the decoded image resources.
     let cache;
     try {
       cache = new window.LWF.ResourceCache();
@@ -576,6 +781,12 @@ export class LwfPackPlayer {
 
     if (lwf.rendererFactory) {
       lwf.rendererFactory.clearColor = null;
+      lwf.rendererFactory.absAdditiveAlphaScale = this.additiveAlphaScale;
+      lwf.rendererFactory.absAdditiveBlendScale = this.additiveBlendScale;
+      lwf.rendererFactory.disableAdditiveReduction = this.disableAdditiveReduction;
+      lwf.rendererFactory.premultipliedAlpha = this.premultipliedAlpha;
+      lwf.rendererFactory.forceTexturePremultiply = this.forceTexturePremultiply;
+      lwf.rendererFactory.absCommandQueue = this.commandQueue;
       lwf.rendererFactory.z$Hc = function() { this.clearColor = null; };
       lwf.rendererFactory.setBackgroundColor = function() { this.clearColor = null; };
     }
@@ -584,6 +795,13 @@ export class LwfPackPlayer {
     }
 
     fitNative(lwf, this.canvas);
+    // These are the same authored-runtime defaults used by the reference
+    // battle-motion player. Keep the root on its own timeline and let the
+    // external clock supply elapsed time instead of seeking child movies.
+    lwf.frameSkip = this.frameSkip;
+    lwf.z$Hk?.(this.frameSkip);
+    lwf.fastForward = false;
+    lwf.z$Gk?.(false);
     lwf.active = true;
     if (lwf.rootMovie) {
       lwf.rootMovie.active = true;
@@ -602,21 +820,42 @@ export class LwfPackPlayer {
     const lwf = this.lwf;
     if (!lwf?.rootMovie || !name) return false;
 
+    const root = lwf.rootMovie;
+    const previous = this.movie;
+    // The official battle-motion player loads `movieName` as a fresh authored
+    // linkage on each LWF layer. Do the same here instead of searching the
+    // current scene graph first: `searchMovieInstance()` looks for an already
+    // instantiated child by string id and can resolve a different character
+    // or effect when several linkages share the same pack. Reusing that child
+    // was the source of the wrong-clip/partial-composition behavior in the
+    // viewer tester.
     try {
-      lwf.rootMovie.detachMovie?.(this._attachName);
+      root.detachMovie?.(this._attachName);
     } catch {}
-
-    lwf.rootMovie.active = true;
-    lwf.rootMovie.playing = true;
-
-    const movie = lwf.rootMovie.attachMovie(name, this._attachName);
+    const movie = this.preferExistingMovie
+      ? (root.searchMovieInstance?.(name) || root.attachMovie(name, this._attachName))
+      : root.attachMovie(name, this._attachName);
     if (!movie) {
       return false;
     }
+    if (previous && previous !== movie) {
+      previous.playing = false;
+      previous.active = false;
+      previous.visible = false;
+    }
+
+    root.active = true;
+    // Effects need the root timeline live, while character idle packages use
+    // it only as an attachment container. Pausing it before the first render
+    // preserves the authored body layer instead of leaving just the aura.
+    root.playing = !this.freezeRootMovie;
     centerMovie(lwf, movie);
     movie.active = true;
+    movie.visible = true;
     this.movie = movie;
     this.clip = name;
+    this._logicalFrame = 1;
+    this._accumulator = 0;
     this.onMovieChange?.(name);
 
     if (play) {
@@ -637,18 +876,123 @@ export class LwfPackPlayer {
     return true;
   }
 
+  // Attach another authored linkage without replacing the current movie.
+  // DokkanDB's rich character idle uses two LWF layers from the same pack on
+  // one shared clock, so a serial setMovie() hand-off cannot preserve the
+  // character/aura phase relationship.
+  attachMovieLayer(name, {
+    attachName = `mc_layer_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+    depth = null,
+    play = false,
+    active = true,
+    visible = true,
+  } = {}) {
+    const lwf = this.lwf;
+    const root = lwf?.rootMovie;
+    if (!root || !name) return null;
+
+    const options = Number.isFinite(Number(depth))
+      ? { depth: Math.floor(Number(depth)) }
+      : undefined;
+    let movie = null;
+    try {
+      movie = root.attachMovie(name, attachName, options);
+    } catch {}
+    if (!movie) return null;
+
+    root.active = true;
+    root.playing = !this.freezeRootMovie;
+    centerMovie(lwf, movie);
+    movie.active = Boolean(active);
+    movie.visible = Boolean(visible);
+    movie.playing = Boolean(play);
+    if (play) {
+      movie.gotoAndPlay?.(1);
+    } else {
+      movie.gotoAndStop?.(1);
+    }
+    return movie;
+  }
+
+  // Return the authored frame span for the currently attached scene,
+  // including nested movies that carry the visible part of the animation.
+  // KO screens and similar cutscenes often have a one-frame root container,
+  // so using only movie.totalFrames would make their loop restart too early.
+  getMovieFrameCount() {
+    const count = Math.max(
+      coerceFrameCount(this.movie?.totalFrames),
+      maxNestedMovieFrames(this.movie),
+    );
+    return Math.min(Math.max(1, count), 3600);
+  }
+
   getFrameState() {
     const m = this.movie;
     if (!m) {
       return { current: 0, total: 0, name: this.clip || '', fps: this.fps() };
     }
     const attached = Math.max(0, Number(m.totalFrames) || 0);
+    const boundedCurrent = Number(this.loopEndFrame) > 0
+      ? Math.max(1, Math.floor(Number(this._logicalFrame) || 1))
+      : Math.max(0, Number(m.currentFrame) || 0);
     return {
-      current: Math.max(0, Number(m.currentFrame) || 0),
+      current: boundedCurrent,
       total: Math.max(attached, this.getRecordFrameCount()),
       name: this.clip || '',
       fps: this.fps(),
     };
+  }
+
+  seekFrame(frame, { play = true } = {}) {
+    if (!this.movie) return false;
+    const target = Math.max(1, Math.floor(Number(frame) || 1));
+    seekMovieTree(this.movie, target, play);
+    this._logicalFrame = target;
+    this.playing = play;
+    this._emitFrame();
+    return true;
+  }
+
+  // Advance an attached scene through its authored timeline without rendering
+  // intermediate frames.  This is deliberately different from seekFrame:
+  // complex Dokkan effects often contain children with unrelated local frame
+  // counts, so forcing every child to a matching absolute frame can produce a
+  // blank composition. Natural execution preserves their parent-driven state.
+  fastForwardToFrame(frame, { play = true } = {}) {
+    if (!this.movie || !this.lwf) return false;
+    const target = Math.max(1, Math.min(3600, Math.floor(Number(frame) || 1)));
+    // Reset every live child to frame one *and let it play*.  Calling this
+    // with `false` looks tempting, but it freezes the nested movies which
+    // carry the visible art in many Dokkan KO effects.  The parent then moves
+    // forward by itself and the result is an empty / half-composed canvas.
+    // Starting all clips together and advancing LWF naturally preserves the
+    // authored parent-child timing.
+    seekMovieTree(this.movie, 1, true);
+    this._logicalFrame = 1;
+    this._lastTs = null;
+    this._frozenAtEnd = false;
+    this.movie.active = true;
+    this.movie.playing = true;
+    if (this.lwf.rootMovie) {
+      this.lwf.rootMovie.active = true;
+      this.lwf.rootMovie.playing = true;
+    }
+
+    const dt = 1 / this.fps();
+    for (let current = 1; current < target; current += 1) {
+      try {
+        this.lwf.exec?.(dt);
+      } catch {
+        return false;
+      }
+    }
+    this._logicalFrame = target;
+    this.movie.playing = play;
+    this.playing = play;
+    if (play) this._kickLoop();
+    else this._renderStill();
+    this._emitFrame();
+    return true;
   }
 
   fps() {
@@ -682,6 +1026,58 @@ export class LwfPackPlayer {
     return state;
   }
 
+  _observeVisualFrame() {
+    if (!this.freezeOnStaticTail || this._frozenAtEnd) return;
+    const signature = sampleCanvasSignature(this.canvas, this._sampleCanvas);
+    if (!signature) return;
+    if (!this._sampleCanvas && typeof document !== 'undefined') {
+      // sampleCanvasSignature creates the canvas when one is not supplied. A
+      // retained canvas avoids allocating a new tiny buffer every frame.
+      this._sampleCanvas = document.createElement('canvas');
+    }
+
+    const frame = Number(this.loopEndFrame) > 0
+      ? Number(this._logicalFrame) || 1
+      : Number(this.movie?.currentFrame) || 1;
+    const difference = canvasSignatureDifference(this._lastVisualSignature, signature);
+    if (Number.isFinite(difference)) {
+      const changed = difference > Math.max(0, Number(this.staticTailDifferenceThreshold) || 0);
+      if (changed) {
+        this._sawVisualMotion = true;
+        this._staticTailFrames = 0;
+      } else if (this._sawVisualMotion) {
+        const loopEnd = Math.max(1, Number(this.loopEndFrame) || 0);
+        const tailWindow = Math.max(30, (Number(this.staticTailMinFrames) || 18) * 3);
+        if (!loopEnd || frame >= loopEnd - tailWindow) {
+          const previousFrame = Number(this._lastVisualFrame) || frame - 1;
+          this._staticTailFrames += Math.max(1, frame - previousFrame);
+        }
+      }
+    }
+    this._lastVisualSignature = signature;
+    this._lastVisualFrame = frame;
+  }
+
+  _holdAtEnd(requestedLoopEnd, total) {
+    const m = this.movie;
+    if (!m) return;
+    if (requestedLoopEnd > 0) {
+      // The scene reached this point through normal LWF execution. Preserve
+      // that composed image exactly as it is: recursively seeking every child
+      // to the same frame number can map a short child past its real ending
+      // and erase otherwise valid KO artwork.
+      this._logicalFrame = Math.min(requestedLoopEnd, Number(this._logicalFrame) || requestedLoopEnd);
+      m.playing = false;
+    } else {
+      m.playing = false;
+      m.gotoAndStop?.(total);
+    }
+    this.playing = false;
+    this._frozenAtEnd = true;
+    this._lastTs = null;
+    this.onEnded?.('freeze');
+  }
+
   _renderStill() {
     try {
       const ctx = this.canvas.getContext('2d');
@@ -696,17 +1092,39 @@ export class LwfPackPlayer {
     } catch {}
   }
 
-  play() {
+  play(startFrame = null) {
     if (!this.movie || !this.lwf) return;
+    if (this._frozenAtEnd) {
+      const requestedLoopStart = Math.floor(Number(this.loopStartFrame) || 0);
+      const restartFrame = requestedLoopStart > 0 ? requestedLoopStart : 1;
+      this._frozenAtEnd = false;
+      this._lastVisualSignature = null;
+      this._lastVisualFrame = 0;
+      this._staticTailFrames = 0;
+      this._sawVisualMotion = false;
+      this._accumulator = 0;
+      if (Number(this.loopEndFrame) > 0) {
+        this.fastForwardToFrame(restartFrame, { play: true });
+        return;
+      }
+    }
     this.movie.active = true;
     this.movie.playing = true;
     if (typeof this.movie.gotoAndPlay === 'function') {
+      const requestedFrame = Math.floor(Number(startFrame));
       const cur = Number(this.movie.currentFrame);
-      if (!Number.isFinite(cur) || cur < 1) this.movie.gotoAndPlay(1);
-      else this.movie.gotoAndPlay(cur);
+      const targetFrame = Number.isFinite(requestedFrame) && requestedFrame > 0
+        ? requestedFrame
+        : ((!Number.isFinite(cur) || cur < 1) ? 1 : cur);
+      this.movie.gotoAndPlay(targetFrame);
     }
     this.playing = true;
+    this._accumulator = 0;
     this._emitFrame();
+    if (this.useExternalClock) {
+      this.renderFrame(false);
+      return;
+    }
     this._kickLoop();
   }
 
@@ -718,6 +1136,7 @@ export class LwfPackPlayer {
       this._raf = null;
     }
     this._lastTs = null;
+    this._accumulator = 0;
     try {
       this.lwf?.render?.();
     } catch {}
@@ -725,6 +1144,7 @@ export class LwfPackPlayer {
   }
 
   _kickLoop() {
+    if (this.useExternalClock) return;
     if (this._raf) return;
     this._lastTs = null;
     const tick = (ts) => {
@@ -733,10 +1153,17 @@ export class LwfPackPlayer {
         return;
       }
       if (this._lastTs == null) this._lastTs = ts;
-      let dt = (ts - this._lastTs) / 1000;
+      const elapsed = (ts - this._lastTs) / 1000;
       this._lastTs = ts;
-      const fps = this.fps();
-      if (!(dt > 0) || dt > 0.1) dt = 1 / fps;
+      const dt = Math.min(Math.max(elapsed, 0), this.maxDt);
+      const playbackRate = Math.max(0.05, Number(this.playbackRate) || 1);
+      const clockStep = 1 / Math.max(1, Number(this.maxFps) || 60);
+      this._accumulator = Math.min(
+        this.maxAccumulatedTime,
+        this._accumulator + (dt * playbackRate),
+      );
+      let advancedSeconds = 0;
+      let steps = 0;
 
       try {
         // 1. Explicitly clear the 2D canvas buffer on every tick
@@ -750,9 +1177,36 @@ export class LwfPackPlayer {
           this.lwf.rendererFactory.clearColor = null;
         }
 
-        this.lwf.exec?.(dt);
+        while (this._accumulator >= clockStep && steps < this.maxSubSteps) {
+          // A few character linkages contain an authored stop command on their
+          // attachment frame. The public player still treats that linkage as
+          // the live idle clock, so re-arm the selected movie before each
+          // natural LWF step without seeking it back to frame one.
+          this.movie?.play?.();
+          this.lwf.exec?.(clockStep);
+          this._accumulator -= clockStep;
+          advancedSeconds += clockStep;
+          steps += 1;
+        }
+        // Preserve sub-frame timing just like the reference external clock.
+        // LWF keeps its own fractional remainder until an authored frame is
+        // ready, so this does not force a child movie to jump to a frame.
+        if (steps === 0 && this._accumulator > 0) {
+          const remainder = this._accumulator;
+          this.movie?.play?.();
+          this.lwf.exec?.(remainder);
+          advancedSeconds += remainder;
+          this._accumulator = 0;
+        } else if (steps >= this.maxSubSteps) {
+          this._accumulator = Math.min(this._accumulator, clockStep);
+        }
+        if (Number(this.loopEndFrame) > 0) {
+          this._logicalFrame = (Number(this._logicalFrame) || 1) + advancedSeconds * this.fps();
+        }
         this.lwf.render?.();
+        this._observeVisualFrame();
       } catch (e) {
+        this._lastError = String(e?.stack || e?.message || e || 'LWF clock error');
         this.pause();
         return;
       }
@@ -764,19 +1218,114 @@ export class LwfPackPlayer {
     this._raf = requestAnimationFrame(tick);
   }
 
+  // Advance one child from a shared battle-motion clock. The reference
+  // component passes seconds here (delta frames / its fixed FPS) and renders
+  // all children afterwards. Do not seek the movie tree: nested LWF movies
+  // have their own authored clocks and must be allowed to advance naturally.
+  advance(seconds, paused = false) {
+    if (!this.lwf || !this.movie || paused || !this.playing) return false;
+    const value = Number(seconds);
+    if (!Number.isFinite(value) || value <= 0) return false;
+    try {
+      // Keep an authored idle linkage alive when its frame-one setup command
+      // stops the attachment after the first scene pass. This resumes the
+      // current frame only; it never performs a synthetic seek/reset.
+      this.movie.play?.();
+      this.lwf.exec?.(value * Math.max(0.05, Number(this.playbackRate) || 1));
+      if (Number(this.loopEndFrame) > 0) {
+        this._logicalFrame = (Number(this._logicalFrame) || 1) + value * this.fps();
+      }
+      this._observeVisualFrame();
+      this._checkEnd();
+      this._emitFrame();
+      return true;
+    } catch (e) {
+      this._lastError = String(e?.stack || e?.message || e || 'LWF advance error');
+      this.playing = false;
+      return false;
+    }
+  }
+
+  // Render one already-advanced child. Keeping clear and render separate is
+  // important when several LWF layers share a parent clock; clearing each
+  // child's private canvas cannot flash the other layers.
+  renderFrame(paused = false) {
+    if (!this.lwf) return false;
+    try {
+      const ctx = this.canvas.getContext('2d');
+      if (ctx) ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+      if (this.lwf.rendererFactory) this.lwf.rendererFactory.clearColor = null;
+      this.lwf.render?.(paused);
+      this._observeVisualFrame();
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   _checkEnd() {
+    if (this.ignoreMovieEnd) return;
     const m = this.movie;
     if (!m || this._advancing) return;
-    const total = Number(m.totalFrames);
-    const cur = Number(m.currentFrame);
+    const requestedLoopEnd = Math.floor(Number(this.loopEndFrame) || 0);
+    const total = requestedLoopEnd > 0
+      ? Math.max(requestedLoopEnd, this.getRecordFrameCount())
+      : Number(m.totalFrames);
+    const cur = requestedLoopEnd > 0
+      ? Number(this._logicalFrame)
+      : Number(m.currentFrame);
     if (!(total > 1) || !Number.isFinite(cur)) return;
 
-    const atEnd = cur >= total || (m.playing === false && cur >= total - 1);
+    const loopEnd = requestedLoopEnd > 0
+      ? Math.max(1, requestedLoopEnd)
+      : total;
+    const atEnd = cur >= loopEnd || (m.playing === false && cur >= loopEnd - 1);
     if (!atEnd) return;
+
+    // A deliberately bounded loop is allowed to interrupt nested clips at its
+    // chosen end frame. Full-movie playback still waits for nested animation.
+    if (requestedLoopEnd <= 0 && this.waitForNestedMoviesAtEnd && hasUnfinishedNestedMovie(m)) return;
+
+    // Some KO LWFs are transition clips: they animate into a final KO frame
+    // and intentionally hold it. Replaying those clips creates a visible jump,
+    // so freeze only after observing a meaningful motion followed by a stable
+    // tail. Seamless KO loops continue through the normal loop branch below.
+    if (
+      this.freezeOnStaticTail
+      && this._sawVisualMotion
+      && this._staticTailFrames >= Math.max(1, Number(this.staticTailMinFrames) || 18)
+    ) {
+      this._holdAtEnd(requestedLoopEnd, total);
+      return;
+    }
 
     if (this.loopMovie) {
       m.playing = true;
-      m.gotoAndPlay?.(1);
+      const tailFrames = Math.max(0, Math.floor(Number(this.loopTailFrames) || 0));
+      const requestedLoopStart = Math.floor(Number(this.loopStartFrame) || 0);
+      const loopStart = requestedLoopStart > 0
+        ? Math.min(loopEnd, Math.max(1, requestedLoopStart))
+        : (tailFrames > 0 ? Math.max(1, total - tailFrames) : 1);
+      // A bounded idle loop must restart through the authored timeline.  A
+      // direct recursive seek maps the same frame number to children with
+      // unrelated durations, which is what made certain final idle clips
+      // jump to a blank frame on their second pass.
+      if (requestedLoopEnd > 0 && this.seamlessLoop) {
+        this._logicalFrame = loopStart;
+        this._lastTs = null;
+        m.gotoAndPlay?.(loopStart);
+      } else if (requestedLoopEnd > 0) {
+        this.fastForwardToFrame(loopStart, { play: true });
+      } else {
+        m.gotoAndPlay?.(loopStart);
+      }
+      return;
+    }
+    if (requestedLoopEnd > 0) {
+      // Rich idle sequences end on their authored third scene. Preserve the
+      // composed final frame instead of seeking the parent back to frame one;
+      // that reset is the bright/dark flash visible on Trunks.
+      this._holdAtEnd(requestedLoopEnd, total);
       return;
     }
     m.playing = false;

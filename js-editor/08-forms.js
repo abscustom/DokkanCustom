@@ -152,6 +152,11 @@ window.refreshFormList = function() {
             document.querySelectorAll(".form-list-item").forEach(el => el.classList.remove("active"));
             item.classList.add("active");
             selectedForm = formRow; // Keep track of which form we are touching
+            // Keep the clean Forms rail's active ring in sync immediately,
+            // even when the editor is only switching the form being edited.
+            document.querySelectorAll('#abs-transformations-container > .abs-transform-row').forEach(row => {
+                row.classList.toggle('is-active', row.dataset.formIndex === String(i));
+            });
             
             // Update the Link Input box to match the newly clicked form
             const linkAnchor = selectedForm.querySelector(".form-link");

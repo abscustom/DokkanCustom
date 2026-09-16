@@ -49,17 +49,35 @@ function staticNewsUrl(fileName) {
     return `json/${fileName}?v=${Date.now()}`;
 }
 
+function escapeNewsHtml(value) {
+    return String(value ?? '').replace(/[&<>"']/g, char => ({
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
+    })[char]);
+}
+
 class DokkanNewsEngine {
     constructor() {
         this.articles = [];
         this.discordArticles = [];
         this.discordBatches = [];
-        this.currentNewsSource = 'discord'; // 'discord' | 'game'
+        this.currentNewsSource = 'game'; // 'discord' | 'game'
+        this.currentNewsFeed = 'all'; // 'all' | 'discord' | 'game'
+        this.recentCharacterCards = [];
         this.currentArticleId = null;
+        this.activeArticleView = null;
         this.currentCategory = 'all';
+        this.newsSortOrder = 'newest';
         this.searchQuery = '';
         this.isLoading = false;
         this.isServerConnected = false;
+        this.featuredNewsIndex = 0;
+        this.featuredRotationTimer = null;
+        this.featuredRotationIsTransitioning = false;
+        this.featuredShouldFadeIn = false;
 
         // Rotating Home News Slides System
         this.currentHomeSlide = 1;
@@ -162,6 +180,7 @@ class DokkanNewsEngine {
      */
     async init() {
         this.isLoading = true;
+        const recentCardsPromise = this.loadRecentCharacterCards();
         let loadedData = null;
 
         // The local bridge only exists while viewing the site from this computer.
@@ -264,6 +283,8 @@ class DokkanNewsEngine {
             this.discordBatches = [];
         }
 
+        await recentCardsPromise;
+
         // Set initial active article ID based on default source
         const initialList = this.getActiveArticles();
         if (initialList && initialList.length > 0) {
@@ -283,6 +304,90 @@ class DokkanNewsEngine {
         if (pageParams.get('view') === 'news' && requestedArticleId) {
             this.openEnlargedArticle(requestedArticleId, pageParams.get('source') === 'discord' ? 'discord' : 'game');
         }
+    }
+
+    async loadRecentCharacterCards() {
+        try {
+            const response = await fetch(staticNewsUrl('cards.json'), { cache: 'no-store' });
+            if (!response.ok) return;
+            const cards = await response.json();
+            if (!Array.isArray(cards)) return;
+
+            const futureCutoff = Date.now() + 31 * 24 * 60 * 60 * 1000;
+            // The release strip should show one representative card per
+            // character: their highest available base card.  Transformation
+            // cut-ins are deliberately excluded, and EZA/SEZA labels do not
+            // create a second entry for the same character.
+            const byCharacter = new Map();
+            cards.forEach(card => {
+                const releasedAt = new Date(String(card.open_at || '').replace(' ', 'T'));
+                if (!card?.name || card.is_transform || Number.isNaN(releasedAt.getTime()) || releasedAt.getTime() > futureCutoff) return;
+
+                const rawId = Number(card.id) || 0;
+                const cutInId = Math.floor(rawId / 10) * 10;
+                if (!cutInId) return;
+
+                const displayName = String(card.name).replace(/\s*\((?:S?EZA)\)\s*$/i, '').trim();
+                const characterKey = displayName.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+                const formRank = (Number(card.rarity || 0) * 100)
+                    + (card.is_seza ? 20 : card.is_eza ? 10 : 0)
+                    + Number(card.max_level || 0) / 1000;
+                const current = byCharacter.get(characterKey);
+                if (!current || formRank > current.formRank || (formRank === current.formRank && rawId > current.id)) {
+                    byCharacter.set(characterKey, {
+                        id: rawId,
+                        cutInId,
+                        name: displayName,
+                        releasedAt,
+                        rarity: card.rarity || 0,
+                        formRank
+                    });
+                }
+            });
+
+            this.recentCharacterCards = Array.from(byCharacter.values())
+                .sort((a, b) => b.releasedAt - a.releasedAt || b.id - a.id)
+                .slice(0, 16);
+        } catch (error) {
+            console.warn('[Dokkan News] Could not load recent character ticker:', error);
+        }
+    }
+
+    formatCharacterReleaseDate(date) {
+        return new Intl.DateTimeFormat('en-US', {
+            month: 'short',
+            day: 'numeric',
+            year: 'numeric'
+        }).format(date).toUpperCase();
+    }
+
+    renderCharacterReleaseTicker() {
+        if (!this.recentCharacterCards.length) return '';
+
+        const cards = this.recentCharacterCards;
+        // renderNewsSection is intentionally rebuilt for source/category
+        // filters. Keep the CSS marquee on its current 72-second phase so
+        // that rebuild never looks like the top release tape restarted.
+        const marqueePhase = -(((typeof performance !== 'undefined' ? performance.now() : Date.now()) / 1000) % 72).toFixed(3);
+        const releaseCards = [...cards, ...cards, ...cards].map(card => {
+            const name = escapeNewsHtml(card.name);
+            const releaseDate = escapeNewsHtml(this.formatCharacterReleaseDate(card.releasedAt));
+            const cutInSrc = `assets/card-art/cards/${card.cutInId}/card_${card.cutInId}_cutin.png`;
+            return `
+                <a class="sba-news-ticker-item" href="card.html?id=${card.id}" aria-label="Open ${name}, released ${releaseDate}" title="Open ${name}">
+                    <span class="sba-news-ticker-thumb"><img src="${cutInSrc}" alt="" loading="lazy" onerror="this.hidden=true"></span>
+                    <span class="sba-news-ticker-copy"><span class="sba-news-ticker-date">${releaseDate}</span><span class="sba-news-ticker-title">${name}</span></span>
+                </a>`;
+        }).join('');
+
+        return `
+            <section class="dokkan-news-snippet sba-character-release-ticker-top" aria-label="Recently released Dokkan characters">
+                <button type="button" class="sba-news-ticker-brand" onclick="switchHubView('news')" aria-label="News releases">
+                    <img class="sba-news-ticker-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="">
+                    <span>NEWS</span>
+                </button>
+                <div class="sba-news-ticker-viewport"><div class="sba-news-ticker-track sba-character-release-track" style="animation-delay:${marqueePhase}s">${releaseCards}</div></div>
+            </section>`;
     }
 
     /**
@@ -417,7 +522,9 @@ class DokkanNewsEngine {
     }
 
     setNewsSource(source) {
+        this.activeArticleView = null;
         this.currentNewsSource = (source === 'game') ? 'game' : 'discord';
+        this.currentNewsFeed = this.currentNewsSource;
         this.searchQuery = '';
         this.currentCategory = 'all';
 
@@ -431,15 +538,47 @@ class DokkanNewsEngine {
         this.renderNewsSection();
     }
 
+    setNewsFeed(feed) {
+        this.activeArticleView = null;
+        this.currentNewsFeed = ['all', 'game', 'discord'].includes(feed) ? feed : 'all';
+        this.currentNewsSource = this.currentNewsFeed === 'discord' ? 'discord' : 'game';
+        this.currentCategory = 'all';
+        this.featuredNewsIndex = 0;
+        this.renderNewsSection();
+        this.restoreNewsFilterPopover();
+    }
+
+    ensureFeaturedNewsRotation() {
+        if (this.featuredRotationTimer) return;
+
+        this.featuredRotationTimer = window.setInterval(() => {
+            const newsSection = document.getElementById('hubNewsSection');
+            const featuredCard = newsSection?.querySelector('.sba-news-featured-card');
+            if (!featuredCard || newsSection.style.display === 'none' || document.hidden || this.featuredRotationIsTransitioning) return;
+
+            this.featuredRotationIsTransitioning = true;
+            featuredCard.classList.add('is-rotating-out');
+
+            window.setTimeout(() => {
+                this.featuredNewsIndex += 1;
+                this.featuredShouldFadeIn = true;
+                this.renderNewsSection();
+                this.featuredShouldFadeIn = false;
+                this.featuredRotationIsTransitioning = false;
+            }, 260);
+        }, 10000);
+    }
+
     /**
      * Populates the Top-Left News Widget on Home View (#hubHomeSection)
      * with an interactive 10-second rotating carousel between:
      * - Slide 1: Original Dokkan Battle & Custom Releases Box / Discord Announcements
      * - Slide 2: Dokkan Live News Releases (Horizontal Mini-Timeline)
-     * Hovering pauses the 10-second auto-scroll timer.
+    * Hovering pauses the 10-second auto-scroll timer.
      */
     renderHomeSnippet() {
-        const snippetEl = document.querySelector('.dokkan-news-snippet');
+        const snippetEls = Array.from(document.querySelectorAll('.dokkan-news-snippet'));
+        const snippetEl = snippetEls[0];
         if (!snippetEl) return;
 
         const formatDate = (ds) => {
@@ -484,6 +623,63 @@ class DokkanNewsEngine {
         
         // Triple top 5 articles for a seamless continuous scroll loop
         const displayArticles = [...top5Articles, ...top5Articles, ...top5Articles];
+
+        // SBA Home uses the same current news data as a compact ticker instead
+        // of the large dashboard card. The dedicated News view is unchanged.
+        if (document.body.classList.contains('theme-sba')) {
+            const tickerItemsHtml = displayArticles.map((art) => {
+                const imgUrl = normalizeDokkanNewsUrl(art.banner)
+                    || (art.bodies && art.bodies.find(seg => seg.image)?.image)
+                    || (art.banner && art.banner !== DOKKAN_NO_NEWS_IMG ? art.banner : null)
+                    || DOKKAN_NO_NEWS_IMG;
+                return `
+                    <button type="button" class="sba-news-ticker-item" onclick="openDokkanNewsArticle(${art.id})" title="${art.title}">
+                        <span class="sba-news-ticker-thumb"><img src="${imgUrl}" alt="" loading="lazy" onerror="this.onerror=null; this.src='${DOKKAN_NO_NEWS_IMG}';"></span>
+                        <span class="sba-news-ticker-copy">
+                            <span class="sba-news-ticker-date">${formatDate(art.date_added)}</span>
+                            <span class="sba-news-ticker-title">${art.title}</span>
+                        </span>
+                    </button>`;
+                }).join('');
+
+            snippetEl.innerHTML = `
+                <button type="button" class="sba-news-ticker-brand" onclick="switchHubView('news')" aria-label="Open News">
+                    <img class="sba-news-ticker-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="">
+                    <span>NEWS</span>
+                </button>
+                <div class="sba-news-ticker-viewport">
+                    <div class="sba-news-ticker-track" id="sbaNewsTickerTrack">${tickerItemsHtml}</div>
+                </div>`;
+
+            // Keep the Cards copy in sync with Home while giving its track a
+            // unique id. Both instances use the same live article data and
+            // retain the ticker's smooth horizontal scrolling behavior.
+            snippetEls.slice(1).forEach((target, index) => {
+                target.innerHTML = snippetEl.innerHTML.replace(
+                    /id="sbaNewsTickerTrack"/g,
+                    `id="sbaNewsTickerTrack-${index + 1}"`
+                );
+            });
+
+            snippetEls.forEach((target) => {
+                const ticker = target.querySelector('.sba-news-ticker-track');
+                if (!ticker) return;
+                ticker.dataset.setLength = String(top5Articles.length);
+                const attachTicker = () => {
+                    const items = ticker.querySelectorAll('.sba-news-ticker-item');
+                    if (items.length >= top5Articles.length * 2 && items[top5Articles.length]) {
+                        const first = items[0].getBoundingClientRect();
+                        const repeat = items[top5Articles.length].getBoundingClientRect();
+                        const distance = Math.round(repeat.left - first.left);
+                        if (distance > 50) ticker.dataset.singleSetWidth = String(distance);
+                    }
+                    if (window.attachSmoothHorizontalScroll) window.attachSmoothHorizontalScroll(ticker, 0.30);
+                    else setTimeout(attachTicker, 80);
+                };
+                setTimeout(attachTicker, 60);
+            });
+            return;
+        }
         
         const cardsHtml = displayArticles.map((art, idx) => {
             const catBadge = this.getCategoryBadge(art.category);
@@ -852,12 +1048,114 @@ class DokkanNewsEngine {
         }
     }
 
+    renderArticleBodyHtml(article) {
+        const catBadge = this.getCategoryBadge(article.category);
+        const heroBanner = normalizeDokkanNewsUrl(article.banner)
+            || (article.bodies || []).find(segment => segment.image)?.image
+            || DOKKAN_NO_NEWS_IMG;
+
+        let bodySegmentsHtml = '';
+        if (article.isDiscord) {
+            const videos = (article.media || []).filter(media => media.type === 'video');
+            const images = (article.media || [])
+                .filter(media => media.type === 'image')
+                .sort((a, b) => (a.visualNumber || 0) - (b.visualNumber || 0));
+            const textBodies = (article.bodies || []).filter(body => body.description && !body.image && !body.video);
+
+            const textsHtml = textBodies.map(body => `
+                <div class="news-body-segment">
+                    <div class="news-segment-text">${this.parseDokkanMarkup(body.description)}</div>
+                </div>
+            `).join('');
+
+            const videosHtml = videos.map((video, index) => `
+                <div class="discord-full-visual-card">
+                    <div class="discord-visual-tag-bar"><span class="discord-visual-tag">${newsSvgIcon('video')} Video ${index + 1}</span></div>
+                    <div class="news-segment-video-wrap sba-news-reader-video">
+                        <video src="${escapeNewsHtml(video.url)}" controls playsinline preload="metadata" onloadedmetadata="this.volume=0.10"></video>
+                    </div>
+                </div>
+            `).join('');
+
+            const imagesHtml = images.map((image, index) => {
+                const visualLabel = `Visual ${image.visualNumber || index + 1}`;
+                return `
+                    <div class="discord-full-visual-card">
+                        <div class="discord-visual-tag-bar"><span class="discord-visual-tag">${newsSvgIcon('image')} ${visualLabel}</span></div>
+                        <div class="discord-full-visual-img-wrap"
+                             onclick="window.dokkanNews.toggleImageZoom(event, this)"
+                             onmousemove="window.dokkanNews.handleImageZoomMove(event, this)"
+                             title="Click to magnify small text / Pan around">
+                            <img src="${escapeNewsHtml(image.url)}" alt="${escapeNewsHtml(visualLabel)}" class="discord-full-visual-img" loading="lazy" onerror="this.onerror=null; this.src='${DOKKAN_NO_NEWS_IMG}';">
+                            <div class="glass-zoom-pill" title="Click to Magnify / Reset">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            bodySegmentsHtml = `${textsHtml}${videosHtml}${imagesHtml}`;
+        } else if (article.bodies && article.bodies.length > 0) {
+            bodySegmentsHtml = article.bodies.map((body, index) => `
+                <div class="news-body-segment">
+                    ${body.video ? `
+                        <div class="news-segment-video-wrap sba-news-reader-video">
+                            <video src="${escapeNewsHtml(body.video)}" controls playsinline preload="metadata" onloadedmetadata="this.volume=0.10"></video>
+                        </div>
+                    ` : ''}
+                    ${body.image ? `
+                        <div class="news-segment-img-wrap"
+                             onclick="window.dokkanNews.toggleImageZoom(event, this)"
+                             onmousemove="window.dokkanNews.handleImageZoomMove(event, this)"
+                             title="Click to magnify small text / Pan around">
+                            <img src="${escapeNewsHtml(body.image)}" alt="Segment Image ${index + 1}" class="news-segment-img" loading="lazy" onerror="this.onerror=null; this.src='${DOKKAN_NO_NEWS_IMG}';">
+                            <div class="glass-zoom-pill" title="Click to Magnify / Reset">
+                                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                    <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                                    <line x1="11" y1="8" x2="11" y2="14"></line><line x1="8" y1="11" x2="14" y2="11"></line>
+                                </svg>
+                            </div>
+                        </div>
+                    ` : ''}
+                    ${body.description ? `<div class="news-segment-text">${this.parseDokkanMarkup(body.description)}</div>` : ''}
+                </div>
+            `).join('');
+        }
+
+        if (!bodySegmentsHtml) {
+            bodySegmentsHtml = `<div class="news-body-segment"><p>${article.isDiscord ? 'No visual or text details provided for this release batch.' : 'No details provided for this notice.'}</p></div>`;
+        }
+
+        const showHeroBanner = heroBanner && heroBanner !== DOKKAN_NO_NEWS_IMG;
+        return `
+            ${showHeroBanner ? `
+                <div class="enlarged-hero-banner-wrap sba-news-reader-hero">
+                    <img src="${escapeNewsHtml(heroBanner)}" alt="Announcement Banner" class="enlarged-hero-img" onerror="this.onerror=null; this.src='${DOKKAN_NO_NEWS_IMG}';">
+                </div>
+            ` : ''}
+            <header class="news-reader-header sba-news-reader-heading">
+                <div class="reader-header-meta sba-news-reader-meta">
+                    ${catBadge}
+                    <span class="reader-header-date">Added: ${escapeNewsHtml(article.date_added || 'Recent')}</span>
+                </div>
+                <h1 id="sbaNewsReaderTitle" class="reader-header-title">${escapeNewsHtml(article.title || 'Dokkan Announcement')}</h1>
+            </header>
+            <div class="news-reader-segments-stream sba-news-reader-stream">
+                ${bodySegmentsHtml}
+            </div>
+        `;
+    }
+
     openEnlargedArticle(articleId, source = null) {
         if (source) {
             this.currentNewsSource = source;
         }
 
-        let list = this.currentNewsSource === 'discord' ? this.discordBatches : this.articles;
+        let list = this.getEnlargedArticleList();
         if (!list || list.length === 0) return;
 
         let article = null;
@@ -871,13 +1169,13 @@ class DokkanNewsEngine {
                     article = this.articles.find(a => String(a.id) === String(articleId));
                     if (article) {
                         this.currentNewsSource = 'game';
-                        list = this.articles;
+                        list = this.getEnlargedArticleList();
                     }
                 } else {
                     article = this.discordBatches.find(a => String(a.id) === String(articleId));
                     if (article) {
                         this.currentNewsSource = 'discord';
-                        list = this.discordBatches;
+                        list = this.getEnlargedArticleList();
                     }
                 }
             }
@@ -888,6 +1186,32 @@ class DokkanNewsEngine {
 
         this.currentArticleId = article.id;
         const currentIndex = list.findIndex(a => String(a.id) === String(article.id));
+
+        this.activeArticleView = {
+            id: article.id,
+            source: this.currentNewsSource
+        };
+
+        const newsSection = document.getElementById('hubNewsSection');
+        if (!newsSection || newsSection.style.display === 'none') {
+            if (typeof switchHubView === 'function') {
+                switchHubView('news');
+            } else {
+                this.renderNewsSection();
+            }
+        } else {
+            this.renderNewsSection();
+        }
+
+        try {
+            const url = new URL(window.location.href);
+            url.searchParams.set('view', 'news');
+            url.searchParams.set('source', this.currentNewsSource);
+            url.searchParams.set('article', String(article.id));
+            window.history.replaceState({}, document.title, url.pathname + url.search);
+        } catch (e) {}
+
+        return;
 
         const modal = this.initEnlargedArticleModal();
         const counterEl = document.getElementById('enlargedCounter');
@@ -1032,15 +1356,30 @@ class DokkanNewsEngine {
     }
 
     closeEnlargedArticle() {
+        this.activeArticleView = null;
         const modal = document.getElementById('dokkan-enlarged-article-modal');
         if (modal) {
             modal.classList.remove('active');
             document.body.style.overflow = '';
         }
+
+        const newsSection = document.getElementById('hubNewsSection');
+        if (newsSection && newsSection.style.display !== 'none') {
+            this.renderNewsSection();
+        }
+
+        try {
+            const url = new URL(window.location.href);
+            url.searchParams.delete('article');
+            url.searchParams.delete('source');
+            if (url.searchParams.get('view') === 'news') {
+                window.history.replaceState({}, document.title, url.pathname + url.search);
+            }
+        } catch (e) {}
     }
 
     prevEnlargedArticle() {
-        const list = this.currentNewsSource === 'discord' ? this.discordBatches : this.articles;
+        const list = this.getEnlargedArticleList();
         const idx = list.findIndex(a => String(a.id) === String(this.currentArticleId));
         if (idx > 0) {
             this.openEnlargedArticle(list[idx - 1].id, this.currentNewsSource);
@@ -1048,101 +1387,499 @@ class DokkanNewsEngine {
     }
 
     nextEnlargedArticle() {
-        const list = this.currentNewsSource === 'discord' ? this.discordBatches : this.articles;
+        const list = this.getEnlargedArticleList();
         const idx = list.findIndex(a => String(a.id) === String(this.currentArticleId));
         if (idx !== -1 && idx < list.length - 1) {
             this.openEnlargedArticle(list[idx + 1].id, this.currentNewsSource);
         }
     }
 
+    getEnlargedArticleList() {
+        // The reader follows the same source, category, search, and release
+        // date ordering as the visible newsroom grid.
+        return this.getNewsDashboardItems(this.currentNewsSource);
+    }
+
+    getNewsDashboardItems(source) {
+        const isDiscord = source === 'discord';
+        const list = isDiscord ? this.discordBatches : this.articles;
+        const query = this.searchQuery.trim().toLowerCase();
+
+        const filteredItems = [...(list || [])].filter(item => {
+            const matchesCategory = this.currentCategory === 'all' || (!isDiscord && item.category === this.currentCategory);
+            if (!matchesCategory) return false;
+            if (!query) return true;
+
+            const searchable = [
+                item.title,
+                item.date_added,
+                item.date,
+                ...(item.bodies || []).map(body => body.description || '')
+            ].join(' ').toLowerCase();
+            return searchable.includes(query);
+        });
+
+        return this.sortNewsDashboardItems(filteredItems);
+    }
+
+    getCampaignShowcaseItems() {
+        // This display is deliberately kept to actual playable campaign/event
+        // announcements. Character previews, maintenance, and issue notices
+        // remain available in their source lists, but never enter the rotator.
+        return [...(this.articles || [])].filter(item => ['campaign', 'event'].includes(item.category));
+    }
+
+    getNewsDashboardImage(item) {
+        return normalizeDokkanNewsUrl(item?.banner)
+            || (item?.bodies || []).find(body => body.image)?.image
+            || DOKKAN_NO_NEWS_IMG;
+    }
+
+    getNewsDashboardExcerpt(item) {
+        const body = item?.summary
+            || (item?.bodies || []).find(entry => entry.description)?.description
+            || '';
+        const cleaned = String(body)
+            .replace(/\{[^{}]+\}/g, '')
+            .replace(/<[^>]+>/g, ' ')
+            .replace(/\s+/g, ' ')
+            .trim();
+        return cleaned || 'Open this update to view the full notice and attached campaign details.';
+    }
+
+    getNewsDashboardDate(item) {
+        const rawDate = item?.date_added || item?.date || 'Recent';
+        const date = new Date(String(rawDate).replace(' ', 'T'));
+        if (Number.isNaN(date.getTime())) return String(rawDate);
+        return new Intl.DateTimeFormat('en-US', { month: 'short', day: 'numeric' }).format(date);
+    }
+
+    getNewsDashboardTimestamp(item) {
+        if (Number.isFinite(Number(item?.start_at)) && Number(item.start_at) > 0) {
+            return Number(item.start_at) * 1000;
+        }
+
+        const rawDate = item?.timestamp || item?.date_added || item?.date || '';
+        const parsed = new Date(String(rawDate).replace(' ', 'T')).getTime();
+        return Number.isFinite(parsed) ? parsed : 0;
+    }
+
+    sortNewsDashboardItems(items) {
+        const direction = this.newsSortOrder === 'oldest' ? 1 : -1;
+        return [...(items || [])].sort((a, b) => {
+            const timestampDifference = this.getNewsDashboardTimestamp(a) - this.getNewsDashboardTimestamp(b);
+            if (timestampDifference !== 0) return timestampDifference * direction;
+
+            const aId = String(a?.id ?? '');
+            const bId = String(b?.id ?? '');
+            return aId.localeCompare(bId, undefined, { numeric: true }) * direction;
+        });
+    }
+
+    getNewsDashboardType(item, source) {
+        if (source === 'discord') return 'COMMUNITY RELEASE';
+        return String(item?.category || 'news').toUpperCase();
+    }
+
+    renderNewsDashboardRow(item, source) {
+        const image = escapeNewsHtml(this.getNewsDashboardImage(item));
+        const title = escapeNewsHtml(item?.title || 'Dokkan Announcement');
+        const excerpt = escapeNewsHtml(this.getNewsDashboardExcerpt(item));
+        const date = escapeNewsHtml(this.getNewsDashboardDate(item));
+        const type = escapeNewsHtml(this.getNewsDashboardType(item, source));
+        const id = escapeNewsHtml(item?.id);
+
+        return `
+            <li>
+                <button type="button" class="sba-news-list-row" data-news-open data-news-source="${source}" data-news-id="${id}">
+                    <span class="sba-news-list-copy">
+                        <span class="sba-news-list-meta">${type}<span aria-hidden="true">•</span>${date}</span>
+                        <strong>${title}</strong>
+                        <span class="sba-news-list-excerpt">${excerpt}</span>
+                    </span>
+                    <span class="sba-news-list-image"><img src="${image}" alt="" loading="lazy" onerror="this.hidden=true;this.parentElement.classList.add('is-fallback')"></span>
+                </button>
+            </li>`;
+    }
+
+    renderNewsCompactRow(item, source) {
+        const title = escapeNewsHtml(item?.title || 'Dokkan Announcement');
+        const date = escapeNewsHtml(this.getNewsDashboardDate(item));
+        const type = escapeNewsHtml(this.getNewsDashboardType(item, source));
+        const id = escapeNewsHtml(item?.id);
+        const image = escapeNewsHtml(this.getNewsDashboardImage(item));
+        const discordPreview = source === 'discord' ? `<span class="sba-news-compact-image"><img src="${image}" alt="" loading="lazy" onerror="this.hidden=true;this.parentElement.classList.add('is-fallback')"></span>` : '';
+
+        return `
+            <li>
+                <button type="button" class="sba-news-compact-row${source === 'discord' ? ' has-preview' : ''}" data-news-open data-news-source="${source}" data-news-id="${id}">
+                    <span class="sba-news-compact-copy"><span class="sba-news-compact-meta">${type}<span aria-hidden="true">•</span>${date}</span><strong>${title}</strong></span>
+                    ${discordPreview}
+                </button>
+            </li>`;
+    }
+
+    renderNewsEditorialCard(item, source) {
+        const image = escapeNewsHtml(this.getNewsDashboardImage(item));
+        const title = escapeNewsHtml(item?.title || 'Dokkan Announcement');
+        const excerpt = escapeNewsHtml(this.getNewsDashboardExcerpt(item));
+        const date = escapeNewsHtml(this.getNewsDashboardDate(item));
+        const type = escapeNewsHtml(this.getNewsDashboardType(item, source));
+        const id = escapeNewsHtml(item?.id);
+
+        return `
+            <button type="button" class="sba-news-editorial-card" data-news-open data-news-source="${source}" data-news-id="${id}">
+                <span class="sba-news-editorial-image"><img src="${image}" alt="" loading="lazy" onerror="this.hidden=true;this.parentElement.classList.add('is-fallback')"></span>
+                <span class="sba-news-editorial-copy">
+                    <span class="sba-news-editorial-meta">${type}<span aria-hidden="true">•</span>${date}</span>
+                    <strong>${title}</strong>
+                    <span class="sba-news-editorial-excerpt">${excerpt}</span>
+                </span>
+            </button>`;
+    }
+
+    renderNewsGridCard(item, source) {
+        const image = escapeNewsHtml(this.getNewsDashboardImage(item));
+        const title = escapeNewsHtml(item?.title || 'Dokkan Announcement');
+        const excerpt = escapeNewsHtml(this.getNewsDashboardExcerpt(item));
+        const date = escapeNewsHtml(this.getNewsDashboardDate(item));
+        const type = escapeNewsHtml(source === 'discord' ? 'DISCORD' : String(item?.category || 'NEWS').toUpperCase());
+        const id = escapeNewsHtml(item?.id);
+        const category = escapeNewsHtml(source === 'discord' ? 'discord' : (item?.category || 'general'));
+
+        return `
+            <button type="button" class="sba-news-grid-card" data-news-card-category="${category}" data-news-open data-news-source="${source}" data-news-id="${id}" aria-label="Open ${title}">
+                <span class="sba-news-grid-image">
+                    <img src="${image}" alt="" loading="lazy" onerror="this.hidden=true; this.parentElement.classList.add('is-fallback');">
+                </span>
+                <span class="sba-news-grid-copy">
+                    <span class="sba-news-grid-meta"><span class="sba-news-grid-badge">${type}</span><time>${date}</time></span>
+                    <strong>${title}</strong>
+                    <span class="sba-news-grid-excerpt">${excerpt}</span>
+                    <span class="sba-news-grid-open">Open article ${newsSvgIcon('next')}</span>
+                </span>
+            </button>`;
+    }
+
+    renderNewsArticlePage(article, list, currentIndex) {
+        const newsSection = document.getElementById('hubNewsSection');
+        if (!newsSection || !article) return;
+
+        const source = this.currentNewsSource === 'discord' ? 'discord' : 'game';
+        const sourceLabel = source === 'discord' ? 'Discord community release' : 'Official Dokkan announcement';
+        const articleLabel = source === 'discord' ? 'Batch' : 'Notice';
+
+        newsSection.innerHTML = `
+            <header class="sba-news-page-heading">
+                <span class="sba-news-identity-icon" aria-hidden="true">${newsSvgIcon('news')}</span>
+                <span class="sba-news-title-copy"><strong>Dokkan Newsroom</strong><small>${sourceLabel}</small></span>
+            </header>
+            ${this.renderCharacterReleaseTicker()}
+            <div class="sba-news-shell sba-news-reader-shell" data-news-source="${source}">
+                <div class="sba-news-reader-toolbar">
+                    <button type="button" class="sba-news-reader-back" data-news-reader-back>${newsSvgIcon('previous')}<span>Back to news</span></button>
+                    <div class="sba-news-reader-pagination">
+                        <button type="button" class="sba-news-reader-page-btn" data-news-reader-prev ${currentIndex <= 0 ? 'disabled' : ''}>${newsSvgIcon('previous')}<span>Previous</span></button>
+                        <span>${articleLabel} ${currentIndex + 1} of ${list.length}</span>
+                        <button type="button" class="sba-news-reader-page-btn" data-news-reader-next ${currentIndex >= list.length - 1 ? 'disabled' : ''}><span>Next</span>${newsSvgIcon('next')}</button>
+                    </div>
+                </div>
+                <article class="sba-news-reader-article" aria-labelledby="sbaNewsReaderTitle">
+                    <div class="sba-news-reader-source-line"><span>${sourceLabel}</span><span aria-hidden="true">•</span><span>${articleLabel} ${currentIndex + 1}</span></div>
+                    ${this.renderArticleBodyHtml(article)}
+                </article>
+            </div>`;
+
+        newsSection.querySelector('[data-news-reader-back]')?.addEventListener('click', () => this.closeEnlargedArticle());
+        newsSection.querySelector('[data-news-reader-prev]')?.addEventListener('click', () => this.prevEnlargedArticle());
+        newsSection.querySelector('[data-news-reader-next]')?.addEventListener('click', () => this.nextEnlargedArticle());
+
+        requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: 'smooth' }));
+    }
+
     /**
-     * Renders the Side-by-Side Dokkan News View (#hubNewsSection)
-     * In-Game News on the left, Discord Releases on the right.
-     * Clicking ANY card opens the enlarged fullscreen scrollable modal GUI!
+     * Renders the newsroom grid. Official announcements and Discord batches
+     * share the same card language, while the source toggle controls which
+     * feed is shown.
      */
     renderNewsSection() {
         const newsSection = document.getElementById('hubNewsSection');
         if (!newsSection) return;
 
+        if (this.activeArticleView) {
+            this.currentNewsSource = this.activeArticleView.source === 'discord' ? 'discord' : 'game';
+            const articleList = this.getEnlargedArticleList();
+            const article = articleList.find(item => String(item.id) === String(this.activeArticleView.id));
+            if (article) {
+                this.currentArticleId = article.id;
+                this.renderNewsArticlePage(article, articleList, articleList.findIndex(item => String(item.id) === String(article.id)));
+                return;
+            }
+            this.activeArticleView = null;
+        }
+
+        const selectedFeed = ['all', 'game', 'discord'].includes(this.currentNewsFeed) ? this.currentNewsFeed : 'all';
+        const officialItems = this.getNewsDashboardItems('game').map(item => ({ item, source: 'game' }));
+        const discordItems = this.getNewsDashboardItems('discord').map(item => ({ item, source: 'discord' }));
+        const gridItems = this.sortNewsDashboardItems(
+            selectedFeed === 'game' ? officialItems : selectedFeed === 'discord' ? discordItems : [...officialItems, ...discordItems]
+        );
+        const categoryDefinitions = [
+            ['all', 'All'],
+            ['campaign', 'Campaigns'],
+            ['summon', 'Summons'],
+            ['event', 'Events'],
+            ['notice', 'Notices']
+        ];
+        const categoryButtons = categoryDefinitions
+            .map(([value, label]) => `<button type="button" class="sba-news-filter-option ${this.currentCategory === value ? 'is-active' : ''}" data-news-category="${value}" aria-pressed="${this.currentCategory === value}">${label}</button>`)
+            .join('');
+        const sourceButtons = [
+            ['all', 'All news', 'Official + Discord'],
+            ['game', 'Official', 'Dokkan announcements'],
+            ['discord', 'Discord', 'Community releases']
+        ].map(([value, label, detail]) => `
+            <button type="button" class="sba-news-filter-option sba-news-source-option ${selectedFeed === value ? 'is-active' : ''}" data-news-source-tab="${value}" aria-pressed="${selectedFeed === value}">
+                <span>${label}</span><small>${detail}</small>
+            </button>`).join('');
+        const sortButtons = [
+            ['newest', 'Newest first'],
+            ['oldest', 'Oldest first']
+        ].map(([value, label]) => `<button type="button" class="sba-news-filter-option ${this.newsSortOrder === value ? 'is-active' : ''}" data-news-sort-order="${value}" aria-pressed="${this.newsSortOrder === value}">${label}</button>`).join('');
+        const feedLabel = selectedFeed === 'discord' ? 'Discord community releases' : selectedFeed === 'game' ? 'Official Dokkan announcements' : 'Official Dokkan + Discord';
+        const sortLabel = this.newsSortOrder === 'oldest' ? 'oldest first' : 'newest first';
+        const newsFilterCount = this.getNewsFilterCount();
+        const gridMarkup = gridItems.length
+            ? gridItems.map(({ item, source }) => this.renderNewsGridCard(item, source)).join('')
+            : `<div class="sba-news-grid-empty"><strong>No matching news</strong><span>Try another source, category, or search term.</span></div>`;
+
         newsSection.innerHTML = `
-            <div class="hub-view-header" style="margin-bottom: 16px;">
-                <div class="hub-view-info">
-                    <h2 class="hub-section-title">Dokkan Battle News Feed</h2>
-                    <p class="hub-section-subtitle">Browse In-Game Official Notices on the left and Discord Campaign Batches on the right. Click any card to open the enlarged reader.</p>
-                </div>
-
-                <!-- Global Search & Bridge Status Toolbar -->
-                <div class="news-view-toolbar" style="gap: 12px; display: flex; align-items: center; flex-wrap: wrap;">
-                    <div class="news-search-box" style="max-width: 320px;">
-                        <svg class="news-search-icon" width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                        </svg>
-                        <input type="text" id="newsSearchInput" value="${this.searchQuery}" placeholder="Search all news & releases..." oninput="window.dokkanNews.handleSearch(this.value)">
-                    </div>
-
-                    ${this.isServerConnected ? `
-                        <div class="news-bridge-indicator connected">
-                            <span class="pulse-dot"></span>
-                            <span>Live Bridge Connected (Port 3001)</span>
+            <header class="sba-news-page-heading hub-view-header cards-workspace-header news-workspace-header">
+                <div class="cards-workspace-heading news-workspace-heading">
+                    <div class="hub-view-info cards-workspace-title news-workspace-title">
+                        <span class="cards-workspace-title-icon news-workspace-title-icon" aria-hidden="true">${newsSvgIcon('news')}</span>
+                        <div>
+                            <h2 class="hub-section-title" id="newsViewTitle">Dokkan Newsroom</h2>
+                            <p class="hub-section-subtitle" id="newsViewSubtitle">${feedLabel}</p>
                         </div>
-                    ` : ''}
-                </div>
-            </div>
-
-            <!-- SIDE-BY-SIDE 2-COLUMN NEWS DASHBOARD -->
-            <div class="dokkan-news-dashboard-grid side-by-side-grid">
-                
-                <!-- LEFT COLUMN: IN-GAME DOKKAN NEWS -->
-                <div class="dokkan-news-column-panel game-column-panel" id="gameNewsColumn">
-                    <div class="news-column-header">
-                        <div class="column-title-row">
-                            <div class="column-title-group">
-                                <span class="column-header-icon" style="color: #facc15;">${newsSvgIcon('lightning')}</span>
-                                <h3 class="column-header-title">In-Game News</h3>
+                    </div>
+                    <div class="cards-workspace-divider" aria-hidden="true"></div>
+                    <div class="cards-workspace-actions news-workspace-actions">
+                        <div class="cards-search-toolbar news-search-toolbar">
+                            <button type="button" class="liquid-toolbar-filter-btn${newsFilterCount ? ' active' : ''}" id="newsFiltersBtn" aria-expanded="false" aria-controls="sbaNewsFilterPopover">
+                                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h10M18 7h2M4 17h2M10 17h10M14 4v6M6 14v6"></path></svg>
+                                <span class="filter-button-label">Filters</span>
+                                <span class="advanced-filter-count" id="newsFilterCount" ${newsFilterCount ? '' : 'hidden'}>${newsFilterCount}</span>
+                            </button>
+                            <div class="sba-news-filter-popover" id="sbaNewsFilterPopover" aria-hidden="true">
+                                <div class="sba-news-filter-popover-header">
+                                    <span>News filters</span>
+                                    <button type="button" class="sba-news-filter-reset" data-news-filter-reset>Reset</button>
+                                </div>
+                                <div class="sba-news-filter-group">
+                                    <span class="sba-news-filter-label">Source</span>
+                                    <div class="sba-news-filter-options">${sourceButtons}</div>
+                                </div>
+                                ${selectedFeed === 'discord' ? '' : `<div class="sba-news-filter-group"><span class="sba-news-filter-label">Category</span><div class="sba-news-filter-options">${categoryButtons}</div></div>`}
+                                <div class="sba-news-filter-group">
+                                    <span class="sba-news-filter-label">Release date</span>
+                                    <div class="sba-news-filter-options">${sortButtons}</div>
+                                </div>
                             </div>
-                            <span class="column-count-badge" id="gameNewsCount">${this.articles.length} Notices</span>
-                        </div>
-
-                        <!-- Category Filter Pills -->
-                        <div class="news-category-pill-group">
-                            <button type="button" class="news-pill-btn ${this.currentCategory === 'all' ? 'active' : ''}" onclick="window.dokkanNews.setCategory('all', this)">All</button>
-                            <button type="button" class="news-pill-btn ${this.currentCategory === 'campaign' ? 'active' : ''}" onclick="window.dokkanNews.setCategory('campaign', this)">Campaigns</button>
-                            <button type="button" class="news-pill-btn ${this.currentCategory === 'summon' ? 'active' : ''}" onclick="window.dokkanNews.setCategory('summon', this)">Summons</button>
-                            <button type="button" class="news-pill-btn ${this.currentCategory === 'event' ? 'active' : ''}" onclick="window.dokkanNews.setCategory('event', this)">Events</button>
-                            <button type="button" class="news-pill-btn ${this.currentCategory === 'notice' ? 'active' : ''}" onclick="window.dokkanNews.setCategory('notice', this)">Notices</button>
-                        </div>
-                    </div>
-
-                    <!-- Scrollable In-Game Articles Stream -->
-                    <div class="news-articles-stream side-by-side-stream" id="gameNewsStream">
-                        ${this.renderGameNewsListHtml()}
-                    </div>
-                </div>
-
-                <!-- RIGHT COLUMN: DISCORD & CAMPAIGNS -->
-                <div class="dokkan-news-column-panel discord-column-panel" id="discordNewsColumn">
-                    <div class="news-column-header">
-                        <div class="column-title-row">
-                            <div class="column-title-group">
-                                <span class="column-header-icon" style="color: #818cf8;">${newsSvgIcon('chat')}</span>
-                                <h3 class="column-header-title">Discord & Campaigns</h3>
+                            <div class="liquid-search-border-container news-search-border">
+                                <div class="liquid-search-box" role="search" tabindex="0" onclick="this.querySelector('input')?.focus()">
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" fill="#94a3b8" class="search-icon" aria-hidden="true"><path d="M13 3C7.489 3 3 7.489 3 13s4.489 10 10 10a9.95 9.95 0 0 0 6.322-2.264l5.971 5.971a1 1 0 1 0 1.414-1.414l-5.97-5.97A9.95 9.95 0 0 0 23 13c0-5.511-4.489-10-10-10m0 2c4.43 0 8 3.57 8 8s-3.57 8-8 8-8-3.57-8-8 3.57-8 8-8"/></svg>
+                                    <input type="search" id="newsSearchInput" value="${escapeNewsHtml(this.searchQuery)}" placeholder="Search news..." autocomplete="off">
+                                </div>
                             </div>
-                            <span class="column-count-badge discord-count-badge" id="discordNewsCount">${this.discordBatches.length} Batches (${this.discordArticles.length} Posts)</span>
                         </div>
-
-                        <div class="discord-header-subline">
-                            <span>Batch Releases, Visual Datamines & Animations</span>
-                        </div>
-                    </div>
-
-                    <!-- Scrollable Discord Batches Stream -->
-                    <div class="news-articles-stream side-by-side-stream" id="discordNewsStream">
-                        ${this.renderDiscordNewsListHtml()}
                     </div>
                 </div>
+            </header>
+            ${this.renderCharacterReleaseTicker()}
+            <div class="sba-news-shell sba-news-grid-shell">
+                <div class="sba-news-grid-summary"><span><strong>${gridItems.length}</strong> updates</span><span>${feedLabel} · ${sortLabel}</span></div>
+                <section class="sba-news-card-grid" aria-label="${escapeNewsHtml(feedLabel)}" aria-live="polite">
+                    ${gridMarkup}
+                </section>
+            </div>`;
 
-            </div>
-        `;
+        newsSection.querySelectorAll('[data-news-open]').forEach(button => {
+            button.addEventListener('click', () => this.openEnlargedArticle(button.dataset.newsId, button.dataset.newsSource));
+        });
+        newsSection.querySelectorAll('[data-news-source-tab]').forEach(button => {
+            button.addEventListener('click', () => this.setNewsFeed(button.dataset.newsSourceTab));
+        });
+        newsSection.querySelectorAll('[data-news-category]').forEach(button => {
+            button.addEventListener('click', () => this.setCategory(button.dataset.newsCategory));
+        });
+        newsSection.querySelectorAll('[data-news-sort-order]').forEach(button => {
+            button.addEventListener('click', () => this.setNewsSortOrder(button.dataset.newsSortOrder));
+        });
+        newsSection.querySelector('[data-news-filter-reset]')?.addEventListener('click', () => this.resetNewsFilters());
+        const newsFilterButton = newsSection.querySelector('#newsFiltersBtn');
+        const newsFilterPopover = newsSection.querySelector('#sbaNewsFilterPopover');
+        newsFilterButton?.addEventListener('click', event => {
+            event.stopPropagation();
+            const isOpen = !newsFilterPopover?.classList.contains('is-open');
+            newsFilterPopover?.classList.toggle('is-open', isOpen);
+            newsFilterPopover?.setAttribute('aria-hidden', String(!isOpen));
+            newsFilterButton.setAttribute('aria-expanded', String(isOpen));
+            newsFilterButton.classList.toggle('active', isOpen || newsFilterCount > 0);
+        });
+        const searchInput = newsSection.querySelector('#newsSearchInput');
+        searchInput?.addEventListener('input', event => {
+            this.handleSearch(event.currentTarget.value, event.currentTarget.selectionStart);
+        });
+        return;
+
+        {
+        const selectedFeed = ['all', 'game', 'discord'].includes(this.currentNewsFeed) ? this.currentNewsFeed : 'all';
+        const activeSource = selectedFeed === 'discord' && this.discordBatches.length ? 'discord' : 'game';
+        const companionSource = activeSource === 'game' ? 'discord' : 'game';
+        const activeItems = this.getNewsDashboardItems(activeSource);
+        const isDiscordFeed = selectedFeed === 'discord' && activeSource === 'discord';
+        const showCompanionFeed = selectedFeed === 'all';
+        const companionItems = showCompanionFeed ? this.getNewsDashboardItems(companionSource) : [];
+        const featuredItems = isDiscordFeed ? activeItems : this.getCampaignShowcaseItems();
+        const featuredSource = isDiscordFeed ? 'discord' : 'game';
+        const featuredIndex = featuredItems.length ? this.featuredNewsIndex % featuredItems.length : 0;
+        const featured = featuredItems[featuredIndex] || null;
+        const latestIssue = (this.articles || []).find(item => item.category === 'notice') || null;
+        const relatedItems = activeItems.filter(item => !featured || String(item.id) !== String(featured.id)).slice(0, 12);
+        const latestItems = companionItems.slice(0, 12);
+        const editorialItems = (relatedItems.length ? relatedItems : activeItems).slice(0, 4);
+        const activeLabel = activeSource === 'discord' ? 'Discord' : 'Dokkan Announcements';
+        const companionLabel = companionSource === 'discord' ? 'Discord' : 'Dokkan Announcements';
+        const categoryDefinitions = [
+            ['all', 'All'],
+            ['campaign', 'Campaigns'],
+            ['summon', 'Summons'],
+            ['event', 'Events'],
+            ['notice', 'Notices']
+        ];
+        const categoryButtons = categoryDefinitions.map(([value, label]) => `<button type="button" class="sba-news-category ${this.currentCategory === value ? 'is-active' : ''}" data-news-category="${value}">${label}</button>`).join('');
+        const scrollControls = (targetId, label) => `
+            <span class="sba-news-scroll-controls" aria-label="${label}">
+                <button type="button" data-news-scroll data-news-scroll-target="${targetId}" data-news-scroll-direction="-1" aria-label="Previous">${newsSvgIcon('previous')}</button>
+                <button type="button" data-news-scroll data-news-scroll-target="${targetId}" data-news-scroll-direction="1" aria-label="Next">${newsSvgIcon('next')}</button>
+            </span>`;
+
+        const renderShowcaseMarkup = (item, source, label) => item ? (() => {
+            const image = escapeNewsHtml(this.getNewsDashboardImage(item));
+            const title = escapeNewsHtml(item.title || 'Dokkan Announcement');
+            const excerpt = escapeNewsHtml(this.getNewsDashboardExcerpt(item));
+            const date = escapeNewsHtml(this.getNewsDashboardDate(item));
+            const type = escapeNewsHtml(this.getNewsDashboardType(item, source));
+            const id = escapeNewsHtml(item.id);
+            return `
+                <button type="button" class="sba-news-featured-action" data-news-open data-news-source="${source}" data-news-id="${id}">
+                    <span class="sba-news-featured-heading">
+                        <span class="sba-news-featured-campaign"><span>${label}</span><span>${type}<span aria-hidden="true">•</span>${date}</span></span>
+                        <strong>${title}</strong>
+                    </span>
+                    <span class="sba-news-featured-media"><img src="${image}" alt="" loading="eager" onerror="this.hidden=true;this.parentElement.classList.add('is-fallback')"></span>
+                    <span class="sba-news-featured-details"><span>${excerpt}</span><span class="sba-news-open-label">Open full notice ${newsSvgIcon('next')}</span></span>
+                </button>`;
+        })() : `<div class="sba-news-empty-state">No notices are available yet.</div>`;
+        const featuredMarkup = renderShowcaseMarkup(featured, featuredSource, 'Campaign');
+        const discordShowcaseMarkup = renderShowcaseMarkup(featured, 'discord', 'Discord release');
+        const issueMarkup = renderShowcaseMarkup(latestIssue, 'game', 'Issue');
+
+        newsSection.innerHTML = `
+            <header class="sba-news-page-heading">
+                <span class="sba-news-identity-icon" aria-hidden="true">${newsSvgIcon('news')}</span>
+                <span class="sba-news-title-copy"><strong>Dokkan Newsroom</strong><small>Official Dokkan Announcements · Discord</small></span>
+            </header>
+            ${this.renderCharacterReleaseTicker()}
+            <div class="sba-news-shell">
+                <header class="sba-news-topbar">
+                    <nav class="sba-news-source-nav" aria-label="News source">
+                        <button type="button" class="${selectedFeed === 'all' ? 'is-active' : ''}" data-news-source-tab="all" aria-pressed="${selectedFeed === 'all'}"><span>All News</span><small>Official + Discord</small></button>
+                        <button type="button" class="${selectedFeed === 'game' ? 'is-active' : ''}" data-news-source-tab="game" aria-pressed="${selectedFeed === 'game'}"><span>Official Dokkan</span><small>Announcements</small></button>
+                        <button type="button" class="${selectedFeed === 'discord' ? 'is-active' : ''}" data-news-source-tab="discord" aria-pressed="${selectedFeed === 'discord'}"><span>Discord</span><small>Community feed</small></button>
+                    </nav>
+                    <label class="sba-news-search" for="newsSearchInput">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+                        <input type="search" id="newsSearchInput" value="${escapeNewsHtml(this.searchQuery)}" placeholder="Search news" autocomplete="off">
+                    </label>
+                </header>
+
+                ${selectedFeed === 'discord' ? '' : `<div class="sba-news-category-nav" aria-label="Official news category">${categoryButtons}</div>`}
+
+                <div class="sba-news-dashboard ${showCompanionFeed ? 'is-all-news' : 'is-single-source'}">
+                    <div class="sba-news-showcase-stack${isDiscordFeed ? ' sba-news-discord-showcase-stack' : ''}">
+                        <article class="sba-news-featured-card sba-news-campaign-showcase${isDiscordFeed ? ' sba-news-discord-showcase' : ''}${this.featuredShouldFadeIn ? ' is-rotating-in' : ''}" data-news-source="${featuredSource}">
+                            ${isDiscordFeed ? discordShowcaseMarkup : featuredMarkup}
+                        </article>
+                        ${isDiscordFeed ? '' : `<article class="sba-news-featured-card sba-news-campaign-showcase sba-news-issue-showcase" data-news-source="game">
+                            ${issueMarkup}
+                        </article>`}
+                    </div>
+
+                    <section class="sba-news-related-panel" aria-labelledby="sbaNewsRelatedTitle">
+                        <header>
+                            <div>
+                                <h2 id="sbaNewsRelatedTitle">Related news</h2>
+                                <span class="sba-news-kicker">${escapeNewsHtml(activeLabel)}</span>
+                            </div>
+                            <span class="sba-news-panel-actions"><span class="sba-news-item-count">${activeItems.length}</span>${scrollControls('sbaNewsRelatedList', 'Scroll related news')}</span>
+                        </header>
+                        <ol class="sba-news-list" id="sbaNewsRelatedList">
+                            ${relatedItems.length ? relatedItems.map(item => this.renderNewsDashboardRow(item, activeSource)).join('') : '<li class="sba-news-list-empty">No more matching updates.</li>'}
+                        </ol>
+                    </section>
+
+                    ${showCompanionFeed ? `<aside class="sba-news-latest-panel" aria-labelledby="sbaNewsLatestTitle">
+                        <header>
+                            <div>
+                                <h2 id="sbaNewsLatestTitle">Latest updates</h2>
+                                <span class="sba-news-kicker">${escapeNewsHtml(companionLabel)}</span>
+                            </div>
+                            <span class="sba-news-panel-actions"><button type="button" class="sba-news-switch-source" data-news-source-tab="${companionSource}">View ${companionSource === 'discord' ? 'Discord' : 'official'}</button>${scrollControls('sbaNewsLatestList', 'Scroll latest news')}</span>
+                        </header>
+                        <ol class="sba-news-compact-list" id="sbaNewsLatestList">
+                            ${latestItems.length ? latestItems.map(item => this.renderNewsCompactRow(item, companionSource)).join('') : '<li class="sba-news-list-empty">No matching updates.</li>'}
+                        </ol>
+                    </aside>` : ''}
+                </div>
+
+                <section class="sba-news-editorial-rail" aria-labelledby="sbaNewsEditorialTitle">
+                    <header class="sba-news-rail-heading">
+                        <div>
+                            <span class="sba-news-rail-kicker">News feed</span>
+                            <h2 id="sbaNewsEditorialTitle">More updates</h2>
+                        </div>
+                        <span class="sba-news-rail-note">More from ${escapeNewsHtml(activeLabel)}</span>
+                    </header>
+                    <div class="sba-news-editorial-grid">
+                        ${editorialItems.length ? editorialItems.map(item => this.renderNewsEditorialCard(item, activeSource)).join('') : '<div class="sba-news-list-empty">No matching updates.</div>'}
+                    </div>
+                </section>
+            </div>`;
+
+        newsSection.querySelectorAll('[data-news-open]').forEach(button => {
+            button.addEventListener('click', () => this.openEnlargedArticle(button.dataset.newsId, button.dataset.newsSource));
+        });
+        newsSection.querySelectorAll('[data-news-source-tab]').forEach(button => {
+            button.addEventListener('click', () => this.setNewsFeed(button.dataset.newsSourceTab));
+        });
+        newsSection.querySelectorAll('[data-news-category]').forEach(button => {
+            button.addEventListener('click', () => this.setCategory(button.dataset.newsCategory));
+        });
+        const searchInput = newsSection.querySelector('#newsSearchInput');
+        searchInput?.addEventListener('input', event => {
+            this.handleSearch(event.currentTarget.value, event.currentTarget.selectionStart);
+        });
+        newsSection.querySelectorAll('[data-news-scroll]').forEach(button => {
+            button.addEventListener('click', () => {
+                const target = newsSection.querySelector(`#${button.dataset.newsScrollTarget}`);
+                const direction = Number(button.dataset.newsScrollDirection) || 1;
+                target?.scrollBy({ top: target.clientHeight * 0.72 * direction, behavior: 'smooth' });
+            });
+        });
+        this.ensureFeaturedNewsRotation();
+        }
     }
 
     renderGameNewsListHtml() {
@@ -1230,31 +1967,73 @@ class DokkanNewsEngine {
         }).join('');
     }
 
-    setCategory(cat, btnEl) {
-        this.currentCategory = cat;
-        if (btnEl && btnEl.parentElement) {
-            btnEl.parentElement.querySelectorAll('.news-pill-btn').forEach(b => b.classList.remove('active'));
-            btnEl.classList.add('active');
-        }
-        const stream = document.getElementById('gameNewsStream');
-        if (stream) stream.innerHTML = this.renderGameNewsListHtml();
+    setCategory(cat) {
+        this.activeArticleView = null;
+        this.currentCategory = cat || 'all';
+        this.featuredNewsIndex = 0;
+        this.renderNewsSection();
+        this.restoreNewsFilterPopover();
     }
 
-    handleSearch(query) {
+    getNewsFilterCount() {
+        return [
+            this.currentNewsFeed !== 'all',
+            this.currentCategory !== 'all',
+            this.newsSortOrder !== 'newest'
+        ].filter(Boolean).length;
+    }
+
+    restoreNewsFilterPopover() {
+        const filterButton = document.getElementById('newsFiltersBtn');
+        const filterPopover = document.getElementById('sbaNewsFilterPopover');
+        if (!filterButton || !filterPopover) return;
+
+        filterPopover.classList.add('is-open');
+        filterPopover.setAttribute('aria-hidden', 'false');
+        filterButton.setAttribute('aria-expanded', 'true');
+        filterButton.classList.add('active');
+    }
+
+    resetNewsFilters() {
+        this.activeArticleView = null;
+        this.currentNewsFeed = 'all';
+        this.currentNewsSource = 'game';
+        this.currentCategory = 'all';
+        this.newsSortOrder = 'newest';
+        this.featuredNewsIndex = 0;
+        this.renderNewsSection();
+        this.restoreNewsFilterPopover();
+    }
+
+    setNewsSortOrder(order) {
+        this.activeArticleView = null;
+        this.newsSortOrder = order === 'oldest' ? 'oldest' : 'newest';
+        this.renderNewsSection();
+        this.restoreNewsFilterPopover();
+    }
+
+    handleSearch(query, caret = null) {
+        this.activeArticleView = null;
         this.searchQuery = (query || '').trim().toLowerCase();
-        const gameStream = document.getElementById('gameNewsStream');
-        if (gameStream) gameStream.innerHTML = this.renderGameNewsListHtml();
-        const discordStream = document.getElementById('discordNewsStream');
-        if (discordStream) discordStream.innerHTML = this.renderDiscordNewsListHtml();
+        this.renderNewsSection();
+        if (caret !== null) {
+            requestAnimationFrame(() => {
+                const input = document.getElementById('newsSearchInput');
+                if (!input) return;
+                input.focus();
+                const position = Math.min(caret, input.value.length);
+                input.setSelectionRange(position, position);
+            });
+        }
     }
 
     setNewsSource(source) {
-        this.currentNewsSource = source;
-        if (source === 'discord') {
-            document.getElementById('discordNewsColumn')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } else {
-            document.getElementById('gameNewsColumn')?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        }
+        this.activeArticleView = null;
+        this.currentNewsSource = source === 'discord' ? 'discord' : 'game';
+        this.currentNewsFeed = this.currentNewsSource;
+        this.currentCategory = 'all';
+        this.searchQuery = '';
+        this.renderNewsSection();
     }
 
     openBatchMedia(batchIndex, mediaIndex) {

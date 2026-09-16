@@ -6,11 +6,18 @@ window.updateCardDisplay = function() {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+    if (window.syncAbsCleanIdentityIcons) {
+        window.syncAbsCleanIdentityIcons();
+    }
+    if (window.syncAbsCleanIdentityIcons) {
+        window.syncAbsCleanIdentityIcons();
+    }
     window.syncProgressionDisplayControls?.();
 };
 
 window.applyCardTheme = function(newSuffix) {
     currentType = newSuffix;
+    window.currentType = newSuffix;
     const typeSuffixes = ['agl', 'teq', 'int', 'str', 'phy', 'none'];
     typeSuffixes.forEach(suf => {
         document.querySelectorAll(`.bg-${suf}`).forEach(el => el.classList.replace(`bg-${suf}`, `bg-${newSuffix}`));
@@ -57,6 +64,12 @@ window.applyCardTheme = function(newSuffix) {
     window.calcFromMin('hp');
     window.calcFromMin('atk');
     window.calcFromMin('def');
+    if (window.syncToAbsLayout) {
+        window.syncToAbsLayout();
+    }
+    if (window.syncAbsCleanIdentityIcons) {
+        window.syncAbsCleanIdentityIcons();
+    }
 };
 
 window.updateIconImages = function() {
@@ -80,6 +93,9 @@ window.updateIconImages = function() {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+    if (window.syncAbsCleanIdentityIcons) {
+        window.syncAbsCleanIdentityIcons();
+    }
 };
 
 window.updateRarityStats = function(rarityName) {
@@ -91,9 +107,16 @@ window.updateRarityStats = function(rarityName) {
     const ssrIcon = document.getElementById('ssr-rarity-icon');
     const turIcon = document.getElementById('tur-rarity-icon');
 
-    if (mainIcon) mainIcon.src = `https://abscustom.github.io/assets/images/rarity_${rarityName}.png`;
+    const rarityFileMap = {
+        'LR': 'rarity_LR.png',
+        'TUR': 'rarity_TUR.png',
+        'SSR': 'rarity_ssr.png',
+        'NONE': 'rarity_none.png'
+    };
+    const file = rarityFileMap[rarityName] || 'rarity_none.png';
+    if (mainIcon) mainIcon.src = `https://abscustom.github.io/assets/images/${file}`;
     
-    if (rarityName === "none") {
+    if (rarityName === "NONE") {
         if (ssrIcon) ssrIcon.src = "https://abscustom.github.io/assets/images/rarity_none.png";
         if (turIcon) turIcon.src = "https://abscustom.github.io/assets/images/rarity_none.png";
     } else {
@@ -101,21 +124,47 @@ window.updateRarityStats = function(rarityName) {
         if (turIcon) turIcon.src = "https://abscustom.github.io/assets/images/rarity_TUR.png";
     }
 
-    const lightningEffects = document.querySelectorAll('.lightning-overlay');
-    const spinDials = document.querySelectorAll('.lr-spin-dial');
+    // Synchronize Dokkan Info layout main header card icon (#img-lr) when card rarity is TUR vs LR
+    const imgLr = document.getElementById('img-lr');
+    const imgTur = document.getElementById('img-tur');
+    if (imgLr) {
+        if (rarityName === 'TUR') {
+            const currentSrc = imgLr.getAttribute('src') || imgLr.src || '';
+            if (currentSrc && !currentSrc.endsWith('TUR_Icon.png') && !currentSrc.endsWith('default.png') && !currentSrc.includes('rarity_') && !imgLr.dataset.savedLrSrc) {
+                imgLr.dataset.savedLrSrc = currentSrc;
+            }
+            const turImgSrc = imgTur?.getAttribute('src') || imgTur?.src || '';
+            if (turImgSrc && !turImgSrc.endsWith('LR_Icon.png')) {
+                imgLr.src = turImgSrc;
+            } else {
+                imgLr.src = 'https://abscustom.github.io/assets/images/TUR_Icon.png';
+            }
+        } else if (rarityName === 'LR') {
+            const currentSrc = imgLr.getAttribute('src') || imgLr.src || '';
+            const turImgSrc = imgTur?.getAttribute('src') || imgTur?.src || '';
+            if (currentSrc.endsWith('TUR_Icon.png') || (turImgSrc && currentSrc === turImgSrc)) {
+                imgLr.src = imgLr.dataset.savedLrSrc || 'https://abscustom.github.io/assets/images/LR_Icon.png';
+            }
+        }
+    }
+
+    const isCleanTheme = document.body.classList.contains('theme-abs-clean');
+    const lightningEffects = Array.from(document.querySelectorAll('.lightning-overlay')).filter(el => {
+        if (el.closest('.abs-clean-form-icon') || el.closest('.abs-clean-forms-bubble-tray') || el.closest('#abs-clean-header-forms-slot')) return false;
+        if (isCleanTheme && el.closest('#abs-transformations-container, #abs-clean-forms-wrapper, .abs-transform-row')) return false;
+        return true;
+    });
+    const spinDials = Array.from(document.querySelectorAll('.lr-spin-dial')).filter(el => {
+        return !el.closest('.abs-clean-form-icon') && !el.closest('.abs-clean-forms-bubble-tray');
+    });
     const turRow = document.getElementById('tur-row');
     const ssrRow = document.getElementById('ssr-row');
     const awkWrapper = document.getElementById('awakening-progression-wrapper');
     const showSsrProgression = window.showSsrProgression !== false;
     const showTurProgression = window.showTurProgression !== false;
 
-    const ssrSrc = document.getElementById('img-ssr')?.getAttribute('src') || document.getElementById('img-ssr')?.src || "";
-    const turSrc = document.getElementById('img-tur')?.getAttribute('src') || document.getElementById('img-tur')?.src || "";
-    const hasCustomSsr = ssrSrc && !ssrSrc.endsWith('SSR_Icon.png') && !ssrSrc.endsWith('none.png') && !ssrSrc.endsWith('default.png') && !ssrSrc.endsWith('editor.html');
-    const hasCustomTur = turSrc && !turSrc.endsWith('TUR_Icon.png') && !turSrc.endsWith('none.png') && !turSrc.endsWith('default.png') && !turSrc.endsWith('editor.html');
-
-    const canShowSsr = showSsrProgression && hasCustomSsr && (rarityName === 'TUR' || rarityName === 'LR');
-    const canShowTur = showTurProgression && hasCustomTur && rarityName === 'LR';
+    const canShowSsr = showSsrProgression && (rarityName === 'TUR' || rarityName === 'LR');
+    const canShowTur = showTurProgression && rarityName === 'LR';
 
     if (rarityName === "LR") {
         lightningEffects.forEach(lightning => lightning.style.setProperty('display', 'block', 'important'));
@@ -142,11 +191,14 @@ window.updateRarityStats = function(rarityName) {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+    if (window.syncAbsCleanIdentityIcons) {
+        window.syncAbsCleanIdentityIcons();
+    }
 };
 
 window.getDisplayedCardRarity = function() {
-    const raritySource = document.getElementById('main-rarity-icon')?.getAttribute('src') || document.getElementById('main-rarity-icon')?.src || '';
-    const sourceMatch = String(raritySource).match(/rarity_(lr|tur|ssr)(?:_abs)?\.png/i);
+    const raritySource = document.getElementById('main-rarity-icon')?.getAttribute('src') || '';
+    const sourceMatch = raritySource.match(/rarity_(lr|tur|ssr)/i);
     if (sourceMatch) return sourceMatch[1].toUpperCase();
     return String(window.currentRarity || currentRarity || 'none').toUpperCase();
 };
@@ -275,9 +327,11 @@ window.updateIdentity = function() {
 
     const dbName = document.getElementById("abs-char-name");
     if (dbName) dbName.textContent = name;
+    if (window.syncAbsCleanReleaseDate) window.syncAbsCleanReleaseDate();
 
     const dbLeader = document.getElementById("abs-leader-skill");
     if (dbLeader) dbLeader.innerHTML = window.formatCategoryQuotes(leaderRaw).replace(/\n/g, '<br>');
+    if (window.syncAbsCleanLeaderBar) window.syncAbsCleanLeaderBar();
 
     const container = document.getElementById("release-dates-container");
     const dateEl = document.getElementById("dateInput");

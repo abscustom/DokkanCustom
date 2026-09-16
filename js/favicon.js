@@ -1,9 +1,12 @@
 /* Keep the browser-tab icon in sync with the selected home-site style. */
 (() => {
+    const ABS_LOGO = 'https://abscustom.github.io/assets/images/abs_logo.png';
+    const CARD_FAVICON = new URL('assets/ui/images/cards-favicon.png', document.baseURI).href;
     const ICONS = {
-        'abs-style': 'https://abscustom.github.io/assets/images/abs.style.png',
-        dokkaninfo: 'https://abscustom.github.io/assets/images/dokkan-info-logo.png',
-        placeholder: 'https://abscustom.github.io/assets/images/abs.custom.png'
+        'abs-style': ABS_LOGO,
+        dokkaninfo: ABS_LOGO,
+        placeholder: ABS_LOGO,
+        sba: ABS_LOGO
     };
 
     function getStyle() {
@@ -16,7 +19,8 @@
     }
 
     window.updateSiteFavicon = function(style = getStyle()) {
-        const icon = ICONS[style] || ICONS['abs-style'];
+        const isCalculator = /(?:^|\/)calculator\.html$/i.test(window.location.pathname);
+        const icon = isCalculator ? CARD_FAVICON : (ICONS[style] || ICONS['abs-style']);
         let link = document.querySelector('link[rel~="icon"]');
 
         if (!link) {

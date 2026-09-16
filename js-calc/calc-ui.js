@@ -4,10 +4,16 @@
 
 function setCalcTab(tab) {
     window.currentCalcTab = tab;
-    const atkBtn = document.getElementById('btn-tab-atk');
-    const defBtn = document.getElementById('btn-tab-def');
-    if (atkBtn) atkBtn.classList.toggle('active', tab === 'atk');
-    if (defBtn) defBtn.classList.toggle('active', tab === 'def');
+    
+    document.querySelectorAll('#btn-tab-atk, [data-calc-tab="atk"]').forEach(btn => {
+        btn.classList.toggle('active', tab === 'atk');
+        btn.setAttribute('aria-pressed', tab === 'atk' ? 'true' : 'false');
+    });
+
+    document.querySelectorAll('#btn-tab-def, [data-calc-tab="def"]').forEach(btn => {
+        btn.classList.toggle('active', tab === 'def');
+        btn.setAttribute('aria-pressed', tab === 'def' ? 'true' : 'false');
+    });
 
     // Dynamically tag cards
     const sotDefCard = document.getElementById('res-sot-def')?.closest('.ds-dash-card');
@@ -31,6 +37,7 @@ function setCalcTab(tab) {
     }
     calculateDokkanStats();
 }
+window.setCalcTab = setCalcTab;
 
 function setLeaderPreset(leadVal) {
     const leadInput = document.getElementById('calc-lead');

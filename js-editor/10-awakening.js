@@ -16,6 +16,7 @@ window.applyAwakening = function(mode) {
     if (ezaBtn) ezaBtn.classList.remove('active-awakening');
     if (sezaBtn) sezaBtn.classList.remove('active-awakening');
     currentAwakeningMode = mode;
+    window.currentAwakeningMode = mode;
 
     if (mode === 'none') {
         if (container) container.style.display = 'none';

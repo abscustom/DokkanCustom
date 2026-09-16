@@ -579,3 +579,75 @@ img[src*="passive_skill_dialog"] {
   transform: translateY(-1px) !important;
   display: inline-block !important;
 }
+
+/* =======================================================================
+   DOKKAN INFO SQUARED ORANGE / YELLOW EDITING OUTLINES & SELECTED GLOW
+   ======================================================================= */
+#layout-dokkaninfo .dokkan-card,
+#layout-dokkaninfo [data-edit],
+#layout-dokkaninfo .sa-block,
+#layout-dokkaninfo .active-block,
+#layout-dokkaninfo .card-art-canvas,
+#layout-dokkaninfo #forms-card-wrapper,
+#layout-dokkaninfo #awakening-progression-wrapper,
+#layout-dokkaninfo #ssr-row,
+#layout-dokkaninfo #tur-row,
+#layout-dokkaninfo .card-icon {
+  border-radius: 0px !important;
+}
+
+body.admin-mode-active #layout-dokkaninfo [data-edit]:hover,
+body:not(.is-published) #layout-dokkaninfo [data-edit]:hover,
+body.admin-mode-active #layout-dokkaninfo .dokkan-card:hover,
+body:not(.is-published) #layout-dokkaninfo .dokkan-card:hover,
+body.admin-mode-active #layout-dokkaninfo .sa-block:hover,
+body:not(.is-published) #layout-dokkaninfo .sa-block:hover,
+body.admin-mode-active #layout-dokkaninfo .active-block:hover,
+body:not(.is-published) #layout-dokkaninfo .active-block:hover,
+body.admin-mode-active #layout-dokkaninfo .card-art-canvas:hover,
+body:not(.is-published) #layout-dokkaninfo .card-art-canvas:hover,
+body.admin-mode-active #layout-dokkaninfo #forms-card-wrapper:hover,
+body:not(.is-published) #layout-dokkaninfo #forms-card-wrapper:hover,
+body.admin-mode-active #layout-dokkaninfo #awakening-progression-wrapper:hover,
+body:not(.is-published) #layout-dokkaninfo #awakening-progression-wrapper:hover,
+body.admin-mode-active #layout-dokkaninfo #ssr-row:hover,
+body:not(.is-published) #layout-dokkaninfo #ssr-row:hover,
+body.admin-mode-active #layout-dokkaninfo #tur-row:hover,
+body:not(.is-published) #layout-dokkaninfo #tur-row:hover,
+body.admin-mode-active #layout-dokkaninfo .card-icon:hover,
+body:not(.is-published) #layout-dokkaninfo .card-icon:hover {
+  cursor: pointer !important;
+  outline: 2px solid #f59e0b !important;
+  outline-offset: -2px !important;
+  box-shadow: 0 0 14px rgba(245, 158, 11, 0.65), inset 0 0 8px rgba(251, 191, 36, 0.2) !important;
+  border-radius: 0px !important;
+}
+
+#layout-dokkaninfo .active-selected-glow,
+#layout-dokkaninfo [data-edit].active-selected-glow,
+#layout-dokkaninfo .dokkan-card.active-selected-glow,
+#layout-dokkaninfo .sa-block.active-selected-glow,
+#layout-dokkaninfo .active-block.active-selected-glow,
+#layout-dokkaninfo .card-art-canvas.active-selected-glow,
+#layout-dokkaninfo #forms-card-wrapper.active-selected-glow,
+#layout-dokkaninfo #awakening-progression-wrapper.active-selected-glow,
+#layout-dokkaninfo #ssr-row.active-selected-glow,
+#layout-dokkaninfo #tur-row.active-selected-glow,
+#layout-dokkaninfo .card-icon.active-selected-glow {
+  outline: 2px solid #fbbf24 !important;
+  outline-offset: -2px !important;
+  box-shadow: inset 0 0 10px rgba(251, 191, 36, 0.35), 0 0 20px rgba(245, 158, 11, 0.9) !important;
+  border-radius: 0px !important;
+  transition: outline 0.2s ease, box-shadow 0.2s ease !important;
+}
+
+#layout-dokkaninfo [data-edit] .dokkan-card:not([data-edit]):not(.active-selected-glow),
+#layout-dokkaninfo #forms-container .dokkan-card,
+#layout-dokkaninfo #forms-container .row,
+#layout-dokkaninfo .abs-transform-row,
+#layout-dokkaninfo .card-icon-item,
+#layout-dokkaninfo .form-link {
+  outline: none !important;
+  box-shadow: none !important;
+  border-radius: 0px !important;
+}

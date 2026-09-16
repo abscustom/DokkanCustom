@@ -391,6 +391,7 @@ window.getAutomaticSuperEffectiveMatchup = function() {
     return window.getDokkanTypeAndClassMultiplier(cardType, cardClass, bossType, bossClass, false, false).isAdvantage;
 };
 
+
 window.calcEnemyDamage = function(atkStat, isCrit, isSE) {
     const rawDef = parseFloat(document.getElementById('calc-boss-def')?.value) || 0;
     const defMult = parseFloat(document.getElementById('calc-boss-def-mult')?.value) || 0;
@@ -422,7 +423,7 @@ window.stepOrb = function(type, tier, delta) {
     let val = parseInt(inp.value) || 0;
     if (delta !== 0) val += delta;
     if (val < 0) val = 0;
-    if (val > 20) val = 20;
+    if (val > 30) val = 30;
     inp.value = val;
     
     const lbl = document.getElementById(`lbl-lv-${type}-${tier}`);
@@ -442,6 +443,50 @@ window.stepOrb = function(type, tier, delta) {
         if (hidden) hidden.value = sum;
     });
     
+    if (typeof calculateDokkanStats === 'function') calculateDokkanStats();
+};
+
+window.applyGodSkillOrbs = function() {
+    // Sets God Preset: 1100 Bronze (Lv 11), 1400 Silver (Lv 14), 1200 Gold (Lv 12) for both ATK and DEF
+    const godLevels = {
+        bronze: 11, // +1100
+        silver: 14, // +1400
+        gold: 12    // +1200
+    };
+
+    ['atk', 'def'].forEach(type => {
+        Object.entries(godLevels).forEach(([tier, lv]) => {
+            const inp = document.getElementById(`inp-orb-${type}-${tier}`);
+            if (inp) inp.value = lv;
+            const lbl = document.getElementById(`lbl-lv-${type}-${tier}`);
+            if (lbl) lbl.innerText = lv;
+            const yieldText = document.getElementById(`yield-${type}-${tier}`);
+            if (yieldText) yieldText.innerText = `+${lv * 100} ${type.toUpperCase()}`;
+        });
+        const hidden = document.getElementById(`calc-orb-${type}`);
+        if (hidden) hidden.value = (11 + 14 + 12) * 100; // 3700
+    });
+
+    const masterToggle = document.getElementById('calc-orbs-master-toggle');
+    if (masterToggle) masterToggle.checked = true;
+
+    if (typeof calculateDokkanStats === 'function') calculateDokkanStats();
+};
+
+window.resetSkillOrbs = function() {
+    ['atk', 'def'].forEach(type => {
+        ['bronze', 'silver', 'gold'].forEach(tier => {
+            const inp = document.getElementById(`inp-orb-${type}-${tier}`);
+            if (inp) inp.value = 0;
+            const lbl = document.getElementById(`lbl-lv-${type}-${tier}`);
+            if (lbl) lbl.innerText = 0;
+            const yieldText = document.getElementById(`yield-${type}-${tier}`);
+            if (yieldText) yieldText.innerText = `+0 ${type.toUpperCase()}`;
+        });
+        const hidden = document.getElementById(`calc-orb-${type}`);
+        if (hidden) hidden.value = 0;
+    });
+
     if (typeof calculateDokkanStats === 'function') calculateDokkanStats();
 };
 
@@ -1153,10 +1198,10 @@ function calculateDokkanStats() {
                         </div>
                     </div>`;
 
-                let imgSrc = 'assets/battle/super_atk_static.png';
-                if (addSaType === 'ultra') imgSrc = 'assets/battle/u_super_atk_static.png';
-                if (addSaType === 'ex') imgSrc = 'assets/battle/ex_super_atk_static.png';
-                if (addSaType === 'unit') imgSrc = 'assets/battle/unit_super_atk.png';
+                let imgSrc = 'assets/super-attacks/battle/super_atk_static.png';
+                if (addSaType === 'ultra') imgSrc = 'assets/super-attacks/battle/u_super_atk_static.png';
+                if (addSaType === 'ex') imgSrc = 'assets/super-attacks/battle/ex_super_atk_static.png';
+                if (addSaType === 'unit') imgSrc = 'assets/super-attacks/battle/unit_super_atk.png';
 
                 addCardsHtml += `
                     <div class="ds-dash-card liquid-glass-surface ${addAuraClass} view-atk-only" style="position: relative;">
@@ -1539,7 +1584,7 @@ window.renderDokkanStatsCardData = function() {
             const formatUrl = (path) => {
                 if (!path) return '';
                 if (path.startsWith('http')) return path;
-                const cleanPath = path.replace('assets/card/', '');
+                const cleanPath = path.replace('assets/card-art/cards/', '');
                 return `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/card/${cleanPath}`;
             };
             charMediaHtml = `<img src="${formatUrl(assets.charUrl)}">`;

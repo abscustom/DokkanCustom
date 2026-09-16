@@ -4,8 +4,8 @@
 
 /* Global Theme Background Alignment */
 html, body {
-    background-color: #111827 !important;
-    background: #111827 !important;
+    background-color: #0b0f19 !important;
+    background: #0b0f19 !important;
     color: #ffffff !important;
     margin: 0;
     padding: 0;
@@ -15,7 +15,8 @@ html, body {
 #app {
     min-height: 100vh;
     padding-bottom: 50px;
-    background-color: #111827 !important;
+    background-color: #0b0f19 !important;
+    background: #0b0f19 !important;
 }
 
 /* Container Alignment & Spacing */
@@ -39,7 +40,6 @@ html, body {
     height: 78px !important; 
     width: auto !important; 
     max-width: 130px !important; 
-    object-fit: contain !important; 
     margin: 0 auto; 
     display: block; 
 }

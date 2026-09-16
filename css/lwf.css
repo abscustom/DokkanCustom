@@ -17,6 +17,7 @@
     border: none !important;
     outline: none !important;
     display: block !important;
+    filter: drop-shadow(0 0 12px rgba(186, 85, 211, 0.7)) drop-shadow(0 0 24px rgba(244, 114, 182, 0.5)) !important;
 }
 
 /* Remove container box-shadows */
@@ -272,29 +273,63 @@ body #cardGrid .char-box .card-icon:hover {
     visibility: hidden !important;
 }
 
-.seza-lwf-border-canvas {
+/* ==========================================================================
+   DOKKAN TYPE ARROW GLOW EFFECT LWF (EF_003 TYPE GLOW)
+   ========================================================================== */
+.type-arrow-lwf-canvas {
     position: absolute !important;
-    top: 50% !important;
-    left: 50% !important;
+    top: -12px !important;
+    right: -12px !important;
+    width: 52px !important;
+    height: 52px !important;
     max-width: none !important;
     max-height: none !important;
     pointer-events: none !important;
-    z-index: 10 !important;
+    z-index: 6 !important;
+    mix-blend-mode: screen !important;
     background: transparent !important;
     background-color: transparent !important;
-    box-shadow: none !important;
     border: none !important;
+    box-shadow: none !important;
     outline: none !important;
     display: block !important;
+    filter: drop-shadow(0 0 8px rgba(56, 189, 248, 0.8)) !important;
 }
 
-/* Ensure no parent containers force background colors */
-.seza-glow-card,
-#abs-composed-icon.seza-glow-card,
-.abs-composed-icon.seza-glow-card,
-.char-box .card-icon.seza-glow-card {
-    box-shadow: none !important;
-    border: none !important;
-    outline: none !important;
+/* ===========================================================================
+   LR AURA, LIGHTNING, AND RING EFFECT LWF CANVASES
+   Theme-specific sizing and colour treatments belong in their theme sheets.
+   ========================================================================== */
+.sba-lr-lwf-canvas,
+.sba-ring-effect {
+    position: absolute !important;
+    pointer-events: none !important;
     background: transparent !important;
 }
+
+.sba-lr-lwf-aura-canvas {
+    z-index: 1 !important;
+    mix-blend-mode: screen !important;
+}
+
+.sba-lr-lwf-lightning-canvas {
+    z-index: 3 !important;
+    mix-blend-mode: screen !important;
+}
+
+.sba-ring-effect {
+    z-index: 4 !important;
+}
+
+/* Modern LWF layers are opt-in; theme rules explicitly enable them. */
+#abs-composed-icon .sba-lr-lwf-canvas,
+#abs-composed-icon .sba-ring-effect {
+    display: none !important;
+}
+
+/* Modern LWF layers are opt-in; theme styles explicitly enable them. */
+#abs-composed-icon .sba-lr-lwf-canvas,
+#abs-composed-icon .sba-ring-effect {
+    display: none !important;
+}
+

@@ -23,6 +23,33 @@
     background: #0b0f19 !important;
 }
 
+/* Clean-only nodes must never display in ABS Style layout */
+body:not(.theme-abs-clean) #abs-clean-grid-circuit,
+body:not(.theme-abs-clean) #abs-clean-awakening-portraits,
+body:not(.theme-abs-clean) #abs-clean-name-badges,
+body:not(.theme-abs-clean) #abs-clean-type-matchups,
+body:not(.theme-abs-clean) #abs-clean-portrait-stage,
+body:not(.theme-abs-clean) #abs-clean-bottom-timeline,
+body:not(.theme-abs-clean) .abs-clean-bottom-timeline,
+body:not(.theme-abs-clean) #abs-clean-leader-banner-slot,
+body:not(.theme-abs-clean) #abs-clean-leader-bar,
+body:not(.theme-abs-clean) #abs-clean-info-bar,
+body:not(.theme-abs-clean) #abs-clean-release-date,
+body:not(.theme-abs-clean) #abs-clean-ability-docks,
+body:not(.theme-abs-clean) #abs-clean-identity-icons,
+body:not(.theme-abs-clean) #abs-clean-link-skills-slot,
+body:not(.theme-abs-clean) #abs-clean-header-partners,
+body:not(.theme-abs-clean) #abs-clean-header-form-portraits,
+body:not(.theme-abs-clean) #abs-clean-header-badges-rail,
+body:not(.theme-abs-clean) #abs-clean-header-stats,
+body:not(.theme-abs-clean) #abs-clean-awakening-forms-box,
+body:not(.theme-abs-clean) #abs-passive-summary,
+body:not(.theme-abs-clean) .abs-passive-summary,
+body:not(.theme-abs-clean) .abs-category-badge,
+body:not(.theme-abs-clean) .abs-link-effect {
+    display: none !important;
+}
+
 #app.theme-abs-style .dokkan-card {
     background: transparent !important;
     border: none !important;
@@ -661,6 +688,10 @@
     line-height: 1.4 !important;
     margin: 0 !important;
     padding: 0 !important;
+    font-size: 14px !important;
+    font-weight: bold !important;
+    color: #ffffff !important;
+    flex: 1 1 auto !important;
 }
 
 /* 3. Center the EZA divider line & badge */
@@ -790,10 +821,6 @@
     position: absolute !important; top: -10px !important; right: -10px !important; height: 48px !important; width: auto !important; z-index: 5 !important;
 }
 
-#abs-composed-icon .eza-icon {
-    position: absolute !important; bottom: -2px !important; right: -14px !important; height: 25px !important; width: auto !important; z-index: 6 !important;
-}
-
 .abs-composed-icon {
     position: relative !important;
     width: 75px !important;
@@ -834,8 +861,26 @@
     position: absolute !important; top: -8px !important; right: -10px !important; height: 32px !important; width: auto !important; z-index: 5 !important;
 }
 
+#abs-composed-icon .eza-icon {
+    position: absolute !important;
+    bottom: -4px !important;
+    right: -12px !important;
+    height: 28px !important;
+    width: auto !important;
+    z-index: 6 !important;
+    filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.85)) !important;
+    pointer-events: none !important;
+}
+
 .abs-composed-icon .eza-icon {
-    position: absolute !important; bottom: -2px !important; right: -14px !important; height: 20px !important; width: auto !important; z-index: 6 !important;
+    position: absolute !important;
+    bottom: -2px !important;
+    right: -10px !important;
+    height: 20px !important;
+    width: auto !important;
+    z-index: 6 !important;
+    filter: drop-shadow(0 2px 3px rgba(0, 0, 0, 0.85)) !important;
+    pointer-events: none !important;
 }
 
 @keyframes lr-dial-spin {
@@ -1131,7 +1176,6 @@
     transition: transform 0.2s ease;
 }
 
-
 .abs-sa-icon-left,
 .abs-sa-header-title img,
 .abs-header .abs-sa-icon-left,
@@ -1149,7 +1193,7 @@
     display: inline-block !important;
     margin: 0 !important;
     filter: none !important;
-    cursor: pointer !important;
+    cursor: default !important;
     pointer-events: auto !important;
 }
 /* ==========================================================================

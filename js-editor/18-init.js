@@ -32,6 +32,28 @@
     window.addEventListener('touchmove', handleScrollActivity, { capture: true, passive: true });
 })();
 
+// Autosave belongs to the editable session, not to the published viewer. A
+// published upload can opt into this session only after Admin Mode is unlocked.
+window.editorAutosaveTimer = null;
+window.startEditorAutosave = function() {
+    if (window.IS_PUBLISHED && window.ADMIN_MODE !== true) return false;
+    if (window.editorAutosaveTimer) return true;
+
+    window.editorAutosaveTimer = window.setInterval(() => {
+        if (window.IS_RESETTING) return;
+        if (window.IS_PUBLISHED && window.ADMIN_MODE !== true) return;
+        window.autoSaveToCache?.();
+    }, 15000);
+    return true;
+};
+
+window.stopEditorAutosave = function() {
+    if (window.editorAutosaveTimer) {
+        window.clearInterval(window.editorAutosaveTimer);
+        window.editorAutosaveTimer = null;
+    }
+};
+
 document.addEventListener("DOMContentLoaded", function() {
     
     // Clean up cache-busting query parameter if coming from a reset
@@ -79,6 +101,7 @@ document.addEventListener("DOMContentLoaded", function() {
             if (window.syncToAbsLayout) window.syncToAbsLayout();
             if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
             window.refreshEditorLinkingPartners?.();
+            window.scheduleEditorLwfHydration?.();
         }, 200);
 
         console.log("Card loaded in Published View. Press Ctrl+Shift+A to unlock Admin Mode.");
@@ -90,10 +113,12 @@ document.addEventListener("DOMContentLoaded", function() {
         if (element) element.addEventListener("input", window.updateIdentity);
     });
 
-    const activeSkillInputs = ["input-active-name", "input-active-effect", "input-active-condition-title", "input-active-conditions"];
+    const activeSkillInputs = ["input-active-type", "input-active-name", "input-active-effect", "input-active-condition-title", "input-active-conditions"];
     activeSkillInputs.forEach(id => {
         const element = document.getElementById(id);
-        if(element) element.addEventListener("input", window.updateActiveCard);
+        if (element && typeof window.syncActiveSkill === 'function') {
+            element.addEventListener("input", window.syncActiveSkill);
+        }
     });
 
     const saInputs = ["input-sa-name", "input-sa-type-label", "input-sa-effects"];
@@ -262,7 +287,9 @@ document.addEventListener("DOMContentLoaded", function() {
     document.querySelectorAll(".class-btn").forEach(btn => {
         btn.addEventListener("click", function() { 
             currentClass = this.dataset.class; 
+            window.currentClass = this.dataset.class;
             window.updateIconImages(); 
+            window.syncToAbsLayout?.();
         });
     });
 
@@ -272,33 +299,45 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     });
 
-    const toggleBtn = document.getElementById('toggleBtn');
-    const editor = document.getElementById('editor');
-    if (toggleBtn && editor) {
-        let hoverTimeout = null;
-
-        const openEditor = () => {
-            clearTimeout(hoverTimeout);
-            editor.classList.add('open');
-        };
-
-        const closeEditor = () => {
-            hoverTimeout = setTimeout(() => {
-                if (!editor.matches(':hover') && !toggleBtn.matches(':hover')) {
-                    editor.classList.remove('open');
+    window.toggleEditorSidebar = function(forceState) {
+        const editor = document.getElementById('editor');
+        const toggleBtn = document.getElementById('toggleBtn');
+        if (!editor) return;
+        const willOpen = typeof forceState === 'boolean' ? forceState : !editor.classList.contains('open');
+        editor.classList.toggle('open', willOpen);
+        editor.classList.toggle('is-open', willOpen);
+        document.body.classList.toggle('editor-sidebar-open', willOpen);
+        if (toggleBtn) {
+            toggleBtn.classList.toggle('active', willOpen);
+            toggleBtn.setAttribute('aria-expanded', String(willOpen));
+        }
+        if (willOpen) {
+            // Keep bottom dock permanently visible while sidebar is open
+            if (typeof window.revealToolSbaNav === 'function') {
+                window.revealToolSbaNav();
+            } else {
+                document.body.classList.add('sba-bottom-nav-visible');
+            }
+            // When opening editor, close settings drawer if open to prevent UI overlap
+            if (document.body.classList.contains('sba-side-settings-open')) {
+                if (typeof window.toggleSettingsDrawer === 'function') {
+                    window.toggleSettingsDrawer();
                 }
-            }, 300);
-        };
+            }
+        } else {
+            // Sidebar is disabled/closed: allow floating bottom dock to resume auto-hiding
+            if (typeof window.scheduleToolSbaNavHide === 'function') {
+                window.scheduleToolSbaNavHide(1000);
+            }
+        }
+    };
 
-        toggleBtn.addEventListener('mouseenter', openEditor);
-        toggleBtn.addEventListener('mouseleave', closeEditor);
-
-        editor.addEventListener('mouseenter', openEditor);
-        editor.addEventListener('mouseleave', closeEditor);
-
+    const toggleBtn = document.getElementById('toggleBtn');
+    if (toggleBtn) {
         toggleBtn.addEventListener('click', (e) => {
+            e.preventDefault();
             e.stopPropagation();
-            editor.classList.toggle('open');
+            window.toggleEditorSidebar();
         });
     }
 
@@ -416,20 +455,7 @@ document.addEventListener("DOMContentLoaded", function() {
     if (!window.IS_PUBLISHED) {
         if (!window.location.search.includes('reset=')) {
             window.loadFromCache();
-            
-            // Run autosave every 15 seconds silently in the background
-            setInterval(() => {
-                if (!window.IS_RESETTING) {
-                    window.autoSaveToCache();
-                }
-            }, 15000);
-
-            // Save on window unload unless resetting
-            window.addEventListener('beforeunload', () => {
-                if (!window.IS_RESETTING) {
-                    window.autoSaveToCache();
-                }
-            });
+            window.startEditorAutosave();
         }
         
         // Setup default DOM structure ONLY in editor
@@ -444,7 +470,9 @@ document.addEventListener("DOMContentLoaded", function() {
 
         // Enforce saved or default theme on editor startup
         const savedTheme = localStorage.getItem('dokkan_selected_theme') || 'dokkaninfo';
-        if (window.toggleCardTheme) {
+        if (window.switchCardTheme) {
+            window.switchCardTheme((savedTheme === 'sba' || savedTheme === 'abs.clean' || savedTheme === 'abs-clean') ? 'sba' : (savedTheme === 'abs-style' ? 'abs-style' : 'dokkaninfo'));
+        } else if (window.toggleCardTheme) {
             window.toggleCardTheme(savedTheme === 'abs-style');
         }
 
@@ -478,4 +506,20 @@ document.addEventListener("DOMContentLoaded", function() {
             });
         });
     }
+
+    // Save an unlocked published card on exit as well. Locked published cards
+    // intentionally do nothing here, matching the autosave guard above.
+    window.addEventListener('beforeunload', () => {
+        if (!window.IS_RESETTING && (!window.IS_PUBLISHED || window.ADMIN_MODE === true)) {
+            window.autoSaveToCache?.();
+        }
+    });
+
+    // The editor restores cached content and composes both themes during this
+    // startup callback. Signal the shared loader only after those synchronous
+    // layout passes have completed and the browser has painted the result.
+    requestAnimationFrame(() => requestAnimationFrame(() => {
+        window.absEditorContentReady = true;
+        window.dispatchEvent(new Event('abs-editor-content-ready'));
+    }));
 });

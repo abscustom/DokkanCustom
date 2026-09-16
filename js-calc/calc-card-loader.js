@@ -3,6 +3,29 @@
    ========================================================================== */
 
 let allPickerCards = [];
+
+window.handlePickerCircleError = function(img, folderId, parentFolderId) {
+    if (!img) return;
+    img.onerror = null;
+    if (parentFolderId && parentFolderId !== folderId && !img.dataset.triedParentCircle) {
+        img.dataset.triedParentCircle = 'true';
+        img.src = `./assets/card-art/cards/${parentFolderId}/card_${parentFolderId}_circle.png`;
+        img.onerror = function() {
+            window.handlePickerCircleError(this, folderId, parentFolderId);
+        };
+        return;
+    }
+    img.classList.add('is-fallback-thumb');
+    img.onerror = function() {
+        if (typeof window.handleHubThumbError === 'function') {
+            window.handleHubThumbError(this, folderId, parentFolderId);
+        } else {
+            this.src = 'assets/images/SSR_Icon.png';
+        }
+    };
+    img.src = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+};
+
 let filteredPickerCards = [];
 let currentPickerSource = 'all';
 let pickerSearchQuery = '';
@@ -71,14 +94,6 @@ function parseActiveSkillBuffValues(effectText = '') {
 
 window.parseActiveSkillBuffValues = parseActiveSkillBuffValues;
 
-/* NOTE: this restores the STUDIO dock sync button (#update-box-btn), which
-   in the original HTML sizes its icon directly on the <svg> itself
-   (width="11" height="11") rather than via a .dock-svg-icon wrapper. This
-   used to be a copy of the *other* sync button's markup (the "Get Started"
-   box one), whose <svg> has no size attributes at all -- that mismatch is
-   what made this icon balloon to the browser's default SVG size after every
-   sync. Keep this in sync with the button markup at #update-box-btn in
-   calculator.html if that ever changes. */
 const ORIGINAL_SYNC_BTN_HTML = `
     <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align: -1px; margin-right: 3px; color: #34d399;">
         <polyline points="23 4 23 10 17 10"></polyline>
@@ -126,10 +141,55 @@ function setCalculatorTypeTheme(type) {
 }
 window.setCalculatorTypeTheme = setCalculatorTypeTheme;
 
+window.positionSettingsMiniGui = function() {
+    const drawer = document.getElementById('settingsDrawer');
+    const btn = document.getElementById('sba-side-settings-button') || document.querySelector('.hud-nav-link[aria-label="Settings"]');
+    if (!drawer || !btn) return;
+    const btnRect = btn.getBoundingClientRect();
+    const drawerWidth = Math.min(290, window.innerWidth - 24);
+    
+    let left = btnRect.left + (btnRect.width / 2) - (drawerWidth / 2);
+    left = Math.max(12, Math.min(window.innerWidth - drawerWidth - 12, left));
+    
+    const bottom = Math.max(16, window.innerHeight - btnRect.top + 10);
+    drawer.style.setProperty('position', 'fixed', 'important');
+    drawer.style.setProperty('left', `${Math.round(left)}px`, 'important');
+    drawer.style.setProperty('bottom', `${Math.round(bottom)}px`, 'important');
+    drawer.style.setProperty('top', 'auto', 'important');
+    drawer.style.setProperty('right', 'auto', 'important');
+    drawer.style.setProperty('width', `${drawerWidth}px`, 'important');
+    drawer.style.setProperty('height', 'auto', 'important');
+    drawer.style.setProperty('max-height', `${Math.round(window.innerHeight - bottom - 16)}px`, 'important');
+};
+
+window.setAppStyle = function(style) {
+    const norm = style === 'placeholder' ? 'placeholder' : 'sba';
+    localStorage.setItem('hub_selected_style', norm);
+    document.body.classList.remove('theme-abs-style', 'theme-sba', 'theme-placeholder');
+    document.body.classList.add(`theme-${norm}`);
+    document.querySelectorAll('.abs-hud-theme-btn').forEach(btn => {
+        const active = (btn.id === 'theme-btn-abs' && norm === 'sba') || (btn.id === 'theme-btn-placeholder' && norm === 'placeholder');
+        btn.classList.toggle('active', active);
+        btn.setAttribute('aria-pressed', String(active));
+    });
+};
+
 window.toggleSettingsDrawer = function() {
     const drawer = document.getElementById('settingsDrawer');
     const overlay = document.getElementById('settingsOverlay');
     if (drawer && overlay) {
+        if (document.body.classList.contains('theme-sba')) {
+            const isOpen = document.body.classList.contains('sba-side-settings-open');
+            const willOpen = !isOpen;
+            document.body.classList.toggle('sba-side-settings-open', willOpen);
+            drawer.classList.toggle('open', willOpen);
+            document.getElementById('sba-side-settings-button')?.setAttribute('aria-expanded', String(willOpen));
+            if (willOpen) {
+                document.body.dataset.sbaPanelOpenedAt = String(Date.now());
+                window.positionSettingsMiniGui();
+            }
+            return;
+        }
         const isOpen = drawer.classList.contains('open');
         if (isOpen) {
             drawer.classList.remove('open');
@@ -140,6 +200,32 @@ window.toggleSettingsDrawer = function() {
         }
     }
 };
+
+window.addEventListener('resize', () => {
+    if (document.body.classList.contains('sba-side-settings-open')) {
+        window.positionSettingsMiniGui();
+    }
+});
+
+document.addEventListener('pointerdown', (e) => {
+    if (!document.body.classList.contains('sba-side-settings-open')) return;
+    const openedAt = Number(document.body.dataset.sbaPanelOpenedAt || '0');
+    if (Date.now() - openedAt < 120) return;
+    const drawer = document.getElementById('settingsDrawer');
+    const btn = document.getElementById('sba-side-settings-button');
+    if (drawer?.contains(e.target) || btn?.contains(e.target)) return;
+    document.body.classList.remove('sba-side-settings-open');
+    drawer?.classList.remove('open');
+    btn?.setAttribute('aria-expanded', 'false');
+});
+
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && document.body.classList.contains('sba-side-settings-open')) {
+        document.body.classList.remove('sba-side-settings-open');
+        document.getElementById('settingsDrawer')?.classList.remove('open');
+        document.getElementById('sba-side-settings-button')?.setAttribute('aria-expanded', 'false');
+    }
+});
 
 window.syncCalculatorUnits = async function() {
     const btn = document.getElementById('update-box-btn');
@@ -164,6 +250,7 @@ window.syncCalculatorUnits = async function() {
         if (typeof loadDokkanDatabase === 'function') {
             await loadDokkanDatabase();
         }
+
         await initUnitPickerDatabase();
 
         openSyncModal(allPickerCards.length);
@@ -483,9 +570,11 @@ async function initUnitPickerDatabase() {
             const isTUR = !isLR && (c.rarity === 4 || c.max_level >= 120 || c.cost >= 40);
             const rarityKey = isLR ? 'LR' : (isTUR ? 'TUR' : 'SSR');
 
-            let baseTime = cardDokkanRouteDates.get(parentId) || cardDokkanRouteDates.get(rawId) || parseReleaseTime(c.open_at || c.start_at || c.release_date);
-            let ezaTime = cardEzaRouteDates.get(parentId) || cardEzaRouteDates.get(rawId) || 0;
-            let sezaTime = cardSezaRouteDates.get(parentId) || cardSezaRouteDates.get(rawId) || 0;
+            const normParent = parseInt(parentId, 10);
+            const normRaw = parseInt(rawId, 10);
+            let baseTime = cardDokkanRouteDates.get(normParent) || cardDokkanRouteDates.get(normRaw) || parseReleaseTime(c.open_at || c.start_at || c.release_date);
+            let ezaTime = cardEzaRouteDates.get(normParent) || cardEzaRouteDates.get(normRaw) || 0;
+            let sezaTime = cardSezaRouteDates.get(normParent) || cardSezaRouteDates.get(normRaw) || 0;
 
             const hasSeza = sezaTime > 0 || c.is_seza === true;
             const hasEza = ezaTime > 0 || hasSeza || c.is_eza === true;
@@ -764,15 +853,24 @@ function renderPickerGrid() {
     grid.innerHTML = filteredPickerCards.map((c, i) => {
         const exactCardId = String(c.id);
         const folderId = exactCardId.length >= 7 ? exactCardId.substring(0, 7) : exactCardId;
-        const parentFolderId = (c.source === 'official' && typeof getCardParentId === 'function') ? Math.floor(getCardParentId(c.id) / 10) * 10 : folderId;
+        const normId = parseInt(exactCardId, 10);
+        const circleFolderId = Math.floor(normId / 10) * 10;
+        const parentFolderId = (c.source === 'official' && typeof getCardParentId === 'function') ? Math.floor(getCardParentId(c.id) / 10) * 10 : circleFolderId;
+
+        const isCustom = c.source === 'custom';
+        const circleUrl = isCustom
+            ? (c.thumbUrl || `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`)
+            : `./assets/card-art/cards/${circleFolderId}/card_${circleFolderId}_circle.png`;
         const frameSrc = `${CALC_ASSET_URL}frame_${c.type || 'agl'}.png`;
-        const thumbUrl = c.thumbUrl || `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
 
         // Top-Left Purple Form Badge
-        const transBadge = c.isTransformed ? `<span style="position: absolute; top: -3px; left: -3px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: #fff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">FORM</span>` : '';
+        const transBadge = c.isTransformed ? `<span style="position: absolute; top: -3px; left: -3px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">FORM</span>` : '';
         
         // Bottom-Left Cyan Custom Badge
-        const customBadge = c.source === 'custom' ? `<span style="position: absolute; bottom: -3px; left: -3px; background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); color: #fff; font-size: 7px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.6); letter-spacing: 0.5px;">CUSTOM</span>` : '';
+        const customBadge = c.source === 'custom' ? `<span style="position: absolute; bottom: -3px; left: -3px; background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.6); letter-spacing: 0.4px;">CUSTOM</span>` : '';
+
+        // Top-Right SEZA / EZA Badge
+        const sezaBadge = c.isSeza ? `<span style="position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">SEZA</span>` : (c.isEza ? `<span style="position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">EZA</span>` : '');
 
         const typeKey = (c.type || 'agl').toLowerCase();
         const typeClass = `picker-type-${typeKey}`;
@@ -782,8 +880,9 @@ function renderPickerGrid() {
             <div class="picker-thumb-wrapper">
                 ${transBadge}
                 ${customBadge}
+                ${sezaBadge}
                 <img class="picker-frame" src="${frameSrc}" loading="lazy">
-                <img class="picker-thumb" src="${thumbUrl}" loading="lazy" onerror="window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')">
+                <img class="picker-thumb${isCustom ? ' is-fallback-thumb' : ''}" src="${circleUrl}" loading="lazy" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}')">
             </div>
             <span class="picker-name">${c.name}</span>
             <span class="picker-sub">${c.rarity} • ${typeKey.toUpperCase()}${c.isTransformed ? ' (Form)' : ''}</span>
@@ -892,6 +991,8 @@ async function selectUnitFromPicker(index) {
 async function loadPickerCardIntoCalculator(cardItem, forcedMode = null) {
     if (!cardItem) return;
 
+    // Unit switching stays interactive: no full-screen takeover. Remote data
+    // (if any) resolves in place while the studio layout stays responsive.
     resetCalculatorForNewCharacterSelection();
 
     const initialActionBox = document.getElementById('calc-initial-action-box');
@@ -1144,7 +1245,7 @@ async function loadOfficialDokkanCardIntoCalculator(cardId, rawCard, cardItemMet
         const thumbImg = document.getElementById('calc-char-thumb');
         if (thumbImg) {
             thumbImg.classList.remove('is-fallback-thumb');
-            thumbImg.src = `assets/card/${circleCardId}/card_${circleCardId}_circle.png`;
+            thumbImg.src = `assets/card-art/cards/${circleCardId}/card_${circleCardId}_circle.png`;
             thumbImg.setAttribute('onerror', `this.onerror=null; this.classList.add('is-fallback-thumb'); this.src='https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png'`);
         }
 
@@ -1366,7 +1467,9 @@ async function loadOfficialDokkanCardIntoCalculator(cardId, rawCard, cardItemMet
         if (fieldObj && domainWrapper) {
             const fName = fieldObj.name || "Dokkan Field";
             const fCond = fieldObj.condition || fieldObj.conditions || fieldObj.details || targetCard.field_condition || "";
-            const fDesc = fieldObj.description || fieldObj.itemized_description || fieldObj.effect || targetCard.field_description || "";
+            const fDesc = typeof getAbsDokkanFieldEffectText === 'function'
+                ? getAbsDokkanFieldEffectText(fieldObj, targetCard.field_description || '')
+                : (fieldObj.effect_description || fieldObj.description || fieldObj.itemized_description || fieldObj.effect || targetCard.field_description || "");
             
             domainWrapper.style.display = 'block';
             if (panelDomain) panelDomain.style.display = 'block';
@@ -1592,7 +1695,7 @@ function renderDeckFamilyForms(targetCard, container) {
         const folderId = id.length >= 7 ? id.substring(0, 7) : id;
         const parentFolderId = Math.floor(getRootParentId(form) / 10) * 10;
         const circleCardId = folderId.length > 1 ? `${folderId.slice(0, -1)}0` : folderId;
-        const circleUrl = `assets/card/${circleCardId}/card_${circleCardId}_circle.png`;
+        const circleUrl = `assets/card-art/cards/${circleCardId}/card_${circleCardId}_circle.png`;
         const thumbUrl = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
         
         let isCurrent = false;
@@ -1662,9 +1765,9 @@ window.openFormPickerModal = function() {
         return `
         <div class="picker-unit-card" style="${isCurrent ? 'border-color: #38bdf8; background: rgba(56, 189, 248, 0.25);' : ''}" onclick="window.selectFormFromPicker(${f.id})">
             <div class="picker-thumb-wrapper">
-                <span style="position: absolute; top: -3px; left: -3px; background: ${tagColor}; color: #fff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 3px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">${formTag}</span>
+                <span style="position: absolute; top: -3px; left: -3px; background: ${tagColor}; color: #fff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 0px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">${formTag}</span>
                 <img class="picker-frame" src="${frameSrc}" loading="lazy">
-                <img class="picker-thumb" src="${thumbUrl}" loading="lazy" onerror="window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')">
+                <img class="picker-thumb" src="${circleUrl}" loading="lazy" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}')">
             </div>
             <span class="picker-name" style="font-size: 9.5px; font-weight: 800;">${titleObj.name}</span>
             <span class="picker-sub" style="color: ${isCurrent ? '#38bdf8' : '#94a3b8'}; font-weight: 800;">${isCurrent ? '● Active' : (isCardLR(f) ? 'LR' : 'TUR')}</span>
@@ -1871,13 +1974,17 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
 
     activeBlocks.forEach(block => {
         const typeLabel = (block.querySelector('.active-type-label, .domain-type-label, b')?.textContent || '').toLowerCase();
+        const explicitKind = String(block.dataset?.activeKind || block.dataset?.skillKind || '').trim().toLowerCase();
         const name = block.querySelector('.active-display-name, .domain-display-name, #abs-active-title, #abs-domain-title, .active-title, .domain-title')?.textContent?.trim() || '';
         let cond = block.querySelector('.active-display-condition, .active-condition, #abs-active-condition, .active-conditions, .domain-condition, #abs-domain-condition')?.textContent?.trim() || '';
         let effect = block.querySelector('.active-display-effect, .domain-display-effect, #abs-active-effect, #abs-domain-effect, .active-effect, .domain-effect')?.textContent?.trim() || '';
 
         if (!effect) effect = block.textContent?.trim() || '';
 
-        if (typeLabel.includes('domain') || name.toLowerCase().includes('domain') || effect.toLowerCase().includes('domain effect')) {
+        const isDomain = explicitKind
+            ? explicitKind === 'domain'
+            : (typeLabel.includes('domain') || name.toLowerCase().includes('domain') || effect.toLowerCase().includes('domain effect'));
+        if (isDomain) {
             foundDomainTitle = name || "Domain Effect";
             foundDomainCond = cond;
             foundDomainDesc = effect;

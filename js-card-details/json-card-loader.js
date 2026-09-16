@@ -5,7 +5,8 @@
 window.DB = {
     cards: [], leaders: {}, passives: {}, actives: {}, standbys: {}, 
     finishes: {}, fields: {}, links: {}, categories: {}, awakeningRoutes: [],
-    cardSpecials: {}, cardSpecialsByCard: {}, specials: {}, specialViews: {}, specialCategories: {}, optimalAwakeningGrowths: []
+    cardSpecials: {}, cardSpecialsByCard: {}, specials: {}, specialSets: {}, specialViews: {}, specialCategories: {},
+    passiveEffectViews: {}, optimalAwakeningGrowths: []
 };
 
 async function fetchJsonSafely(filename) {
@@ -28,7 +29,7 @@ async function loadDokkanDatabase() {
         const [
             cards, leaders, passives, actives, standbys,
             finishes, fields, links, categories, routes, 
-            cardSpecials, specials, specialViews, specialCategories, optimalGrowths
+            cardSpecials, specials, specialSets, specialViews, specialCategories, passiveEffectManifest, optimalGrowths, unitProvenance
         ] = await Promise.all([
             fetchJsonSafely('cards.json'),
             fetchJsonSafely('leader_skills.json'),
@@ -42,14 +43,18 @@ async function loadDokkanDatabase() {
             fetchJsonSafely('awakening_routes.json'),
             fetchJsonSafely('card_specials.json'),
             fetchJsonSafely('specials.json'),
+            fetchJsonSafely('special_sets.json'),
             fetchJsonSafely('special_views.json'),
             fetchJsonSafely('special_categories.json'),
-            fetchJsonSafely('optimal_awakening_growths.json')
+            fetchJsonSafely('passive_skill_effect_views.json'),
+            fetchJsonSafely('optimal_awakening_growths.json'),
+            fetchJsonSafely('unit-provenance.json')
         ]);
 
         if (cards) DB.cards = Array.isArray(cards) ? cards : Object.values(cards);
         if (routes) DB.awakeningRoutes = Array.isArray(routes) ? routes : Object.values(routes);
         if (optimalGrowths) DB.optimalAwakeningGrowths = Array.isArray(optimalGrowths) ? optimalGrowths : Object.values(optimalGrowths);
+        if (unitProvenance && typeof unitProvenance === 'object') DB.unitProvenance = unitProvenance;
 
         DB.leaders = {};
         if (leaders) {
@@ -130,7 +135,16 @@ async function loadDokkanDatabase() {
             });
         }
 
-        // 3. Index special_views by id (contains special_category_id)
+        // 3. Index special_sets. These are the authoritative names,
+        // descriptions, and multiplier values for a card's base/EZA SA rows.
+        DB.specialSets = {};
+        if (specialSets) {
+            (Array.isArray(specialSets) ? specialSets : Object.values(specialSets)).forEach(set => {
+                if (set && set.id) DB.specialSets[String(set.id)] = set;
+            });
+        }
+
+        // 4. Index special_views by id (contains special_category_id)
         DB.specialViews = {};
         if (specialViews) {
             (Array.isArray(specialViews) ? specialViews : Object.values(specialViews)).forEach(sv => {
@@ -138,7 +152,7 @@ async function loadDokkanDatabase() {
             });
         }
 
-        // 4. Index special_categories
+        // 5. Index special_categories
         DB.specialCategories = {};
         if (specialCategories) {
             (Array.isArray(specialCategories) ? specialCategories : Object.values(specialCategories)).forEach(sc => {
@@ -146,7 +160,9 @@ async function loadDokkanDatabase() {
             });
         }
 
-        console.log(`SUCCESS! Loaded ${DB.cards.length} cards + SA relational tables.`);
+        DB.passiveEffectViews = passiveEffectManifest?.by_passive_skill_set || {};
+
+        console.log(`SUCCESS! Loaded ${DB.cards.length} cards + official animation relationships.`);
         return true;
     } catch (error) {
         console.error("Database load error:", error);

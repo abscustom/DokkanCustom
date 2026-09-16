@@ -1,4 +1,17 @@
 
+
+/* ── Smooth modal close helper ── */
+window.fadeOutModal = function(elOrId, doneCallback) {
+    const el = typeof elOrId === 'string' ? document.getElementById(elOrId) : elOrId;
+    if (!el) { if (doneCallback) doneCallback(); return; }
+    el.classList.add('is-closing');
+    setTimeout(() => {
+        el.classList.remove('is-closing');
+        el.style.display = 'none';
+        if (doneCallback) doneCallback();
+    }, 210);
+};
+
 /* ============================================================
    6. JSON EXPORT & RESTORE + GITHUB PUBLISHING & LIVE ADMIN SAVES
    ============================================================ */
@@ -70,6 +83,7 @@ window.getProjectDataObject = function() {
         ta.setAttribute('value', ta.value);
     });
 
+    window.normalizeActiveSkillBlocks?.();
     const saHTMLBlocks = Array.from(document.querySelectorAll(".sa-block")).map(b => b.outerHTML);
     const activeHTMLBlocks = Array.from(document.querySelectorAll(".active-block")).map(b => b.outerHTML);
 
@@ -90,6 +104,12 @@ window.getProjectDataObject = function() {
 
     return {
         cardSource: window.currentCardSource === 'official' ? 'official' : 'custom',
+        officialCardId: window.currentCardSource === 'official'
+            ? (window.currentOfficialCardId || window.editorPartnerCardId || "")
+            : "",
+        officialCardAwakeningMode: window.currentCardSource === 'official'
+            ? (window.currentOfficialCardAwakeningMode || currentAwakeningMode || "")
+            : "",
         currentType: currentType, 
         currentClass: currentClass,
         currentRarity: currentRarity,
@@ -120,7 +140,7 @@ window.getProjectDataObject = function() {
         formsData: formsData,
         passiveName: document.getElementById('input-passive-name-sidebar')?.value || "",
         passiveHeaderIconsOverride: window.passiveHeaderIconsOverride || null,
-        absUnitTag: window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT',
+        absUnitTag: window.absUnitTag ?? '',
         showAwakeningProgression: window.showAwakeningProgression !== false,
         showSsrProgression: window.showSsrProgression !== false,
         showTurProgression: window.showTurProgression !== false,
@@ -128,11 +148,15 @@ window.getProjectDataObject = function() {
             ? ""
             : (document.getElementById("myOverlayImage")?.src || ""),
         cardArtVideo: document.getElementById("myOverlayVideo")?.querySelector('source')?.getAttribute('src') || document.getElementById("myOverlayVideo")?.getAttribute('src') || "",
-        editorArtMode: window.currentEditorArtMode || 'static'
+        editorArtMode: window.currentEditorArtMode || 'static',
+        themeStyle: window.currentCardThemeStyle || 'dokkaninfo',
+        themeVariant: window.currentCardThemeVariant || window.currentCardThemeStyle || 'dokkaninfo'
     };
 };
 
 window.exportProjectAsJson = function() {
+    if (window.isPublishedEditorLocked?.()) return;
+
     try {
         const projectData = window.getProjectDataObject();
         const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(projectData, null, 2));
@@ -151,8 +175,20 @@ window.exportProjectAsJson = function() {
 };
 
 window.loadProjectData = function(projectData, baseUrl = '') {
-    if (!projectData) return;
-    window.currentCardSource = projectData.cardSource === 'official' ? 'official' : 'custom';
+    if (!projectData || window.isPublishedEditorLocked?.()) return;
+    const projectImageInput = String(projectData.inputs?.imageInput || '');
+    const projectHasOfficialArt = /(?:dokkaninfo\.com|images\.weserv\.nl).*\/character\/card\/\d+/i.test(projectImageInput);
+    window.currentCardSource = projectData.cardSource === 'official' || (!projectData.cardSource && projectHasOfficialArt)
+        ? 'official'
+        : 'custom';
+    window.currentOfficialCardId = window.currentCardSource === 'official' && projectData.officialCardId
+        ? String(projectData.officialCardId)
+        : '';
+    window.currentOfficialCardAwakeningMode = window.currentCardSource === 'official'
+        ? (projectData.officialCardAwakeningMode || projectData.currentAwakeningMode || '')
+        : '';
+    if (window.currentOfficialCardId) window.editorPartnerCardId = window.currentOfficialCardId;
+    window.currentCardThemeVariant = projectData.themeVariant || projectData.themeStyle || 'dokkaninfo';
     const legacyProgressionVisibility = projectData.showAwakeningProgression !== false;
     window.showSsrProgression = projectData.showSsrProgression !== undefined ? projectData.showSsrProgression !== false : legacyProgressionVisibility;
     window.showTurProgression = projectData.showTurProgression !== undefined ? projectData.showTurProgression !== false : legacyProgressionVisibility;
@@ -230,6 +266,7 @@ window.loadProjectData = function(projectData, baseUrl = '') {
         }
         if (document.getElementById("card-category-container")) {
             document.getElementById("card-category-container").innerHTML = norm(projectData.containers.categories || "");
+            window.normalizeEditorCategoryItems?.(document.getElementById("card-category-container"));
         }
         
         document.querySelectorAll('#sidebar-sections-area [id^="side-sec-"]').forEach(sec => {
@@ -295,6 +332,7 @@ window.loadProjectData = function(projectData, baseUrl = '') {
         const actSpot = document.getElementById("active-skill-insert-spot");
         if (actSpot) projectData.activeBlocksHTML.forEach(html => actSpot.insertAdjacentHTML('beforebegin', normBlock(html)));
     }
+    window.normalizeActiveSkillBlocks?.();
     
     if (projectData.saBlocksHTML) {
         const saSpot = document.getElementById("sa-insert-spot");
@@ -381,7 +419,13 @@ window.loadProjectData = function(projectData, baseUrl = '') {
         }
     }
 
-    window.applyCardTheme(currentType); 
+    // Keep the selected theme intact when importing an exported project.
+    // Older exports have no themeStyle, so they retain the classic default.
+    if (projectData.themeVariant === 'sba' || projectData.themeStyle === 'sba' || projectData.themeStyle === 'abs.clean' || projectData.themeStyle === 'abs-clean') {
+        window.switchCardTheme?.('sba');
+    } else {
+        window.applyCardTheme(currentType);
+    }
     window.applyAwakening(currentAwakeningMode);
     window.updateIdentity(); 
     window.calcFromMin('hp'); 
@@ -406,9 +450,15 @@ window.loadProjectData = function(projectData, baseUrl = '') {
     if (window.autoSaveToCache) {
         window.autoSaveToCache();
     }
+    window.scheduleEditorLwfHydration?.();
 };
 
 window.importProjectFromJson = function() {
+    if (window.isPublishedEditorLocked?.()) {
+        window.unlockAdminMode?.();
+        return;
+    }
+
     const input = document.createElement('input');
     input.type = 'file';
     input.accept = '.json';
@@ -563,15 +613,23 @@ function addPublishedPartnerFrameGuard(clone) {
 function configurePublishedCardActions(clone, cardSource) {
     const adminExport = clone.querySelector('#admin-export-json-btn');
     if (adminExport) {
+        adminExport.remove();
+    }
+
+    const actionsDock = clone.querySelector('#admin-onscreen-actions-dock');
+    if (actionsDock) {
+        actionsDock.remove();
+    }
+
+    const adminQuickSave = clone.querySelector('#admin-quick-save-btn');
+    if (adminQuickSave) {
         if (cardSource === 'official') {
-            // Official cards already have the always-visible download action.
-            adminExport.remove();
+            adminQuickSave.remove();
         } else {
-            // Custom uploads expose JSON export only after Admin Mode is unlocked.
-            adminExport.setAttribute('onclick', 'window.exportPublishedCardJson()');
-            adminExport.setAttribute('title', 'Export Card JSON');
-            adminExport.setAttribute('aria-label', 'Export Card JSON');
-            adminExport.style.setProperty('display', 'none', 'important');
+            adminQuickSave.setAttribute('onclick', 'window.saveQuickEditToGitHub()');
+            adminQuickSave.setAttribute('title', 'Save Quick Edit to GitHub');
+            adminQuickSave.setAttribute('aria-label', 'Save Quick Edit to GitHub');
+            adminQuickSave.style.setProperty('display', 'none', 'important');
         }
     }
 
@@ -657,6 +715,29 @@ window.exportPublishedCardJson = async function() {
     }
 };
 
+window.ensureAdminActionsDock = function() {
+    // Keep the published custom-card save action in the top bar; the normal
+    // editor intentionally hides this publish-site-only control.
+    const legacyDock = document.getElementById('admin-onscreen-actions-dock');
+    if (legacyDock) legacyDock.remove();
+
+    const legacyExport = document.getElementById('admin-export-json-btn');
+    if (legacyExport) legacyExport.remove();
+
+    const legacyImport = document.getElementById('admin-import-json-btn');
+    if (legacyImport) legacyImport.remove();
+
+    const quickSaveButton = document.getElementById('admin-quick-save-btn');
+    if (quickSaveButton) {
+        quickSaveButton.onclick = () => window.saveQuickEditToGitHub ? window.saveQuickEditToGitHub() : window.openQuickSaveModal?.();
+        const canShowQuickSave = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
+        const shouldShow = canShowQuickSave && Boolean(window.ADMIN_MODE || document.body.classList.contains('quick-edit-open') || document.body.classList.contains('admin-mode-active'));
+        quickSaveButton.style.setProperty('display', shouldShow ? 'flex' : 'none', 'important');
+    }
+
+    return quickSaveButton;
+};
+
 window.ensurePublishedCustomCardRuntime = function() {
     if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
 
@@ -684,26 +765,9 @@ window.ensurePublishedCustomCardRuntime = function() {
         }
     }
 
-    // Older custom uploads had this control stripped from their saved HTML.
-    // Recreate it at runtime so they also gain Admin-only JSON export.
-    let exportButton = document.getElementById('admin-export-json-btn');
-    if (!exportButton) {
-        const topbarRight = document.querySelector('.top-bar-right');
-        if (topbarRight) {
-            exportButton = document.createElement('button');
-            exportButton.id = 'admin-export-json-btn';
-            exportButton.type = 'button';
-            exportButton.title = 'Export Card JSON';
-            exportButton.setAttribute('aria-label', 'Export Card JSON');
-            exportButton.innerHTML = '<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:4px;" aria-hidden="true"><path d="M19 12v7H5v-7H3v7c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2v-7h-2zm-6 .67 2.59-2.58L17 11.5l-5 5-5-5 1.41-1.41L11 12.67V3h2z"></path></svg>Export JSON';
-            const quickSaveButton = document.getElementById('admin-quick-save-btn');
-            topbarRight.insertBefore(exportButton, quickSaveButton || topbarRight.firstChild);
-        }
-    }
-    if (exportButton) {
-        exportButton.onclick = () => window.exportPublishedCardJson();
-        exportButton.style.setProperty('display', window.ADMIN_MODE ? 'inline-flex' : 'none', 'important');
-    }
+    // Custom uploads expose Save Quick Edit and Export JSON when Admin Mode /
+    // Quick Edit is active.
+    window.ensureAdminActionsDock?.();
 
     // Published uploads standardize the user's PNG at card_art.png. Prefer that
     // exact file for Static mode, even when an MP4 is also present and playing.
@@ -920,16 +984,26 @@ function repairPublishedSelfFormLinks(clone, cardName, folderName) {
         return nodeThumbs.some(thumb => currentThumbs.includes(thumb));
     };
     const repairGroup = (selector, nameSelector, imageSelector, linkSelector) => {
-        const nameMatches = Array.from(clone.querySelectorAll(selector))
+        const nodes = Array.from(clone.querySelectorAll(selector));
+        const first = nodes[0];
+        const nameMatches = nodes
             .filter(node => getNodeName(node, nameSelector) === normalizedName);
         const exactMatches = nameMatches.filter(node => matchesCurrentThumb(node, imageSelector));
-        const matches = exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []);
+        const matches = new Set([
+            ...(first ? [first] : []),
+            ...(exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []))
+        ]);
         matches.forEach(node => {
             const link = node.querySelector(linkSelector);
             if (!link) return;
             link.setAttribute('href', selfUrl);
             link.setAttribute('target', '_self');
         });
+        if (first) {
+            first.removeAttribute('data-admin-linked-slug');
+            first.removeAttribute('data-admin-link-adopted');
+            first.removeAttribute('data-admin-previous-href');
+        }
     };
 
     repairGroup('#forms-container .dokkan-card', '.form-name-display, .form-name', '.form-image', '.form-link');
@@ -1056,6 +1130,36 @@ function slugifyCharacterName(rawName) {
     return str;
 }
 
+function isCurrentCardReversibleExchange() {
+    const selectedPassiveIcons = Array.isArray(window.passiveHeaderIconsOverride)
+        ? window.passiveHeaderIconsOverride
+        : [];
+    if (selectedPassiveIcons.includes('st_reversible.png')) return true;
+
+    const passiveContainer = document.getElementById('card-passive-container');
+    const passiveText = passiveContainer?.innerText || passiveContainer?.textContent || '';
+    const hasReversiblePassiveIcon = Boolean(
+        passiveContainer?.querySelector('img[src*="st_reversible.png"]') ||
+        document.getElementById('abs-passive-name')?.querySelector('img[src*="st_reversible.png"]')
+    );
+
+    const activeText = Array.from(document.querySelectorAll('.active-block')).map(block => [
+        block.querySelector('.active-type-label')?.textContent,
+        block.querySelector('.active-display-name')?.textContent,
+        block.querySelector('.active-display-effect')?.textContent
+    ].filter(Boolean).join(' ')).join(' ');
+
+    return hasReversiblePassiveIcon ||
+        /\breversible\s+exchange\b/i.test(`${passiveText} ${activeText}`) ||
+        /\bcan\s+switch\s+back\b/i.test(passiveText);
+}
+
+function getUploadCharacterName(rawName) {
+    const fullName = String(rawName || '').trim();
+    if (!fullName.includes('+') || !isCurrentCardReversibleExchange()) return fullName;
+    return fullName.split('+', 1)[0].trim();
+}
+
 window.openUploadModal = function() {
     let baseId = "";
     const urlInputVal = document.getElementById('asset-url-input')?.value || "";
@@ -1081,9 +1185,11 @@ window.openUploadModal = function() {
         baseId = Math.floor(1000000 + Math.random() * 9000000).toString();
     }
 
-    // Extract Full Name Slug
+    // Reversible exchanges keep their full display name on the card, but the
+    // uploaded website folder uses only the current character before the "+".
     const charNameRaw = document.getElementById("nameInput")?.value || "";
-    const nameSlug = slugifyCharacterName(charNameRaw);
+    const uploadCharacterName = getUploadCharacterName(charNameRaw);
+    const nameSlug = slugifyCharacterName(uploadCharacterName);
 
     const finalFolderId = nameSlug ? `${baseId}-${nameSlug}` : baseId;
 
@@ -1097,12 +1203,13 @@ window.openUploadModal = function() {
         tokenInput.value = savedToken;
     }
 
-    document.getElementById('glass-upload-modal').style.display = 'flex';
+    const _uploadModal = document.getElementById('glass-upload-modal');
+    if (_uploadModal) { _uploadModal.classList.remove('is-closing'); _uploadModal.style.display = 'flex'; }
     window.debounceIdCheck();
 };
 
 window.closeUploadModal = function() {
-    document.getElementById('glass-upload-modal').style.display = 'none';
+    window.fadeOutModal('glass-upload-modal');
 };
 
 window.debounceIdCheck = function() {
@@ -1289,7 +1396,9 @@ window.executeGitHubUpload = async function() {
         if (cloneQuickSave) cloneQuickSave.style.display = "none";
 
         const cloneExportJson = clone.querySelector('#admin-export-json-btn');
-        if (cloneExportJson) cloneExportJson.style.display = "none";
+        if (cloneExportJson) cloneExportJson.remove();
+        const cloneActionsDock = clone.querySelector('#admin-onscreen-actions-dock');
+        if (cloneActionsDock) cloneActionsDock.remove();
 
         const charTitleRaw = document.getElementById("descInput")?.value || document.getElementById("char-description")?.textContent || "";
         const charName = document.getElementById("nameInput")?.value || document.getElementById("char-name")?.textContent || "";
@@ -1297,7 +1406,7 @@ window.executeGitHubUpload = async function() {
         const cleanTitle = charTitleRaw.replace(/[\[\]]/g, '').trim();
         const fullDisplayName = cleanTitle ? `[${cleanTitle}] ${charName}` : charName;
         const cardSource = window.currentCardSource === 'official' ? 'official' : 'custom';
-        const publishedUnitTag = window.absUnitTag ?? clone.querySelector('#abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
+        const publishedUnitTag = window.absUnitTag ?? '';
         const publishedRarity = String(window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity || 'none').toUpperCase();
         const publishedShowSsr = window.showSsrProgression !== false;
         const publishedShowTur = window.showTurProgression !== false;
@@ -1329,8 +1438,10 @@ window.executeGitHubUpload = async function() {
         const cloneBody = clone.querySelector('body');
         if (cloneBody) {
             cloneBody.classList.add('is-published');
-            cloneBody.classList.remove('admin-mode-active');
+            cloneBody.classList.remove('admin-mode-active', 'quick-edit-open');
         }
+        const cloneGui = clone.querySelector('#context-gui');
+        if (cloneGui) cloneGui.style.display = 'none';
 
         clone.querySelectorAll('meta[name="hub-id"], [data-hub-letter]').forEach(element => {
             if (element.matches('meta')) element.remove();
@@ -1372,8 +1483,15 @@ window.executeGitHubUpload = async function() {
         const frameImg = clone.querySelector('.card-frame');
         if (frameImg) frameImg.src = `${PUBLISHED_SHARED_ASSET_ROOT}frame_${currentType}.png`;
 
+        const rarityFileMap = {
+            'LR': 'rarity_LR.png',
+            'TUR': 'rarity_TUR.png',
+            'SSR': 'rarity_ssr.png',
+            'NONE': 'rarity_none.png'
+        };
+        const pubRarityFile = rarityFileMap[publishedRarity] || 'rarity_none.png';
         const rarityIcon = clone.querySelector('#main-rarity-icon');
-        if (rarityIcon) rarityIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}rarity_${publishedRarity}.png`;
+        if (rarityIcon) rarityIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}${pubRarityFile}`;
 
         const typeIcon = clone.querySelector('.typing-icon');
         if (typeIcon) typeIcon.src = `${PUBLISHED_SHARED_ASSET_ROOT}${currentClass}_type_${currentType}.png`;
@@ -1405,10 +1523,10 @@ window.executeGitHubUpload = async function() {
         repairPublishedSelfFormLinks(clone, charName, basePath);
 
         const toRemove = [
-            '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#icon-picker-modal', 
+            '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#importUnitBtn', '#topbar-importer-dock-wrap', '#icon-picker-modal',
             '#glass-upload-modal', '#card-admin-modal', '#topbar-card-admin-dock-wrap', '#topbar-card-delete-dock-wrap',
-            '#main-autosave-indicator', '#hud-loading-spinner', '#editor',
-            '#toggleBtn', '#topbar-theme-switcher', '.scouter-menu-btn'
+            '#main-autosave-indicator', '#hud-loading-spinner',
+            '#toggleBtn', '.scouter-menu-btn'
         ];
         toRemove.forEach(sel => { clone.querySelectorAll(sel).forEach(el => el.remove()); });
 
@@ -1522,15 +1640,26 @@ jobs:
         
         // SHOW ANIMATED GREEN CHECKMARK FOR UPLOAD SUCCESS
         window.showHudSuccess('UPLOAD COMPLETE!');
+        window.closeUploadModal();
 
         setTimeout(() => {
-            alert(`✅ Card Uploaded Successfully!\n\nWebsite: ${websiteUrl}\n\nTip for Live Edits:\nOn your published page, press Ctrl+Shift+A to unlock Admin Mode anytime!`);
-        }, 200);
+            if (window.CardHubToast) {
+                window.CardHubToast.success('Card Published!', {
+                    detail: 'Live at: ' + websiteUrl,
+                    duration: 8000,
+                    action: { label: 'Open →', onClick: () => window.open(websiteUrl, '_blank') }
+                });
+            }
+        }, 300);
 
     } catch (error) {
         window.hideHudLoader();
         console.error("Upload Error:", error);
-        alert(`Failed: ${error.message}`);
+        if (window.CardHubToast) {
+            window.CardHubToast.error('Upload Failed', { detail: error.message, duration: 8000 });
+        } else {
+            alert(`Failed: ${error.message}`);
+        }
     }
 };
 
@@ -1539,18 +1668,25 @@ jobs:
 // ============================================================
 
 window.openQuickSaveModal = function() {
+    if (window.isPublishedEditorLocked?.()) {
+        window.unlockAdminMode?.();
+        return;
+    }
+    if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
+
     const tokenInput = document.getElementById('quicksave-github-token');
     if (tokenInput) {
         const savedToken = localStorage.getItem('gh_token') || "";
         tokenInput.value = savedToken;
     }
     document.getElementById('confirm-quicksave-btn').disabled = true;
-    document.getElementById('glass-quicksave-modal').style.display = 'flex';
+    const _qsModal = document.getElementById('glass-quicksave-modal');
+    if (_qsModal) { _qsModal.classList.remove('is-closing'); _qsModal.style.display = 'flex'; }
     window.checkQuickSaveValidity(); 
 };
 
 window.closeQuickSaveModal = function() {
-    document.getElementById('glass-quicksave-modal').style.display = 'none';
+    window.fadeOutModal('glass-quicksave-modal');
 };
 
 window.checkQuickSaveValidity = function() {
@@ -1564,10 +1700,18 @@ window.checkQuickSaveValidity = function() {
 };
 
 window.saveQuickEditToGitHub = function() {
+    if (window.isPublishedEditorLocked?.()) {
+        window.unlockAdminMode?.();
+        return;
+    }
+    if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
     window.openQuickSaveModal();
 };
 
 window.executeQuickSave = async function() {
+    if (window.isPublishedEditorLocked?.()) return;
+    if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
+
     const token = document.getElementById('quicksave-github-token').value.trim();
     const rememberBox = document.getElementById('quicksave-remember-token');
     
@@ -1589,7 +1733,7 @@ window.executeQuickSave = async function() {
         const cardSource = window.PUBLISHED_CARD_SOURCE === 'official' || window.currentCardSource === 'official'
             ? 'official'
             : 'custom';
-        const publishedUnitTag = window.absUnitTag ?? document.getElementById('abs-art-header-text')?.textContent?.trim() ?? 'DOKKAN FESTIVAL UNIT';
+        const publishedUnitTag = window.absUnitTag ?? '';
         const publishedRarity = String(window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity || 'none').toUpperCase();
         const publishedShowSsr = window.showSsrProgression !== false;
         const publishedShowTur = window.showTurProgression !== false;
@@ -1625,7 +1769,9 @@ window.executeQuickSave = async function() {
         if (cloneQuickSave) cloneQuickSave.style.display = "none";
 
         const cloneExportJson = clone.querySelector('#admin-export-json-btn');
-        if (cloneExportJson) cloneExportJson.style.display = "none";
+        if (cloneExportJson) cloneExportJson.remove();
+        const cloneActionsDock = clone.querySelector('#admin-onscreen-actions-dock');
+        if (cloneActionsDock) cloneActionsDock.remove();
 
         preservePublishedPartnerFrames(clone);
         addPublishedPartnerFrameGuard(clone);
@@ -1677,10 +1823,10 @@ window.executeQuickSave = async function() {
         configurePublishedCardActions(clone, cardSource);
 
         const toRemove = [
-            '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#icon-picker-modal', 
+            '#uploadGithubBtn', '#topbar-upload-dock-wrap', '#importUnitBtn', '#topbar-importer-dock-wrap', '#icon-picker-modal',
             '#glass-upload-modal', '#card-admin-modal', '#topbar-card-admin-dock-wrap', '#topbar-card-delete-dock-wrap',
-            '#main-autosave-indicator', '#hud-loading-spinner', '#editor',
-            '#toggleBtn', '#topbar-theme-switcher', '.scouter-menu-btn'
+            '#main-autosave-indicator', '#hud-loading-spinner',
+            '#toggleBtn', '.scouter-menu-btn'
         ];
         toRemove.forEach(sel => { clone.querySelectorAll(sel).forEach(el => el.remove()); });
 
@@ -1703,6 +1849,10 @@ window.executeQuickSave = async function() {
         await uploadBatchToGitHub(token, owner, repo, filesToUpload, `Live Quick Edit Update`);
 
         window.showHudSuccess('SAVED LIVE!');
+        window.closeQuickSaveModal();
+        if (window.CardHubToast) {
+            setTimeout(() => window.CardHubToast.success('Live Edit Saved!', { detail: 'Changes pushed to GitHub.', duration: 5000 }), 300);
+        }
         setTimeout(() => { alert("✅ Quick edit saved live to GitHub Pages!"); }, 150);
 
     } catch (e) {

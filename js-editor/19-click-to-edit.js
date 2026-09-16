@@ -33,41 +33,85 @@ document.addEventListener('DOMContentLoaded', () => {
     if (catCont) observer.observe(catCont, { childList: true, subtree: true });
     
     sanitizeLinksAndCategories();
+    syncPublishedEditorLockUi();
 });
 
 window.ADMIN_MODE = false;
 
-window.unlockAdminMode = function() {
-    if (!window.IS_PUBLISHED) return;
+function isPublishedEditorLocked() {
+    return Boolean(window.IS_PUBLISHED && window.ADMIN_MODE !== true);
+}
 
+window.isPublishedEditorLocked = isPublishedEditorLocked;
+
+function syncPublishedEditorLockUi() {
+    const locked = isPublishedEditorLocked();
+    const body = document.body;
+    if (!body) return;
+
+    body.classList.toggle('published-editor-locked', locked);
+
+    const topBar = document.getElementById('editor-top-bar');
+    const topTrigger = document.getElementById('editor-top-bar-trigger');
+    const settingsDrawer = document.getElementById('settingsDrawer');
+    const settingsOverlay = document.getElementById('settingsOverlay');
+    const settingsButton = document.getElementById('sba-side-settings-button');
+    const contextGui = document.getElementById('context-gui');
+
+    if (locked) {
+        body.classList.remove('quick-edit-open', 'sba-bottom-nav-visible', 'sba-side-settings-open', 'editor-sidebar-open');
+        topBar?.classList.remove('is-revealed');
+        topTrigger?.classList.remove('is-revealed');
+        settingsDrawer?.classList.remove('open');
+        settingsOverlay?.classList.remove('open');
+        settingsButton?.setAttribute('aria-expanded', 'false');
+        if (contextGui) contextGui.style.display = 'none';
+        window.clearCardGlow?.();
+    } else if (window.IS_PUBLISHED) {
+        // The controls stay hidden until the password is accepted, then the
+        // normal editor affordances become available again.
+        topBar?.classList.add('is-revealed');
+        window.revealToolSbaNav?.();
+    }
+}
+
+window.syncPublishedEditorLockUi = syncPublishedEditorLockUi;
+
+window.unlockAdminMode = function() {
     if (window.ADMIN_MODE) {
         window.ADMIN_MODE = false;
         document.body.classList.remove('admin-mode-active');
+        document.body.classList.remove('quick-edit-open');
         const sidebar = document.getElementById('editor');
         const toggleBtn = document.getElementById('toggleBtn');
         const quickSaveBtn = document.getElementById('admin-quick-save-btn');
-        const exportJsonBtn = document.getElementById('admin-export-json-btn');
+        const quickEditBtn = document.getElementById('topbar-quick-edit-btn');
         const uploadDockBtn = document.getElementById('topbar-upload-dock-wrap');
 
-        if (sidebar) sidebar.style.display = 'none';
-        if (toggleBtn) toggleBtn.style.display = 'none';
+        if (window.IS_PUBLISHED) {
+            if (sidebar) sidebar.style.display = 'none';
+            if (toggleBtn) toggleBtn.style.display = 'none';
+            if (uploadDockBtn) uploadDockBtn.style.setProperty('display', 'none', 'important');
+            if (quickEditBtn) quickEditBtn.style.setProperty('display', 'none', 'important');
+            window.stopEditorAutosave?.();
+        }
         if (quickSaveBtn) quickSaveBtn.style.setProperty('display', 'none', 'important');
-        if (exportJsonBtn) exportJsonBtn.style.setProperty('display', 'none', 'important');
-        if (uploadDockBtn) uploadDockBtn.style.setProperty('display', 'none', 'important');
 
+        syncPublishedEditorLockUi();
         window.clearCardGlow();
         alert("🔒 Admin Mode Deactivated.");
         return;
     }
 
-    document.getElementById('glass-admin-unlock-modal').style.display = 'flex';
+    const _adminModal = document.getElementById('glass-admin-unlock-modal');
+    if (_adminModal) { _adminModal.classList.remove('is-closing'); _adminModal.style.display = 'flex'; }
     document.getElementById('admin-unlock-pass').value = '';
     document.getElementById('confirm-admin-unlock-btn').disabled = true;
     setTimeout(() => document.getElementById('admin-unlock-pass').focus(), 100);
 };
 
 window.closeAdminUnlockModal = function() {
-    document.getElementById('glass-admin-unlock-modal').style.display = 'none';
+    window.fadeOutModal ? window.fadeOutModal('glass-admin-unlock-modal') : (document.getElementById('glass-admin-unlock-modal').style.display = 'none');
 };
 
 window.checkAdminUnlockValidity = function() {
@@ -81,17 +125,31 @@ window.executeAdminUnlock = function() {
     window.ADMIN_MODE = true;
     document.body.classList.add('admin-mode-active');
 
+    window.startEditorAutosave?.();
+    syncPublishedEditorLockUi();
+
+    if (window.ensureAdminActionsDock) {
+        window.ensureAdminActionsDock();
+    } else if (window.ensurePublishedCustomCardRuntime) {
+        window.ensurePublishedCustomCardRuntime();
+    }
+
     const sidebar = document.getElementById('editor');
     const toggleBtn = document.getElementById('toggleBtn');
     const quickSaveBtn = document.getElementById('admin-quick-save-btn');
-    const exportJsonBtn = document.getElementById('admin-export-json-btn');
+    const quickEditBtn = document.getElementById('topbar-quick-edit-btn');
     const uploadDockBtn = document.getElementById('topbar-upload-dock-wrap');
 
     if (sidebar) sidebar.style.display = 'block';
     if (toggleBtn) toggleBtn.style.display = 'flex';
-    if (quickSaveBtn) quickSaveBtn.style.setProperty('display', 'inline-flex', 'important');
-    if (exportJsonBtn) exportJsonBtn.style.setProperty('display', 'inline-flex', 'important');
+    if (quickSaveBtn) {
+        const canQuickSave = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
+        quickSaveBtn.style.setProperty('display', canQuickSave ? 'flex' : 'none', 'important');
+    }
     if (uploadDockBtn) uploadDockBtn.style.setProperty('display', 'inline-block', 'important');
+    if (quickEditBtn) {
+        quickEditBtn.style.setProperty('display', window.IS_PUBLISHED ? 'inline-flex' : 'none', 'important');
+    }
 
     ensureGUIContainerExists();
     makeGUIDraggable();
@@ -108,7 +166,7 @@ document.addEventListener('keydown', function(e) {
 
 // Click-to-Edit Route Handler
 document.addEventListener('click', function(e) {
-    if (window.IS_PUBLISHED && !window.ADMIN_MODE) return;
+    if (isPublishedEditorLocked()) return;
 
     ensureGUIContainerExists();
 
@@ -119,13 +177,25 @@ document.addEventListener('click', function(e) {
 
     if (target) {
         editType = target.getAttribute('data-edit');
+        if (editType === 'active') {
+            // Clean mode renders Active Skills/Dokkan Fields in separate
+            // containers. Resolve that visual card back to its source block
+            // before opening the editor; otherwise the GUI has no editable
+            // block after the card has been widened or reparented.
+            const renderedActive = target.closest(
+                '[data-edit="active"], .abs-clean-active-rendered, .abs-clean-domain-rendered, .abs-clean-standby-rendered, #abs-active-container > .abs-box, #abs-active-container > div, #abs-field-container > .abs-box, #abs-field-container > div, #abs-standby-container > .abs-box, #abs-standby-container > div'
+            ) || target;
+            const clickedActive = e.target.closest('.active-block');
+            currentActiveSkill = clickedActive || window.resolveActiveSkillBlock?.(renderedActive) || currentActiveSkill || null;
+            target = renderedActive || clickedActive || target;
+        }
     } else {
-        if (e.target.closest('#char-name, #char-description, #abs-char-title, #abs-char-name, .abs-header-text, #release-dates-container, .abs-awaken-date')) {
+        if (e.target.closest('#char-name, #char-description, #abs-char-title, #abs-char-name, .abs-header-text, #release-dates-container, .abs-awaken-date, #abs-clean-info-bar, .abs-clean-info-box, #abs-clean-identity-icons, .abs-clean-id-badge')) {
             editType = 'identity';
-            target = document.getElementById('release-dates-container') || e.target.closest('.abs-header-text, .abs-awaken-date') || e.target;
-        } else if (e.target.closest('#leader-skill, #abs-leader-skill, [data-edit="leader"]') || (e.target.closest('.abs-box') && e.target.closest('.abs-box').querySelector('#abs-leader-skill'))) {
+            target = e.target.closest('.abs-clean-id-badge, #abs-clean-identity-icons, .abs-clean-info-box, #abs-clean-info-bar') || document.getElementById('release-dates-container') || e.target.closest('.abs-header-text, .abs-awaken-date') || e.target;
+        } else if (e.target.closest('#leader-skill, #abs-leader-skill, #abs-clean-leader-bar, #abs-clean-leader-text, [data-edit="leader"]') || (e.target.closest('.abs-box') && e.target.closest('.abs-box').querySelector('#abs-leader-skill'))) {
             editType = 'leader';
-            target = e.target.closest('.abs-box') || e.target;
+            target = e.target.closest('#abs-clean-leader-bar, #abs-clean-leader-text') || e.target.closest('.abs-box') || e.target;
         } else if (e.target.closest('#card-passive-container, .passive-name-display, #abs-passive-container, #abs-passive-name')) {
             editType = 'passive';
             target = e.target.closest('.abs-box') || e.target;
@@ -135,18 +205,18 @@ document.addEventListener('click', function(e) {
         } else if (e.target.closest('#card-category-container, #abs-category-container')) {
             editType = 'categories';
             target = e.target.closest('.abs-box') || e.target;
-        } else if (e.target.closest('#myOverlayImage, #myOverlayVideo, .card-art-canvas, .abs-art-box, #abs-art-dock-wrapper')) {
+        } else if (e.target.closest('#myOverlayImage, #myOverlayVideo, .card-art-canvas, .abs-art-box, #abs-art-dock-wrapper, #abs-clean-portrait-stage')) {
             editType = 'art';
-            target = document.getElementById('abs-art-dock-wrapper') || e.target;
-        } else if (e.target.closest('#forms-container, #abs-transformations-box, .abs-transform-row')) {
+            target = document.getElementById('abs-clean-portrait-stage') || document.getElementById('abs-art-dock-wrapper') || e.target;
+        } else if (e.target.closest('#forms-container, #abs-transformations-box, #abs-transformations-container, [data-abs-clean-section="forms"], #abs-clean-awakening-forms-forms-slot, [data-edit="forms"], .abs-transform-row')) {
             editType = 'forms';
-            target = document.getElementById('forms-container') || document.getElementById('abs-transformations-box') || e.target;
-        } else if (e.target.closest('#ssr-row, #tur-row, #img-ssr, #img-tur, #img-lr, .card-icon, #abs-awakenings-box, .abs-awaken-row, .abs-awaken-divider, #abs-composed-icon, #abs-top-rarity-icon, #abs-rarity-icon, #main-rarity-icon, #ssr-rarity-icon, #tur-rarity-icon, #awakening-container, #abs-awakening-img') && !e.target.closest('.abs-awaken-date')) {
+            target = document.getElementById('forms-container') || document.getElementById('abs-transformations-box') || e.target.closest('[data-abs-clean-section="forms"], #abs-transformations-box, #abs-clean-awakening-forms-forms-slot') || e.target;
+        } else if (e.target.closest('#ssr-row, #tur-row, #img-ssr, #img-tur, #img-lr, .card-icon, #abs-awakenings-box, .abs-awaken-row, .abs-awaken-divider, #abs-composed-icon, #abs-top-rarity-icon, #abs-rarity-icon, #main-rarity-icon, #ssr-rarity-icon, #tur-rarity-icon, #awakening-container, #abs-awakening-img, #abs-clean-awakening-portraits, .abs-clean-awakening-portrait, #abs-clean-ssr-portrait, #abs-clean-tur-portrait') && !e.target.closest('.abs-awaken-date')) {
             editType = 'icons';
-            target = e.target.closest('.abs-box, .dokkan-card') || e.target;
-        } else if (e.target.closest('table.col, #abs-stats-box, .abs-stat-cards-row, .abs-stat-slider-wrapper')) {
+            target = e.target.closest('.abs-box, .dokkan-card, #abs-clean-awakening-portraits, .abs-clean-awakening-portrait') || e.target;
+        } else if (e.target.closest('table.col, #abs-stats-box, #abs-clean-header-stats, .abs-stat-cards-row, .abs-stat-slider-wrapper, #abs-clean-portrait-callouts, .abs-clean-callout')) {
             editType = 'stats';
-            target = document.getElementById('abs-stats-box') || e.target;
+            target = e.target.closest('.abs-clean-callout') || document.getElementById('abs-stats-box') || e.target;
         } else if (e.target.closest('.sa-block, #abs-sa-container > div')) {
             editType = 'sa';
             let clickedBlock = e.target.closest('.sa-block');
@@ -160,19 +230,14 @@ document.addEventListener('click', function(e) {
             }
             currentSuperAttack = clickedBlock;
             target = clickedBlock || e.target.closest('#abs-sa-container > div');
-        } else if (e.target.closest('.active-block, #abs-active-container > div')) {
+        } else if (e.target.closest('.active-block, #abs-active-container > .abs-box, #abs-active-container > div, #abs-field-container > .abs-box, #abs-field-container > div, #abs-standby-container > .abs-box, #abs-standby-container > div')) {
             editType = 'active';
-            let clickedActive = e.target.closest('.active-block');
-            if (!clickedActive) {
-                const dbActive = e.target.closest('#abs-active-container > div');
-                const dbContainer = document.getElementById('abs-active-container');
-                const dbActives = Array.from(dbContainer.children);
-                let index = dbActives.indexOf(dbActive);
-                if (index === -1) index = 0;
-                clickedActive = document.querySelectorAll('.active-block')[index];
-            }
-            currentActiveSkill = clickedActive;
-            target = clickedActive || e.target.closest('#abs-active-container > div');
+            const clickedActive = e.target.closest('.active-block');
+            const renderedActive = e.target.closest(
+                '[data-edit="active"], .abs-clean-active-rendered, .abs-clean-domain-rendered, .abs-clean-standby-rendered, #abs-active-container > .abs-box, #abs-active-container > div, #abs-field-container > .abs-box, #abs-field-container > div, #abs-standby-container > .abs-box, #abs-standby-container > div'
+            );
+            currentActiveSkill = clickedActive || window.resolveActiveSkillBlock?.(renderedActive) || null;
+            target = renderedActive || clickedActive || e.target;
         }
         target = target || e.target;
     }
@@ -192,11 +257,18 @@ window.collapsedPassiveSections = new Set();
 
 function ensureGUIContainerExists() {
     if (!document.getElementById('context-gui')) {
+        const isCustomPublished = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
+        const showQuickSave = !window.IS_PUBLISHED || isCustomPublished;
         const guiHTML = `
         <div id="context-gui">
             <div class="gui-header">
                 <span id="gui-title" class="gui-title">⚙️ Editor</span>
-                <button type="button" class="gui-close" onclick="closeContextGUI()">×</button>
+                <div class="gui-header-actions" style="display: flex; align-items: center; gap: 6px;">
+                    <button type="button" id="gui-quick-save-btn" class="gui-header-save-btn" onclick="window.saveQuickEditToGitHub?.()" title="Save Quick Edit to GitHub" style="${showQuickSave ? 'display: inline-flex;' : 'display: none;'}">
+                        <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor" style="display:inline-block; vertical-align:-1px; margin-right:3px;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>Save
+                    </button>
+                    <button type="button" class="gui-close" onclick="closeContextGUI()">×</button>
+                </div>
             </div>
             <div id="gui-content"></div>
         </div>`;
@@ -208,13 +280,18 @@ function ensureGUIContainerExists() {
 window.closeContextGUI = function() {
     const gui = document.getElementById('context-gui');
     if (gui) gui.style.display = 'none';
+    document.body.classList.remove('quick-edit-open');
+    if (!window.ADMIN_MODE) {
+        const quickSaveBtn = document.getElementById('admin-quick-save-btn');
+        if (quickSaveBtn) quickSaveBtn.style.setProperty('display', 'none', 'important');
+    }
     window.clearCardGlow();
 };
 
 window.highlightCardElement = function(element) {
     window.clearCardGlow();
-    if (!element || (window.IS_PUBLISHED && !window.ADMIN_MODE)) return;
-    const outerBox = element.closest('.dokkan-card, .abs-box, .sa-block, .active-block, .abs-header-text, .abs-art-dock-wrapper') || element;
+    if (!element || isPublishedEditorLocked()) return;
+    const outerBox = element.closest('.dokkan-card, .abs-box, .sa-block, .active-block, .abs-header-text, .abs-art-dock-wrapper, #abs-clean-portrait-stage, #abs-clean-leader-bar, #abs-clean-header-stats, #abs-categories-box, #abs-link-skills-box, #abs-stats-box, #abs-passive-skill-box, #abs-leader-skill-box, #abs-sa-container > div, #abs-sa-container, #abs-category-container, [data-edit]') || element;
     if (outerBox) outerBox.classList.add('active-selected-glow');
 };
 
@@ -222,6 +299,13 @@ window.clearCardGlow = function() {
     document.querySelectorAll('.active-selected-glow').forEach(el => {
         el.classList.remove('active-selected-glow');
     });
+};
+
+window.getContextGUIZoom = function() {
+    const gui = document.getElementById('context-gui');
+    if (!gui) return 1;
+    const computed = parseFloat(window.getComputedStyle(gui).zoom) || 1;
+    return computed > 0 ? computed : 1;
 };
 
 function makeGUIDraggable() {
@@ -239,6 +323,7 @@ function makeGUIDraggable() {
         isDragging = true;
         gui.dataset.isDragged = "true";
 
+        const zoom = window.getContextGUIZoom();
         const rect = gui.getBoundingClientRect();
         startX = e.clientX;
         startY = e.clientY;
@@ -246,26 +331,28 @@ function makeGUIDraggable() {
         initialTop = rect.top;
 
         gui.style.position = 'fixed';
-        gui.style.left = `${initialLeft}px`;
-        gui.style.top = `${initialTop}px`;
+        gui.style.left = `${initialLeft / zoom}px`;
+        gui.style.top = `${initialTop / zoom}px`;
 
         document.onmousemove = function(moveEvent) {
             if (!isDragging) return;
+            const currentZoom = window.getContextGUIZoom();
             let newLeft = initialLeft + (moveEvent.clientX - startX);
             let newTop = initialTop + (moveEvent.clientY - startY);
 
+            const rectNow = gui.getBoundingClientRect();
             const minTop = 60;
             const minLeft = 10;
-            const maxLeft = Math.max(10, window.innerWidth - gui.offsetWidth - 10);
-            const maxTop = Math.max(minTop, window.innerHeight - gui.offsetHeight - 10);
+            const maxLeft = Math.max(10, window.innerWidth - rectNow.width - 10);
+            const maxTop = Math.max(minTop, window.innerHeight - rectNow.height - 10);
 
             if (newTop < minTop) newTop = minTop;
             if (newTop > maxTop) newTop = maxTop;
             if (newLeft < minLeft) newLeft = minLeft;
             if (newLeft > maxLeft) newLeft = maxLeft;
 
-            gui.style.left = `${newLeft}px`;
-            gui.style.top = `${newTop}px`;
+            gui.style.left = `${newLeft / currentZoom}px`;
+            gui.style.top = `${newTop / currentZoom}px`;
         };
 
         document.onmouseup = function() {
@@ -277,11 +364,18 @@ function makeGUIDraggable() {
 }
 
 function openContextGUI(mouseX, mouseY, editType, targetElement) {
+    if (isPublishedEditorLocked()) return;
     const gui = document.getElementById('context-gui');
     const titleEl = document.getElementById('gui-title');
     const contentEl = document.getElementById('gui-content');
 
     if (!gui || !titleEl || !contentEl) return;
+    if (editType === 'active') {
+        const activeCandidate = targetElement?.closest?.(
+            '.active-block, [data-edit="active"], .abs-clean-active-rendered, .abs-clean-domain-rendered, .abs-clean-standby-rendered, #abs-active-container > .abs-box, #abs-active-container > div, #abs-field-container > .abs-box, #abs-field-container > div, #abs-standby-container > .abs-box, #abs-standby-container > div'
+        ) || currentActiveSkill;
+        currentActiveSkill = window.resolveActiveSkillBlock?.(activeCandidate) || currentActiveSkill;
+    }
     window.highlightCardElement(targetElement);
 
     let titleHTML = "";
@@ -611,13 +705,23 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
             break;
 
         case 'active':
-            titleHTML = `${activeSkillSvgIcon} Active Skill Editor`;
-            let actBlock = currentActiveSkill || document.querySelectorAll('.active-block')[0];
-            const activeTypeVal = actBlock?.querySelector('.active-type-label')?.textContent || 'Active Skill';
+            let actBlock = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelectorAll('.active-block')[0];
+            if (actBlock) window.ensureActiveSkillKind?.(actBlock);
+            const activeKind = window.getActiveSkillKind?.(actBlock) || 'active';
+            const activeKindLabel = window.getActiveSkillKindLabel?.(activeKind) || 'Active Skill';
+            titleHTML = `${activeSkillSvgIcon} ${activeKindLabel} Editor`;
+            const activeTypeVal = activeKind === 'domain'
+                ? 'Dokkan Field'
+                : (activeKind === 'standby'
+                    ? 'Standby'
+                    : (actBlock?.querySelector('.active-type-label')?.textContent || 'Active Skill'));
             const activeNameVal = actBlock?.querySelector('.active-display-name')?.textContent || 'Skill Name';
             const activeEffectVal = actBlock?.querySelector('.active-display-effect')?.innerText || '';
             const activeCondVal = actBlock?.querySelector('.active-display-condition')?.innerText || '';
-            const activeIconSrc = actBlock?.querySelector('.active-display-icon')?.getAttribute('src') || 'https://abscustom.github.io/assets/images/sp_skill_icon_04.png';
+            const activeIconSrc = actBlock?.querySelector('.active-display-icon')?.getAttribute('src') ||
+                (activeKind === 'domain'
+                    ? 'https://abscustom.github.io/assets/images/ing_label_field.png'
+                    : 'https://abscustom.github.io/assets/images/sp_skill_icon_04.png');
 
             bodyHTML = `
                 <div class="gui-btn-grid mb-2">
@@ -627,16 +731,25 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                     <button type="button" class="gui-preset-btn" onclick="toggleActiveDividerGUI()">Divider Line</button>
                 </div>
 
+                <label class="form-label mb-1">Skill Type</label>
+                <div class="gui-btn-grid mb-2" role="group" aria-label="Skill Type">
+                    <button type="button" class="gui-preset-btn ${activeKind === 'active' ? 'active-glow-btn' : ''}" aria-pressed="${activeKind === 'active'}" data-active-kind-option="active" onclick="guiSetActiveKind('active')">Active Skill</button>
+                    <button type="button" class="gui-preset-btn ${activeKind === 'domain' ? 'active-glow-btn' : ''}" aria-pressed="${activeKind === 'domain'}" data-active-kind-option="domain" onclick="guiSetActiveKind('domain')">Dokkan Field</button>
+                    <button type="button" class="gui-preset-btn ${activeKind === 'standby' ? 'active-glow-btn' : ''}" aria-pressed="${activeKind === 'standby'}" data-active-kind-option="standby" onclick="guiSetActiveKind('standby')">Standby</button>
+                </div>
+                <small class="d-block mb-2" style="opacity:0.75;">Active, Standby, and Dokkan Field entries share this editor while rendering in their dedicated card sections.</small>
+
                 <label class="form-label mb-1">Type Label</label>
-                <input type="text" id="gui-active-type" class="form-control mb-2" value="${activeTypeVal}" oninput="guiUpdateActiveType(this.value)">
+                <input type="text" id="gui-active-type" class="form-control mb-2" value="${escapeContextHtml(activeTypeVal)}" oninput="guiUpdateActiveType(this.value)">
 
                 <label class="form-label mb-1">Name</label>
-                <input type="text" id="gui-active-name" class="form-control mb-2" value="${activeNameVal}" oninput="guiUpdateActiveName(this.value)">
+                <input type="text" id="gui-active-name" class="form-control mb-2" value="${escapeContextHtml(activeNameVal)}" oninput="guiUpdateActiveName(this.value)">
 
-                <!-- ACTIVE SKILL ATTACK CATEGORY ICON -->
-                <label class="form-label mb-1">Active Skill Icon</label>
+                <!-- TYPE-SPECIFIC SKILL ICON -->
+                <label class="form-label mb-1">${activeKind === 'domain' ? 'Dokkan Field Icon' : (activeKind === 'standby' ? 'Standby Skill Icon' : 'Active Skill Icon')}</label>
                 <div class="d-flex gap-2 justify-content-center align-items-center mb-2">
                     <button type="button" class="sa-type-icon-opt ${(!activeIconSrc || activeIconSrc === 'none' || activeIconSrc.includes('none')) ? 'selected' : ''}" style="width: 44px; height: 44px; font-size: 10px; font-weight: 800; color: #aaa;" onclick="guiSetActiveTypeIcon(this, 'none')">NONE</button>
+                    <img src="https://abscustom.github.io/assets/images/ing_label_field.png" class="sa-type-icon-opt ${activeIconSrc.includes('ing_label_field') ? 'selected' : ''}" title="Domain / Field" onclick="guiSetActiveTypeIcon(this, 'https://abscustom.github.io/assets/images/ing_label_field.png')">
                     <img src="https://abscustom.github.io/assets/images/sp_skill_icon_01.png" class="sa-type-icon-opt ${activeIconSrc.includes('sp_skill_icon_01') ? 'selected' : ''}" onclick="guiSetActiveTypeIcon(this, 'https://abscustom.github.io/assets/images/sp_skill_icon_01.png')">
                     <img src="https://abscustom.github.io/assets/images/sp_skill_icon_02.png" class="sa-type-icon-opt ${activeIconSrc.includes('sp_skill_icon_02') ? 'selected' : ''}" onclick="guiSetActiveTypeIcon(this, 'https://abscustom.github.io/assets/images/sp_skill_icon_02.png')">
                     <img src="https://abscustom.github.io/assets/images/sp_skill_icon_etc.png" class="sa-type-icon-opt ${activeIconSrc.includes('sp_skill_icon_etc') ? 'selected' : ''}" onclick="guiSetActiveTypeIcon(this, 'https://abscustom.github.io/assets/images/sp_skill_icon_etc.png')">
@@ -644,10 +757,10 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                 </div>
 
                 <label class="form-label mb-1">Effect</label>
-                <textarea id="gui-active-effect" class="form-control mb-2" style="height:80px;" oninput="guiUpdateActiveEffect(this.value)">${activeEffectVal}</textarea>
+                <textarea id="gui-active-effect" class="form-control mb-2" style="height:80px;" oninput="guiUpdateActiveEffect(this.value)">${escapeContextHtml(activeEffectVal)}</textarea>
 
                 <label class="form-label mb-1">Condition</label>
-                <textarea id="gui-active-conditions" class="form-control" style="height:60px;" oninput="guiUpdateActiveCondition(this.value)">${activeCondVal}</textarea>
+                <textarea id="gui-active-conditions" class="form-control" style="height:60px;" oninput="guiUpdateActiveCondition(this.value)">${escapeContextHtml(activeCondVal)}</textarea>
             `;
             break;
 
@@ -656,10 +769,10 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
             bodyHTML = `
                 <label class="form-label mb-1">Banner Unit Tag (ABS Mode)</label>
                 <select id="gui-abs-unit-tag" class="form-control mb-3" onchange="window.setAbsUnitTag?.(this.value); window.syncToAbsLayout?.(); window.autoSaveToCache?.();">
-                    <option value="DOKKAN FESTIVAL UNIT" ${(window.absUnitTag === 'DOKKAN FESTIVAL UNIT' || window.absUnitTag === undefined) ? 'selected' : ''}>DOKKAN FESTIVAL UNIT</option>
+                    <option value="DOKKAN FESTIVAL UNIT" ${window.absUnitTag === 'DOKKAN FESTIVAL UNIT' ? 'selected' : ''}>DOKKAN FESTIVAL UNIT</option>
                     <option value="CARNIVAL UNIT" ${window.absUnitTag === 'CARNIVAL UNIT' ? 'selected' : ''}>CARNIVAL UNIT</option>
                     <option value="LEGENDARY SUMMON UNIT" ${window.absUnitTag === 'LEGENDARY SUMMON UNIT' ? 'selected' : ''}>LEGENDARY SUMMON UNIT</option>
-                    <option value="" ${window.absUnitTag === '' ? 'selected' : ''}>Hidden / None</option>
+                    <option value="" ${!String(window.absUnitTag || '').trim() ? 'selected' : ''}>Hidden / None</option>
                 </select>
 
                 <div class="d-flex gap-2 mb-2">
@@ -672,8 +785,6 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
                         <input type="file" id="gui-videoUpload" hidden accept="video/mp4" onchange="document.getElementById('videoUpload').files=this.files; document.getElementById('videoUpload').dispatchEvent(new Event('change'));">
                     </label>
                 </div>
-                <label class="form-label mb-1">Card Art Image URL</label>
-                <input type="text" id="gui-imageInput" class="form-control" value="${document.getElementById('imageInput')?.value || ''}" placeholder="https://i.imgur.com/...">
             `;
             break;
 
@@ -796,6 +907,19 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
     const wasOpen = (gui.style.display === 'flex' || gui.style.display === 'block');
     gui.style.display = 'flex';
 
+    const isCustomPublished = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
+    const showQuickSave = isCustomPublished;
+    const guiSaveBtn = document.getElementById('gui-quick-save-btn');
+    if (guiSaveBtn) {
+        guiSaveBtn.style.display = showQuickSave ? 'inline-flex' : 'none';
+    }
+    if (showQuickSave) {
+        document.body.classList.add('quick-edit-open');
+        if (window.ensureAdminActionsDock) window.ensureAdminActionsDock();
+        const quickSaveBtn = document.getElementById('admin-quick-save-btn');
+        if (quickSaveBtn) quickSaveBtn.style.setProperty('display', 'flex', 'important');
+    }
+
     if (gui.dataset.isDragged === "true") return;
 
     // If modal was already open and re-rendering via button click (0, 0), keep existing position!
@@ -803,18 +927,23 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
         return;
     }
 
+    const zoom = window.getContextGUIZoom();
+
     if (mouseX > 0 || mouseY > 0) {
         let posX = mouseX + 20;
         let posY = mouseY - 20;
-        if (posX + 460 > window.innerWidth) posX = Math.max(10, mouseX - 480);
-        if (posY + 400 > window.innerHeight) posY = Math.max(65, window.innerHeight - 420);
+        const renderedWidth = 540 * zoom;
+        const renderedHeight = 400 * zoom;
+        if (posX + renderedWidth > window.innerWidth) posX = Math.max(10, mouseX - renderedWidth - 20);
+        if (posY + renderedHeight > window.innerHeight) posY = Math.max(65, window.innerHeight - renderedHeight - 20);
         if (posY < 65) posY = 65;
 
-        gui.style.left = `${posX}px`;
-        gui.style.top = `${posY}px`;
+        gui.style.left = `${posX / zoom}px`;
+        gui.style.top = `${posY / zoom}px`;
     } else if (!gui.style.left || !gui.style.top || gui.style.left === '0px') {
-        gui.style.left = `${Math.max(20, Math.floor((window.innerWidth - 440) / 2))}px`;
-        gui.style.top = `100px`;
+        const renderedWidth = 540 * zoom;
+        gui.style.left = `${Math.max(20, Math.floor((window.innerWidth - renderedWidth) / 2)) / zoom}px`;
+        gui.style.top = `${100 / zoom}px`;
     }
 }
 
@@ -962,9 +1091,9 @@ window.guiAddSAWithAutoSelect = function() {
 };
 
 window.guiSetActiveTypeIcon = function(element, iconSrc) {
-    document.querySelectorAll('.active-type-icon-opt').forEach(img => img.classList.remove('selected'));
+    document.querySelectorAll('#context-gui .sa-type-icon-opt, #context-gui .active-type-icon-opt').forEach(img => img.classList.remove('selected'));
     element.classList.add('selected');
-    const act = currentActiveSkill || document.querySelector('.active-block');
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
     if (act) {
         let activeDisplayIcon = act.querySelector('.active-display-icon');
         if (!activeDisplayIcon) {
@@ -973,26 +1102,43 @@ window.guiSetActiveTypeIcon = function(element, iconSrc) {
             act.appendChild(activeDisplayIcon);
         }
         activeDisplayIcon.src = (iconSrc === 'none') ? 'none' : iconSrc;
+        activeDisplayIcon.dataset.activeKindIconAuto = 'false';
+        currentActiveSkill = act;
+    }
+    window.updateAbsStyleActiveSkills?.();
+    if (window.syncToAbsLayout) window.syncToAbsLayout();
+};
+window.guiSetActiveKind = function(kind) {
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
+    if (!act) return;
+    currentActiveSkill = act;
+    window.setActiveSkillKind?.(act, kind, { updateLabel: true, updateIcon: true, forceIcon: true });
+    window.refreshActiveDropdown?.();
+    window.updateAbsStyleActiveSkills?.();
+    window.syncToAbsLayout?.();
+    openContextGUI(0, 0, 'active', act);
+};
+window.guiUpdateActiveType = function(val) {
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
+    if (act) {
+        window.ensureActiveSkillKind?.(act);
+        act.querySelector('.active-type-label').textContent = val;
+        currentActiveSkill = act;
     }
     if (window.syncToAbsLayout) window.syncToAbsLayout();
 };
-window.guiUpdateActiveType = function(val) {
-    const act = currentActiveSkill || document.querySelector('.active-block');
-    if (act) act.querySelector('.active-type-label').textContent = val;
-    if (window.syncToAbsLayout) window.syncToAbsLayout();
-};
 window.guiUpdateActiveName = function(val) {
-    const act = currentActiveSkill || document.querySelector('.active-block');
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
     if (act) act.querySelector('.active-display-name').textContent = val;
     if (window.syncToAbsLayout) window.syncToAbsLayout();
 };
 window.guiUpdateActiveEffect = function(val) {
-    const act = currentActiveSkill || document.querySelector('.active-block');
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
     if (act) act.querySelector('.active-display-effect').innerHTML = val.replace(/\n/g, '<br>');
     if (window.syncToAbsLayout) window.syncToAbsLayout();
 };
 window.guiUpdateActiveCondition = function(val) {
-    const act = currentActiveSkill || document.querySelector('.active-block');
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
     if (act) {
         const condDisp = act.querySelector('.active-display-condition');
         if (condDisp) condDisp.innerHTML = val.replace(/\n/g, '<br>');
@@ -1009,7 +1155,7 @@ window.guiUpdateActiveCondition = function(val) {
     if (window.syncToAbsLayout) window.syncToAbsLayout();
 };
 window.toggleActiveDividerGUI = function() {
-    const act = currentActiveSkill || document.querySelector('.active-block');
+    const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
     if (act) {
         act.querySelector('.active-divider-row')?.classList.toggle('d-none');
         act.querySelector('.active-condition-row')?.classList.toggle('d-none');
@@ -1017,25 +1163,47 @@ window.toggleActiveDividerGUI = function() {
     }
 };
 window.guiAddActiveWithAutoSelect = function() {
-    window.addActiveSkillSection();
-    const blocks = document.querySelectorAll('.active-block');
-    openContextGUI(0, 0, 'active', blocks[blocks.length - 1]);
+    const existing = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');
+    const kind = window.getActiveSkillKind?.(existing) || 'active';
+    const added = window.addActiveSkillSection?.(kind);
+    const blocks = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
+    currentActiveSkill = added || blocks[blocks.length - 1] || null;
+    openContextGUI(0, 0, 'active', currentActiveSkill);
 };
 window.guiDeleteActiveWithUndo = function() {
-    const blocks = document.querySelectorAll('.active-block');
-    if (blocks.length > 0) {
-        window.activeUndoStack.push(blocks[blocks.length - 1].outerHTML);
-        blocks[blocks.length - 1].remove();
-        window.refreshActiveDropdown();
-        openContextGUI(0, 0, 'active');
-    }
+    const blocks = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
+    const target = window.resolveActiveSkillBlock?.(currentActiveSkill) || blocks[blocks.length - 1];
+    if (!target) return;
+
+    const targetIndex = blocks.indexOf(target);
+    window.activeUndoStack.push({ html: target.outerHTML, index: targetIndex });
+    target.remove();
+
+    const remaining = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
+    currentActiveSkill = remaining[Math.min(Math.max(targetIndex, 0), remaining.length - 1)] || null;
+    window.refreshActiveDropdown?.();
+    window.updateAbsStyleActiveSkills?.();
+    window.syncToAbsLayout?.();
+    openContextGUI(0, 0, 'active', currentActiveSkill);
 };
 window.guiUndoActive = function() {
     if (window.activeUndoStack.length === 0) return;
-    const html = window.activeUndoStack.pop();
-    document.getElementById('active-skill-insert-spot')?.insertAdjacentHTML('beforebegin', html);
-    window.refreshActiveDropdown();
-    openContextGUI(0, 0, 'active');
+    const entry = window.activeUndoStack.pop();
+    const html = typeof entry === 'string' ? entry : entry?.html;
+    if (!html) return;
+
+    const blocks = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
+    const index = Number.isInteger(entry?.index) ? entry.index : blocks.length;
+    const anchor = blocks[index] || document.getElementById('active-skill-insert-spot');
+    if (!anchor) return;
+    anchor.insertAdjacentHTML('beforebegin', html);
+
+    const restored = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
+    currentActiveSkill = restored[Math.min(Math.max(index, 0), restored.length - 1)] || null;
+    window.refreshActiveDropdown?.();
+    window.updateAbsStyleActiveSkills?.();
+    window.syncToAbsLayout?.();
+    openContextGUI(0, 0, 'active', currentActiveSkill);
 };
 
 window.guiTogglePassiveCollapse = function(id) {
@@ -1234,20 +1402,6 @@ function bindContextListeners(editType) {
             if (window.syncToAbsLayout) window.syncToAbsLayout();
         });
     }
-    if (editType === 'art') {
-        const el = document.getElementById('gui-imageInput');
-        if (el) el.addEventListener('input', () => {
-            const target = document.getElementById('imageInput');
-            if (target) target.value = el.value;
-            const artBox = document.getElementById('abs-art-layers-container');
-            if (artBox) delete artBox.dataset.staticArtSrc;
-            const myOverlay = document.getElementById('myOverlayImage');
-            if (myOverlay) myOverlay.src = el.value;
-            const dbArtImg = document.getElementById('abs-art-img');
-            if (dbArtImg) dbArtImg.src = el.value;
-            if (window.syncToAbsLayout) window.syncToAbsLayout();
-        });
-    }
     if (editType === 'links') {
         document.getElementById('gui-link-input')?.addEventListener('keydown', e => {
             if (e.key === 'Enter') { e.preventDefault(); syncLinkGUI(); }
@@ -1259,3 +1413,13 @@ function bindContextListeners(editType) {
         });
     }
 }
+
+window.openContextGUI = openContextGUI;
+window.openQuickCardEditor = function(type = 'identity') {
+    if (isPublishedEditorLocked()) {
+        if (window.unlockAdminMode) window.unlockAdminMode();
+        return;
+    }
+    ensureGUIContainerExists();
+    openContextGUI(0, 0, type, null);
+};

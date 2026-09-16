@@ -121,11 +121,11 @@
         const thumbEl = doc.querySelector('#abs-thumb-img, #img-lr, #img-tur, #img-ssr, .thumb-img');
         const thumb = resolveCardUrl(thumbEl?.getAttribute('src'), repoPath);
         const frameEl = doc.querySelector('#abs-frame-img, .card-frame');
-        const frame = resolveCardUrl(frameEl?.getAttribute('src') || 'assets/images/frame_none.png', repoPath);
+        const frame = resolveCardUrl(frameEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/frame_none.png', repoPath);
         const rarityEl = doc.querySelector('#abs-top-rarity-icon, #main-rarity-icon');
-        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || 'assets/images/rarity_none.png', repoPath);
+        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/rarity_none.png', repoPath);
         const typeEl = doc.querySelector('#abs-top-type-icon, .typing-icon');
-        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || 'assets/images/type_none.png', repoPath);
+        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/type_none.png', repoPath);
         const marker = doc.querySelector('#pub-site-marker')?.textContent || '';
         const typeMatch = marker.match(/currentType\s*=\s*["']([^"']+)/);
         const rarityMatch = marker.match(/currentRarity\s*=\s*["']([^"']+)/);
@@ -350,12 +350,15 @@
         if (title) title.textContent = state.activeTool === 'delete' ? 'Delete Custom Card' : 'Link Custom Cards';
         if (tokenInput) tokenInput.value = localStorage.getItem('gh_token') || '';
         if (tools) tools.style.display = 'none';
-        if (modal) modal.style.display = 'flex';
+        if (modal) { modal.classList.remove('is-closing'); modal.style.display = 'flex'; }
     };
 
     window.closeCardAdminModal = function () {
         const modal = document.getElementById('card-admin-modal');
-        if (modal && !state.busy) modal.style.display = 'none';
+        if (modal && !state.busy) {
+            if (window.fadeOutModal) window.fadeOutModal(modal);
+            else modal.style.display = 'none';
+        }
     };
 
     window.loadCardAdminCards = async function () {
@@ -414,6 +417,16 @@
             .toLowerCase();
     }
 
+    function normalizeCardIdentityTokens(value) {
+        const ignoredFormWords = new Set(['card', 'form', 'giant', 'mode']);
+        return normalizeCardIdentityText(value)
+            .replace(/[^a-z0-9]+/g, ' ')
+            .split(/\s+/)
+            .filter(word => word && !ignoredFormWords.has(word))
+            .sort()
+            .join(' ');
+    }
+
     function getCardIdentityNames(card) {
         const names = new Set();
         const name = String(card?.name || '').trim();
@@ -421,8 +434,20 @@
         [name, title && name ? `${title} ${name}` : ''].forEach(value => {
             const normalized = normalizeCardIdentityText(value);
             if (normalized) names.add(normalized);
+            const tokenKey = normalizeCardIdentityTokens(value);
+            if (tokenKey) names.add(`tokens:${tokenKey}`);
         });
         return names;
+    }
+
+    function nameTextMatchesCard(value, card) {
+        const cardNames = getCardIdentityNames(card);
+        const normalized = normalizeCardIdentityText(value);
+        const tokenKey = normalizeCardIdentityTokens(value);
+        return Boolean(normalized) && (
+            cardNames.has(normalized) ||
+            (tokenKey && cardNames.has(`tokens:${tokenKey}`))
+        );
     }
 
     function normalizeComparableImage(value, repoPath) {
@@ -445,34 +470,38 @@
             ? node.querySelector('.thumb-img')
             : node.querySelector('.form-image');
         const nodeName = normalizeCardIdentityText(nameElement?.textContent);
-        const cardNames = getCardIdentityNames(card);
         const possibleThumbs = [
             node.getAttribute('data-thumb-src'),
             imageElement?.getAttribute('src')
         ].filter(Boolean).map(value => normalizeComparableImage(value, card.repoPath));
         const cardThumb = normalizeComparableImage(card.thumb, card.repoPath);
-        return !!nodeName && cardNames.has(nodeName) && !!cardThumb && possibleThumbs.includes(cardThumb);
+        return !!nodeName && nameTextMatchesCard(nodeName, card) && !!cardThumb && possibleThumbs.includes(cardThumb);
     }
 
     function nodeMatchesCardName(node, card, kind) {
         const nameElement = kind === 'abs'
             ? node.querySelector('.abs-transform-name')
             : node.querySelector('.form-name-display, .form-name');
-        return getCardIdentityNames(card).has(normalizeCardIdentityText(nameElement?.textContent));
+        return nameTextMatchesCard(nameElement?.textContent, card);
     }
 
-    function findReusableCardNode(nodes, card, kind, sourceCard) {
+    function findReusableCardNode(nodes, card, kind, sourceCard, allowUnmatchedFallback = true) {
         const candidates = Array.from(nodes || []);
-        return candidates.find(node => nodeMatchesCard(node, card, kind))
-            || candidates.find(node => nodeMatchesCardName(node, card, kind))
+        // The first form is reserved for the card whose page is being edited.
+        // Linked targets may reuse later blocks, but must never take over that
+        // first self-form link.
+        const linkedFormCandidates = candidates.slice(1);
+        const unlinkedCandidates = linkedFormCandidates.filter(node => (
+            !node.hasAttribute('data-admin-linked-slug')
+            && !nodeMatchesCardName(node, sourceCard, kind)
+        ));
+        return linkedFormCandidates.find(node => nodeMatchesCard(node, card, kind))
+            || linkedFormCandidates.find(node => nodeMatchesCardName(node, card, kind))
             // A manually prepared forms list normally keeps the current card
-            // first and the linked form second. If its custom label does not
-            // exactly match the uploaded card, reuse that available second
-            // block rather than creating a duplicate.
-            || candidates.slice(1).find(node => (
-                !node.hasAttribute('data-admin-linked-slug')
-                && !nodeMatchesCardName(node, sourceCard, kind)
-            ))
+            // first and the linked form second. This fallback is safe only for
+            // a single-link operation with one unclaimed candidate. In a
+            // multi-link operation it could assign two targets to one block.
+            || (allowUnmatchedFallback && unlinkedCandidates.length === 1 ? unlinkedCandidates[0] : null)
             || null;
     }
 
@@ -488,20 +517,81 @@
         node.setAttribute('data-admin-linked-slug', card.slug);
     }
 
-    function repairCurrentCardLinks(doc, sourceCard) {
+    function repairCurrentCardLinks(doc, sourceCard, ensureSelfForm = false) {
+        const sourceName = escapeHtml(sourceCard.name);
+        const sourceThumb = escapeHtml(sourceCard.thumb);
+        const sourceUrl = escapeHtml(sourceCard.url);
+        const sourceType = escapeHtml(sourceCard.type || 'none');
+
+        const ensureInfoSelfForm = () => {
+            const container = doc.getElementById('forms-container');
+            if (!container) return;
+            const first = container.querySelector('.dokkan-card');
+            if (first && (nodeMatchesCard(first, sourceCard, 'info') || nodeMatchesCardName(first, sourceCard, 'info'))) return;
+            container.insertAdjacentHTML('afterbegin', `
+                <div class="row bg-${sourceType} dokkan-card admin-self-form" data-thumb-src="${sourceThumb}">
+                    <div class="col" style="padding: 8px 0 !important;">
+                        <div class="row align-items-center m-0 w-100">
+                            <div class="col-5 d-flex justify-content-center align-items-center">
+                                <a href="${sourceUrl}" class="form-link" target="_self">
+                                    <img class="img-fluid form-image" src="${sourceThumb}" data-export-name="" style="max-height: 60px; width: auto; display: block;" alt="${sourceName}">
+                                </a>
+                            </div>
+                            <div class="col-7 form-name form-name-display d-flex justify-content-center align-items-center" style="color:#fff; font-size:16px; text-align:center;">${sourceName}</div>
+                        </div>
+                    </div>
+                </div>`);
+            doc.getElementById('forms-card-wrapper')?.style.setProperty('display', 'block');
+        };
+
+        const ensureAbsSelfForm = () => {
+            const container = doc.getElementById('abs-transformations-container');
+            if (!container) return;
+            const first = container.querySelector('.abs-transform-row');
+            if (first && (nodeMatchesCard(first, sourceCard, 'abs') || nodeMatchesCardName(first, sourceCard, 'abs'))) return;
+            const divider = first ? '<div class="abs-transform-divider" data-admin-link-divider="true"></div>' : '';
+            container.insertAdjacentHTML('afterbegin', `
+                <div class="abs-transform-row admin-self-form">
+                    <a href="${sourceUrl}" class="abs-transform-link" target="_self" style="text-decoration:none; color:inherit; display:flex; align-items:center; width:100%;">
+                        <div class="abs-composed-icon">
+                            <img class="card-frame" src="${escapeHtml(sourceCard.frame)}">
+                            <div class="thumb-box"><img class="thumb-img" src="${sourceThumb}" alt="${sourceName}"></div>
+                            <img class="rarity-icon" src="${escapeHtml(sourceCard.rarity)}">
+                            <img class="type-icon" src="${escapeHtml(sourceCard.typeIcon)}">
+                        </div>
+                        <div class="abs-transform-name" style="flex:1; text-align:center; font-size:15px; font-weight:bold;">${sourceName}</div>
+                    </a>
+                </div>${divider}`);
+            doc.getElementById('abs-transformations-box')?.classList.remove('d-none');
+        };
+
+        if (ensureSelfForm) {
+            ensureInfoSelfForm();
+            ensureAbsSelfForm();
+        }
+
         const repairNodes = (selector, kind, linkSelector) => {
             const nodes = Array.from(doc.querySelectorAll(selector));
+            const first = nodes[0];
             const exactMatches = nodes.filter(node => nodeMatchesCard(node, sourceCard, kind));
             const nameMatches = exactMatches.length
                 ? exactMatches
                 : nodes.filter(node => nodeMatchesCardName(node, sourceCard, kind));
-            const matches = exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []);
+            const matches = new Set([
+                ...(first ? [first] : []),
+                ...(exactMatches.length ? exactMatches : (nameMatches.length === 1 ? nameMatches : []))
+            ]);
             matches.forEach(node => {
                 const anchor = node.querySelector(linkSelector);
                 if (!anchor) return;
                 anchor.setAttribute('href', sourceCard.url);
                 anchor.setAttribute('target', '_self');
             });
+            if (first) {
+                first.removeAttribute('data-admin-linked-slug');
+                first.removeAttribute('data-admin-link-adopted');
+                first.removeAttribute('data-admin-previous-href');
+            }
         };
         repairNodes('#forms-container .dokkan-card', 'info', '.form-link');
         repairNodes('#abs-transformations-container .abs-transform-row', 'abs', '.abs-transform-link');
@@ -559,7 +649,7 @@
         return removed;
     }
 
-    function addLinkedCardNodes(doc, sourceCard, targetCard) {
+    function addLinkedCardNodes(doc, sourceCard, targetCard, allowUnmatchedFallback = true) {
         const targetName = escapeHtml(targetCard.name);
         const targetSlug = escapeHtml(targetCard.slug);
         const targetUrl = escapeHtml(targetCard.url);
@@ -572,7 +662,8 @@
             formsContainer?.querySelectorAll('.dokkan-card'),
             targetCard,
             'info',
-            sourceCard
+            sourceCard,
+            allowUnmatchedFallback
         );
         if (matchingInfoForm) {
             setNodeCardLink(matchingInfoForm, targetCard, 'info', true);
@@ -599,7 +690,8 @@
             transContainer?.querySelectorAll('.abs-transform-row'),
             targetCard,
             'abs',
-            sourceCard
+            sourceCard,
+            allowUnmatchedFallback
         );
         if (matchingAbsForm) {
             setNodeCardLink(matchingAbsForm, targetCard, 'abs', true);
@@ -624,11 +716,11 @@
         }
     }
 
-    function updateLinkedHtml(htmlText, sourceCard, targetCard, shouldLink) {
+    function updateLinkedHtml(htmlText, sourceCard, targetCard, shouldLink, allowUnmatchedFallback = true) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         removeLinkedCardNodes(doc, targetCard.slug);
-        repairCurrentCardLinks(doc, sourceCard);
-        if (shouldLink) addLinkedCardNodes(doc, sourceCard, targetCard);
+        repairCurrentCardLinks(doc, sourceCard, shouldLink);
+        if (shouldLink) addLinkedCardNodes(doc, sourceCard, targetCard, allowUnmatchedFallback);
         repairCurrentCardLinks(doc, sourceCard);
         return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
     }
@@ -709,6 +801,7 @@
     async function buildMultiLinkChanges(baseCard, formCards, shouldLink) {
         const affectedCards = [baseCard, ...formCards];
         const files = new Map();
+        const allowUnmatchedFallback = formCards.length === 1;
 
         await Promise.all(affectedCards.map(async card => {
             const [htmlFile, jsonFile] = await Promise.all([
@@ -728,8 +821,8 @@
             const baseFile = files.get(baseCard.repoPath);
             const formFile = files.get(formCard.repoPath);
 
-            baseFile.htmlText = updateLinkedHtml(baseFile.htmlText, baseCard, formCard, shouldLink);
-            formFile.htmlText = updateLinkedHtml(formFile.htmlText, formCard, baseCard, shouldLink);
+            baseFile.htmlText = updateLinkedHtml(baseFile.htmlText, baseCard, formCard, shouldLink, allowUnmatchedFallback);
+            formFile.htmlText = updateLinkedHtml(formFile.htmlText, formCard, baseCard, shouldLink, allowUnmatchedFallback);
 
             if (baseFile.jsonText !== null) {
                 baseFile.jsonText = updateLinkedJson(baseFile.jsonText, baseFile.htmlText, formCard, shouldLink);
@@ -775,6 +868,7 @@
             setStatus(`${baseCard.name} and ${formCards.length} selected form${formCards.length === 1 ? '' : 's'} were ${shouldLink ? 'linked' : 'unlinked'} both ways.`, 'success');
         } catch (error) {
             setStatus(`The selected cards could not be ${shouldLink ? 'linked' : 'unlinked'}: ${error.message}`, 'error');
+            if (window.CardHubToast) window.CardHubToast.error('Operation Failed', { detail: error.message });
         } finally {
             state.busy = false;
         }
@@ -836,8 +930,12 @@
             state.cards = state.cards.filter(item => item.slug !== card.slug);
             populateCardSelectors();
             setStatus(`${card.name} was deleted from GitHub. This cannot be undone from the editor.`, 'success');
+            if (window.CardHubToast) {
+                window.CardHubToast.success('Card Deleted', { detail: card.name + ' removed from GitHub.', duration: 5000 });
+            }
         } catch (error) {
             setStatus(`The card could not be deleted: ${error.message}`, 'error');
+            if (window.CardHubToast) window.CardHubToast.error('Delete Failed', { detail: error.message });
         } finally {
             state.busy = false;
         }

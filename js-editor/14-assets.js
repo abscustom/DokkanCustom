@@ -195,7 +195,7 @@ function generateCandidateThumbUrls(baseIdNum, root) {
         candidates.add(`https://dokkaninfo.com/assets/japan/character/thumb/card_${id}_thumb/card_${id}_thumb.png`);
         candidates.add(`https://dokkaninfo.com/assets/global/en/character/thumb/card_${id}_thumb/card_${id}_thumb.png`);
         candidates.add(`https://abscustom.github.io/assets/thumb/card_${id}_thumb/card_${id}_thumb.png`);
-        candidates.add(`assets/thumb/card_${id}_thumb/card_${id}_thumb.png`);
+        candidates.add(`assets/card-art/thumbnails/card_${id}_thumb/card_${id}_thumb.png`);
         candidates.add(`${root}/thumb/card_${id}_thumb/card_${id}_thumb.png`);
         candidates.add(`${root}/thumb/card_${id}_thumb.png`);
         candidates.add(`${root}/thumb/card_${id}_thumb/card_${id}_thumb.webp`);
@@ -258,7 +258,7 @@ function generateCandidateCutinUrls(baseIdNum, root, seedIds = [], pastedIdNum =
         candidates.add(`https://dokkaninfo.com/assets/japan/character/card/${id}/card_${id}_character.png`);
         candidates.add(`https://dokkaninfo.com/assets/global/en/character/card/${id}/card_${id}_cutin.png`);
         candidates.add(`https://dokkaninfo.com/assets/global/en/character/card/${id}/card_${id}_character.png`);
-        candidates.add(`assets/card/${id}/card_${id}_character.png`);
+        candidates.add(`assets/card-art/cards/${id}/card_${id}_character.png`);
         candidates.add(`${root}/card/${id}/card_${id}_cutin.png`);
         candidates.add(`${root}/card/${id}/card_${id}_cutin_1.png`);
         candidates.add(`${root}/card/${id}/card_${id}_cutin_2.png`);
@@ -468,7 +468,7 @@ async function processAssets(textToSearch, htmlSource = "", options = {}) {
         turUrl = chosenIconsData.icons[1];
         lrUrl = isLR ? chosenIconsData.icons[2] : null;
     } else {
-        const iconTierIds = isLR ? [baseIdNum - 20, baseIdNum - 10, baseIdNum] : [baseIdNum - 20, baseIdNum - 10];
+        const iconTierIds = isLR ? [baseIdNum - 20, baseIdNum - 10, baseIdNum] : [baseIdNum - 10, baseIdNum];
         ssrUrl = `${root}/thumb/card_${iconTierIds[0]}_thumb/card_${iconTierIds[0]}_thumb.png`;
         turUrl = `${root}/thumb/card_${iconTierIds[1]}_thumb/card_${iconTierIds[1]}_thumb.png`;
         lrUrl = isLR ? `${root}/thumb/card_${iconTierIds[2]}_thumb/card_${iconTierIds[2]}_thumb.png` : null;
@@ -477,7 +477,7 @@ async function processAssets(textToSearch, htmlSource = "", options = {}) {
     window.scrapedAssets = {};
     window.extractedCutins = [];
     const hdArtCandidateUrls = [
-        `assets/card/${baseIdNum}/card_${baseIdNum}_character.png`,
+        `assets/card-art/cards/${baseIdNum}/card_${baseIdNum}_character.png`,
         `https://abscustom.github.io/assets/card/${baseIdNum}/card_${baseIdNum}_character.png`,
         `https://dokkaninfo.com/assets/japan/character/card/${baseIdNum}/${baseIdNum}.png`,
         `https://dokkaninfo.com/assets/global/en/character/card/${baseIdNum}/${baseIdNum}.png`,

@@ -25,16 +25,16 @@ window.exToggleState = {};
 function parseDokkanIcons(text) {
     if (!text) return '';
     return text
-        .replace(/:up:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow01.png" onerror="this.onerror=null;this.src='assets/images/passive_skill_dialog_arrow01.png';" class="dokkan-icon" alt="up">`)
-        .replace(/:down:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow02.png" onerror="this.onerror=null;this.src='assets/images/passive_skill_dialog_arrow02.png';" class="dokkan-icon" alt="down">`)
-        .replace(/:ydown:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow03.png" onerror="this.onerror=null;this.src='assets/images/passive_skill_dialog_arrow03.png';" class="dokkan-icon" alt="ydown">`)
-        .replace(/:once:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_icon_01.png" onerror="this.onerror=null;this.src='assets/images/passive_skill_dialog_icon_01.png';" class="dokkan-icon" alt="once">`)
-        .replace(/:inf:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_icon_02.png" onerror="this.onerror=null;this.src='assets/images/passive_skill_dialog_icon_02.png';" class="dokkan-icon" alt="inf">`)
-        .replace(/:atk_down:/g, `<img src="${CALC_ASSET_URL}st_0011.png" onerror="this.onerror=null;this.src='assets/images/st_0011.png';" class="dokkan-icon" alt="atk_down">`)
-        .replace(/:def_down:/g, `<img src="${CALC_ASSET_URL}st_0012.png" onerror="this.onerror=null;this.src='assets/images/st_0012.png';" class="dokkan-icon" alt="def_down">`)
-        .replace(/:stun:/g, `<img src="${CALC_ASSET_URL}st_0100.png" onerror="this.onerror=null;this.src='assets/images/st_0100.png';" class="dokkan-icon" alt="stun">`)
-        .replace(/:seal:/g, `<img src="${CALC_ASSET_URL}st_0102.png" onerror="this.onerror=null;this.src='assets/images/st_0102.png';" class="dokkan-icon" alt="seal">`)
-        .replace(/:break:/g, `<img src="${CALC_ASSET_URL}st_1009.png" onerror="this.onerror=null;this.src='assets/images/st_1009.png';" class="dokkan-icon" alt="break">`);
+        .replace(/:up:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow01.png" class="dokkan-icon" alt="up">`)
+        .replace(/:down:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow02.png" class="dokkan-icon" alt="down">`)
+        .replace(/:ydown:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_arrow03.png" class="dokkan-icon" alt="ydown">`)
+        .replace(/:once:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_icon_01.png" class="dokkan-icon" alt="once">`)
+        .replace(/:inf:/g, `<img src="${CALC_ASSET_URL}passive_skill_dialog_icon_02.png" class="dokkan-icon" alt="inf">`)
+        .replace(/:atk_down:/g, `<img src="${CALC_ASSET_URL}st_0011.png" class="dokkan-icon" alt="atk_down">`)
+        .replace(/:def_down:/g, `<img src="${CALC_ASSET_URL}st_0012.png" class="dokkan-icon" alt="def_down">`)
+        .replace(/:stun:/g, `<img src="${CALC_ASSET_URL}st_0100.png" class="dokkan-icon" alt="stun">`)
+        .replace(/:seal:/g, `<img src="${CALC_ASSET_URL}st_0102.png" class="dokkan-icon" alt="seal">`)
+        .replace(/:break:/g, `<img src="${CALC_ASSET_URL}st_1009.png" class="dokkan-icon" alt="break">`);
 }
 
 // Convert HTML image tags to inline shortcodes for cleaner text processing

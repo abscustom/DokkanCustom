@@ -108,7 +108,7 @@ class DokkanStickerRunner {
             this.canvas.height = 568;
         }
 
-        const baseFolder = `assets/card/${folderId}/`;
+        const baseFolder = `assets/card-art/cards/${folderId}/`;
         const matchResult = await this.findDecorationJson(baseFolder, folderId, cardObj);
         if (!matchResult) return false;
 
@@ -195,7 +195,7 @@ class DokkanStickerRunner {
             maskUrl: `${baseFolder}${maskFileName}`,
             maskFallback: `${baseFolder}card_${folderId}_sticker_mask.png`,
             red: {
-                blendTextureUrl: `assets/special_sticker/general_texture/${redTexName}`,
+                blendTextureUrl: `assets/card-art/stickers/general_texture/${redTexName}`,
                 fallbackUrl: `${baseFolder}${redTexName}`,
                 tiling: parseVec2(findParam(['u_red_tiling', 'red_tiling']), [2, 2]),
                 offset: parseVec2(findParam(['u_red_offset', 'red_offset']), [0, 0]),
@@ -208,7 +208,7 @@ class DokkanStickerRunner {
                 rotateVelocity: parseFloatVal(findParam(['u_red_rotateVelocity', 'red_rotateVelocity']), 0.0)
             },
             green: {
-                blendTextureUrl: `assets/special_sticker/general_texture/${greenTexName}`,
+                blendTextureUrl: `assets/card-art/stickers/general_texture/${greenTexName}`,
                 fallbackUrl: `${baseFolder}${greenTexName}`,
                 tiling: parseVec2(findParam(['u_green_tiling', 'green_tiling']), [0.5, 0.5]),
                 offset: parseVec2(findParam(['u_green_offset', 'green_offset']), [-0.52, -0.39]),
@@ -221,7 +221,7 @@ class DokkanStickerRunner {
                 rotateVelocity: parseFloatVal(findParam(['u_green_rotateVelocity', 'green_rotateVelocity']), 0.0)
             },
             blue: {
-                blendTextureUrl: `assets/special_sticker/general_texture/${blueTexName}`,
+                blendTextureUrl: `assets/card-art/stickers/general_texture/${blueTexName}`,
                 fallbackUrl: `${baseFolder}${blueTexName}`,
                 tiling: parseVec2(findParam(['u_blue_tiling', 'blue_tiling']), [1, 1]),
                 offset: parseVec2(findParam(['u_blue_offset', 'blue_offset']), [0, 0]),

@@ -309,6 +309,9 @@ window.analyzePastedText = async function() {
 
             if (isActiveHeader) {
                 currentState = 'ACTIVE';
+                const activeKind = lowLine.includes('standby')
+                    ? 'standby'
+                    : (lowLine.includes('domain') ? 'domain' : 'active');
                 let typeLabel = line;
                 if (lowLine.includes('domain')) typeLabel = 'Domain Effect(s)';
                 if (lowLine.includes('finish')) typeLabel = 'Finish Skill';
@@ -316,6 +319,7 @@ window.analyzePastedText = async function() {
 
                 currentActive = { 
                     type: typeLabel, 
+                    kind: activeKind,
                     name: isExchangeHeader ? "Reversible Exchange" : "", 
                     effect: [], 
                     condition: [] 
@@ -604,10 +608,12 @@ window.analyzePastedText = async function() {
             document.querySelectorAll(".active-block").forEach(b => b.remove());
             if (parsed.actives.length > 0) {
                 parsed.actives.forEach((act, index) => {
-                    window.addActiveSkillSection();
+                    const activeKind = window.normalizeActiveSkillKind?.(act.kind || act.type) || 'active';
+                    window.addActiveSkillSection(activeKind);
                     const activeBlocks = document.querySelectorAll('.active-block');
                     const currentBlock = activeBlocks[index];
                     if (!currentBlock) return;
+                    window.setActiveSkillKind?.(currentBlock, activeKind, { updateLabel: false, updateIcon: true });
 
                     const typeDisp = currentBlock.querySelector('.active-type-label');
                     if (typeDisp) typeDisp.textContent = act.type || "Active Skill";
@@ -672,7 +678,7 @@ window.analyzePastedText = async function() {
                 if (rx.test(catPool)) {
                     const catId = opt.getAttribute('data-id');
                     if (catId && !document.querySelector(`#card-category-container img[src*="label_${catId}_b_on"]`)) {
-                        const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5"><img src="https://abscustom.github.io/assets/images/card_category_label_${catId}_b_on.png" style="width:210px;"></div>`;
+                        const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 editor-category-item" data-category-id="${catId}" data-category-name="${catName}"><img src="https://abscustom.github.io/assets/images/card_category_label_${catId}_b_on.png" style="width:210px;" alt="${catName}"><span class="category-name-fallback" style="display:none;">${catName}</span></div>`;
                         document.getElementById('card-category-container').insertAdjacentHTML('beforeend', html);
                     }
                 }

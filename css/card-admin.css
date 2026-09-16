@@ -328,3 +328,82 @@
         grid-template-columns: 1fr;
     }
 }
+
+
+/* ── Abs.Clean Modal Overrides for Card Admin ─────────────────────────────── */
+.card-admin-overlay {
+    padding: 24px 16px !important;
+    align-items: flex-start !important;
+    overflow-y: auto !important;
+}
+
+.card-admin-dialog {
+    width: min(960px, 97vw) !important;
+    max-width: 960px !important;
+    max-height: none !important;
+    overflow-y: visible !important;
+    margin: auto !important;
+}
+
+.card-admin-section {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.45) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+}
+
+.card-admin-section h3 {
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+    letter-spacing: 1.5px !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+}
+
+.card-admin-status {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border: 1px solid rgba(255,255,255,0.14) !important;
+    color: #94a3b8 !important;
+    font-size: 11.5px !important;
+}
+
+.card-admin-load-btn,
+.card-admin-link-btn,
+.card-admin-unlink-btn {
+    border-radius: 0px !important;
+}
+
+.card-admin-delete-btn {
+    border-radius: 0px !important;
+}
+
+.card-admin-mode-toggle button {
+    border-radius: 0px !important;
+}
+
+.card-admin-form-checklist {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border: 1px solid rgba(255,255,255,0.12) !important;
+}
+
+.card-admin-form-choice {
+    border-radius: 0px !important;
+}
+
+.card-admin-preview {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.5) !important;
+    border: 1px solid rgba(255,255,255,0.1) !important;
+}
+
+.card-admin-delete-picker {
+    border-radius: 0px !important;
+    background: rgba(40,0,0,0.3) !important;
+    border: 1px solid rgba(239,68,68,0.25) !important;
+}
+
+.card-admin-delete-choice {
+    border-radius: 0px !important;
+    background: rgba(0,0,0,0.55) !important;
+}

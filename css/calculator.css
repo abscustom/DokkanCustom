@@ -30,12 +30,7 @@ input[type=number] {
     appearance: textfield;
 }
 
-/* HIDE REDUNDANT SIDE PASSIVE VIEW-MODE TOGGLE BUTTONS & MODULE JUMP DOCK */
-#calc-passive-view-toggles,
-.passive-view-mode-bar,
-.calc-module-dock {
-    display: none !important;
-}
+
 
 /* --- ANIMATED LIQUID CHROME OUTLINE EFFECT --- */
 @keyframes chrome-shimmer {
@@ -471,102 +466,8 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
     text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8) !important;
 }
 
-/* Browse & Sync Buttons */
-.deck-stacked-actions { display: flex; flex-direction: column; gap: 5px; }
 
-.waffle-unit-picker-btn {
-    display: inline-flex;
-    align-items: center;
-    gap: 7px;
-    background: rgba(15, 23, 42, 0.55) !important;
-    border: 1px solid rgba(255, 255, 255, 0.22) !important;
-    backdrop-filter: blur(20px) !important;
-    -webkit-backdrop-filter: blur(20px) !important;
-    border-radius: 10px !important;
-    padding: 6px 12px !important;
-    color: #f8fafc !important;
-    cursor: pointer;
-    transition: all 0.2s ease;
-}
-
-.waffle-unit-picker-btn:hover {
-    background: rgba(56, 189, 248, 0.2) !important;
-    border-color: #38bdf8 !important;
-    transform: translateY(-1px);
-}
-
-.sync-btn-sub { padding: 5px 12px !important; }
 .waffle-btn-label { font-size: 10.5px; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase; }
-
-/* ==========================================================================
-   "GET STARTED" INITIAL ACTION BOX
-   ========================================================================== */
-.calc-initial-action-surface {
-    /* NOTE: no !important on display — same reason as .calc-studio-layout
-       above. JS sets this element's inline display to 'none' once a unit
-       is picked; !important here would permanently override that and the
-       box would never go away. */
-    display: flex;
-    align-items: center !important;
-    justify-content: space-between !important;
-    flex-wrap: wrap !important;
-    gap: 16px !important;
-    width: 100% !important;
-    padding: 22px 26px !important;
-    margin: 16px 0 !important;
-    box-sizing: border-box !important;
-}
-
-.initial-action-info {
-    display: flex !important;
-    flex-direction: column !important;
-    gap: 4px !important;
-    text-align: left !important;
-    min-width: 220px !important;
-    flex: 1 1 260px !important;
-}
-
-.initial-action-title {
-    font-size: 1.15rem !important;
-    font-weight: 900 !important;
-    color: #ffffff !important;
-    letter-spacing: -0.3px !important;
-    text-shadow: 0 2px 8px rgba(0, 0, 0, 0.6) !important;
-}
-
-.initial-action-sub {
-    font-size: 0.85rem !important;
-    font-weight: 500 !important;
-    color: #94a3b8 !important;
-    line-height: 1.4 !important;
-    max-width: 420px !important;
-}
-
-.initial-action-buttons {
-    display: flex !important;
-    align-items: center !important;
-    gap: 10px !important;
-    flex-wrap: wrap !important;
-    flex: 0 0 auto !important;
-}
-
-.initial-action-buttons .waffle-unit-picker-btn {
-    padding: 9px 16px !important;
-}
-
-@media (max-width: 640px) {
-    .calc-initial-action-surface {
-        flex-direction: column !important;
-        align-items: flex-start !important;
-    }
-    .initial-action-buttons {
-        width: 100% !important;
-    }
-    .initial-action-buttons .waffle-unit-picker-btn {
-        flex: 1 1 auto !important;
-        justify-content: center !important;
-    }
-}
 
 /* Leader Skill Tag */
 .deck-center-slot { flex: 1; width: 100%; min-width: 280px; text-align: left !important; }
@@ -653,7 +554,7 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
 .calc-left-dock-column .compact-card .ds-accordion-body {
     padding: 12px 10px !important;
 }
-.calc-mode-selector-card { display: flex !important; flex-direction: column !important; gap: 6px !important; padding: 8px !important; border-radius: 14px !important; width: 100% !important; align-items: center; }
+
 
 .stacked-control-row { 
     width: 100% !important; 
@@ -672,19 +573,7 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
     white-space: nowrap !important; 
 }
 
-.calc-action-dock-card {
-    display: flex !important;
-    flex-direction: column !important;
-    padding: 6px !important;
-    border-radius: 12px !important;
-    width: 100% !important;
-    align-items: center !important;
-}
 
-.calc-action-dock-card .waffle-unit-picker-pill {
-    flex: 1 !important;
-    padding: 5px 8px !important;
-}
 
 /* --- 5. THEMED BOX HEADER BADGES --- */
 .box-badge-pink { background: linear-gradient(135deg, #f472b6 0%, #db2777 100%); color: #fff; font-size: 9.5px; font-weight: 900; padding: 2px 7px; border-radius: 5px; letter-spacing: 0.5px; text-transform: uppercase; }
@@ -1645,16 +1534,16 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     color: #fb923c;
 }
 
-/* --- 12. UNIT PICKER MODAL --- */
+/* --- 12. UNIT PICKER MODAL (ABS.CLEAN STYLE) --- */
 .calc-unit-picker-backdrop {
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     width: 100vw !important;
     height: 100vh !important;
-    background: rgba(0, 0, 0, 0.78) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
+    background: rgba(0, 0, 0, 0.85) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
     z-index: 999999 !important;
     display: flex;
     align-items: center;
@@ -1669,12 +1558,17 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     overflow: hidden;
     display: flex;
     flex-direction: column;
-    background: rgba(10, 15, 29, 0.94) !important;
-    backdrop-filter: blur(24px) !important;
-    -webkit-backdrop-filter: blur(24px) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
-    border-radius: 18px !important;
+    border-radius: 0px !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(8, 14, 26, 0.92) 0%, rgba(4, 7, 14, 0.98) 100%) !important;
+    background-size: 16px 16px, 16px 16px, auto auto !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.85), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(32px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(32px) saturate(150%) !important;
 }
 
 .calc-picker-header {
@@ -1682,15 +1576,15 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     justify-content: center;
     align-items: center;
     position: relative;
-    padding: 14px 20px;
-    background: rgba(255, 255, 255, 0.04) !important;
+    padding: 13px 20px;
+    background: rgba(255, 255, 255, 0.03) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.14) !important;
 }
 
 .calc-picker-title-text {
     font-size: 12.5px;
     font-weight: 900;
-    letter-spacing: 1.5px;
+    letter-spacing: 1.8px;
     text-transform: uppercase;
     color: #ffffff;
     text-align: center;
@@ -1706,23 +1600,24 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     transform: translateY(-50%);
     width: 28px;
     height: 28px;
-    border-radius: 50%;
+    border-radius: 0px !important;
     display: flex;
     align-items: center;
     justify-content: center;
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(255, 255, 255, 0.06) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.12) !important;
     color: #cbd5e1;
     font-size: 18px;
     line-height: 1;
-    transition: all 0.2s ease;
+    transition: all 0.18s ease;
 }
 
 .calc-picker-close-btn:hover {
-    background: rgba(239, 68, 68, 0.25);
-    border-color: rgba(239, 68, 68, 0.6);
+    background: rgba(239, 68, 68, 0.3) !important;
+    border-color: rgba(239, 68, 68, 0.7) !important;
     color: #ffffff;
-    transform: translateY(-50%) scale(1.08);
+    transform: translateY(-50%) scale(1.04);
 }
 
 .calc-picker-toolbar {
@@ -1731,8 +1626,8 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     justify-content: space-between;
     gap: 12px;
     padding: 10px 18px;
-    background: rgba(0, 0, 0, 0.35) !important;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.08) !important;
+    background: rgba(0, 0, 0, 0.4) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
     flex-wrap: wrap;
 }
 
@@ -1756,19 +1651,19 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
 .picker-search-wrapper input {
     width: 100%;
     background: rgba(15, 23, 42, 0.75) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
-    border-radius: 20px !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    border-radius: 0px !important;
     padding: 6px 14px 6px 34px !important;
     color: #ffffff !important;
     font-size: 11.5px !important;
     outline: none !important;
     transition: all 0.2s ease;
-    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5);
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .picker-search-wrapper input:focus {
-    border-color: rgba(56, 189, 248, 0.6) !important;
-    box-shadow: 0 0 12px rgba(56, 189, 248, 0.35), inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
+    border-color: rgba(56, 189, 248, 0.7) !important;
+    box-shadow: 0 0 12px rgba(56, 189, 248, 0.3), inset 0 1px 3px rgba(0, 0, 0, 0.5) !important;
 }
 
 .picker-controls-row {
@@ -1781,10 +1676,10 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     display: flex;
     align-items: center;
     gap: 2px;
-    background: rgba(255, 255, 255, 0.08) !important;
+    background: rgba(255, 255, 255, 0.06) !important;
     padding: 3px;
-    border-radius: 20px;
-    border: 1px solid rgba(255, 255, 255, 0.15) !important;
+    border-radius: 0px !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
 }
 
 .picker-source-tab {
@@ -1794,7 +1689,7 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     align-items: center;
     gap: 5px;
     padding: 4px 11px;
-    border-radius: 16px;
+    border-radius: 0px !important;
     font-size: 11px;
     font-weight: 800;
     color: rgba(255, 255, 255, 0.7);
@@ -1803,12 +1698,13 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
 
 .picker-source-tab:hover {
     color: #ffffff;
-    background: rgba(255, 255, 255, 0.06);
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .picker-source-tab.active {
     background: #ffffff !important;
-    color: #0f172a !important;
+    color: #090e17 !important;
+    font-weight: 900 !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -1819,7 +1715,7 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     align-items: center;
     gap: 5px;
     padding: 5px 12px;
-    border-radius: 20px;
+    border-radius: 0px !important;
     font-size: 11px;
     font-weight: 800;
     background: rgba(16, 185, 129, 0.15) !important;
@@ -1837,65 +1733,178 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     transform: translateY(-1px);
 }
 
-.calc-picker-grid-viewport { flex: 1; overflow-y: auto; padding: 12px; max-height: 55vh; }
-.calc-picker-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); gap: 8px; }
+.calc-picker-grid-viewport { 
+    flex: 1; 
+    overflow-y: auto; 
+    padding: 12px; 
+    max-height: 55vh; 
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
+}
 
-/* Unit Cards with Type-Specific Hover Outlines */
+.calc-picker-grid { 
+    display: grid; 
+    grid-template-columns: repeat(auto-fill, minmax(95px, 1fr)); 
+    gap: 8px; 
+}
+
+/* --- PICKER UNIT CARDS (ABS.CLEAN SQUARED) --- */
 .picker-unit-card {
     display: flex;
     flex-direction: column;
     align-items: center;
     background: rgba(255, 255, 255, 0.04) !important;
-    border: 1px solid rgba(255, 255, 255, 0.1) !important;
-    border-radius: 10px;
-    padding: 6px 3px;
+    border: 1px solid rgba(255, 255, 255, 0.12) !important;
+    border-radius: 0px !important;
+    padding: 8px 3px 6px 3px;
     cursor: pointer;
-    transition: all 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
     position: relative;
     box-sizing: border-box;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.06), 0 4px 10px rgba(0, 0, 0, 0.25) !important;
 }
 
 .picker-unit-card:hover {
-    transform: translateY(-3px) scale(1.02);
+    transform: translateY(-2px);
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.35) !important;
 }
 
-/* Typing-specific hover styling */
 .picker-unit-card.picker-type-agl:hover {
-    background: rgba(0, 168, 255, 0.15) !important;
-    border-color: rgba(0, 168, 255, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(0, 168, 255, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(56, 189, 248, 0.8) !important;
+    box-shadow: 0 0 16px rgba(56, 189, 248, 0.4), inset 0 0 0 1px rgba(56, 189, 248, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-teq:hover {
-    background: rgba(46, 204, 113, 0.15) !important;
-    border-color: rgba(46, 204, 113, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(46, 204, 113, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(34, 197, 94, 0.8) !important;
+    box-shadow: 0 0 16px rgba(34, 197, 94, 0.4), inset 0 0 0 1px rgba(34, 197, 94, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-int:hover {
-    background: rgba(155, 89, 182, 0.15) !important;
-    border-color: rgba(155, 89, 182, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(155, 89, 182, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(168, 85, 247, 0.8) !important;
+    box-shadow: 0 0 16px rgba(168, 85, 247, 0.4), inset 0 0 0 1px rgba(168, 85, 247, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-str:hover {
-    background: rgba(231, 76, 60, 0.15) !important;
-    border-color: rgba(231, 76, 60, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(231, 76, 60, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(239, 68, 68, 0.8) !important;
+    box-shadow: 0 0 16px rgba(239, 68, 68, 0.4), inset 0 0 0 1px rgba(239, 68, 68, 0.3) !important;
 }
 
 .picker-unit-card.picker-type-phy:hover {
-    background: rgba(241, 196, 15, 0.15) !important;
-    border-color: rgba(241, 196, 15, 0.8) !important;
-    box-shadow: 0 4px 16px rgba(241, 196, 15, 0.45), inset 0 1px 1px rgba(255, 255, 255, 0.4) !important;
+    border-color: rgba(234, 179, 8, 0.8) !important;
+    box-shadow: 0 0 16px rgba(234, 179, 8, 0.4), inset 0 0 0 1px rgba(234, 179, 8, 0.3) !important;
 }
 
-.picker-thumb-wrapper { position: relative; width: 46px; height: 46px; margin-bottom: 2px; }
-.picker-frame { position: absolute; top: 0; left: 0; width: 46px; height: 46px; z-index: 1; }
-.picker-thumb { position: absolute; height: 56px; bottom: -3px; left: 50%; transform: translateX(-50%); z-index: 2; }
-.picker-name { font-size: 9px; font-weight: 800; color: #ffffff; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; width: 100%; text-align: center; }
-.picker-sub { font-size: 8px; font-weight: 700; color: #94a3b8; }
+/* --- CIRCLE PORTRAITS --- */
+.calc-unit-picker-dialog .picker-frame {
+    display: none !important;
+}
 
+.picker-thumb-wrapper { 
+    position: relative !important; 
+    width: 60px !important; 
+    height: 60px !important; 
+    border-radius: 50% !important;
+    margin: 2px auto 6px auto !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-sizing: border-box !important;
+    border: 2px solid rgba(255, 255, 255, 0.28) !important;
+    background: radial-gradient(circle, rgba(20, 26, 40, 0.9) 0%, rgba(5, 8, 16, 0.98) 100%) !important;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 0 6px rgba(0, 0, 0, 0.6) !important;
+    overflow: visible !important;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease !important;
+}
+
+.picker-unit-card:hover .picker-thumb-wrapper {
+    transform: scale(1.06) !important;
+}
+
+/* Type colored portrait outer rings & subtle glows */
+.picker-unit-card.picker-type-agl .picker-thumb-wrapper {
+    border-color: #38bdf8 !important;
+    box-shadow: 0 0 0 1px rgba(56, 189, 248, 0.45), 0 0 10px rgba(56, 189, 248, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-teq .picker-thumb-wrapper {
+    border-color: #22c55e !important;
+    box-shadow: 0 0 0 1px rgba(34, 197, 94, 0.45), 0 0 10px rgba(34, 197, 94, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-int .picker-thumb-wrapper {
+    border-color: #a855f7 !important;
+    box-shadow: 0 0 0 1px rgba(168, 85, 247, 0.45), 0 0 10px rgba(168, 85, 247, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-str .picker-thumb-wrapper {
+    border-color: #ef4444 !important;
+    box-shadow: 0 0 0 1px rgba(239, 68, 68, 0.45), 0 0 10px rgba(239, 68, 68, 0.35) !important;
+}
+
+.picker-unit-card.picker-type-phy .picker-thumb-wrapper {
+    border-color: #eab308 !important;
+    box-shadow: 0 0 0 1px rgba(234, 179, 8, 0.45), 0 0 10px rgba(234, 179, 8, 0.35) !important;
+}
+
+.picker-thumb { 
+    position: absolute !important;
+    top: -2px !important;
+    left: -2px !important;
+    bottom: auto !important;
+    width: calc(100% + 4px) !important;
+    height: calc(100% + 4px) !important;
+    border-radius: 50% !important;
+    object-fit: cover !important;
+    z-index: 2 !important;
+    pointer-events: none !important;
+}
+
+.picker-thumb.is-fallback-thumb {
+    clip-path: circle(50% at 50% 50%) !important;
+    transform: scale(1.15) !important;
+}
+
+
+/* Badges always above portrait */
+.picker-thumb-wrapper > span {
+    z-index: 15 !important;
+}
+/* Sharp Squared Badges on Circle Rim */
+.picker-thumb-wrapper span {
+    border-radius: 4px !important;
+    font-size: 6.5px !important;
+    padding: 1px 3.5px !important;
+    border: 1px solid rgba(255, 255, 255, 0.35) !important;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.6) !important;
+    letter-spacing: 0.4px !important;
+    text-transform: uppercase !important;
+    line-height: 1.1 !important;
+}
+
+.picker-name { 
+    font-size: 9.5px; 
+    font-weight: 800; 
+    color: #ffffff; 
+    white-space: nowrap; 
+    overflow: hidden; 
+    text-overflow: ellipsis; 
+    width: 100%; 
+    text-align: center; 
+    letter-spacing: 0.2px;
+}
+
+.picker-sub { 
+    font-size: 8px; 
+    font-weight: 700; 
+    color: #94a3b8; 
+    text-transform: uppercase;
+    margin-top: 1px;
+}
+
+.unit-sa-picker-item {
+    border-radius: 0px !important;
+}
 /* --- UNIT SUPER ATTACK PICKER MODAL --- */
 .unit-sa-picker-item {
     background: rgba(255, 255, 255, 0.04) !important;
@@ -2549,6 +2558,69 @@ body.type-theme-phy .orb-stepper-btn.plus { border-color: rgba(241, 196, 15, 0.6
 }
 .orb-yield-text.def {
     text-shadow: 0 0 5px rgba(59, 130, 246, 0.8), 0 1px 3px rgba(0,0,0,0.8);
+}
+
+/* --- GOD & RESET PRESET BUTTONS FOR SKILL ORBS --- */
+.orb-preset-god-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 9px;
+    border-radius: 6px;
+    font-size: 10px;
+    font-weight: 900;
+    letter-spacing: 0.8px;
+    text-transform: uppercase;
+    color: #fff;
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.35) 0%, rgba(234, 88, 12, 0.45) 50%, rgba(245, 158, 11, 0.35) 100%);
+    border: 1.5px solid rgba(251, 191, 36, 0.7);
+    box-shadow: 0 0 10px rgba(245, 158, 11, 0.35), inset 0 1px 1px rgba(255, 255, 255, 0.4);
+    text-shadow: 0 0 6px rgba(245, 158, 11, 0.9), 0 1px 2px rgba(0, 0, 0, 0.9);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orb-preset-god-btn:hover {
+    background: linear-gradient(135deg, rgba(245, 158, 11, 0.55) 0%, rgba(234, 88, 12, 0.65) 50%, rgba(245, 158, 11, 0.55) 100%);
+    border-color: #fde047;
+    box-shadow: 0 0 16px rgba(245, 158, 11, 0.65), inset 0 1px 2px rgba(255, 255, 255, 0.6);
+    transform: translateY(-1px) scale(1.03);
+    color: #fffef0;
+}
+
+.orb-preset-god-btn:active {
+    transform: translateY(0) scale(0.96);
+}
+
+.orb-preset-reset-btn {
+    all: unset;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    border-radius: 6px;
+    font-size: 9.5px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+    color: #94a3b8;
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    box-shadow: inset 0 1px 1px rgba(255, 255, 255, 0.05);
+    transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.orb-preset-reset-btn:hover {
+    color: #f87171;
+    border-color: rgba(239, 68, 68, 0.45);
+    background: rgba(239, 68, 68, 0.12);
+    box-shadow: 0 0 8px rgba(239, 68, 68, 0.25);
+    transform: translateY(-1px);
+}
+
+.orb-preset-reset-btn:active {
+    transform: translateY(0) scale(0.96);
 }
 
 /* --- DOKKAN STATS CARD MODAL & PREVIEW --- */
@@ -3212,12 +3284,14 @@ body.fx-static #res-main-sa-unit-img {
     object-fit: contain !important;
 }
 
-body.fx-static *,
-body.fx-static *::before,
-body.fx-static *::after {
-    animation: none !important;
-    transition-duration: 0s !important;
-    scroll-behavior: auto !important;
+body.fx-static {
+    background: #060913 !important;
+    background-color: #060913 !important;
+    background-image: none !important;
+}
+
+body.fx-static #abs-clean-grid-circuit {
+    display: none !important;
 }
 
 body.fx-static .wave-svg-canvas,
@@ -3231,7 +3305,7 @@ body.fx-static.type-theme-teq .wave-bg-viewport,
 body.fx-static.type-theme-int .wave-bg-viewport,
 body.fx-static.type-theme-str .wave-bg-viewport,
 body.fx-static.type-theme-phy .wave-bg-viewport {
-    background: #070b14 !important;
+    background: #060913 !important;
     pointer-events: none !important;
 }
 
@@ -3254,8 +3328,8 @@ body.fx-static.type-theme-phy .wave-bg-viewport {
         width: auto;
         min-width: 0;
     }
-    .deck-stacked-actions { width: 100%; }
-    .deck-stacked-actions .waffle-unit-picker-btn { justify-content: center; }
+    
+    
     .calc-studio-layout { min-width: 0; gap: 10px !important; }
     .calc-left-dock-column {
         position: static !important;
