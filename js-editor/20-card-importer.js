@@ -253,30 +253,40 @@ async function fetchCustomCardsList() {
                 const htmlText = await indexRes.text();
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
-                let charName = doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim() || '';
+                let cardJson = null;
+                const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+                if (cardDataEl) {
+                    try { cardJson = JSON.parse(cardDataEl.textContent); } catch (e) {}
+                }
+
+                let charName = cardJson?.inputs?.nameInput || doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim() || '';
                 if (!charName) {
                     const rawTitle = doc.querySelector('title')?.textContent || folderName;
-                    charName = rawTitle.replace(/^[.*?]\s*/, '').trim();
+                    charName = rawTitle.replace(/^\[.*?\]\s*/, '').trim();
                 }
-                const charTitle = doc.querySelector('#char-description, #abs-char-title')?.textContent?.trim() || '';
+                const charTitle = cardJson?.inputs?.descInput || doc.querySelector('#char-description, #abs-char-title')?.textContent?.trim() || '';
 
-                const frameAttr = doc.querySelector('.card-frame, #abs-frame-img')?.getAttribute('src') || 'frame_agl.png';
-                let cardType = 'agl';
-                if (frameAttr.includes('teq')) cardType = 'teq';
-                else if (frameAttr.includes('int')) cardType = 'int';
-                else if (frameAttr.includes('str')) cardType = 'str';
-                else if (frameAttr.includes('phy')) cardType = 'phy';
+                let cardType = (cardJson?.characterState?.cardType || cardJson?.type || '').toLowerCase();
+                if (!cardType) {
+                    const frameAttr = doc.querySelector('.card-frame, #abs-frame-img')?.getAttribute('src') || 'frame_agl.png';
+                    if (frameAttr.includes('teq')) cardType = 'teq';
+                    else if (frameAttr.includes('int')) cardType = 'int';
+                    else if (frameAttr.includes('str')) cardType = 'str';
+                    else if (frameAttr.includes('phy')) cardType = 'phy';
+                    else cardType = 'agl';
+                }
 
                 const markerText = doc.querySelector('#pub-site-marker')?.textContent || '';
                 const markerRarity = markerText.match(/window\.currentRarity\s*=\s*["']([^"']+)/i)?.[1];
                 const raritySrc = doc.querySelector('#main-rarity-icon, #abs-top-rarity-icon')?.getAttribute('src') || '';
-                const detectedRarity = markerRarity || raritySrc.match(/rarity_(lr|tur|ssr)/i)?.[1] || (htmlText.toLowerCase().includes('rarity_lr') ? 'LR' : 'TUR');
+                const detectedRarity = cardJson?.currentRarity || cardJson?.characterState?.cardRarity || markerRarity || raritySrc.match(/rarity_(lr|tur|ssr)/i)?.[1] || (htmlText.toLowerCase().includes('rarity_lr') ? 'LR' : 'TUR');
                 const rarity = String(detectedRarity).toUpperCase() === 'LR' ? 'LR' : 'TUR';
                 const isLR = rarity === 'LR';
 
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : '#img-tur') || doc.querySelector('#abs-thumb-img, .thumb-img');
                 const fixUrl = (src) => src?.startsWith('http') ? src : `${cardUrl}${src?.replace(/^\.\//, '')}`;
-                const thumbUrl = fixUrl(iconEl?.getAttribute('src'));
+                const rawThumb = cardJson?.thumbMain || (isLR ? cardJson?.thumbLr : cardJson?.thumbTur) || iconEl?.getAttribute('src');
+                const thumbUrl = fixUrl(rawThumb);
 
                 freshCards.push({
                     id: folderName,
@@ -288,7 +298,7 @@ async function fetchCustomCardsList() {
                     thumbUrl: thumbUrl,
                     type: cardType,
                     rarity: rarity,
-                    cardClass: 'super',
+                    cardClass: (cardJson?.characterState?.cardClass || 'super').toLowerCase(),
                     sortTime: Date.now(),
                     htmlText: htmlText
                 });
@@ -1962,8 +1972,8 @@ window.executeCustomCardImport = async function(cardItem) {
     try {
         const doc = new DOMParser().parseFromString(rawHtml, 'text/html');
 
-        // Check embedded dokkan-project-data script tag
-        const backupScript = doc.querySelector('#dokkan-project-data');
+        // Check embedded dokkan-project-data or card-data script tag
+        const backupScript = doc.querySelector('#card-data, #dokkan-project-data');
         if (backupScript && window.loadProjectData) {
             try {
                 const projectData = JSON.parse(backupScript.textContent);

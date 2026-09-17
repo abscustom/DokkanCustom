@@ -1,0 +1,1245 @@
+<div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-editor-content-ready" data-loader-ready-flag="absEditorContentReady">
+        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
+        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
+        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
+        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
+        <div class="abs-loader-art" aria-hidden="true"></div>
+        <div class="abs-loader-stage">
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async" onerror="this.style.display='none'">
+            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">1%</div>
+            <div class="abs-loader-sub" aria-hidden="true">loading</div>
+        </div>
+    </div>
+    <script>window.setTimeout(function(){if(!window.absLoadingScreen){var s=document.getElementById('abs-loading-screen');if(s){s.style.transition='opacity .5s ease';s.style.opacity='0';s.style.pointerEvents='none';window.setTimeout(function(){s.style.visibility='hidden';},550);}}},5000);</script>
+    <video id="stars-bg-video" autoplay muted playsinline aria-hidden="true" loop>
+        <source src="assets/video/Stars BG.webm?v=pingpong2" type="video/webm">
+    </video>
+    <canvas id="abs-clean-grid-circuit" class="abs-clean-grid-circuit" aria-hidden="true"></canvas>
+
+    <!-- Shared SBA liquid-control lens -->
+    <svg style="display: none;" aria-hidden="true">
+        <filter id="sba-liquid-button-refraction" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
+            <feImage id="sba-liquid-displacement-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="sbaLiquidMap" />
+            <feGaussianBlur in="sbaLiquidMap" stdDeviation="0.24" result="sbaLiquidMapSoft" />
+            <feDisplacementMap in="SourceGraphic" in2="sbaLiquidMapSoft" scale="7" xChannelSelector="R" yChannelSelector="G" result="sbaRefracted" />
+            <feMorphology in="SourceAlpha" operator="erode" radius="1.35" result="sbaInsetAlpha" />
+            <feComposite in="SourceAlpha" in2="sbaInsetAlpha" operator="out" result="sbaRim" />
+            <feGaussianBlur in="sbaRim" stdDeviation="0.55" result="sbaRimSoft" />
+            <feSpecularLighting in="sbaRimSoft" surfaceScale="2.6" specularConstant="0.7" specularExponent="22" lighting-color="#ffffff" result="sbaSpecular">
+                <feDistantLight azimuth="225" elevation="52" />
+            </feSpecularLighting>
+            <feBlend in="sbaRefracted" in2="sbaSpecularRim" mode="screen" />
+        </filter>
+        <!-- Liquid Glass: a restrained SVG refraction layer for Chromium. -->
+        <filter id="abs-clean-liquid-glass-refraction" x="-14%" y="-14%" width="128%" height="128%" color-interpolation-filters="sRGB">
+            <feTurbulence type="fractalNoise" baseFrequency="0.009 0.016" numOctaves="2" seed="19" result="glassNoise" />
+            <feDisplacementMap in="SourceGraphic" in2="glassNoise" scale="7" xChannelSelector="R" yChannelSelector="G" result="glassRefracted" />
+            <feGaussianBlur in="glassRefracted" stdDeviation="0.22" result="glassSoft" />
+            <feBlend in="SourceGraphic" in2="glassSoft" mode="screen" />
+        </filter>
+    </svg>
+
+<!-- OVERLAYS & NOTIFICATIONS -->
+<div id="icon-picker-modal">
+    <div class="icon-picker-content">
+        <h2 class="icon-picker-header">Manual Icon Selection Needed</h2>
+        <p class="text-white small mb-2">The system detected card IDs that are far apart. Please select the correct icons manually.</p>
+        <div id="icon-picker-instruction" class="icon-picker-instruction">Please click the <b>SSR</b> Icon</div>
+        <div id="icon-picker-grid" class="icon-grid"></div>
+        <button type="button" class="btn btn-secondary mt-4 w-100 fw-bold" onclick="skipIconSelection()">Skip / Use Auto-Guesses</button>
+    </div>
+</div>
+
+<!-- CHARACTER IMPORTER MODAL -->
+<div id="character-importer-modal" class="calc-unit-picker-backdrop" style="display: none;" onclick="window.closeCharacterImporterModal(event)">
+    <div class="calc-unit-picker-dialog liquid-glass-surface" onclick="event.stopPropagation()">
+        <div class="calc-picker-header">
+            <span class="calc-picker-title-text"><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor" style="display:inline-block; vertical-align:-3px; margin-right:6px;"><path d="M19 9h-4V3H9v6H5l7 7 7-7zM5 18v2h14v-2H5z"/></svg>Dokkan Character Importer</span>
+            <button type="button" class="calc-picker-close-btn" onclick="window.closeCharacterImporterModal()" title="Close">&times;</button>
+        </div>
+
+        <div class="calc-picker-toolbar">
+            <div class="picker-search-wrapper">
+                <span class="picker-search-icon">
+                    <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="11" cy="11" r="8"></circle>
+                        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                    </svg>
+                </span>
+                <input type="text" id="importerSearchInput" placeholder="Search character by name, title, or ID..." oninput="window.handleImporterSearch(this.value)">
+            </div>
+
+            <div class="picker-controls-row">
+                <!-- Source Tabs -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-src-all" onclick="window.setImporterSource('all')">
+                        <span>All</span>
+                    </button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-src-official" onclick="window.setImporterSource('official')">
+                        <span>Official</span>
+                    </button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-src-custom" onclick="window.setImporterSource('custom')">
+                        <span>Custom</span>
+                    </button>
+                </div>
+
+                <!-- Typing Pills Filter -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-type-all" onclick="window.setImporterType('all')">All</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-agl" onclick="window.setImporterType('agl')">AGL</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-teq" onclick="window.setImporterType('teq')">TEQ</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-int" onclick="window.setImporterType('int')">INT</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-str" onclick="window.setImporterType('str')">STR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-type-phy" onclick="window.setImporterType('phy')">PHY</button>
+                </div>
+
+                <!-- Rarity Pills Filter -->
+                <div class="picker-source-tabs ds-pill-group">
+                    <button type="button" class="picker-source-tab ds-pill-btn active" id="importer-rarity-all" onclick="window.setImporterRarity('all')">All</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-lr" onclick="window.setImporterRarity('LR')">LR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-tur" onclick="window.setImporterRarity('TUR')">TUR</button>
+                    <button type="button" class="picker-source-tab ds-pill-btn" id="importer-rarity-ssr" onclick="window.setImporterRarity('SSR')">SSR</button>
+                </div>
+
+                <button type="button" id="importer-sync-btn" class="picker-sync-pill-btn" onclick="window.syncImporterDatabase()" title="Sync Database">
+                    <svg id="importer-sync-icon" class="sync-svg-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="23 4 23 10 17 10"></polyline>
+                        <polyline points="1 20 1 14 7 14"></polyline>
+                        <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15"></path>
+                    </svg>
+                    <span id="importer-sync-text">Sync</span>
+                </button>
+            </div>
+        </div>
+
+        <div class="calc-picker-grid-viewport" id="importerGridViewport">
+            <div class="calc-picker-grid" id="importerGrid"></div>
+        </div>
+    </div>
+</div>
+
+<!-- IMPORTER FORM / AWAKENING VARIANT MODAL -->
+<div id="importer-variant-modal" class="calc-unit-picker-backdrop" style="display: none;" onclick="window.closeImporterVariantModal(event)">
+    <div class="calc-unit-picker-dialog liquid-glass-surface" style="max-width: 500px;" onclick="event.stopPropagation()">
+        <div class="calc-picker-header">
+            <span class="calc-picker-title-text" id="importer-variant-title">Choose Awakening / Form</span>
+            <button type="button" class="calc-picker-close-btn" onclick="window.closeImporterVariantModal()">&times;</button>
+        </div>
+        <div class="calc-picker-grid-viewport" style="max-height: 400px; padding: 16px;">
+            <div id="importerVariantOptions" style="display: flex; flex-direction: column; gap: 10px;"></div>
+        </div>
+    </div>
+</div>
+
+<!-- FULLSCREEN LOADING SPINNER OVERLAY -->
+<div id="glass-loading-overlay" style="display: none;">
+    <div id="glass-spinner-container" class="dot-spinner">
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+        <div class="dot-spinner__dot"></div><div class="dot-spinner__dot"></div>
+    </div>
+    <div id="glass-success-container" style="display: none; align-items: center; justify-content: center;">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33 33" class="hud-check-svg" style="width: 75px; height: 75px;">
+            <circle class="background" cx="16.5" cy="16.5" r="15.5"></circle>
+            <circle class="stroke" cx="16.5" cy="16.5" r="15.5"></circle>
+            <polyline class="check" points="24 10.5 13.5 21 9 16.5"></polyline>
+        </svg>
+    </div>
+    <div id="glass-loading-text" class="mt-4" style="color: #38bdf8; font-weight: 800; letter-spacing: 2px; text-transform: uppercase; font-size: 14px; text-shadow: 0 0 10px rgba(56,189,248,0.8);">Processing...</div>
+</div>
+
+<!-- UPLOAD MODAL -->
+<div id="glass-upload-modal" class="clean-modal-backdrop" style="display: none;" onclick="closeUploadModal()">
+    <div class="clean-modal-panel" style="max-width: 440px;" onclick="event.stopPropagation()">
+        <div class="clean-modal-header">
+            <span class="clean-modal-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/></svg>
+                PUBLISH NEW CARD
+            </span>
+            <button type="button" class="clean-modal-close" onclick="closeUploadModal()">×</button>
+        </div>
+        <div class="clean-modal-body">
+            <div class="clean-input-group">
+                <label class="clean-label">Character Folder ID / Slug</label>
+                <div class="relative-input-wrapper">
+                    <input type="text" id="upload-folder-id" class="clean-input" placeholder="e.g. 1025732-goku" maxlength="50" oninput="debounceIdCheck()">
+                    <div id="upload-id-status" class="input-status-icon"></div>
+                </div>
+                <div id="upload-id-msg" class="clean-status-msg">Waiting for input...</div>
+            </div>
+
+            <div class="clean-input-group">
+                <label class="clean-label">GitHub Access Token (Password)</label>
+                <input type="password" id="upload-github-token" class="clean-input font-mono" placeholder="ghp_********************************" oninput="checkUploadFormValidity()">
+                <label class="checkbox-container" style="display:flex;align-items:center;padding-left:28px;margin-top:6px;font-size:12px;color:#94a3b8;line-height:20px;cursor:pointer;position:relative;user-select:none;">
+                    <input type="checkbox" id="upload-remember-token" class="custom-checkbox" checked>
+                    <span class="checkmark" style="border-radius:0px;"></span>
+                    Remember token locally
+                </label>
+            </div>
+
+            <div class="clean-modal-divider"></div>
+
+            <div class="clean-modal-actions">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeUploadModal()">Cancel</button>
+                <button type="button" id="confirm-upload-btn" class="gui-preset-btn clean-btn-success" onclick="executeGitHubUpload()" disabled>Upload to GitHub</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUICK SAVE MODAL -->
+<div id="glass-quicksave-modal" class="clean-modal-backdrop" style="display: none;" onclick="closeQuickSaveModal()">
+    <div class="clean-modal-panel" style="max-width: 400px;" onclick="event.stopPropagation()">
+        <div class="clean-modal-header">
+            <span class="clean-modal-title" style="color: #facc15;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/></svg>
+                LIVE QUICK SAVE
+            </span>
+            <button type="button" class="clean-modal-close" onclick="closeQuickSaveModal()">×</button>
+        </div>
+        <div class="clean-modal-body">
+            <div class="clean-input-group">
+                <label class="clean-label">GitHub Access Token</label>
+                <input type="password" id="quicksave-github-token" class="clean-input font-mono" placeholder="ghp_********************************" oninput="checkQuickSaveValidity()">
+                <label class="checkbox-container" style="display:flex;align-items:center;padding-left:28px;margin-top:6px;font-size:12px;color:#94a3b8;line-height:20px;cursor:pointer;position:relative;user-select:none;">
+                    <input type="checkbox" id="quicksave-remember-token" class="custom-checkbox" checked>
+                    <span class="checkmark" style="border-radius:0px;"></span>
+                    Remember token locally
+                </label>
+            </div>
+            <div class="clean-modal-divider"></div>
+            <div class="clean-modal-actions">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeQuickSaveModal()">Cancel</button>
+                <button type="button" id="confirm-quicksave-btn" class="gui-preset-btn clean-btn-amber" onclick="executeQuickSave()" disabled>Save Live Edit</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- CUSTOM CARD ADMIN MODAL -->
+<div id="card-admin-modal" class="clean-modal-backdrop card-admin-overlay" style="display: none;" onclick="window.closeCardAdminModal()">
+    <div class="clean-modal-panel card-admin-dialog" onclick="event.stopPropagation()">
+        <div class="clean-modal-header">
+            <span id="card-admin-title" class="clean-modal-title">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
+                LINK CUSTOM CARDS
+            </span>
+            <button type="button" class="clean-modal-close" onclick="window.closeCardAdminModal()">×</button>
+        </div>
+        <div class="clean-modal-body card-admin-body">
+            <div class="card-admin-auth-row">
+                <div class="glass-input-group">
+                    <label class="form-label">GitHub Access Token (Password)</label>
+                    <input type="password" id="card-admin-token" class="glass-form-control font-mono" placeholder="ghp_********************************">
+                </div>
+                <button type="button" class="gui-preset-btn card-admin-load-btn" onclick="window.loadCardAdminCards()">Unlock & Load Cards</button>
+            </div>
+
+            <div id="card-admin-status" class="card-admin-status">Enter your GitHub token to unlock the custom-card tools.</div>
+
+            <div id="card-admin-tools" style="display: none;">
+            <section id="card-admin-link-section" class="card-admin-section mt-3">
+                <h3>Link One or More Forms</h3>
+                <p>Choose one main card, then select one or more linked forms. Every selected card receives a link back to the main card.</p>
+                <div class="card-admin-link-grid">
+                    <div>
+                        <label class="form-label">Main / Base Card</label>
+                        <input type="hidden" id="card-admin-base-select">
+                        <input id="card-admin-base-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminBaseCards(this.value)">
+                        <div id="card-admin-base-checklist" class="card-admin-form-checklist"></div>
+                        <div id="card-admin-base-preview" class="card-admin-preview"></div>
+                    </div>
+                    <div class="card-admin-link-arrow">⇄</div>
+                    <div>
+                        <label class="form-label">Linked Forms</label>
+                        <div class="card-admin-mode-toggle" role="group" aria-label="Number of linked forms">
+                            <button type="button" id="card-admin-mode-single" class="active" onclick="window.setCardAdminLinkMode('single')">One Form</button>
+                            <button type="button" id="card-admin-mode-multiple" onclick="window.setCardAdminLinkMode('multiple')">Multiple Forms</button>
+                        </div>
+                        <div id="card-admin-form-picker">
+                            <input id="card-admin-form-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminMultiForms(this.value)">
+                            <div id="card-admin-form-checklist" class="card-admin-form-checklist"></div>
+                        </div>
+                        <div id="card-admin-form-preview" class="card-admin-preview"></div>
+                    </div>
+                </div>
+                <div class="card-admin-actions">
+                    <button type="button" class="gui-preset-btn card-admin-link-btn" onclick="window.linkSelectedCustomCards()">Link Selected Cards</button>
+                    <button type="button" class="gui-preset-btn card-admin-unlink-btn" onclick="window.unlinkSelectedCustomCards()">Unlink Selected Cards</button>
+                </div>
+            </section>
+
+            <section id="card-admin-delete-section" class="card-admin-section card-admin-danger-section">
+                <h3>Delete Custom Character</h3>
+                <p>This permanently deletes the selected card folder from GitHub and removes admin-created links pointing to it.</p>
+                <label class="form-label">Character</label>
+                <input type="hidden" id="card-admin-delete-select">
+                <input id="card-admin-delete-filter" class="glass-form-control" type="search" placeholder="Search characters to delete..." oninput="window.filterCardAdminDeleteCards(this.value)">
+                <div id="card-admin-delete-picker" class="card-admin-delete-picker" role="listbox" aria-label="Choose a character to delete"></div>
+                <div id="card-admin-delete-preview" class="card-admin-preview card-admin-delete-preview"></div>
+                <label class="form-label mt-3">Separate delete password</label>
+                <input type="password" id="card-admin-delete-password" class="glass-form-control" autocomplete="current-password" placeholder="Delete password">
+                <label class="form-label mt-3">Type the folder name to confirm</label>
+                <input type="text" id="card-admin-delete-confirm" class="glass-form-control" autocomplete="off">
+                <button type="button" class="gui-preset-btn btn-danger card-admin-delete-btn" onclick="window.deleteSelectedCustomCard()">Delete From GitHub</button>
+            </section>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ADMIN UNLOCK MODAL -->
+<div id="glass-admin-unlock-modal" class="clean-modal-backdrop" style="display: none;" onclick="closeAdminUnlockModal()">
+    <div class="clean-modal-panel" style="max-width: 380px;" onclick="event.stopPropagation()">
+        <div class="clean-modal-header">
+            <span class="clean-modal-title" style="color: #f87171;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
+                UNLOCK ADMIN MODE
+            </span>
+            <button type="button" class="clean-modal-close" onclick="closeAdminUnlockModal()">×</button>
+        </div>
+        <div class="clean-modal-body">
+            <p class="clean-modal-desc">Enter administrator password to enable live on-page editing.</p>
+            <div class="clean-input-group">
+                <label class="clean-label">Password</label>
+                <input type="password" id="admin-unlock-pass" class="clean-input" placeholder="Password..." oninput="checkAdminUnlockValidity()" onkeydown="if(event.key === 'Enter') { document.getElementById('confirm-admin-unlock-btn').click(); }">
+            </div>
+            <div class="clean-modal-divider"></div>
+            <div class="clean-modal-actions">
+                <button type="button" class="gui-preset-btn btn-danger" onclick="closeAdminUnlockModal()">Cancel</button>
+                <button type="button" id="confirm-admin-unlock-btn" class="gui-preset-btn clean-btn-red" onclick="executeAdminUnlock()" disabled>Unlock</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TOP AUTO-REVEALING DOCK TRIGGER & BAR -->
+<div id="editor-top-bar-trigger" class="editor-top-bar-trigger" aria-hidden="true"></div>
+
+<header id="editor-top-bar" class="editor-top-hud-bar" role="toolbar" aria-label="Editor Action Bar">
+    <div class="hud-nav-group editor-top-hud-group">
+        <!-- CREATION ACTIONS -->
+        <button type="button" class="hud-nav-link top-hud-btn" onclick="window.addSuperAttackSection()" aria-label="Super Attack" title="Add Super Attack">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+            </svg>
+            <span>+ Super</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn" onclick="window.addActiveSkillSection()" aria-label="Active Skill" title="Add Active Skill">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"/>
+                <polyline points="12 6 12 12 16 14"/>
+            </svg>
+            <span>+ Active</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn" id="add-forms-sidebar-btn" onclick="window.addFormsSection()" aria-label="Forms" title="Add Transformation Form">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="18" cy="5" r="3"/>
+                <circle cx="6" cy="12" r="3"/>
+                <circle cx="18" cy="19" r="3"/>
+                <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
+                <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
+            </svg>
+            <span>+ Forms</span>
+        </button>
+
+        <div class="top-hud-divider" role="separator" aria-orientation="vertical"></div>
+
+        <!-- STAGE PROGRESSION TOGGLES -->
+        <button type="button" class="hud-nav-link top-hud-btn active" id="topbar-toggle-ssr" data-progression-control="ssr" onclick="window.toggleTopBarProgression('ssr')" aria-label="SSR Box" title="Toggle SSR Box" aria-pressed="true">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <span>SSR Box</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn active" id="topbar-toggle-tur" data-progression-control="tur" onclick="window.toggleTopBarProgression('tur')" aria-label="TUR Box" title="Toggle TUR Box" aria-pressed="true">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                <path d="M9 12l2 2 4-4"/>
+            </svg>
+            <span>TUR Box</span>
+        </button>
+
+        <div class="top-hud-divider" role="separator" aria-orientation="vertical"></div>
+
+        <!-- PROJECT DATA & RESET -->
+        <button type="button" class="hud-nav-link top-hud-btn" id="importJsonBtn" onclick="window.importProjectFromJson()" aria-label="Import JSON" title="Import Project from JSON">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="17 8 12 3 7 8"/>
+                <line x1="12" y1="3" x2="12" y2="15"/>
+            </svg>
+            <span>Import JSON</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn" id="exportJsonBtn" onclick="exportProjectAsJson()" aria-label="Export JSON" title="Export Project as JSON">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+                <polyline points="7 10 12 15 17 10"/>
+                <line x1="12" y1="15" x2="12" y2="3"/>
+            </svg>
+            <span>Export JSON</span>
+        </button>
+
+        <div class="top-hud-divider published-editor-actions-divider" role="separator" aria-orientation="vertical"></div>
+
+        <!-- PUBLISHED-CARD QUICK EDIT & SAVE -->
+        <button type="button" class="hud-nav-link top-hud-btn" id="topbar-quick-edit-btn" onclick="window.openQuickCardEditor ? window.openQuickCardEditor() : window.openContextGUI?.(0,0,'identity')" aria-label="Quick Card Editor" title="Open Quick Card Editor">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
+            </svg>
+            <span>Quick Edit</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn" id="admin-quick-save-btn" onclick="window.saveQuickEditToGitHub ? window.saveQuickEditToGitHub() : window.openQuickSaveModal()" aria-label="Save Quick Edit" title="Save Quick Edit to GitHub">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="currentColor">
+                <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
+            </svg>
+            <span>Save Quick Edit</span>
+        </button>
+
+    </div>
+</header>
+
+
+<!-- LEGACY HIDDEN STORE (Preserves compatibility for cache, parser, import/export) -->
+<div id="topbar-theme-switcher" style="display: none !important;" aria-hidden="true">
+    <div id="editor" style="display: none !important;">
+        <button type="button" id="editorCloseBtn" style="display: none !important;"></button>
+        <input type="text" id="asset-url-input" style="display: none !important;">
+        <div id="raw-paste-input" style="display: none !important;"></div>
+        <div id="side-header-badges-box" style="display: none !important;">
+            <input type="text" id="input-passive-name-sidebar" style="display: none !important;">
+            <div id="sidebar-passive-badges-toggle-strip" style="display: none !important;"></div>
+        </div>
+        <div id="sidebar-sections-area" style="display: none !important;"></div>
+        <input type="checkbox" id="sidebar-show-ssr-progression" data-progression-display="ssr" checked style="display: none !important;">
+        <input type="checkbox" id="sidebar-show-tur-progression" data-progression-display="tur" checked style="display: none !important;">
+    </div>
+</div>
+
+
+    <!-- UNIFIED APPLE-STYLE HUD NAVIGATION BAR (FLOATING BOTTOM DOCK) -->
+    <header class="apple-hud-wrapper">
+        <div class="liquid-metal-frame">
+            <nav class="apple-hud-bar">
+                <!-- DOCK NAVIGATION GROUP -->
+                <div class="hud-nav-group">
+                    <a href="index.html" class="hud-nav-link" aria-label="Home" title="Home">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 21V13.6C9 13.04 9 12.76 9.11 12.55C9.2 12.36 9.36 12.2 9.55 12.11C9.76 12 10.04 12 10.6 12H13.4C13.96 12 14.24 12 14.45 12.11C14.64 12.2 14.8 12.36 14.89 12.55C15 12.76 15 13.04 15 13.6V21M11.02 2.76L4.24 8.04C3.78 8.39 3.56 8.57 3.39 8.79C3.25 8.98 3.14 9.2 3.07 9.44C3 9.7 3 9.99 3 10.57V17.8C3 18.92 3 19.48 3.22 19.91C3.41 20.28 3.72 20.59 4.09 20.78C4.52 21 5.08 21 6.2 21H17.8C18.92 21 19.48 21 19.91 20.78C20.28 20.59 20.59 20.28 20.78 19.91C21 19.48 21 18.92 21 17.8V10.57C21 9.99 21 9.7 20.93 9.44C20.86 9.2 20.75 8.98 20.61 8.79C20.44 8.57 20.22 8.39 19.76 8.04L12.98 2.76C12.63 2.49 12.46 2.35 12.26 2.3C12.09 2.26 11.91 2.26 11.74 2.3C11.54 2.35 11.37 2.49 11.02 2.76Z"/>
+                        </svg>
+                        <span>Home</span>
+                    </a>
+
+                    <a href="index.html" class="hud-nav-link" onclick="localStorage.setItem('hub_force_cards_view', 'true')" aria-label="Cards" title="Cards">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M4 21.82C4.6 22 5.42 22 6.8 22H17.2C18.58 22 19.4 22 20 21.82M4 21.82C3.87 21.78 3.75 21.73 3.64 21.67C3.07 21.39 2.61 20.93 2.33 20.36C2 19.72 2 18.88 2 17.2V6.8C2 5.12 2 4.28 2.33 3.64C2.61 3.07 3.07 2.61 3.64 2.33C4.28 2 5.12 2 6.8 2H17.2C18.88 2 19.72 2 20.36 2.33C20.93 2.61 21.39 3.07 21.67 3.64C22 4.28 22 5.12 22 6.8V17.2C22 18.88 22 19.72 21.67 20.36C21.39 20.93 20.93 21.39 20.36 21.67C20.25 21.73 20.13 21.78 20 21.82M4 21.82C4 21.01 4.01 20.58 4.08 20.22C4.39 18.63 5.63 17.39 7.22 17.08C7.61 17 8.07 17 9 17H15C15.93 17 16.39 17 16.78 17.08C18.37 17.39 19.61 18.63 19.92 20.22C20 20.58 20 21.01 20 21.82M16 9.5C16 11.71 14.21 13.5 12 13.5C9.79 13.5 8 11.71 8 9.5C8 7.29 9.79 5.5 12 5.5C14.21 5.5 16 7.29 16 9.5Z"/>
+                        </svg>
+                        <span>Cards</span>
+                    </a>
+
+                    <a href="card.html?viewer=1" class="hud-nav-link" id="nav-btn-viewer" aria-label="Viewer" title="Viewer">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="M2.5 12S5.9 6 12 6s9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="2"/>
+                        </svg>
+                        <span>Viewer</span>
+                    </a>
+
+                    <a href="calculator.html" class="hud-nav-link" aria-label="Calculator" title="Calculator">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M17.5 6.5L6.5 17.5M8.5 10.5V6.5M6.5 8.5H10.5M13.5 15.5H17.5M7.8 21H16.2C17.88 21 18.72 21 19.36 20.67C19.93 20.39 20.39 19.93 20.67 19.36C21 18.72 21 17.88 21 16.2V7.8C21 6.12 21 5.28 20.67 4.64C20.39 4.07 19.93 3.61 19.36 3.33C18.72 3 17.88 3 16.2 3H7.8C6.12 3 5.28 3 4.64 3.33C4.07 3.61 3.61 4.07 3.33 4.64C3 5.28 3 6.12 3 7.8V16.2C3 17.88 3 18.72 3.33 19.36C3.61 19.93 4.07 20.39 4.64 20.67C5.28 21 6.12 21 7.8 21Z"/>
+                        </svg>
+                        <span>Calculator</span>
+                    </a>
+
+                    <a href="editor.html" class="hud-nav-link active" aria-label="Editor" title="Editor">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M9 15.5H7.5C6.1 15.5 5.41 15.5 4.84 15.67C3.56 16.06 2.56 17.06 2.17 18.34C2 18.91 2 19.6 2 21M14.5 7.5C14.5 9.99 12.49 12 10 12C7.51 12 5.5 9.99 5.5 7.5C5.5 5.01 7.51 3 10 3C12.49 3 14.5 5.01 14.5 7.5ZM11 21L14.1 20.11C14.25 20.07 14.32 20.05 14.39 20.02C14.45 19.99 14.51 19.96 14.57 19.92C14.63 19.87 14.68 19.82 14.79 19.71L21.25 13.25C21.94 12.56 21.94 11.44 21.25 10.75C20.56 10.06 19.44 10.06 18.75 10.75L12.29 17.21C12.18 17.32 12.13 17.37 12.08 17.43C12.04 17.49 12.01 17.55 11.98 17.61C11.95 17.68 11.93 17.75 11.89 17.9L11 21Z"/>
+                        </svg>
+                        <span>Editor</span>
+                    </a>
+
+                    <a href="index.html?view=news" class="hud-nav-link" id="nav-btn-news" aria-label="News" title="News">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 21L11.9 20.85C11.21 19.81 10.86 19.29 10.4 18.91C9.99 18.58 9.52 18.33 9.02 18.17C8.45 18 7.83 18 6.57 18H5.2C4.08 18 3.52 18 3.09 17.78C2.72 17.59 2.41 17.28 2.22 16.91C2 16.48 2 15.92 2 14.8V6.2C2 5.08 2 4.52 2.22 4.09C2.41 3.72 2.72 3.41 3.09 3.22C3.52 3 4.08 3 5.2 3H5.6C7.84 3 8.96 3 9.82 3.44C10.57 3.82 11.18 4.43 11.56 5.18C12 6.04 12 7.16 12 9.4M12 21V9.4M12 21L12.1 20.85C12.79 19.81 13.14 19.29 13.6 18.91C14.01 18.58 14.48 18.33 14.98 18.17C15.55 18 16.17 18 17.43 18H18.8C19.92 18 20.48 18 20.91 17.78C21.28 17.59 21.59 17.28 20.91 3.22C20.48 3 19.92 3 18.8 3H18.4C16.16 3 15.04 3 14.18 3.44C13.43 3.82 12.82 4.43 12.44 5.18C12 6.04 12 7.16 12 9.4"/>
+                        </svg>
+                        <span>News</span>
+                    </a>
+
+
+                    <!-- SETTINGS BUTTON -->
+                    <button type="button" class="hud-nav-link sba-side-settings-button" id="sba-side-settings-button" onclick="toggleSettingsDrawer()" aria-expanded="false" aria-label="Settings" title="Settings &amp; Tools">
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M12.22 2h-.44a2 2 0 0 0-2 2v.18a2 2 0 0 1-1 1.73l-.43.25a2 2 0 0 1-2 0l-.15-.08a2 2 0 0 0-2.73.73l-.22.38a2 2 0 0 0 .73 2.73l.15.09a2 2 0 0 1 1 1.74v.5a2 2 0 0 1-1 1.74l-.15.09a2 2 0 0 0-.73 2.73l.22.38a2 2 0 0 0 2.73.73l.15-.08a2 2 0 0 1 2 0l.43.25a2 2 0 0 1 1 1.73V20a2 2 0 0 0 2 2h.44a2 2 0 0 0 2-2v-.18a2 2 0 0 1 1-1.73l.43-.25a2 2 0 0 1 2 0l.15.08a2 2 0 0 0 2.73-.73l.22-.38a2 2 0 0 0-.73-2.73l-.15-.09a2 2 0 0 1-1-1.74v-.5a2 2 0 0 1 1-1.74l.15-.09a2 2 0 0 0 .73-2.73l-.22-.38a2 2 0 0 0-2.73-.73l-.15.08a2 2 0 0 1-2 0l-.43-.25a2 2 0 0 1-1-1.73V4a2 2 0 0 0-2-2Z"/>
+                            <circle cx="12" cy="12" r="3"/>
+                        </svg>
+                        <span>Settings</span>
+                    </button>
+                </div>
+
+                <!-- AUTOSAVE INDICATOR — hidden, toast is used instead -->
+                <div id="main-autosave-indicator" class="main-autosave-ui scouter-autosave" style="display:none!important" aria-hidden="true">
+                    <span class="autosave-dot"></span>
+                    <span class="autosave-label">autosave!</span>
+                </div>
+
+            </nav>
+        </div>
+    </header>
+
+<!-- CARD PREVIEW CONTENT -->
+<div class="content" id="app">
+
+    <!-- SETTINGS MINI GUI (ACCESSED VIA NAVBAR SETTINGS BUTTON) -->
+    <div class="sidebar-overlay sba-settings-overlay" id="settingsOverlay" onclick="toggleSettingsDrawer()"></div>
+    <aside class="sidebar-drawer liquid-glass-drawer sba-settings-popover" id="settingsDrawer" role="dialog" aria-modal="true" aria-label="Editor Settings &amp; Tools">
+        <div class="sidebar-header sba-settings-header">
+            <div class="sba-settings-brand" style="display: flex; align-items: center; gap: 12px;">
+                <a class="nav-center-link" href="index.html" title="Return to Main Hub" style="display: flex; align-items: center; text-decoration: none;">
+                    <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs.custom.png" alt="Custom Dokkan Logo" class="nav-center-logo-img" style="width: 34px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
+                </a>
+                <div style="display: flex; flex-direction: column;">
+                    <h2 style="margin: 0; font-size: 15px; font-weight: 800; letter-spacing: 0.8px; line-height: 1.2;">Settings &amp; Tools</h2>
+                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 0.5px;">absCustom Editor</span>
+                </div>
+            </div>
+            <button type="button" class="close-btn sba-settings-close-btn" onclick="toggleSettingsDrawer()" aria-label="Close settings">✕</button>
+        </div>
+
+        <!-- 1. CARD THEME STYLE (MOVED TO TOP OF SETTINGS PANEL) -->
+        <div class="settings-theme-section sba-settings-section">
+            <span class="filter-group-title">Card Theme Style</span>
+            <div class="hud-theme-stack sba-settings-btn-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; box-sizing: border-box;" role="group" aria-label="Card Theme Style">
+                <button type="button" id="theme-btn-info" class="abs-hud-theme-btn sba-gui-btn active" onclick="switchCardTheme('dokkaninfo')" title="Dokkan Info Theme">
+                    <img src="https://abscustom.github.io/assets/images/dokkan-info-logo.png" alt="Dokkan Info" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
+                    <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">dokkan.info</span>
+                </button>
+                <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('abs-style')" title="ABS Style Theme">
+                    <img src="https://abscustom.github.io/assets/images/abs.style.png" alt="ABS" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
+                    <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">abs.style</span>
+                </button>
+                <button type="button" id="theme-btn-sba" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('sba')" title="abs.clean Theme">
+                    <img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
+                    <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">abs.clean</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- 2. CARD ACTIONS -->
+        <div class="settings-theme-section sba-settings-section">
+            <span class="filter-group-title">Card Actions</span>
+            <div class="sba-settings-btn-grid" style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                <div id="topbar-importer-dock-wrap">
+                    <button type="button" id="importUnitBtn" class="sba-gui-btn" onclick="window.openCharacterImporterModal(); toggleSettingsDrawer();" title="Import Character from Database">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #38bdf8;">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM12 17l-5-5h3V8h4v4h3l-5 5z"/>
+                        </svg>
+                        <span class="btn-main-text">Import Unit</span>
+                    </button>
+                </div>
+
+                <div id="topbar-upload-dock-wrap">
+                    <button type="button" id="uploadGithubBtn" class="sba-gui-btn" onclick="openUploadModal(); toggleSettingsDrawer();" title="Upload Card to GitHub">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #4ade80;">
+                            <path d="M19.35 10.04C18.67 6.59 15.64 4 12 4 9.11 4 6.6 5.64 5.35 8.04 2.34 8.36 0 10.91 0 14c0 3.31 2.69 6 6 6h13c2.76 0 5-2.24 5-5 0-2.64-2.05-4.78-4.65-4.96zM14 13v4h-4v-4H7l5-5 5 5h-3z"/>
+                        </svg>
+                        <span class="btn-main-text">Upload Card</span>
+                    </button>
+                </div>
+
+                <div id="topbar-card-admin-dock-wrap">
+                    <button type="button" id="cardAdminBtn" class="sba-gui-btn" onclick="window.openCardAdminModal('link'); toggleSettingsDrawer();" title="Link uploaded custom cards" aria-label="Link uploaded custom cards">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #a78bfa;">
+                            <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58-1.92-3.32-2.39.96a7.2 7.2 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18c-.58.24-1.12.55-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58a7.43 7.43 0 0 0-.05.94c0 .32.02.63.05.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.7 1.62.94l.36 3.18h3.84l.36-3.18c.58-.24 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58zM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5z"/>
+                        </svg>
+                        <span class="btn-main-text">Link Cards</span>
+                    </button>
+                </div>
+
+                <div id="topbar-card-delete-dock-wrap">
+                    <button type="button" id="cardDeleteBtn" class="sba-gui-btn" onclick="window.openCardAdminModal('delete'); toggleSettingsDrawer();" title="Delete uploaded custom cards" aria-label="Delete uploaded custom cards">
+                        <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #f87171;">
+                            <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 12H7L6 9zm4 3v6h2v-6h-2zm4 0v6h2v-6h-2z"/>
+                        </svg>
+                        <span class="btn-main-text">Delete Card</span>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 3. PROJECT & TOOLS -->
+        <div class="filter-group sba-settings-section">
+            <span class="filter-group-title">Project &amp; Tools</span>
+            <div>
+                <a href="https://github.com/abscustom" target="_blank" rel="noopener" class="sba-gui-btn" style="text-decoration: none; width: 100%; display: flex; flex-direction: row; gap: 10px; align-items: center; justify-content: center; min-height: 44px;" title="Visit GitHub Repository">
+                    <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor">
+                        <path fill-rule="evenodd" clip-rule="evenodd" d="M12 2C6.477 2 2 6.484 2 12.017c0 4.425 2.865 8.18 6.839 9.504.5.092.682-.217.682-.483 0-.237-.008-.868-.013-1.703-2.782.605-3.369-1.343-3.369-1.343-.454-1.158-1.11-1.466-1.11-1.466-.908-.62.069-.608.069-.608 1.003.07 1.53 1.032 1.53 1.032.892 1.53 2.341 1.088 2.91.832.092-.647.35-1.088.636-1.338-2.22-.253-4.555-1.113-4.555-4.951 0-1.093.39-1.988 1.029-2.688-.103-.253-.446-1.272.098-2.65 0 0 .84-.27 2.75 1.026A9.564 9.564 0 0112 6.844c.85.004 1.705.115 2.504.337 1.909-1.296 2.747-1.027 2.747-1.027.546 1.379.202 2.398.1 2.651.64.7 1.028 1.595 1.028 2.688 0 3.848-2.339 4.695-4.566 4.943.359.309.678.92.678 1.855 0 1.338-.012 2.419-.012 2.747 0 .268.18.58.688.482A10.019 10.019 0 0022 12.017C22 6.484 17.522 2 12 2z"></path>
+                    </svg>
+                    <span style="font-weight: 700; font-size: 12px;">GitHub Repository</span>
+                </a>
+            </div>
+            <!-- 4. RESET EDITOR CACHE (ALL THE WAY ON THE BOTTOM) -->
+            <div style="margin-top: 10px;">
+                <button type="button" id="settings-reset-editor-btn" class="sba-gui-btn sba-reset-editor-drawer-btn" onclick="window.resetEditorCache(); toggleSettingsDrawer();" style="width: 100%; display: flex; flex-direction: row; gap: 8px; align-items: center; justify-content: center; min-height: 44px;" title="Reset Editor Cache">
+                    <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" style="color: #f87171;">
+                        <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+                        <path d="M3 3v5h5"/>
+                    </svg>
+                    <span class="btn-main-text" style="font-size: 11px; font-weight: 700;">Reset Editor Cache</span>
+                </button>
+            </div>
+        </div>
+    </aside>
+
+    <!-- MAIN CONTAINER -->
+    <div id="top-content">
+        <div id="abs-clean-info-bar" class="abs-clean-info-bar" aria-label="Character Information" hidden></div>
+        <div id="abs-clean-leader-bar" class="abs-clean-leader-bar" data-edit="leader" aria-label="Leader Skill" hidden>
+            <span class="abs-clean-leader-label">LEADER SKILL</span>
+            <div id="abs-clean-leader-text" class="abs-clean-leader-text"></div>
+        </div>
+        <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
+            
+            <!-- 1. DOKKAN INFO LAYOUT (100% UNTOUCHED & AUTHENTIC) -->
+            <div id="layout-dokkaninfo">
+                <div class="row align-items-start">
+                    <div class="col-xl-4">
+                        <div class="row padding-left-right-1 margin-top-5">
+                            <div class="col">
+                                <div class="row border border-2 border-none bg-none dokkan-card" style="height: 162px;" data-edit="icons">
+                                    <div class="col">
+                                        <div class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base">
+                                                    <img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120" alt="Card Frame">
+                                                </div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0; position: relative;">
+                                                    <img class="lr-spin-dial" src="https://abscustom.github.io/assets/images/lr_spin_dial.png" alt="spin-effect">
+                                                    <video class="lightning-overlay" autoplay muted loop playsinline><source src="https://abscustom.github.io/assets/images/lightningfx.webm" type="video/webm"></video>
+                                                    <img id="img-lr" src="https://abscustom.github.io/assets/images/LR_Icon.png" height="150" alt="icon">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb">
+                                                    <img id="main-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72" alt="rarity">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb">
+                                                    <img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" alt="type icon" height="57">
+                                                </div>
+                                                <div class="card-icon-item card-icon-item-eza-ja card-info-above-thumb">
+                                                    <div id="awakening-container" class="card-icon-item-eza-container" style="display: none;">
+                                                        <img id="awakening-img" src="" alt="Awakening Icon">
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-8">
+                        <div class="row padding-left-right-1 margin-top-5">
+                            <div class="col">
+                                <div class="row justify-content-center align-items-center padding-top-bottom-10 border border-2 border-none bg-none dokkan-card" style="min-height: 162px; height: auto;" data-edit="identity">
+                                    <div class="col d-flex flex-column justify-content-center align-items-center p-2">
+                                        <div class="row w-100"><p id="char-description" class="m-0 text-center"></p></div>
+                                        <div class="row w-100"><h1 id="char-name" class="m-0 text-center"></h1></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row align-items-start">
+                    <div class="col-xl-4">
+                        <div class="row padding-left-right-1">
+                            <div class="col">
+                                <div class="row border border-2 border-dark margin-top-bottom-5 border-none bg-none dokkan-card safe-centered-frame">
+                                    <div class="card-art-canvas" data-edit="art" style="position: relative; overflow: hidden;">
+                                        <canvas id="info-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; pointer-events: auto; display: none;"></canvas>
+                                        <video autoplay muted playsinline loop preload="auto" id="myOverlayVideo" onloadeddata="delete this.dataset.failed; window.refreshInfoArtPreference?.();" onerror="this.dataset.failed='true'; window.refreshInfoArtPreference?.();"><source src="" type="video/mp4" onerror="this.parentElement.dataset.failed='true'; window.refreshInfoArtPreference?.();"></video>
+                                        <img id="myOverlayImage" src="https://abscustom.github.io/assets/images/Card Art Template.png" alt="Card Art" style="position: relative; z-index: 2;">
+                                    </div>
+                                </div>
+                                
+                                <div id="release-dates-container" class="margin-top-bottom-5 mb-4"></div>
+
+                                <div class="row border border-2 border-dark border-none bg-none dokkan-card" id="forms-card-wrapper" data-edit="forms" style="display: none;">
+                                    <div class="col p-3">
+                                        <div id="forms-container"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row d-flex flex-wrap border border-1 border-none dokkan-card mt-1" id="awakening-progression-wrapper" data-edit="icons">
+                                    <div class="col border border-1 border-none bg-none">
+                                        <div id="ssr-row" class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base"><img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120"></div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-ssr" src="https://abscustom.github.io/assets/images/SSR_Icon.png" height="150"></div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb"><img id="ssr-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72"></div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb"><img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" height="57"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div id="tur-row" class="col border border-1 border-none bg-none dokkan-card">
+                                        <div class="row">
+                                            <div class="col card-icon unselectable">
+                                                <div class="card-icon-item card-icon-item-base card-info-base"><img class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png" height="120"></div>
+                                                <div class="card-info-thumb" style="z-index: 2; margin-top: 0px;"><img id="img-tur" src="https://abscustom.github.io/assets/images/TUR_Icon.png" height="150"></div>
+                                                <div class="card-icon-item card-icon-item-rarity card-info-above-thumb"><img id="tur-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png" height="72"></div>
+                                                <div class="card-icon-item card-icon-item-type card-info-above-thumb"><img class="typing-icon" src="https://abscustom.github.io/assets/images/type_none.png" height="57"></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="row border border-2 margin-top-bottom-5 border-none bg-none dokkan-card">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10">
+                                            <div class="col"><div class="row"><div class="col"><b>Max Lv</b>: </div></div><div class="row"><div class="col text-center" id="max-lv">0</div></div></div>
+                                            <div class="col"><div class="row"><div class="col"><b>SA Lv</b>: </div></div><div class="row"><div class="col text-center" id="sa-lv">0</div></div></div>
+                                            <div class="col"><div class="row"><div class="col"><b>Cost</b>: </div></div><div class="row"><div class="col text-center" id="cost">0</div></div></div>
+                                        </div>
+                                        <div class="row padding-top-bottom-10"><div class="col"><b>Summonable</b></div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-xl-8">
+                        <div class="row padding-left-right-1 margin-top-bottom-5">
+                            <div class="col">
+                               <div class="row font-size-1_2 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="leader">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none"><div class="col"><b>Leader Skill</b></div></div>
+                                        <div class="row padding-top-bottom-5 bg-none-2"><div class="col" id="leader-skill"></div></div>
+                                    </div>
+                                </div>
+
+                                <div id="sa-insert-spot"></div>
+
+                               <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="passive">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none dokkan-card">
+                                            <div class="col-sm-2"><b>Passive Skill</b></div>
+                                            <div class="col-sm-8"><b class="passive-name-display">passive name</b></div>
+                                        </div>
+                                        <div class="row padding-top-bottom-5 bg-none-2 dokkan-card">
+                                            <div class="col text-start padding-top-bottom-5">
+                                                <div class="passive-container-main"><div id="card-passive-container"></div></div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div id="active-skill-insert-spot"></div>
+                                <div class="row font-size-1_2 margin-top-bottom-3 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="links">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none dokkan-card"><div class="col"><b>Link Skills</b></div></div>
+                                        <div id="card-link-container" class="row d-flex flex-wrap justify-content-center bg-none-2 padding-top-bottom-0 dokkan-card"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="categories">
+                                    <div class="col">
+                                        <div class="row padding-top-bottom-10 bg-none"><div class="col"><b>Categories</b></div></div>
+                                        <div id="card-category-container" class="row d-flex flex-wrap justify-content-center bg-none-2 padding-top-bottom-10 dokkan-card"></div>
+                                    </div>
+                                </div>
+
+                                <div class="row font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="stats">
+                                    <div class="col container-text-light container-text-center bg-none-2">
+                                        <div class="row">
+                                            <table class="col">
+                                                <tbody>
+                                                   <tr>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Stats</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Base Min</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>Base Max</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>55%</b></th>
+                                                    <th class="padding-top-bottom-10" scope="col"><b>100%</b></th>
+                                                    <th class="padding-top-bottom-10 eza-stat-col d-none" scope="col"><b>EZA B. Max</b></th>
+                                                    <th class="padding-top-bottom-10 eza-stat-col d-none" scope="col"><b>EZA 100%</b></th>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>HP</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-hp-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-hp-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-hp-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>ATK</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-atk-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-atk-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-atk-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                                <tr class="bg-none">
+                                                    <th class="bg-none-2 padding-top-bottom-5" scope="row"><b>DEF</b></th>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-min">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-max">0</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-55">2000</b></td>
+                                                    <td class="padding-top-bottom-5"><b id="stat-def-100">5000</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-def-eza-max" style="color: #facc15;">0</b></td>
+                                                    <td class="padding-top-bottom-5 eza-stat-col d-none"><b id="stat-def-eza-100" style="color: #facc15;">0</b></td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. ABS.STYLE 3D LAYOUT (MATCHING CARD INSPECTOR VIEWER 1:1) -->
+            <div id="layout-abs-style" style="display: none;">
+                
+                <!-- HEADER -->
+                <div class="abs-top-header">
+                    <div class="abs-header-left">
+                        <!-- ABS.CLEAN moves this live badge strip into the top
+                             utility lane above the Passive Skill title. -->
+                        <div id="abs-clean-ability-docks" class="abs-clean-ability-docks" hidden>
+                            <div id="abs-clean-passive-icons" aria-label="Detected passive abilities"></div>
+                        </div>
+                        <div id="abs-clean-awakening-portraits" aria-label="Awakening portraits" hidden>
+                            <div class="abs-clean-awakening-portrait abs-clean-awakening-portrait--ssr" title="Edit SSR thumbnail" hidden>
+                                <span class="abs-clean-awakening-portrait-label">SSR</span>
+                                <img id="abs-clean-ssr-portrait" alt="SSR portrait">
+                            </div>
+                            <div class="abs-clean-awakening-portrait abs-clean-awakening-portrait--tur" title="Edit TUR thumbnail" hidden>
+                                <span class="abs-clean-awakening-portrait-label">TUR</span>
+                                <img id="abs-clean-tur-portrait" alt="TUR portrait">
+                            </div>
+                            <div class="abs-clean-awakening-portrait abs-clean-awakening-portrait--lr" title="Edit LR thumbnail" hidden>
+                                <span class="abs-clean-awakening-portrait-label">LR</span>
+                                <img id="abs-clean-lr-portrait" alt="LR portrait">
+                            </div>
+                        </div>
+                        <div id="abs-composed-icon">
+                            <canvas id="abs-clean-lr-aura" class="sba-lr-lwf-canvas sba-lr-lwf-aura-canvas" width="640" height="1136" aria-hidden="true" style="display: none;"></canvas>
+                            <img id="abs-frame-img" class="card-frame" src="https://abscustom.github.io/assets/images/frame_none.png">
+                            <img id="abs-spin-dial" class="lr-spin-dial" src="https://abscustom.github.io/assets/images/lr_spin_dial.png" style="display: none;">
+                            <video id="abs-lightning" class="lightning-overlay" autoplay muted loop playsinline style="display: none;">
+                                <source src="https://abscustom.github.io/assets/images/lightningfx.webm" type="video/webm">
+                            </video>
+                            <div class="thumb-box">
+                                <img id="abs-thumb-img" class="thumb-img" src="https://abscustom.github.io/assets/images/SSR_Icon.png">
+                            </div>
+                            <canvas id="abs-clean-lr-lightning" class="sba-lr-lwf-canvas sba-lr-lwf-lightning-canvas" data-lwf-pack="lightning" width="640" height="1136" aria-hidden="true" style="display: none;"></canvas>
+                            <canvas id="abs-clean-ring-effect" class="sba-ring-effect" width="180" height="180" aria-hidden="true" style="display: none;"></canvas>
+                            <img id="abs-top-rarity-icon" class="rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png">
+                            <img id="abs-top-type-icon" class="type-icon" src="https://abscustom.github.io/assets/images/type_none.png">
+                            <img id="abs-awakening-img" class="eza-icon" src="" style="display: none;">
+                        </div>
+                        <div class="abs-header-text text-start">
+                            <div class="abs-title-brand-row">
+                                <div id="abs-char-title">Character Title</div>
+                            </div>
+                            <div class="abs-clean-name-line">
+                                <div id="abs-char-name">Character Name</div>
+                                <div id="abs-clean-name-badges" aria-label="Character rarity, class, type, and tag">
+                                    <img id="abs-clean-name-rarity" alt="">
+                                    <img id="abs-clean-name-type" alt="">
+                                </div>
+                            </div>
+                            <div id="abs-clean-release-date" class="abs-clean-release-date">
+                                <span class="abs-clean-date-item">
+                                    <span class="abs-clean-date-label">Release Date:</span>
+                                    <span class="abs-clean-date-val">TBD</span>
+                                </span>
+                            </div>
+                        </div>
+                        <div id="abs-clean-type-matchups" class="abs-clean-type-matchups" aria-label="Type matchup"></div>
+                    </div>
+
+                    <div class="abs-header-right" id="abs-header-right-slot">
+                        <img id="abs-rarity-icon" src="https://abscustom.github.io/assets/images/rarity_none.png">
+                        <img id="abs-type-icon" src="https://abscustom.github.io/assets/images/type_none.png">
+                        <img id="abs-top-awakening-img" src="" style="display: none; height: 48px;">
+                    </div>
+                </div>
+
+                <div class="abs-grid-container">
+                    <div class="abs-main-col">
+                        <div id="abs-clean-leader-banner-slot" aria-label="Leader Skill"></div>
+                        <!-- LEADER SKILL -->
+                        <div id="abs-leader-skill-legacy-slot" style="display: contents;">
+                            <div class="abs-box" id="abs-leader-skill-box" data-edit="leader">
+                                <div class="abs-header">
+                                    <span id="abs-leader-title">Leader Skill</span>
+                                </div>
+                                <div class="abs-content text-start" id="abs-leader-skill"></div>
+                            </div>
+                        </div>
+
+                        <!-- PASSIVE SKILL (WITH SMART IN-GAME ABILITY ICONS STRIP) -->
+                        <div class="abs-box" id="abs-passive-skill-box" data-edit="passive">
+                            <div id="abs-passive-summary" class="abs-passive-summary" hidden aria-label="Passive percentage totals"></div>
+                            <div class="abs-header" id="abs-passive-name">
+                                <div class="abs-passive-header-title">
+                                    <span>Passive Skill</span>
+                                </div>
+                            </div>
+                            <div class="abs-content text-start" id="abs-passive-container"></div>
+                        </div>
+
+                        <div id="abs-sa-container" data-edit="sa"></div>
+                        <div id="abs-active-container"></div>
+                        <div id="abs-field-container"></div>
+                        <div id="abs-standby-container"></div>
+                        <div id="abs-finish-container"></div>
+
+                        <!-- LINKS -->
+                        <div id="abs-link-skills-legacy-slot" style="display: contents;">
+                        <div class="abs-box" id="abs-link-skills-box" data-edit="links">
+                            <div class="abs-header justify-content-center">Link Skills</div>
+                            <div class="abs-content abs-links-container justify-content-center" id="abs-link-container"></div>
+                        </div>
+                        </div>
+
+                        <!-- CATEGORIES -->
+                        <div class="abs-box" id="abs-categories-box" data-edit="categories">
+                            <div class="abs-header justify-content-center">Categories</div>
+                            <div class="abs-content abs-category-switcher-content justify-content-center">
+                                <div id="abs-category-container"></div>
+                            </div>
+                        </div>
+
+                        <div class="abs-box mt-3" id="abs-partners-box" style="display: none;">
+                            <div class="abs-header text-center justify-content-center"><span>Linking Partners</span></div>
+                            <div class="abs-content p-3">
+                                <div class="d-flex justify-content-center gap-2 mb-3">
+                                    <button type="button" class="abs-stat-tab active partner-limit-btn" onclick="setPartnerLimit(9, this)">9</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(18, this)">18</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(27, this)">27</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(36, this)">36</button>
+                                    <button type="button" class="abs-stat-tab partner-limit-btn" onclick="setPartnerLimit(45, this)">45</button>
+                                </div>
+                                <div id="abs-partners-container" class="linking-partners-grid"></div>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="abs-side-col">
+                        <!-- ABS Clean's unboxed, isolated character presentation. -->
+                        <div id="abs-clean-portrait-stage" aria-hidden="true">
+                            <div id="abs-clean-identity-icons" class="abs-clean-identity-icons" aria-label="Character Identity" data-edit="identity" hidden>
+                                <div class="abs-clean-css-badge" id="abs-clean-badge-rarity" title="Edit Rarity">
+                                    <span class="abs-clean-badge-label">RARITY</span>
+                                    <span class="abs-clean-badge-val" id="abs-clean-val-rarity">LR</span>
+                                </div>
+                                <div class="abs-clean-css-badge" id="abs-clean-badge-class" title="Edit Class">
+                                    <span class="abs-clean-badge-label">CLASS</span>
+                                    <span class="abs-clean-badge-val" id="abs-clean-val-class">SUPER</span>
+                                </div>
+                                <div class="abs-clean-css-badge" id="abs-clean-badge-type" title="Edit Type">
+                                    <span class="abs-clean-badge-label">TYPE</span>
+                                    <span class="abs-clean-badge-val" id="abs-clean-val-type">TEQ</span>
+                                </div>
+                                <div class="abs-clean-css-badge" id="abs-clean-badge-tag" title="Edit Unit Tag" hidden>
+                                    <span class="abs-clean-badge-label">TAG</span>
+                                    <span class="abs-clean-badge-val" id="abs-clean-val-tag"></span>
+                                </div>
+                                <div class="abs-clean-css-badge" id="abs-clean-badge-awakening" title="Edit Awakening" hidden>
+                                    <span class="abs-clean-badge-label">BASE</span>
+                                    <span class="abs-clean-badge-val" id="abs-clean-val-awakening"></span>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="abs-clean-bottom-timeline" class="abs-clean-bottom-timeline" aria-label="Progression Timeline" data-edit="icons" hidden>
+                            <div class="abs-clean-timeline-label">Progression</div>
+                            <div class="abs-clean-timeline-pill">
+                                <div class="abs-clean-timeline-segment active" id="abs-clean-timeline-ssr">
+                                    <span class="abs-clean-seg-label">BASE</span>
+                                    <span class="abs-clean-seg-val">SSR</span>
+                                </div>
+                                <div class="abs-clean-timeline-segment active" id="abs-clean-timeline-tur">
+                                    <span class="abs-clean-seg-label">DOKKAN</span>
+                                    <span class="abs-clean-seg-val">TUR</span>
+                                </div>
+                                <div class="abs-clean-timeline-segment current" id="abs-clean-timeline-lr">
+                                    <span class="abs-clean-seg-label">FINAL</span>
+                                    <span class="abs-clean-seg-val" id="abs-clean-timeline-rarity">LR</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- CARD ART BOX WITH DOCKED BOTTOM BAR -->
+                        <div class="abs-box abs-art-dock-wrapper" id="abs-art-dock-wrapper" data-edit="art">
+                            <span id="abs-art-caption" class="abs-clean-art-caption" hidden>card</span>
+                            <div class="abs-header abs-art-header-bar" id="abs-art-header-bar">
+                                <span id="abs-art-header-text">DOKKAN FESTIVAL UNIT</span>
+                            </div>
+
+                            <div class="abs-art-box" id="abs-art-layers-container">
+                                <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
+                                <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
+                                <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
+                                
+                                <canvas id="abs-tur-sticker-canvas" class="abs-sticker-canvas" style="display: none;"></canvas>
+                                <canvas id="abs-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="display: none;"></canvas>
+                                 <img id="abs-art-img" class="abs-art-layer" src="https://abscustom.github.io/assets/images/Card Art Template.png" onerror="this.dataset.failed='true'; window.refreshEditorArtModeAvailability?.();" style="width: 100%; height: 100%; object-fit: cover; display: none;">
+                                 <video id="abs-art-video" class="abs-art-layer" style="width: 100%; height: 100%; object-fit: cover; display: none;" autoplay muted loop playsinline onerror="this.dataset.failed='true'; window.refreshEditorArtModeAvailability?.();"></video>
+                             </div>
+
+                            <div id="abs-art-toggle-bar" class="abs-docked-tab-bar bottom-dock">
+                                <div class="abs-stat-tabs justify-content-center m-0" id="abs-art-toggle-container">
+                                    <button type="button" id="art-toggle-static" class="abs-stat-tab" style="min-width: 90px;" onclick="window.switchEditorArtMode('static')">CARD ART</button>
+                                    <button type="button" id="art-toggle-animated" class="abs-stat-tab active" style="min-width: 90px;" onclick="window.switchEditorArtMode('animated')">ANIMATION</button>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <!-- HIDDEN POTENTIAL STAT SLIDER BOX -->
+                        <div class="abs-box" id="abs-stats-box" data-edit="stats">
+                            <div class="abs-header text-center" style="justify-content: center;">Stats</div>
+                            <div class="abs-content p-3 text-center">
+                                
+                                <div class="abs-stat-cards-row">
+                                    <div class="abs-stat-card hp-card">
+                                        <span class="abs-stat-card-label hp-label">HP</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-hp-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card atk-card">
+                                        <span class="abs-stat-card-label atk-label">ATK</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-atk-val">0</span>
+                                    </div>
+                                    <div class="abs-stat-card def-card">
+                                        <span class="abs-stat-card-label def-label">DEF</span>
+                                        <span class="abs-stat-card-value" id="abs-stat-def-val">0</span>
+                                    </div>
+                                </div>
+
+                                <div class="abs-stat-slider-wrapper mt-3">
+                                    <div class="abs-stat-slider-header">
+                                        <span class="abs-slider-label">HIDDEN POTENTIAL</span>
+                                        <span id="abs-slider-percent-display" class="abs-slider-value">100%</span>
+                                    </div>
+                                    <div class="abs-slider-track-container">
+                                        <input type="range" id="abs-stat-range-slider" min="0" max="5" step="1" value="5" oninput="handleStatSliderChange(this.value)">
+                                        <div class="abs-slider-ticks">
+                                            <span onclick="setStatSliderIndex(0)">0%</span>
+                                            <span onclick="setStatSliderIndex(1)">55%</span>
+                                            <span onclick="setStatSliderIndex(2)">69%</span>
+                                            <span onclick="setStatSliderIndex(3)">79%</span>
+                                            <span onclick="setStatSliderIndex(4)">90%</span>
+                                            <span onclick="setStatSliderIndex(5)">100%</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- abs.clean moves the live Link Skills box here. -->
+                        <div id="abs-clean-link-skills-slot" aria-label="Link Skills"></div>
+
+                        <!-- AWAKENINGS BOX -->
+                        <div class="abs-box" id="abs-awakenings-box" data-edit="icons">
+                            <div class="abs-header text-center" style="justify-content: center;">Awakenings</div>
+                            <div class="abs-content p-0" id="abs-awakenings-container"></div>
+                        </div>
+
+                        <!-- TRANSFORMATIONS BOX -->
+                        <div class="abs-box d-none" id="abs-transformations-box" data-edit="forms">
+                            <div class="abs-header text-center" style="justify-content: center;">Transformations</div>
+                            <div class="abs-content p-0" id="abs-transformations-container"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TEMPLATES -->
+            <template id="sa-template">
+                <div class="row sa-block font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-edit="sa">
+                    <div class="col">
+                        <div class="row padding-top-bottom-10 bg-none dokkan-card">
+                            <div class="col-sm-2"><b><span class="sa-type-label">Super Attack</span></b></div>
+                            <div class="col-sm-8" style="display: flex; justify-content: center; align-items: center;">
+                                <img class="sa-display-icon" src="https://abscustom.github.io/assets/images/sp_skill_icon_01.png">
+                                <b class="sa-display-name">Super Attack</b>
+                            </div>
+                        </div>
+                        <div class="row padding-top-bottom-5 bg-none-2 dokkan-card">
+                            <div class="col padding-top-bottom-5">
+                                <div class="sa-display-effects-list"><div class="row"><div class="col"></div></div></div>
+                                <div class="activation-row d-none">
+                                    <hr class="divider py bg-secondary">
+                                    <div class="row"><div class="col text-center italic py-1"><div class="activation-text"><strong>Activation Condition</strong></div></div></div>
+                                </div>
+                                <div class="row">
+                                    <div class="col">
+                                        <hr class="divider py bg-secondary">
+                                        <div class="stats-container row"></div>
+                                    </div>
+                                </div>
+                                <div class="sa-lv-container">
+                                    <div class="row sa-20-bonus">
+                                        <div class="col">
+                                            <hr class="divider py bg-secondary">
+                                            <div class="text-center py-1">SA Lv 20: Super Attack +30%</div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+            <template id="active-template">
+                <div class="row active-block active-kind-active font-size-1_2 margin-top-bottom-5 justify-content-center align-items-center border border-2 border-none dokkan-card" data-active-kind="active" data-skill-kind="active" data-edit="active">
+                    <div class="col p-0">
+                        <div class="row padding-top-bottom-10 bg-none m-0 position-relative d-flex align-items-center">
+                            <div class="position-absolute start-0 w-auto" style="padding-left: 15px;">
+                                <b class="active-type-label">Active Skill</b>
+                                <img class="active-display-icon d-none" src="https://abscustom.github.io/assets/images/sp_skill_icon_04.png" data-active-kind-icon-auto="true" alt="">
+                            </div>
+                            <div class="col text-center px-5">
+                                <b class="active-display-name">(Enter Skill Name)</b>
+                            </div>
+                        </div>
+                        <div class="row padding-top-bottom-5 bg-none-2 m-0">
+                            <div class="col text-center">
+                                <div class="row padding-top-5">
+                                    <div class="col active-display-effect">(Enter what the Skill Does)</div>
+                                </div>
+                                <div class="row active-divider-row">
+                                    <div class="col"><hr class="divider py bg-secondary"></div>
+                                </div>
+                                <div class="row padding-bottom-5 active-condition-row">
+                                    <div class="col">
+                                        <div class="row"><div class="col"><b class="active-display-condition-title">Activation Condition(s)</b></div></div>
+                                        <div class="row"><div class="col active-display-condition">(ex.) Can be activated starting from the 5th turn...</div></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </template>
+
+        </div>
+    </div>
+</div>
+
+<!-- HIDDEN LEGACY INPUTS & DATALISTS -->
+<div style="display: none;" id="hidden-legacy-inputs">
+    <textarea id="descInput"></textarea>
+    <input type="text" id="nameInput">
+    <textarea id="dateInput"></textarea>
+    <textarea id="ezaDateInput"></textarea>
+    <textarea id="sezaDateInput"></textarea>
+    <textarea id="leaderInput"></textarea>
+    <input type="number" id="input-hp-max">
+    <input type="number" id="input-atk-max">
+    <input type="number" id="input-def-max">
+    <input type="text" id="imageInput">
+    <input type="file" id="videoUpload" accept="video/mp4">
+    <input type="file" id="imageUpload" accept="image/*">
+    <input type="file" id="upload-lr" accept="image/*">
+    <input type="file" id="upload-tur" accept="image/*">
+    <input type="file" id="upload-ssr" accept="image/*">
+    <input list="link-options" id="side-link-input">
+    <input list="category-options" id="side-category-input">
+    <select id="sa-selector"></select>
+    <select id="sa-type-dropdown"></select>
+    <input type="text" id="input-sa-type-label">
+    <input type="text" id="input-sa-name">
+    <textarea id="input-sa-effects"></textarea>
+    <textarea id="input-activation"></textarea>
+    <select id="active-selector"></select>
+    <input type="text" id="input-active-type">
+    <input type="text" id="input-active-name">
+    <textarea id="input-active-effect"></textarea>
+    <input type="text" id="input-active-condition-title">
+    <textarea id="input-active-conditions"></textarea>
+
+    <datalist id="link-options">
+        <option value="Fierce Battle"><option value="Legendary Power"><option value="Prepared for Battle"><option value="Shocking Speed">
+        <option value="Over in a Flash"><option value="Big Bad Bosses"><option value="Super Saiyan"><option value="Kamehameha">
+        <option value="Warrior Gods"><option value="Royal Lineage"><option value="Saiyan Warrior Race"><option value="The First Awakened">
+        <option value="Golden Warrior"><option value="Saiyan Roar"><option value="All in the Family"><option value="Experienced Fighters">
+        <option value="Z-Fighters"><option value="Infighter"><option value="Fear and Faith"><option value="Strongest Clan in Space">
+        <option value="Thirst for Conquest"><option value="Nightmare"><option value="Metamorphosis"><option value="Brutal Beatdown">
+        <option value="Wall Standing Tall"><option value="More Than Meets the Eye"><option value="Auto Regeneration"><option value="Tournament of Power">
+        <option value="Universe's Most Malevolent"><option value="Cold Judgment"><option value="Brainiacs"><option value="Gaze of Respect">
+        <option value="Fused Fighter"><option value="Majin"><option value="Android Assault"><option value="GT">
+        <option value="Solid Support"><option value="Patrol"><option value="Hero of Justice"><option value="Godly Power"><option value="Prodigies">
+    </datalist>
+
+    <datalist id="category-options">
+        <option value="Fusion" data-id="0001"><option value="Shadow Dragon Saga" data-id="0002"><option value="World Tournament" data-id="0003">
+        <option value="Peppy Gals" data-id="0004"><option value="Hybrid Saiyans" data-id="0005"><option value="Universe Survival Saga" data-id="0006">
+        <option value="Resurrected Warriors" data-id="0007"><option value="Realm of Gods" data-id="0008"><option value="Majin Buu Saga" data-id="0009">
+        <option value="Potara" data-id="0010"><option value="Low-Class Warrior" data-id="0011"><option value="Super Saiyan 3" data-id="0012">
+        <option value="Giant Form" data-id="0013"><option value="Planet Namek Saga" data-id="0014"><option value="Ginyu Force" data-id="0015">
+        <option value="Movie Bosses" data-id="0016"><option value="Pure Saiyans" data-id="0017"><option value="Namekians" data-id="0018">
+        <option value="Future Saga" data-id="0019"><option value="Full Power" data-id="0020"><option value="Androids" data-id="0021">
+        <option value="Representatives of Universe 7" data-id="0022"><option value="Transformation Boost" data-id="0023"><option value="Wicked Bloodline" data-id="0024">
+        <option value="Dragon Ball Seekers" data-id="0025"><option value="Time Travelers" data-id="0026"><option value="Universe 6" data-id="0027">
+        <option value="Joined Forces" data-id="0028"><option value="Movie Heroes" data-id="0029"><option value="Goku's Family" data-id="0030">
+        <option value="Vegeta's Family" data-id="0031"><option value="Artificial Life Forms" data-id="0032"><option value="Youth" data-id="0033">
+        <option value="DB Saga" data-id="0034"><option value="Siblings' Bond" data-id="0035"><option value="Super Saiyans" data-id="0036">
+        <option value="Worthy Rivals" data-id="0037"><option value="Androids/Cell Saga" data-id="0038"><option value="Kamehameha" data-id="0039">
+        <option value="Bond of Master and Disciple" data-id="0040"><option value="Terrifying Conquerors" data-id="0041"><option value="Dragon Ball Heroes" data-id="0042">
+        <option value="Target: Goku" data-id="0043"><option value="Otherworld Warriors" data-id="0044"><option value="Super Saiyan 2" data-id="0045">
+        <option value="Final Trump Card" data-id="0046"><option value="Exploding Rage" data-id="0047"><option value="Revenge" data-id="0048">
+        <option value="Team Bardock" data-id="0049"><option value="Inhuman Deeds" data-id="0050"><option value="Earthlings" data-id="0051">
+        <option value="Special Pose" data-id="0052"><option value="Majin Power" data-id="0053"><option value="Rapid Growth" data-id="0054">
+        <option value="All-Out Struggle" data-id="0055"><option value="Universe 11" data-id="0056"><option value="Saviors" data-id="0057">
+        <option value="Battle of Wits" data-id="0058"><option value="Power Absorption" data-id="0059"><option value="Giant Ape Power" data-id="0060">
+        <option value="Crossover" data-id="0061"><option value="Space-Traveling Warriors" data-id="0062"><option value="Connected Hope" data-id="0063">
+        <option value="Corroded Body and Mind" data-id="0064"><option value="Turtle School" data-id="0065"><option value="Miraculous Awakening" data-id="0066">
+        <option value="Powerful Comeback" data-id="0067"><option value="Gifted Warriors" data-id="0068"><option value="Planetary Destruction" data-id="0069">
+        <option value="Defenders of Justice" data-id="0070"><option value="Storied Figures" data-id="0071"><option value="GT Heroes" data-id="0072">
+        <option value="GT Bosses" data-id="0073"><option value="Heavenly Events" data-id="0074"><option value="Time Limit" data-id="0075">
+        <option value="Mastered Evolution" data-id="0076"><option value="Legendary Existence" data-id="0077"><option value="Sworn Enemies" data-id="0078">
+        <option value="Bond of Friendship" data-id="0079"><option value="Accelerated Battle" data-id="0080"><option value="Entrusted Will" data-id="0081">
+        <option value="Worldwide Chaos" data-id="0082"><option value="Battle of Fate" data-id="0083"><option value="Power Beyond Super Saiyan" data-id="0084">
+        <option value="Fused Fighters" data-id="0085"><option value="Saiyan Saga" data-id="0086"><option value="Bond of Parent and Child" data-id="0087">
+        <option value="Super Heroes" data-id="0088"><option value="Earth-Bred Fighters" data-id="0089"><option value="Power of Wishes" data-id="0090">
+        <option value="Tournament Participants" data-id="0091"><option value="Super Bosses" data-id="0092"><option value="Demonic Power" data-id="0093">
+        <option value="Uncontrollable Power" data-id="0094"><option value="Earth-Protecting Heroes" data-id="0095"><option value="Successors" data-id="0096">
+        <option value="Mission Execution" data-id="0097"><option value="DAIMA" data-id="0098">
+    </datalist>
+</div>
+
+<!-- DOKKAN DOMAIN MODAL -->
+<div id="abs-domain-modal-overlay" class="abs-domain-modal-backdrop" style="display: none;" onclick="closeDomainModal(event)">
+    <div class="abs-domain-modal-dialog" onclick="event.stopPropagation()">
+        <div class="abs-domain-modal-header">
+            <div class="d-flex align-items-center gap-2">
+                <img src="https://abscustom.github.io/assets/images/ing_label_field.png" alt="Domain" style="height: 24px; width: auto;">
+                <span id="abs-domain-modal-title" class="abs-domain-modal-title-text">Domain Animation Preview</span>
+            </div>
+            <button type="button" class="abs-domain-modal-close" onclick="closeDomainModal()">&times;</button>
+        </div>
+        <div class="abs-domain-modal-body">
+            <div class="abs-domain-canvas-viewport">
+                <canvas id="abs-art-domain-canvas"></canvas>
+            </div>
+        </div>
+    </div>
+</div>

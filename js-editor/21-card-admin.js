@@ -114,21 +114,39 @@
 
     function parseCard(slug, htmlText, repoPath = slug) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
-        const name = doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim()
+        let cardJson = null;
+        const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+        if (cardDataEl) {
+            try { cardJson = JSON.parse(cardDataEl.textContent); } catch (e) {}
+        }
+
+        const name = cardJson?.inputs?.nameInput
+            || doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim()
             || doc.querySelector('title')?.textContent?.replace(/^\[.*?\]\s*/, '').trim()
             || slug;
-        const title = doc.querySelector('#char-description, #abs-char-title')?.textContent?.trim() || '';
-        const thumbEl = doc.querySelector('#abs-thumb-img, #img-lr, #img-tur, #img-ssr, .thumb-img');
-        const thumb = resolveCardUrl(thumbEl?.getAttribute('src'), repoPath);
-        const frameEl = doc.querySelector('#abs-frame-img, .card-frame');
-        const frame = resolveCardUrl(frameEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/frame_none.png', repoPath);
-        const rarityEl = doc.querySelector('#abs-top-rarity-icon, #main-rarity-icon');
-        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/rarity_none.png', repoPath);
-        const typeEl = doc.querySelector('#abs-top-type-icon, .typing-icon');
-        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || 'https://abscustom.github.io/assets/images/type_none.png', repoPath);
+        const title = cardJson?.inputs?.descInput
+            || doc.querySelector('#char-description, #abs-char-title')?.textContent?.trim() || '';
         const marker = doc.querySelector('#pub-site-marker')?.textContent || '';
         const typeMatch = marker.match(/currentType\s*=\s*["']([^"']+)/);
         const rarityMatch = marker.match(/currentRarity\s*=\s*["']([^"']+)/);
+
+        const rarityName = cardJson?.currentRarity || cardJson?.characterState?.cardRarity || rarityMatch?.[1] || 'TUR';
+        const isLR = String(rarityName).toUpperCase() === 'LR';
+        const type = (cardJson?.characterState?.cardType || cardJson?.currentType || typeMatch?.[1] || 'none').toLowerCase();
+        const cardClass = (cardJson?.characterState?.cardClass || cardJson?.currentClass || 'super').toLowerCase();
+
+        const thumbEl = doc.querySelector('#abs-thumb-img, #img-lr, #img-tur, #img-ssr, .thumb-img');
+        const rawThumb = cardJson?.thumbMain || (isLR ? cardJson?.thumbLr : cardJson?.thumbTur) || thumbEl?.getAttribute('src');
+        const thumb = resolveCardUrl(rawThumb, repoPath);
+
+        const frameEl = doc.querySelector('#abs-frame-img, .card-frame');
+        const frame = resolveCardUrl(frameEl?.getAttribute('src') || (type !== 'none' ? `https://abscustom.github.io/assets/images/frame_${type}.png` : 'https://abscustom.github.io/assets/images/frame_none.png'), repoPath);
+
+        const rarityEl = doc.querySelector('#abs-top-rarity-icon, #main-rarity-icon');
+        const rarity = resolveCardUrl(rarityEl?.getAttribute('src') || `https://abscustom.github.io/assets/images/rarity_${rarityName}.png`, repoPath);
+
+        const typeEl = doc.querySelector('#abs-top-type-icon, .typing-icon');
+        const typeIcon = resolveCardUrl(typeEl?.getAttribute('src') || (type !== 'none' ? `https://abscustom.github.io/assets/images/${cardClass}_type_${type}.png` : 'https://abscustom.github.io/assets/images/type_none.png'), repoPath);
 
         return {
             slug,
@@ -139,8 +157,8 @@
             frame,
             rarity,
             typeIcon,
-            type: typeMatch?.[1] || 'none',
-            rarityName: rarityMatch?.[1] || 'TUR',
+            type,
+            rarityName,
             url: `${SITE_ROOT}${encodeRepoPath(repoPath)}/`,
             htmlText
         };
@@ -722,11 +740,46 @@
         repairCurrentCardLinks(doc, sourceCard, shouldLink);
         if (shouldLink) addLinkedCardNodes(doc, sourceCard, targetCard, allowUnmatchedFallback);
         repairCurrentCardLinks(doc, sourceCard);
+
+        const cardDataEl = doc.querySelector('#card-data');
+        if (cardDataEl) {
+            try {
+                const data = JSON.parse(cardDataEl.textContent);
+                data.formsData = data.formsData || [];
+                if (shouldLink) {
+                    if (!data.formsData.some(f => f.adminLinkedSlug === targetCard.slug || (f.link && f.link.includes(targetCard.slug)))) {
+                        data.formsData.push({
+                            imageSrc: targetCard.thumb,
+                            imageExportName: '',
+                            thumbSrc: targetCard.thumb,
+                            name: targetCard.name,
+                            link: targetCard.url,
+                            adminLinkedSlug: targetCard.slug
+                        });
+                    }
+                } else {
+                    data.formsData = data.formsData.filter(f => f.adminLinkedSlug !== targetCard.slug && !(f.link && f.link.includes(targetCard.slug)));
+                }
+                cardDataEl.textContent = JSON.stringify(data, null, 2);
+            } catch (e) {}
+        }
+
         return '<!DOCTYPE html>\n' + doc.documentElement.outerHTML;
     }
 
     function htmlHasAdminLink(htmlText, targetSlug) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
+        const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+        if (cardDataEl) {
+            try {
+                const data = JSON.parse(cardDataEl.textContent);
+                if (data.formsData && Array.isArray(data.formsData)) {
+                    if (data.formsData.some(f => f.adminLinkedSlug === targetSlug || (f.link && f.link.includes(targetSlug)))) {
+                        return true;
+                    }
+                }
+            } catch (e) {}
+        }
         return Array.from(doc.querySelectorAll('[data-admin-linked-slug]'))
             .some(node => node.getAttribute('data-admin-linked-slug') === targetSlug);
     }
@@ -741,7 +794,7 @@
         }
 
         const updatedDoc = new DOMParser().parseFromString(updatedHtml, 'text/html');
-        data.formsData = Array.from(updatedDoc.querySelectorAll('#forms-container .dokkan-card')).map(form => {
+        const domForms = Array.from(updatedDoc.querySelectorAll('#forms-container .dokkan-card')).map(form => {
             const image = form.querySelector('.form-image');
             return {
                 imageSrc: image?.getAttribute('src') || form.getAttribute('data-thumb-src') || '',
@@ -754,8 +807,29 @@
                     : {})
             };
         });
-        data.containers = data.containers || {};
-        data.containers.forms = updatedDoc.getElementById('forms-container')?.innerHTML || '';
+
+        if (domForms.length > 0) {
+            data.formsData = domForms;
+            data.containers = data.containers || {};
+            data.containers.forms = updatedDoc.getElementById('forms-container')?.innerHTML || '';
+        } else {
+            data.formsData = data.formsData || [];
+            if (shouldLink) {
+                if (!data.formsData.some(f => f.adminLinkedSlug === targetCard.slug || (f.link && f.link.includes(targetCard.slug)))) {
+                    data.formsData.push({
+                        imageSrc: targetCard.thumb,
+                        imageExportName: '',
+                        thumbSrc: targetCard.thumb,
+                        name: targetCard.name,
+                        link: targetCard.url,
+                        adminLinkedSlug: targetCard.slug
+                    });
+                }
+            } else {
+                data.formsData = data.formsData.filter(f => f.adminLinkedSlug !== targetCard.slug && !(f.link && f.link.includes(targetCard.slug)));
+            }
+        }
+
         return JSON.stringify(data, null, 2);
     }
 

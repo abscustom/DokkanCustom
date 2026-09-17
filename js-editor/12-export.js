@@ -174,8 +174,8 @@ window.exportProjectAsJson = function() {
     }
 };
 
-window.loadProjectData = function(projectData, baseUrl = '') {
-    if (!projectData || window.isPublishedEditorLocked?.()) return;
+window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false) {
+    if (!projectData || (!allowLocked && !window.__absDynamicBootstrapping && window.isPublishedEditorLocked?.())) return;
     const projectImageInput = String(projectData.inputs?.imageInput || '');
     const projectHasOfficialArt = /(?:dokkaninfo\.com|images\.weserv\.nl).*\/character\/card\/\d+/i.test(projectImageInput);
     window.currentCardSource = projectData.cardSource === 'official' || (!projectData.cardSource && projectHasOfficialArt)
@@ -545,6 +545,84 @@ function setPublishedSocialPreviewImage(clone, imageUrl, version = '') {
         meta.setAttribute('content', previewUrl);
     });
 }
+
+window.generateDynamicCardHtml = function(projectData, folderPath) {
+    const rawName = projectData?.inputs?.nameInput || 'Custom Card';
+    const rawDesc = projectData?.inputs?.descInput || '';
+    const fullTitle = rawDesc ? `[${rawDesc}] ${rawName}` : rawName;
+    const descText = projectData?.inputs?.leaderInput || rawDesc || '';
+    const previewImg = projectData?.cardArtImage || projectData?.thumbMain || projectData?.thumbLr || projectData?.thumbTur || projectData?.thumbSsr || '';
+    
+    const escapeAttr = (str) => String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const escapeText = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>${escapeText(fullTitle)}</title>
+
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/DokkanCustom/assets/ui/images/editor-favicon.png?v=1" sizes="48x48">
+    <meta name="color-scheme" content="dark">
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:site" content="@HarryTurney">
+    <meta property="og:type" content="website">
+    <meta property="og:site_name" content="abs Info">
+    <meta name="application-name" content="Dokkan Info!">
+    <meta itemprop="name" content="${escapeAttr(fullTitle)}">
+    <meta property="og:title" content="${escapeAttr(fullTitle)}">
+    <meta name="twitter:title" content="${escapeAttr(fullTitle)}">
+    <meta name="apple-mobile-web-app-title" content="${escapeAttr(fullTitle)}">
+    ${previewImg ? `<meta itemprop="image" content="${escapeAttr(previewImg)}">\n    <meta property="og:image" content="${escapeAttr(previewImg)}">\n    <meta name="twitter:image" content="${escapeAttr(previewImg)}">` : ''}
+    ${descText ? `<meta name="description" id="meta-description" content="${escapeAttr(descText)}">\n    <meta itemprop="description" id="meta-itemprop-description" content="${escapeAttr(descText)}">\n    <meta property="og:description" id="meta-og-description" content="${escapeAttr(descText)}">\n    <meta property="twitter:description" id="meta-twitter-description" content="${escapeAttr(descText)}">` : ''}
+
+    <script id="card-data" type="application/json">
+${JSON.stringify(projectData || {}, null, 2)}
+    </script>
+    <script>
+        (function() {
+            const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
+            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+            if (isLocal) {
+                const p = decodeURIComponent(location.pathname);
+                const idx = p.indexOf('/abscustom/');
+                if (idx !== -1) {
+                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js';
+                } else {
+                    const isGrouped = p.includes('/Custom Cards/') || p.includes('/Custom%20Cards/');
+                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js' : '../../DokkanCustom/js/custom-card-bootstrapper.js';
+                }
+            }
+            const s = document.createElement('script');
+            s.src = src;
+            s.onerror = function() {
+                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js') {
+                    const fallback = document.createElement('script');
+                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+                    document.head.appendChild(fallback);
+                }
+            };
+            document.head.appendChild(s);
+        })();
+    </script>
+</head>
+<body class="is-published theme-abs-style">
+    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady">
+        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
+        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
+        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
+        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
+        <div class="abs-loader-art" aria-hidden="true"></div>
+        <div class="abs-loader-stage">
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async">
+            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">Loading...</div>
+            <div class="abs-loader-sub" aria-hidden="true">custom card</div>
+        </div>
+    </div>
+</body>
+</html>`;
+};
 
 function getPublishedCardPreviewImage(clone) {
     const candidates = [
@@ -1263,12 +1341,13 @@ window.checkFolderAvailability = async function(id) {
         
         if (legacyRes.status === 200 || groupedRes.status === 200) {
             statusIcon.innerHTML = `
-                <svg class="status-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
+                <svg class="status-icon-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="#38bdf8" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>`;
-            statusMsg.innerText = "A card with this ID already exists. Choose a different name or ID.";
-            statusMsg.style.color = "#ef4444";
-            isFolderAvailable = false;
+            statusMsg.innerText = "Existing card found. Upload will update this card!";
+            statusMsg.style.color = "#38bdf8";
+            isFolderAvailable = true;
+            window.isCardOverwrite = true;
         } else if (legacyRes.status === 404 && groupedRes.status === 404) {
             statusIcon.innerHTML = `
                 <svg class="status-icon-check" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -1277,14 +1356,16 @@ window.checkFolderAvailability = async function(id) {
             statusMsg.innerText = "New card ID is available!";
             statusMsg.style.color = "#10b981";
             isFolderAvailable = true;
+            window.isCardOverwrite = false;
         } else {
             statusIcon.innerHTML = `
                 <svg class="status-icon-x" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line>
                 </svg>`;
-            statusMsg.innerText = "Unable to confirm that this card ID is available. Upload is disabled.";
+            statusMsg.innerText = "Unable to confirm card ID status. Upload is disabled.";
             statusMsg.style.color = "#ef4444";
             isFolderAvailable = false;
+            window.isCardOverwrite = false;
         }
     } catch (e) {
         statusIcon.innerHTML = `
@@ -1294,6 +1375,7 @@ window.checkFolderAvailability = async function(id) {
         statusMsg.innerText = "Unable to check this card ID. Upload is disabled until the check succeeds.";
         statusMsg.style.color = "#ef4444";
         isFolderAvailable = false;
+        window.isCardOverwrite = false;
     }
     
     window.checkUploadFormValidity();
@@ -1305,8 +1387,10 @@ window.checkUploadFormValidity = function() {
     if (!btn) return;
     if (isFolderAvailable && token.length > 15) {
         btn.disabled = false;
+        btn.textContent = window.isCardOverwrite ? "Update Card on GitHub" : "Upload to GitHub";
     } else {
         btn.disabled = true;
+        btn.textContent = "Upload to GitHub";
     }
 };
 
@@ -1358,10 +1442,9 @@ window.executeGitHubUpload = async function() {
             )
         ]);
         if (legacyFolderResponse.status === 200 || groupedFolderResponse.status === 200) {
-            throw new Error("A card with this ID already exists. Use Quick Save to update it, or choose a different ID.");
-        }
-        if (legacyFolderResponse.status !== 404 || groupedFolderResponse.status !== 404) {
-            throw new Error("Could not confirm that this card ID is available. Nothing was uploaded.");
+            console.log("Updating existing custom card folder on GitHub:", basePath);
+        } else if (legacyFolderResponse.status !== 404 || groupedFolderResponse.status !== 404) {
+            console.warn("Folder check returned non-404 status, proceeding with upload:", legacyFolderResponse.status, groupedFolderResponse.status);
         }
 
         savedInputs.forEach(id => {
@@ -1626,7 +1709,9 @@ jobs:
             });
         }
 
-        let htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
+        let htmlContent = window.generateDynamicCardHtml
+            ? window.generateDynamicCardHtml(projectData, basePath)
+            : ("<!DOCTYPE html>\n" + clone.outerHTML);
         filesToUpload.push({
             path: `${basePath}/index.html`,
             blob: new Blob([htmlContent], { type: 'text/html' })
@@ -1843,7 +1928,10 @@ window.executeQuickSave = async function() {
             });
         }
 
-        const htmlContent = "<!DOCTYPE html>\n" + clone.outerHTML;
+        const isDynamic = Boolean(window.__absIsDynamicViewer || document.querySelector('script[src*="custom-card-bootstrapper"]') || window.generateDynamicCardHtml);
+        const htmlContent = isDynamic && window.generateDynamicCardHtml
+            ? window.generateDynamicCardHtml(projectData, folderName)
+            : ("<!DOCTYPE html>\n" + clone.outerHTML);
         filesToUpload.push({ path: `${folderName}/index.html`, blob: new Blob([htmlContent], { type: 'text/html' }) });
 
         await uploadBatchToGitHub(token, owner, repo, filesToUpload, `Live Quick Edit Update`);

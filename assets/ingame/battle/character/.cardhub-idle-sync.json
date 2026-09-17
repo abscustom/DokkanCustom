@@ -1,0 +1,12 @@
+{
+  "generatedAt": "2026-09-17T05:54:06.702Z",
+  "source": "C:\\Users\\Ruffy\\Desktop\\CardHub Console\\local-hosting\\assets\\ingame\\battle\\character",
+  "destination": "C:\\Users\\Ruffy\\Documents\\GitHub\\DokkanCustom\\assets\\ingame\\battle\\character",
+  "mode": "missing-only",
+  "files": 13379,
+  "copied": 0,
+  "skipped": 13379,
+  "failed": 0,
+  "copiedBytes": 0,
+  "errors": []
+}

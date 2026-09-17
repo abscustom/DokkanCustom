@@ -120,6 +120,7 @@
             const h = { ...(options.headers || {}) };
             if (targetServer && (targetServer.includes('ngrok') || targetServer.includes('loca.lt'))) {
                 h['ngrok-skip-browser-warning'] = 'true';
+                h['Bypass-Tunnel-Reminder'] = 'true';
             }
             return h;
         };
@@ -442,6 +443,32 @@
         return /(?:^|[^A-Za-z0-9])K\s*[._-]?\s*O\.?\s*(?:$|[^A-Za-z0-9])|Ｋ\s*[．._-]?\s*[ＯO]|KOScreen|K\.O\.演出|KO演出/iu.test(text);
     }
 
+    function getCallLineContext(source, index, length) {
+      const text = String(source || '');
+      const lineStart = text.lastIndexOf('\n', index - 1) + 1;
+      const lineEnd = text.indexOf('\n', index + length);
+      const end = lineEnd >= 0 ? lineEnd : text.length;
+      const line = text.slice(lineStart, end);
+      const offset = Math.max(0, index - lineStart);
+      const prefix = line.slice(0, offset);
+      const trailing = line.slice(offset + length);
+      const assignment = prefix.match(/^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*$/);
+      const previousLines = text.slice(0, lineStart).split(/\r?\n/);
+      let previousComment = '';
+      while (previousLines.length) {
+        const candidate = String(previousLines.pop() || '').trim();
+        if (!candidate) continue;
+        previousComment = candidate;
+        break;
+      }
+      return {
+        callVariable: assignment?.[1] || '',
+        trailingComment: trailing,
+        previousComment: previousComment.startsWith('--') ? previousComment : '',
+      };
+    }
+    
+
     function buildLuaNumberResolver(source) {
         const expressions = new Map();
         const assignmentPattern = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*([^;\r\n]+)\s*;?/gm;
@@ -532,184 +559,144 @@
         return null;
     }
 
-    function inferKoEffectMetadata(payload) {
-        const source = String(payload?.lua_source || '');
-        if (!source) return new Map();
-
-        const assignments = new Map();
-        // Dokkan Lua appears with and without a semicolon before the comment.
-        const assignmentPattern = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(\d+)\s*;?\s*([^\r\n]*)\r?$/gm;
-        for (const match of source.matchAll(assignmentPattern)) {
-            assignments.set(match[1], {
-                id: Number(match[2]),
-                isKo: hasKoMarker(match[1]) || hasKoMarker(match[3]),
-                isFullTimelineKo: /(?:start|beginning|開始|スタート)[\s\S]{0,48}(?:K\s*[._-]?\s*O|Ｋ\s*[．._-]?\s*[ＯO])/iu.test(match[3]),
-            });
-        }
-
-        const resolveFrame = buildLuaNumberResolver(source);
-        const damageFrames = [];
-        const endFrames = [];
-        const timingCallPattern = /\b(dealDamage|endPhase)\s*\(([^)]*)\)/g;
-        for (const match of source.matchAll(timingCallPattern)) {
-            const frame = resolveFrame(match[2].split(',')[0]);
-            if (!Number.isFinite(frame)) continue;
-            if (match[1] === 'dealDamage') damageFrames.push(frame);
-            else endFrames.push(frame);
-        }
-        const damageFrame = damageFrames.length ? Math.max(...damageFrames) : null;
-        const endFrame = endFrames.length ? Math.max(...endFrames) : null;
-        const tailStartRatio = Number.isFinite(damageFrame) && Number.isFinite(endFrame) && endFrame > damageFrame
-            ? Math.min(0.985, Math.max(0.5, damageFrame / endFrame))
-            : 0;
-
-        // Each LWF can be mounted on a local phase variable (for example
-        // `spep_2`) after a card cut-in. Those variables are not always
-        // reducible to an absolute script frame, but their damage/end offsets
-        // are. Keep that local timing so KO previews can trim the LWF itself.
-        const timingByBase = new Map();
-        for (const match of source.matchAll(timingCallPattern)) {
-            const timingExpression = match[2].split(',')[0];
-            const base = getLuaFrameBase(timingExpression);
-            const relativeFrame = resolveLuaFrameRelativeTo(timingExpression, base, resolveFrame);
-            if (!base || !Number.isFinite(relativeFrame)) continue;
-            const timing = timingByBase.get(base) || { damage: [], end: [] };
-            if (match[1] === 'dealDamage') timing.damage.push(relativeFrame);
-            else timing.end.push(relativeFrame);
-            timingByBase.set(base, timing);
-        }
-
-        const metadata = new Map();
-        const effectCallPattern = /\b(setupMovie|entryEffect(?:Life|Unpausable|Attach|Sub)?)\s*\(([^)]*)\)/g;
-        for (const match of source.matchAll(effectCallPattern)) {
-            const tokens = match[2].split(',').map((part) => part.trim());
-            const token = tokens[1];
-            const assignment = assignments.get(token);
-            const effectId = /^\d+$/.test(token || '') ? Number(token) : assignment?.id;
-            if (!effectId) continue;
-
-            const nearbySource = source.slice(Math.max(0, match.index - 240), match.index);
-            if (assignment?.isKo || hasKoMarker(token) || hasKoMarker(nearbySource)) {
-                const prior = metadata.get(effectId) || {
-                    id: effectId,
-                    isFullTimelineKo: false,
-                    isStandaloneKoScene: false,
-                    koStartRatio: 0,
-                    koStartFrame: 0,
-                    koDamageFrame: 0,
-                    koEndFrame: 0,
-                    needsBattleResult: false,
-                };
-                const frameBase = getLuaFrameBase(tokens[0]);
-                const entryFrameRelative = resolveLuaFrameRelativeTo(tokens[0], frameBase, resolveFrame);
-                const entryFrameAbsolute = resolveFrame(tokens[0]);
-                const entryFrame = entryFrameRelative ?? entryFrameAbsolute;
-                // A number relative to `spep_0` is not enough to decide
-                // whether this is the full attack: `spep_0 + 1218` is still
-                // relative to zero, but it is an explicitly separate KO
-                // scene. Conversely, phases created by showCardCutin cannot
-                // be resolved to an absolute value, so their local zero is a
-                // valid full-timeline start.
-                const isMountedAtPhaseStart = Boolean(
-                    Number.isFinite(entryFrameRelative)
-                    && entryFrameRelative <= 1
-                    && (!Number.isFinite(entryFrameAbsolute) || entryFrameAbsolute <= 1)
-                );
-                const localTiming = timingByBase.get(frameBase);
-                const localDamage = localTiming?.damage?.length ? Math.max(...localTiming.damage) : null;
-                const localEnd = localTiming?.end?.length ? Math.max(...localTiming.end) : null;
-                const localAttackStart = inferFinalAttackStartFrame(source, frameBase, localDamage, resolveFrame);
-                const localTailStartFrame = Number.isFinite(localAttackStart)
-                    ? localAttackStart
-                    : localDamage;
-                const localTailStartRatio = Number.isFinite(localTailStartFrame) && Number.isFinite(localEnd) && localEnd > localTailStartFrame
-                    ? Math.min(0.985, Math.max(0.5, localTailStartFrame / localEnd))
-                    : 0;
-                const effectTailStartRatio = localTailStartRatio || tailStartRatio;
-                const effectTailStartFrame = Number.isFinite(localTailStartFrame)
-                    ? localTailStartFrame
-                    : (Number.isFinite(damageFrame) ? damageFrame : 0);
-                // Older scripts use many labels for the same structure
-                // ("charge → KO", "start → KO", etc.). Some launch the KO
-                // movie after a card cut-in, so their entry frame cannot be
-                // reduced to absolute frame zero. Its own damage/end offsets
-                // are still authored in the local effect timeline, however.
-                // Treat that local tail as the source of truth. A dedicated
-                // KO LWF launched near the end has no meaningful local damage
-                // span and remains untrimmed.
-                const hasLocalKoTail = Boolean(
-                    isMountedAtPhaseStart
-                    &&
-                    Number.isFinite(localDamage)
-                    && Number.isFinite(localEnd)
-                    && localDamage >= 30
-                    && localEnd > localDamage
-                    && localTailStartRatio >= 0.5
-                );
-                // The shared battle-result UI is emitted by the game when a
-                // full attack LWF is mounted at the start of its phase. A
-                // standalone KO loop is mounted later and already contains
-                // its own authored result; adding battle_170000 there would
-                // duplicate the letters and tint the scene incorrectly.
-                const needsBattleResult = Boolean(
-                    isMountedAtPhaseStart
-                    && Number.isFinite(localDamage)
-                    && Number.isFinite(localEnd)
-                    && localEnd > localDamage
-                );
-                const isFullTimelineKo = Boolean(
-                    assignment?.isFullTimelineKo
-                    || (
-                        isMountedAtPhaseStart
-                        && effectTailStartRatio > 0
-                    )
-                    || hasLocalKoTail,
-                );
-                const isStandaloneKoScene = !isMountedAtPhaseStart;
-                metadata.set(effectId, {
-                    ...prior,
-                    isFullTimelineKo: prior.isFullTimelineKo || isFullTimelineKo,
-                    // A named KO scene entered after the attack is already a
-                    // complete, authored result. Do not trim it with the
-                    // attack's damage/end markers or substitute the pack's
-                    // broad USM movie, which may represent a different
-                    // scene from the same pack.
-                    isStandaloneKoScene: prior.isStandaloneKoScene || isStandaloneKoScene,
-                    // A single "start → KO" LWF contains the entire attack.
-                    // Start its dedicated preview at the authored final-attack
-                    // cue (or the damage point when no cue can be resolved),
-                    // so the KO view includes the last strike instead of
-                    // opening halfway through it.
-                    koStartRatio: isFullTimelineKo ? Math.max(prior.koStartRatio || 0, effectTailStartRatio) : prior.koStartRatio,
-                    // The LWF and the ActionBank script frequently share the
-                    // exact local frame numbers.  Keep that number as well as
-                    // the ratio: it avoids skipping past a KO tail when a
-                    // nested LWF's total-frame count differs from the script.
-                    koStartFrame: isFullTimelineKo
-                        ? Math.max(prior.koStartFrame || 0, effectTailStartFrame || 0)
-                        : prior.koStartFrame,
-                    // `dealDamage` is the game-runtime handoff to the shared
-                    // battle result layer. Keep its local frame separately:
-                    // dedicated KO LWFs should open on this frame, not on the
-                    // earlier attack cue used for full-attack previews.
-                    koDamageFrame: Number.isFinite(localDamage)
-                        ? Math.max(prior.koDamageFrame || 0, localDamage)
-                        : prior.koDamageFrame,
-                    needsBattleResult: prior.needsBattleResult || needsBattleResult,
-                    // Preserve the paired local end frame too. Some LWFs
-                    // contain dormant child movies after their authored
-                    // scene, which can make a broad "largest nested movie"
-                    // measurement run hundreds of blank frames past the KO.
-                    // The Lua phase boundary is the reliable stop point.
-                    koEndFrame: isFullTimelineKo && Number.isFinite(localEnd)
-                        ? Math.max(prior.koEndFrame || 0, localEnd)
-                        : prior.koEndFrame,
-                });
-            }
-        }
-        return metadata;
+    function inferKoEffectMetadata(payloadOrSource) {
+      const source = typeof payloadOrSource === 'string'
+        ? payloadOrSource
+        : String(payloadOrSource?.lua_source || '');
+      if (!source) return new Map();
+    
+      const assignments = new Map();
+      const assignmentPattern = /^\s*([A-Za-z_][A-Za-z0-9_]*)\s*=\s*(\d+)\s*;?\s*([^\r\n]*)\r?$/gm;
+      for (const match of source.matchAll(assignmentPattern)) {
+        assignments.set(match[1], {
+          id: Number(match[2]),
+          isKo: hasKoMarker(match[1]) || hasKoMarker(match[3]),
+          isFullTimelineKo: /(?:start|beginning|開始|スタート)[\s\S]{0,48}(?:K\s*[._-]?\s*O|Ｋ\s*[．._-]?\s*[ＯO])/iu.test(match[3]),
+        });
+      }
+    
+      const resolveFrame = buildLuaNumberResolver(source);
+      const damageFrames = [], endFrames = [];
+      const timingCallPattern = /\b(dealDamage|endPhase)\s*\(([^)]*)\)/g;
+      for (const match of source.matchAll(timingCallPattern)) {
+        const frame = resolveFrame(match[2].split(',')[0]);
+        if (!Number.isFinite(frame)) continue;
+        (match[1] === 'dealDamage' ? damageFrames : endFrames).push(frame);
+      }
+      const damageFrame = damageFrames.length ? Math.max(...damageFrames) : null;
+      const endFrame = endFrames.length ? Math.max(...endFrames) : null;
+      const tailStartRatio = Number.isFinite(damageFrame) && Number.isFinite(endFrame) && endFrame > damageFrame
+        ? Math.min(0.985, Math.max(0.5, damageFrame / endFrame)) : 0;
+    
+      const timingByBase = new Map();
+      for (const match of source.matchAll(timingCallPattern)) {
+        const expression = match[2].split(',')[0];
+        const base = getLuaFrameBase(expression);
+        const relativeFrame = resolveLuaFrameRelativeTo(expression, base, resolveFrame);
+        if (!base || !Number.isFinite(relativeFrame)) continue;
+        const timing = timingByBase.get(base) || { damage: [], end: [] };
+        (match[1] === 'dealDamage' ? timing.damage : timing.end).push(relativeFrame);
+        timingByBase.set(base, timing);
+      }
+    
+      const metadata = new Map();
+      const effectCallPattern = /\b(setupMovie|entryEffect(?:Life|Unpausable|Attach|Sub)?)\s*\(([^)]*)\)/g;
+      const calls = [];
+      for (const match of source.matchAll(effectCallPattern)) {
+        const tokens = match[2].split(',').map((part) => part.trim());
+        const token = tokens[1];
+        const assignment = assignments.get(token);
+        const effectId = /^\d+$/.test(token || '') ? Number(token) : assignment?.id;
+        if (!effectId) continue;
+        const context = getCallLineContext(source, match.index, match[0].length);
+        const explicitKo = Boolean(
+          assignment?.isKo
+          || hasKoMarker(token)
+          || hasKoMarker(context.callVariable)
+          || hasKoMarker(context.trailingComment)
+          || hasKoMarker(context.previousComment)
+        );
+        const frameBase = getLuaFrameBase(tokens[0]);
+        const entryFrameRelative = resolveLuaFrameRelativeTo(tokens[0], frameBase, resolveFrame);
+        const entryFrameAbsolute = resolveFrame(tokens[0]);
+        calls.push({
+          match,
+          tokens,
+          assignment,
+          effectId,
+          method: match[1],
+          explicitKo,
+          frameBase,
+          entryFrameRelative,
+          entryFrameAbsolute,
+        });
+      }
+      const visualEffectIds = new Set(calls.filter((call) => call.method !== 'setupMovie').map((call) => call.effectId));
+      const koCalls = calls.filter((call) => call.explicitKo && call.method !== 'setupMovie');
+      for (const call of calls) {
+        // setupMovie is a skip/preload instruction for the same pack. When the
+        // script also has a visual entryEffect for that id, let the visual call
+        // provide the KO metadata so a nearby skip cue cannot turn a cut-in into
+        // a KO layer. Keep setupMovie-only KO packs eligible for movie playback.
+        if (call.method === 'setupMovie' && visualEffectIds.has(call.effectId)) continue;
+        // A KO block often has a foreground and a background LWF mounted on the
+        // same authored frame. Include those companions, but do not use a wide
+        // character window that can accidentally tag an earlier cut-in or dodge
+        // effect as KO.
+        const sameAuthoredStart = koCalls.some((koCall) => {
+          const sameBase = call.frameBase && koCall.frameBase && call.frameBase === koCall.frameBase;
+          const sameRelative = Number.isFinite(call.entryFrameRelative)
+            && Number.isFinite(koCall.entryFrameRelative)
+            && Math.abs(call.entryFrameRelative - koCall.entryFrameRelative) <= 2;
+          const sameAbsolute = Number.isFinite(call.entryFrameAbsolute)
+            && Number.isFinite(koCall.entryFrameAbsolute)
+            && Math.abs(call.entryFrameAbsolute - koCall.entryFrameAbsolute) <= 2;
+          return call.method !== 'setupMovie'
+            && koCall.method !== 'setupMovie'
+            && call !== koCall
+            && ((sameBase && sameRelative) || sameAbsolute);
+        });
+        if (!call.explicitKo && !sameAuthoredStart) continue;
+    
+        const { match, tokens, assignment, effectId, frameBase, entryFrameRelative, entryFrameAbsolute } = call;
+    
+        const prior = metadata.get(effectId) || {
+          id: effectId, isFullTimelineKo: false, isStandaloneKoScene: false,
+          koStartRatio: 0, koStartFrame: 0, koDamageFrame: 0, koEndFrame: 0,
+          needsBattleResult: false,
+        };
+        const isMountedAtPhaseStart = Boolean(
+          Number.isFinite(entryFrameRelative) && entryFrameRelative <= 1
+          && (!Number.isFinite(entryFrameAbsolute) || entryFrameAbsolute <= 1),
+        );
+        const localTiming = timingByBase.get(frameBase);
+        const localDamage = localTiming?.damage?.length ? Math.max(...localTiming.damage) : null;
+        const localEnd = localTiming?.end?.length ? Math.max(...localTiming.end) : null;
+        const localAttackStart = inferFinalAttackStartFrame(source, frameBase, localDamage, resolveFrame);
+        const localTailStartFrame = Number.isFinite(localAttackStart) ? localAttackStart : localDamage;
+        const localTailStartRatio = Number.isFinite(localTailStartFrame) && Number.isFinite(localEnd) && localEnd > localTailStartFrame
+          ? Math.min(0.985, Math.max(0.5, localTailStartFrame / localEnd)) : 0;
+        const effectTailStartRatio = localTailStartRatio || tailStartRatio;
+        const effectTailStartFrame = Number.isFinite(localTailStartFrame) ? localTailStartFrame : (Number.isFinite(damageFrame) ? damageFrame : 0);
+        const hasLocalKoTail = Boolean(isMountedAtPhaseStart && Number.isFinite(localDamage) && Number.isFinite(localEnd)
+          && localDamage >= 30 && localEnd > localDamage && localTailStartRatio >= 0.5);
+        const needsBattleResult = Boolean(isMountedAtPhaseStart && Number.isFinite(localDamage)
+          && Number.isFinite(localEnd) && localEnd > localDamage);
+        const isFullTimelineKo = Boolean(assignment?.isFullTimelineKo || (isMountedAtPhaseStart && effectTailStartRatio > 0) || hasLocalKoTail);
+        metadata.set(effectId, {
+          ...prior,
+          isFullTimelineKo: prior.isFullTimelineKo || isFullTimelineKo,
+          isStandaloneKoScene: prior.isStandaloneKoScene || !isMountedAtPhaseStart,
+          koStartRatio: isFullTimelineKo ? Math.max(prior.koStartRatio || 0, effectTailStartRatio) : prior.koStartRatio,
+          koStartFrame: isFullTimelineKo ? Math.max(prior.koStartFrame || 0, effectTailStartFrame || 0) : prior.koStartFrame,
+          koDamageFrame: Number.isFinite(localDamage) ? Math.max(prior.koDamageFrame || 0, localDamage) : prior.koDamageFrame,
+          needsBattleResult: prior.needsBattleResult || needsBattleResult,
+          koEndFrame: isFullTimelineKo && Number.isFinite(localEnd) ? Math.max(prior.koEndFrame || 0, localEnd) : prior.koEndFrame,
+        });
+      }
+      return metadata;
     }
-
+    
     function inferKoEffectIds(payload) {
         return new Set(inferKoEffectMetadata(payload).keys());
     }
@@ -1492,15 +1479,18 @@
 
         if (koEffects.length === 1 && !battleResultEffect) {
             const effect = koEffects[0];
+            const canTrim = !effect?.ko_standalone_scene;
             const authoredDamageFrame = Number(effect.ko_damage_frame) || 0;
             const authoredEndFrame = Number(effect.ko_end_frame) || 0;
-            const damageRatio = authoredDamageFrame > 0 && authoredEndFrame > authoredDamageFrame
+            const damageRatio = canTrim && authoredDamageFrame > 0 && authoredEndFrame > authoredDamageFrame
                 ? Math.min(0.985, Math.max(0.5, authoredDamageFrame / authoredEndFrame))
                 : 0;
             await playEffect(koEffects[0], {
                 ...options,
-                koStartRatio: damageRatio || Number(effect.ko_start_ratio) || 0,
-                koStartFrame: Number(effect.ko_start_frame) || 0,
+                koStartRatio: canTrim ? damageRatio || Number(effect.ko_start_ratio) || 0 : 0,
+                koStartFrame: canTrim
+                    ? authoredDamageFrame || Number(effect.ko_start_frame) || 0
+                    : Number(effect.ko_start_frame) || 0,
                 koEndFrame: Number(effect.ko_end_frame) || 0,
             });
             return;

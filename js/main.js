@@ -2663,7 +2663,19 @@ async function loadCustomCards() {
                 const htmlText = await indexRes.text();
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
-                let charName = doc.querySelector('#char-name')?.textContent?.trim() || '';
+                let cardData = null;
+                const embeddedJson = doc.querySelector('#card-data')?.textContent;
+                if (embeddedJson) {
+                    try { cardData = JSON.parse(embeddedJson); } catch (e) {}
+                }
+                if (!cardData) {
+                    try {
+                        const cardDataRes = await fetch(`https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/card.json`, { cache: 'no-store' });
+                        if (cardDataRes.ok) cardData = await cardDataRes.json();
+                    } catch (e) {}
+                }
+
+                let charName = cardData?.inputs?.nameInput || doc.querySelector('#char-name')?.textContent?.trim() || '';
                 if (!charName) {
                     const rawTitle = doc.querySelector('title')?.textContent || folderName;
                     charName = rawTitle.replace(/^\[.*?\]\s*/, '').trim();
@@ -2675,50 +2687,46 @@ async function loadCustomCards() {
                     return `${cardUrl}${src.replace(/^\.\//, '')}`;
                 };
 
-                const rarityAttr = doc.querySelector('#main-rarity-icon')?.getAttribute('src') || 'rarity_LR.png';
-                const isLR = rarityAttr.toLowerCase().includes('lr');
-                const isSSR = rarityAttr.toLowerCase().includes('ssr');
-                const rarityKey = isLR ? 'lr' : (isSSR ? 'ssr' : 'tur');
+                const rarityAttr = doc.querySelector('#main-rarity-icon')?.getAttribute('src') || '';
+                const detectedRarity = cardData?.currentRarity ? cardData.currentRarity.toLowerCase() : (rarityAttr.toLowerCase().includes('lr') ? 'lr' : (rarityAttr.toLowerCase().includes('ssr') ? 'ssr' : 'tur'));
+                const rarityKey = detectedRarity || 'tur';
+                const isLR = rarityKey === 'lr';
+                const isSSR = rarityKey === 'ssr';
 
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : (isSSR ? '#img-ssr' : '#img-tur')) || doc.querySelector('#abs-thumb-img');
-                const charImgSrc = fixUrl(iconEl?.getAttribute('src'), `${CENTRAL_ASSET_URL}SSR_Icon.png`);
+                const rawIcon = cardData?.thumbMain || (isLR ? cardData?.thumbLr : (isSSR ? cardData?.thumbSsr : cardData?.thumbTur)) || iconEl?.getAttribute('src');
+                const charImgSrc = fixUrl(rawIcon, `${CENTRAL_ASSET_URL}SSR_Icon.png`);
 
                 // The SBA showcase is art-led. Read the published art layers
                 // rather than using the header thumbnail as its hero image.
-                const rawCardArtImage = [
+                const rawCardArtImage = cardData?.cardArtImage || [
                     doc.querySelector('#myOverlayImage')?.getAttribute('src'),
                     doc.querySelector('#abs-art-img')?.getAttribute('src'),
                     doc.querySelector('.card-art-canvas img')?.getAttribute('src')
                 ].find(src => src && !/Card(?:%20| )Art(?:%20| )Template\.png/i.test(src)) || '';
-                const rawCardArtVideo = doc.querySelector('#myOverlayVideo source')?.getAttribute('src') ||
+                const rawCardArtVideo = cardData?.cardArtVideo || doc.querySelector('#myOverlayVideo source')?.getAttribute('src') ||
                     doc.querySelector('#myOverlayVideo')?.getAttribute('src') ||
                     doc.querySelector('video.card-art-canvas source')?.getAttribute('src') || '';
                 const cardArtImageUrl = rawCardArtImage ? fixUrl(rawCardArtImage, '') : '';
                 const cardArtVideoUrl = rawCardArtVideo ? fixUrl(rawCardArtVideo, '') : '';
 
-                const frameAttr = doc.querySelector('.card-frame')?.getAttribute('src') || 'frame_agl.png';
-                const typeImgAttr = doc.querySelector('.typing-icon')?.getAttribute('src') || 'super_type_agl.png';
+                const frameAttr = doc.querySelector('.card-frame')?.getAttribute('src') || '';
+                const typeImgAttr = doc.querySelector('.typing-icon')?.getAttribute('src') || '';
                 
-                let cardClass = typeImgAttr.includes('extreme') ? 'extreme' : 'super';
-                let cardType = 'agl';
-                if (frameAttr.includes('teq')) cardType = 'teq';
-                else if (frameAttr.includes('int')) cardType = 'int';
-                else if (frameAttr.includes('str')) cardType = 'str';
-                else if (frameAttr.includes('phy')) cardType = 'phy';
+                let cardClass = cardData?.currentClass ? cardData.currentClass.toLowerCase() : (typeImgAttr.includes('extreme') ? 'extreme' : 'super');
+                let cardType = cardData?.currentType ? cardData.currentType.toLowerCase() : 'agl';
+                if (!cardData?.currentType) {
+                    if (frameAttr.includes('teq')) cardType = 'teq';
+                    else if (frameAttr.includes('int')) cardType = 'int';
+                    else if (frameAttr.includes('str')) cardType = 'str';
+                    else if (frameAttr.includes('phy')) cardType = 'phy';
+                }
 
                 // card.json contains the exact Release Date entered in the
                 // editor. It is the source of truth for a custom card's place
                 // on the timeline; a GitHub upload date is never used here.
-                let dateText = '';
-                let unitTag = '';
-                try {
-                    const cardDataRes = await fetch(`https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/card.json`, { cache: 'no-store' });
-                    if (cardDataRes.ok) {
-                        const cardData = await cardDataRes.json();
-                        dateText = cardData?.inputs?.dateInput || cardData?.inputs?.releaseDate || cardData?.releaseDate || cardData?.release_date || '';
-                        unitTag = cardData?.inputs?.absUnitTag || cardData?.absUnitTag || cardData?.unitTag || '';
-                    }
-                } catch (e) {}
+                let dateText = cardData?.inputs?.dateInput || cardData?.inputs?.releaseDate || cardData?.releaseDate || cardData?.release_date || '';
+                let unitTag = cardData?.inputs?.absUnitTag || cardData?.absUnitTag || cardData?.unitTag || '';
 
                 if (!dateText) {
                     dateText = doc.querySelector('#dateInput')?.getAttribute('value') || doc.querySelector('#dateInput')?.value || '';

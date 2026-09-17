@@ -166,13 +166,16 @@ export class CharaLayer {
             state.sy = 1;
             state.rotation = 0;
             state.alpha = 1;
-            state.disp = 0;
+            // Dokkan starts the attacking side on screen. Older Super scripts
+            // only hide the enemy at frame 0 and rely on this default, so
+            // resetting both sides hidden makes their moving attacker invisible.
+            state.disp = state.id === 0 ? 1 : 0;
             state.drawFront = false;
             state.loopAnime = true;
             state.stopAtEnd = false;
             state.lastClipFrame = null;
-            state.wrap.style.display = 'none';
-            state.wrap.style.visibility = 'hidden';
+            state.wrap.style.display = state.disp ? 'block' : 'none';
+            state.wrap.style.visibility = state.disp ? 'visible' : 'hidden';
             state.wrap.style.opacity = '1';
             this.applyPose(state, state.id === 0 ? 0 : 100);
             this.updateTransform(state);
@@ -445,11 +448,13 @@ export class CharaLayer {
         }
     }
 
-    setLogicalHeight() {
-        // Dokkan character keys always use the fixed 852x1536 battle stage.
-        // A 852x1136 USM is a cropped scene plate and must not change the
-        // character coordinate system.
-        this.logicalHeight = LOGICAL_STAGE_HEIGHT;
+    setLogicalHeight(height = LOGICAL_STAGE_HEIGHT) {
+        // Character coordinates follow the active stage height so characters
+        // and effects share the same viewport scale on cropped stages.
+        const nextHeight = Number(height);
+        this.logicalHeight = Number.isFinite(nextHeight) && nextHeight > 0
+            ? nextHeight
+            : LOGICAL_STAGE_HEIGHT;
     }
 
     stageScale() {

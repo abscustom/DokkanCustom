@@ -120,7 +120,7 @@
     }
 
     function bridgeHeaders(server) {
-        return server.includes('ngrok') || server.includes('loca.lt') ? { 'ngrok-skip-browser-warning': 'true' } : {};
+        return server.includes('ngrok') || server.includes('loca.lt') ? { 'ngrok-skip-browser-warning': 'true', 'Bypass-Tunnel-Reminder': 'true' } : {};
     }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = BRIDGE_REQUEST_TIMEOUT_MS) {
@@ -141,10 +141,6 @@
             const resolved = new URL(raw, server);
             if (!/^https?:$/i.test(resolved.protocol) || !/^\/(?:assets|api)\//i.test(resolved.pathname)) {
                 return value;
-            }
-            if (resolved.pathname.startsWith('/assets/')) {
-                const rel = resolved.pathname.replace('/assets/', '');
-                return `${GITHUB_RAW_BASE}/${rel}`;
             }
             const origin = new URL(server).origin;
             return `${origin}${resolved.pathname}${resolved.search}${resolved.hash}`;

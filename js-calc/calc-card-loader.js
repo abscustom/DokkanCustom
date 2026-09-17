@@ -646,6 +646,18 @@ async function initUnitPickerDatabase() {
 
 function getCustomCardRarityFromDoc(doc, htmlText) {
     if (!doc && !htmlText) return 'TUR';
+
+    if (doc) {
+        const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+        if (cardDataEl) {
+            try {
+                const d = JSON.parse(cardDataEl.textContent);
+                const r = d.currentRarity || d.characterState?.cardRarity;
+                if (r) return String(r).toUpperCase().trim();
+            } catch (e) {}
+        }
+    }
+
     const textLow = (htmlText || (doc ? doc.documentElement.innerHTML : '')).toLowerCase();
 
     const rarityScriptMatch = textLow.match(/window\.currentrarity\s*=\s*["']([^"']+)["']/i);
@@ -693,6 +705,17 @@ function getCustomCardRarityFromDoc(doc, htmlText) {
 }
 
 function getCustomCardClassFromDoc(doc, htmlText) {
+    if (doc) {
+        const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+        if (cardDataEl) {
+            try {
+                const d = JSON.parse(cardDataEl.textContent);
+                const c = d.currentClass || d.characterState?.cardClass;
+                if (c) return String(c).toLowerCase().trim();
+            } catch (e) {}
+        }
+    }
+
     const source = htmlText || (doc ? doc.documentElement.innerHTML : '');
     const classScriptMatch = source.match(/window\.currentClass\s*=\s*["'](super|extreme)["']/i);
     if (classScriptMatch) return classScriptMatch[1].toLowerCase();
@@ -752,23 +775,34 @@ async function loadCustomCardsForCalculator() {
                 const htmlText = await indexRes.text();
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
-                let charName = doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim() || '';
+                let cardJson = null;
+                const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+                if (cardDataEl) {
+                    try { cardJson = JSON.parse(cardDataEl.textContent); } catch (e) {}
+                }
+
+                let charName = cardJson?.inputs?.nameInput || doc.querySelector('#char-name, #abs-char-name')?.textContent?.trim() || '';
                 if (!charName) {
                     const rawTitle = doc.querySelector('title')?.textContent || folderName;
                     charName = rawTitle.replace(/^\[.*?\]\s*/, '').trim();
                 }
 
-                const exactRarity = getCustomCardRarityFromDoc(doc, htmlText);
-                const frameAttr = doc.querySelector('.card-frame, #abs-frame-img')?.getAttribute('src') || 'frame_agl.png';
-                let cardType = 'agl';
-                if (frameAttr.includes('teq')) cardType = 'teq';
-                else if (frameAttr.includes('int')) cardType = 'int';
-                else if (frameAttr.includes('str')) cardType = 'str';
-                else if (frameAttr.includes('phy')) cardType = 'phy';
+                const exactRarity = cardJson?.currentRarity ? String(cardJson.currentRarity).toUpperCase() : getCustomCardRarityFromDoc(doc, htmlText);
+                let cardType = (cardJson?.characterState?.cardType || cardJson?.currentType || cardJson?.type || '').toLowerCase();
+                if (!cardType) {
+                    const frameAttr = doc.querySelector('.card-frame, #abs-frame-img')?.getAttribute('src') || 'frame_agl.png';
+                    if (frameAttr.includes('teq')) cardType = 'teq';
+                    else if (frameAttr.includes('int')) cardType = 'int';
+                    else if (frameAttr.includes('str')) cardType = 'str';
+                    else if (frameAttr.includes('phy')) cardType = 'phy';
+                    else cardType = 'agl';
+                }
 
                 const fixUrl = (src) => src?.startsWith('http') ? src : `${cardUrl}${src?.replace(/^\.\//, '')}`;
-                const iconEl = doc.querySelector(exactRarity === 'LR' ? '#img-lr' : '#img-tur') || doc.querySelector('#abs-thumb-img, .thumb-img');
-                const thumbUrl = fixUrl(iconEl?.getAttribute('src'));
+                const isLR = exactRarity === 'LR';
+                const iconEl = doc.querySelector(isLR ? '#img-lr' : '#img-tur') || doc.querySelector('#abs-thumb-img, .thumb-img');
+                const rawThumb = cardJson?.thumbMain || (isLR ? cardJson?.thumbLr : cardJson?.thumbTur) || iconEl?.getAttribute('src');
+                const thumbUrl = fixUrl(rawThumb);
 
                 customCards.push({
                     id: folderName,
@@ -778,7 +812,7 @@ async function loadCustomCardsForCalculator() {
                     cardUrl: cardUrl,
                     thumbUrl: thumbUrl,
                     type: cardType,
-                    cardClass: getCustomCardClassFromDoc(doc, htmlText),
+                    cardClass: (cardJson?.characterState?.cardClass || cardJson?.currentClass || getCustomCardClassFromDoc(doc, htmlText)).toLowerCase(),
                     rarity: exactRarity,
                     sortTime: Date.now(),
                     htmlText: htmlText
@@ -1851,7 +1885,13 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     };
     window.currentFamilyForms = [];
 
-    const exactRarity = getCustomCardRarityFromDoc(doc, htmlText);
+    let cardData = null;
+    const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
+    if (cardDataEl) {
+        try { cardData = JSON.parse(cardDataEl.textContent); } catch (e) {}
+    }
+
+    const exactRarity = cardData?.currentRarity ? String(cardData.currentRarity).toUpperCase() : getCustomCardRarityFromDoc(doc, htmlText);
     const isLR = exactRarity === 'LR';
     cardItem.rarity = exactRarity;
 
@@ -1863,7 +1903,7 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     toggleCalcRarity(isLR ? 'LR' : 'TUR', true);
     if (typeof updateKiSliderDisplay === 'function') updateKiSliderDisplay();
 
-    const isEZA = htmlText.includes('eza_abs.png') || htmlText.includes('superza_abs.png') || false;
+    const isEZA = cardData?.currentAwakeningMode?.includes('eza') || htmlText.includes('eza_abs.png') || htmlText.includes('superza_abs.png') || false;
     const ezaBox = document.getElementById('calc-is-eza');
     if (ezaBox) ezaBox.checked = isEZA;
     window.currentCalcEza = isEZA;
@@ -1877,19 +1917,19 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
         return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
     };
 
-    let atk100 = getNum('#stat-atk-100') || getNum('#abs-stat-atk-val') || 19995;
-    let def100 = getNum('#stat-def-100') || getNum('#abs-stat-def-val') || 14869;
+    let atk100 = cardData?.stats?.atkMax || cardData?.stats?.atk || getNum('#stat-atk-100') || getNum('#abs-stat-atk-val') || 19995;
+    let def100 = cardData?.stats?.defMax || cardData?.stats?.def || getNum('#stat-def-100') || getNum('#abs-stat-def-val') || 14869;
     cardParsedStats.rainbow100.atk = atk100;
     cardParsedStats.rainbow100.def = def100;
-    cardParsedStats.hipo55.atk = getNum('#stat-atk-55') || (atk100 - 3400);
-    cardParsedStats.hipo55.def = getNum('#stat-def-55') || (def100 - 3000);
+    cardParsedStats.hipo55.atk = cardData?.stats?.atk55 || getNum('#stat-atk-55') || (atk100 - 3400);
+    cardParsedStats.hipo55.def = cardData?.stats?.def55 || getNum('#stat-def-55') || (def100 - 3000);
 
     applyHipoPreset(currentHipoPreset);
 
     const nameEl = document.getElementById('calc-char-name-text');
     const titleEl = document.getElementById('calc-char-title-text');
-    if (nameEl) nameEl.innerText = cardItem.name;
-    if (titleEl) titleEl.innerText = doc.querySelector('#char-description, #abs-char-title')?.textContent || 'Custom Unit';
+    if (nameEl) nameEl.innerText = cardData?.inputs?.nameInput || cardItem.name;
+    if (titleEl) titleEl.innerText = cardData?.inputs?.descInput || doc.querySelector('#char-description, #abs-char-title')?.textContent || 'Custom Unit';
     
     const cardType = cardItem.type || 'agl';
     const cardClassKey = cardItem.cardClass || getCustomCardClassFromDoc(doc, htmlText);
@@ -1924,7 +1964,7 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     const awkImg = document.getElementById('calc-awakening-img');
     if (awkImg) awkImg.style.display = isEZA ? 'block' : 'none';
 
-    const leaderText = doc.querySelector('#leader-skill, #abs-leader-skill, #leader-desc')?.textContent || '';
+    const leaderText = cardData?.inputs?.leaderInput || doc.querySelector('#leader-skill, #abs-leader-skill, #leader-desc')?.textContent || '';
     if (leaderText) {
         document.getElementById('calc-lead').value = parseLeaderSkillValue(leaderText);
         let cleanText = leaderText.replace(/<[^>]*>?/gm, '').replace(/(?:\r\n|\r|\n|\\n)/g, ' ').replace(/\s{2,}/g, ' ').trim();
@@ -1934,7 +1974,12 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
 
     activeCharacterLinks = [];
     let detectedLinkKeys = new Set();
-    const linkNodes = doc.querySelectorAll('.abs-link-name, #card-link-container a, .link-name');
+    let linkNodes = doc.querySelectorAll('.abs-link-name, #card-link-container a, .link-name');
+    if (linkNodes.length === 0 && cardData?.containers?.links) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cardData.containers.links;
+        linkNodes = tempDiv.querySelectorAll('a, .abs-link-name, .link-name');
+    }
     
     linkNodes.forEach(node => {
         const linkName = node.textContent.trim();
@@ -1955,6 +2000,10 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     renderLinkSkillBadges();
 
     let pContainer = doc.querySelector('#card-passive-container, #abs-passive-container, .passive-container-main');
+    if (!pContainer && cardData?.containers?.passiveCard) {
+        pContainer = document.createElement('div');
+        pContainer.innerHTML = cardData.containers.passiveCard;
+    }
     if (pContainer) {
         parseAndRenderInteractivePassiveCard(pContainer);
     } else {
@@ -1963,7 +2012,16 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     }
 
     // --- ACTIVE SKILL AND DOMAIN PARSING (CALCULATOR ENGINE) ---
-    const activeBlocks = doc.querySelectorAll('.active-block, #card-active-container, #abs-active-container, .active-container, .domain-block, .domain-box, #card-domain-container, #abs-domain-container');
+    let activeBlocks = doc.querySelectorAll('.active-block, #card-active-container, #abs-active-container, .active-container, .domain-block, .domain-box, #card-domain-container, #abs-domain-container');
+    if (activeBlocks.length === 0 && (cardData?.activeBlocksHTML?.length || cardData?.inputs?.['input-active-name'])) {
+        const tempDiv = document.createElement('div');
+        if (cardData.activeBlocksHTML?.length) {
+            tempDiv.innerHTML = cardData.activeBlocksHTML.join('');
+        } else if (cardData.inputs?.['input-active-name']) {
+            tempDiv.innerHTML = `<div class="active-block"><span class="active-type-label">${cardData.inputs['input-active-type'] || 'Active Skill'}</span><b class="active-display-name">${cardData.inputs['input-active-name']}</b><div class="active-display-condition">${cardData.inputs['input-active-conditions'] || ''}</div><div class="active-display-effect">${cardData.inputs['input-active-effect'] || ''}</div></div>`;
+        }
+        activeBlocks = tempDiv.querySelectorAll('.active-block, .domain-block');
+    }
     
     let foundActiveTitle = '';
     let foundActiveCond = '';
@@ -2105,6 +2163,11 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
     let saBlocks = Array.from(doc.querySelectorAll('#layout-dokkaninfo .sa-block'));
     if (saBlocks.length === 0) saBlocks = Array.from(doc.querySelectorAll('.sa-block'));
     if (saBlocks.length === 0) saBlocks = Array.from(doc.querySelectorAll('#abs-sa-container .abs-box'));
+    if (saBlocks.length === 0 && cardData?.saBlocksHTML?.length) {
+        const tempDiv = document.createElement('div');
+        tempDiv.innerHTML = cardData.saBlocksHTML.join('');
+        saBlocks = Array.from(tempDiv.querySelectorAll('.sa-block'));
+    }
     let saBlocksData = [];
     saBlocks.forEach((block, idx) => {
         let textContent = block.textContent || '';
