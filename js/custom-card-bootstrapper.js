@@ -50,7 +50,8 @@
         `${repoRoot}css/card-admin.css`,
         `${repoRoot}css/sba-side-dock.css`,
         `${repoRoot}css/sba-bottom-nav.css`,
-        `${repoRoot}css/tool-sba-nav.css`
+        `${repoRoot}css/tool-sba-nav.css`,
+        `${repoRoot}css/card-viewer-settings.css`
     ];
 
     styles.forEach(href => {
@@ -201,6 +202,12 @@
     if (sidebar) sidebar.style.display = 'none';
     if (toggleBtn) toggleBtn.style.display = 'none';
     if (scouterMenuBtn) scouterMenuBtn.style.display = 'none';
+
+    // Ensure Viewer tab is active and Editor tab is inactive
+    const viewerNav = document.getElementById('nav-btn-viewer');
+    const editorNav = document.querySelector('.apple-hud-bar a[href*="editor.html"], .hud-nav-group a[href*="editor.html"]');
+    if (viewerNav) viewerNav.classList.add('active');
+    if (editorNav) editorNav.classList.remove('active');
 
     // 11. Populate the Card with Project Data
     const currentFolderUrl = window.location.href.split('?')[0].split('#')[0];

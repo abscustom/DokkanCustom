@@ -49,9 +49,9 @@ body.theme-abs-style .glass-overlay {
     -webkit-backdrop-filter: blur(8px) saturate(120%);
 }
 
-/* Editor/Card Viewer inspired full-width scouter header. */
-body.theme-abs-style .apple-hud-wrapper,
-body.theme-abs-style.hub-cards-nav-static .apple-hud-wrapper {
+/* Editor/Card Viewer inspired full-width scouter header. (Hub only; excluded on published cards & editor) */
+body.theme-abs-style:not(.is-published):not(.editor-tool-page) .apple-hud-wrapper,
+body.theme-abs-style.hub-cards-nav-static:not(.is-published):not(.editor-tool-page) .apple-hud-wrapper {
     position: sticky !important;
     top: 0 !important;
     width: 100% !important;

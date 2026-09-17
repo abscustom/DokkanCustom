@@ -733,11 +733,13 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .ab
 
 /* Passive follows the same exterior square-band treatment, stretched across
    the complete passive panel. */
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
     margin-top: 42px !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
     top: -36px !important;
     right: 0 !important;
     bottom: auto !important;
@@ -1078,11 +1080,13 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-awakening-for
     text-shadow: 0 0 8px color-mix(in srgb, var(--theme-border, #38bdf8) 55%, transparent) !important;
 }
 
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
     margin-top: 42px !important;
 }
 
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name {
     top: -36px !important;
     right: 0 !important;
     bottom: auto !important;

@@ -7,9 +7,14 @@
 /* Ensure the 1:1 Apple HUD navbar is displayed and properly layer-stacked */
 body.theme-sba .apple-hud-wrapper,
 body.editor-tool-page .apple-hud-wrapper,
-body.calc-liquid-body .apple-hud-wrapper {
+body.calc-liquid-body .apple-hud-wrapper,
+body.is-published .apple-hud-wrapper {
     position: fixed !important;
     inset: 0 !important;
+    top: auto !important;
+    bottom: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
     width: 100vw !important;
     height: 100dvh !important;
     pointer-events: none !important;
@@ -23,7 +28,9 @@ body.editor-tool-page .apple-hud-bar,
 body.calc-liquid-body .liquid-metal-frame,
 body.calc-liquid-body .apple-hud-bar,
 body.theme-sba .liquid-metal-frame,
-body.theme-sba .apple-hud-bar {
+body.theme-sba .apple-hud-bar,
+body.is-published .liquid-metal-frame,
+body.is-published .apple-hud-bar {
     width: 100vw !important;
     height: 100% !important;
     overflow: visible !important;
@@ -54,10 +61,13 @@ body.theme-sba:not(.editor-tool-page) .apple-nav-center {
 /* Floating bottom navigation dock base layout */
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
-body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .apple-hud-wrapper:focus-within .hud-nav-group {
     position: fixed !important;
     top: auto !important;
     right: auto !important;
@@ -87,7 +97,8 @@ body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrappe
 }
 
 body.editor-tool-page .apple-hud-wrapper,
-body.calc-liquid-body .apple-hud-wrapper {
+body.calc-liquid-body .apple-hud-wrapper,
+body.is-published .apple-hud-wrapper {
     z-index: 10050 !important;
 }
 
@@ -101,10 +112,14 @@ body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page:has(#editor.is-op
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page:has(#toggleBtn.active) .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.sba-bottom-nav-visible .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body.sba-side-settings-open .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published.sba-bottom-nav-visible .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published.sba-side-settings-open .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:hover .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .apple-hud-wrapper:focus-within .hud-nav-group,
 body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:hover .hud-nav-group,
-body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group {
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrapper:focus-within .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .apple-hud-wrapper:hover .hud-nav-group,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .apple-hud-wrapper:focus-within .hud-nav-group {
     opacity: 1 !important;
     pointer-events: auto !important;
     transform: translateX(-50%) translateY(0) !important;
@@ -112,7 +127,8 @@ body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .apple-hud-wrappe
 
 /* Base nav links in dock for Editor & Calculator - Generous vertical & horizontal space */
 body:where(:not(.calc-liquid-body.theme-sba)).editor-tool-page .hud-nav-group .hud-nav-link,
-body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link {
+body:where(:not(.calc-liquid-body.theme-sba)).calc-liquid-body .hud-nav-group .hud-nav-link,
+body:where(:not(.calc-liquid-body.theme-sba)).is-published .hud-nav-group .hud-nav-link {
     box-sizing: border-box !important;
     display: flex !important;
     flex-direction: column !important;

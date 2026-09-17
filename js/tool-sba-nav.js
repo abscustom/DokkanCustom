@@ -173,7 +173,7 @@
 
     const setStyle = (style) => {
         localStorage.setItem(KEY, style);
-        if (document.body.classList.contains('editor-tool-page') && window.switchCardTheme) {
+        if ((document.body.classList.contains('editor-tool-page') || document.body.classList.contains('is-published')) && window.switchCardTheme) {
             window.switchCardTheme(style === 'dokkaninfo' ? 'dokkaninfo' : (style === 'sba' ? 'sba' : 'abs-style'));
         } else {
             applyCalculatorTheme(style);
@@ -188,7 +188,8 @@
         return document.body.classList.contains('theme-sba') ||
                document.body.classList.contains('theme-abs-clean') ||
                document.body.classList.contains('editor-tool-page') ||
-               document.body.classList.contains('calc-liquid-body');
+               document.body.classList.contains('calc-liquid-body') ||
+               document.body.classList.contains('is-published');
     };
 
     const isEditorSidebarActive = () => {
@@ -203,24 +204,18 @@
 
     const isPublishedEditorLocked = () => {
         const body = document.body;
-        return Boolean(body?.classList.contains('editor-tool-page') &&
-            body.classList.contains('is-published') &&
+        return Boolean(body?.classList.contains('is-published') &&
             !body.classList.contains('admin-mode-active'));
     };
 
     function revealToolSbaNav() {
         if (!isBottomDockActive()) return;
-        if (isPublishedEditorLocked()) return;
         if (sbaNavHideTimer) { clearTimeout(sbaNavHideTimer); sbaNavHideTimer = null; }
         document.body.classList.add('sba-bottom-nav-visible');
     }
 
     function scheduleToolSbaNavHide(delay = 800) {
         if (!isBottomDockActive()) return;
-        if (isPublishedEditorLocked()) {
-            document.body.classList.remove('sba-bottom-nav-visible');
-            return;
-        }
         // Keep dock visible permanently while editor sidebar or settings drawer is active
         if (isEditorSidebarActive()) return;
         if (sbaNavHideTimer) clearTimeout(sbaNavHideTimer);
@@ -238,7 +233,6 @@
 
     document.addEventListener('pointermove', (event) => {
         if (!isBottomDockActive()) return;
-        if (isPublishedEditorLocked()) return;
         const nav = document.querySelector('.hud-nav-group');
         const drawer = document.getElementById('settingsDrawer');
         const editor = document.getElementById('editor');
@@ -329,7 +323,7 @@
     window.addEventListener('DOMContentLoaded', () => {
         const rawStyle = localStorage.getItem(KEY);
         const style = rawStyle ? rawStyle : 'sba';
-        if (document.body.classList.contains('editor-tool-page') && window.switchCardTheme) {
+        if ((document.body.classList.contains('editor-tool-page') || document.body.classList.contains('is-published')) && window.switchCardTheme) {
             if (style === 'sba') window.switchCardTheme('sba');
         } else {
             applyCalculatorTheme(style);
@@ -391,7 +385,7 @@
         const drawer = document.getElementById('settingsDrawer');
         const overlay = document.getElementById('settingsOverlay');
         const btn = document.getElementById('sba-side-settings-button') || document.querySelector('.hud-nav-link[aria-label="Settings"]');
-        if (!drawer || isPublishedEditorLocked()) return;
+        if (!drawer) return;
 
         const isOpen = drawer.classList.contains('open') || document.body.classList.contains('sba-side-settings-open');
         const willOpen = !isOpen;

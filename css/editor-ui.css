@@ -2397,41 +2397,66 @@ body.theme-sba #admin-quick-save-btn {
    win over the theme/nav hover rules above, so moving to the top or bottom
    edge cannot reveal editor chrome while locked.
 */
-body.editor-tool-page.is-published:not(.admin-mode-active) #editor-top-bar,
-body.editor-tool-page.is-published:not(.admin-mode-active) #editor-top-bar-trigger,
-body.editor-tool-page.is-published:not(.admin-mode-active) .apple-hud-wrapper,
-body.editor-tool-page.is-published:not(.admin-mode-active) .top-left-dock,
-body.editor-tool-page.is-published:not(.admin-mode-active) .modern-top-bar.scouter-hud-bar,
-body.editor-tool-page.is-published:not(.admin-mode-active) .scouter-menu-btn,
-body.editor-tool-page.is-published:not(.admin-mode-active) .topbar-menu-btn {
+body.is-published:not(.admin-mode-active) #editor-top-bar,
+body.is-published:not(.admin-mode-active) #editor-top-bar-trigger,
+body.is-published:not(.admin-mode-active) .editor-top-bar,
+body.is-published:not(.admin-mode-active) .editor-top-bar-trigger,
+body.is-published:not(.admin-mode-active) .top-left-dock,
+body.is-published:not(.admin-mode-active) .modern-top-bar.scouter-hud-bar,
+body.is-published:not(.admin-mode-active) .scouter-menu-btn,
+body.is-published:not(.admin-mode-active) .topbar-menu-btn {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
 }
 
-body.editor-tool-page.is-published:not(.admin-mode-active) #context-gui,
-body.editor-tool-page.is-published:not(.admin-mode-active) #settingsDrawer,
-body.editor-tool-page.is-published:not(.admin-mode-active) #settingsOverlay,
-body.editor-tool-page.is-published:not(.admin-mode-active) #admin-quick-save-btn,
-body.editor-tool-page.is-published:not(.admin-mode-active) #topbar-quick-edit-btn,
-body.editor-tool-page.is-published:not(.admin-mode-active) .hud-quick-save-btn,
-body.editor-tool-page.is-published:not(.admin-mode-active) #main-autosave-indicator,
-body.editor-tool-page.is-published:not(.admin-mode-active) #glass-quicksave-modal,
-body.editor-tool-page.is-published:not(.admin-mode-active) #glass-upload-modal,
-body.editor-tool-page.is-published:not(.admin-mode-active) #card-admin-modal,
-body.editor-tool-page.is-published:not(.admin-mode-active) #character-importer-modal {
+body.is-published:not(.admin-mode-active) #context-gui,
+body.is-published:not(.admin-mode-active) #admin-quick-save-btn,
+body.is-published:not(.admin-mode-active) #topbar-quick-edit-btn,
+body.is-published:not(.admin-mode-active) .hud-quick-save-btn,
+body.is-published:not(.admin-mode-active) #main-autosave-indicator,
+body.is-published:not(.admin-mode-active) #glass-quicksave-modal,
+body.is-published:not(.admin-mode-active) #glass-upload-modal,
+body.is-published:not(.admin-mode-active) #card-admin-modal,
+body.is-published:not(.admin-mode-active) #character-importer-modal,
+body.is-published:not(.admin-mode-active) #settingsDrawer #topbar-importer-dock-wrap,
+body.is-published:not(.admin-mode-active) #settingsDrawer #topbar-upload-dock-wrap,
+body.is-published:not(.admin-mode-active) #settingsDrawer #topbar-card-admin-dock-wrap,
+body.is-published:not(.admin-mode-active) #settingsDrawer #topbar-card-delete-dock-wrap,
+body.is-published:not(.admin-mode-active) #settingsDrawer #settings-reset-editor-btn,
+body.is-published:not(.admin-mode-active) #settingsDrawer .sba-settings-section:has(#importUnitBtn),
+body.is-published:not(.admin-mode-active) #settingsDrawer .sba-settings-section:has(#settings-reset-editor-btn) {
     display: none !important;
     visibility: hidden !important;
+    opacity: 0 !important;
     pointer-events: none !important;
 }
 
-body.editor-tool-page.is-published.admin-mode-active #editor-top-bar,
-body.editor-tool-page.is-published.admin-mode-active #editor-top-bar-trigger,
-body.editor-tool-page.is-published.admin-mode-active .apple-hud-wrapper,
-body.editor-tool-page.is-published.admin-mode-active #settingsDrawer,
-body.editor-tool-page.is-published.admin-mode-active #settingsOverlay {
+body.is-published.admin-mode-active #editor-top-bar,
+body.is-published.admin-mode-active #editor-top-bar-trigger,
+body.is-published.admin-mode-active .editor-top-bar,
+body.is-published.admin-mode-active .editor-top-bar-trigger,
+body.is-published.admin-mode-active .top-left-dock,
+body.is-published.admin-mode-active .modern-top-bar.scouter-hud-bar,
+body.is-published.admin-mode-active .scouter-menu-btn,
+body.is-published.admin-mode-active .topbar-menu-btn {
+    display: block !important;
     visibility: visible !important;
+    pointer-events: auto !important;
+}
+
+body.is-published.admin-mode-active #settingsDrawer #topbar-importer-dock-wrap,
+body.is-published.admin-mode-active #settingsDrawer #topbar-upload-dock-wrap,
+body.is-published.admin-mode-active #settingsDrawer #topbar-card-admin-dock-wrap,
+body.is-published.admin-mode-active #settingsDrawer #topbar-card-delete-dock-wrap,
+body.is-published.admin-mode-active #settingsDrawer #settings-reset-editor-btn,
+body.is-published.admin-mode-active #settingsDrawer .sba-settings-section:has(#importUnitBtn),
+body.is-published.admin-mode-active #settingsDrawer .sba-settings-section:has(#settings-reset-editor-btn) {
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    pointer-events: auto !important;
 }
 
 /* The normal editor uses direct editing controls. Quick Edit/Admin/Save Quick
