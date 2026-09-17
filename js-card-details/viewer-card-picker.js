@@ -305,24 +305,58 @@
     }
 
     function cardImageUrl(card) {
+        let rawId = Number.parseInt(cardId(card), 10) || 0;
+        if (rawId > 10000000) rawId = Math.floor(rawId / 10);
+        const folderId = Math.floor(rawId / 10) * 10;
+
+        const explicitCircle = [
+            card?.circle_url,
+            card?.circleUrl,
+            card?.circle_art_url,
+            card?.circleArtUrl,
+            card?.circle_thumb_url,
+            card?.circleThumbUrl,
+            card?.portrait_url,
+            card?.portraitUrl,
+            card?.images?.circle,
+            card?.assets?.circle
+        ].find(value => String(value || '').trim());
+
+        let circleUrl = '';
+        if (explicitCircle) {
+            circleUrl = String(explicitCircle).trim();
+        } else if (card?.folder && folderId > 0) {
+            const folder = String(card.folder).replace(/^\.\//, '').replace(/\/+$/, '');
+            circleUrl = `./${folder}/card_${folderId}_circle.png`;
+        } else if (folderId > 0) {
+            circleUrl = `./assets/card-art/cards/${folderId}/card_${folderId}_circle.png`;
+        }
+
+        let fallbackUrl = '';
         try {
             if (typeof getViewerCircleAsset === 'function') {
                 const asset = getViewerCircleAsset(card) || {};
-                return {
-                    primary: asset.circleUrl || asset.fallbackUrl || '',
-                    fallback: asset.fallbackUrl || ''
-                };
+                if (!circleUrl && asset.circleUrl) circleUrl = asset.circleUrl;
+                if (asset.fallbackUrl) fallbackUrl = asset.fallbackUrl;
             }
             const resolveFn = (typeof resolveCardAssets === 'function') ? resolveCardAssets : window.resolveCardAssets;
             if (typeof resolveFn === 'function') {
                 const assets = resolveFn(card) || {};
-                return { primary: assets.thumbUrl || assets.artUrl || '', fallback: assets.artUrl || '' };
+                if (!circleUrl && assets.circleUrl) circleUrl = assets.circleUrl;
+                if (!fallbackUrl) fallbackUrl = assets.thumbUrl || assets.artUrl || '';
             }
         } catch (error) {}
+
         const cid = cardId(card);
+        if (!fallbackUrl) {
+            fallbackUrl = card?.thumbMain || card?.thumbLr || card?.thumbTur || card?.thumbSsr || card?.image || (folderId
+                ? `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`
+                : (cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : 'assets/images/SSR_Icon.png'));
+        }
+
         return {
-            primary: cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : '',
-            fallback: 'assets/images/SSR_Icon.png'
+            primary: circleUrl || fallbackUrl,
+            fallback: (fallbackUrl && fallbackUrl !== circleUrl) ? fallbackUrl : (cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : 'assets/images/SSR_Icon.png')
         };
     }
 

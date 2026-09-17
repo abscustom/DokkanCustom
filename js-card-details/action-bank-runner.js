@@ -855,7 +855,6 @@ export class ActionBankRunner {
         if (!scene || !armManualMovie(player, scene)) {
             throw new Error(`Effect ${command.effectId} scene ${effect.scene_name || '(default)'} was not found.`);
         }
-
         const entry = {
             command,
             effect,
@@ -1142,6 +1141,8 @@ export class ActionBankRunner {
         this.screenShake.tick(1);
         this.backgroundLayer.tick(1, { paused });
         if (!paused) this.charaLayer.tick(VISUAL_SECONDS);
+        // Re-read animated attachment tags after the character pose advances.
+        this._applyEffectTracks(Math.max(0, this.frame - 1));
 
         for (const [workId, entry] of [...this.activeEffects.entries()]) {
             const canAdvance = !paused || entry.command.pausable === false;
@@ -1258,8 +1259,48 @@ export class ActionBankRunner {
         const shakeX = entry.shakeFrames > 0 ? (Math.random() * 2 - 1) * entry.shakePower : 0;
         const shakeY = entry.shakeFrames > 0 ? (Math.random() * 2 - 1) * entry.shakePower : 0;
         const stageScale = this._stageScale();
+        let anchorX = 0, anchorY = 0;
+        if ((Number(command.attr) & 0x40) && Number(command.target) >= 0) {
+            const character = this.charaLayer.characters.get(Number(command.target));
+            if (character) {
+                const characterScale = this.charaLayer.stageScale();
+                anchorX = character.x * characterScale;
+                anchorY = -character.y * characterScale;
+                const tagName = `t${String(Number(command.tparam) || 0).padStart(3, '0')}`;
+                const tag = character.activePlayer?.movie?.searchMovieInstance?.(tagName);
+                const point = tag?.localToGlobal?.({ x: 0, y: 0 });
+                if (point && Number.isFinite(point.x) && Number.isFinite(point.y)) {
+                    const dx = point.x - character.activeCanvas.width / 2;
+                    const dy = point.y - character.activeCanvas.height / 2;
+                    const angle = character.rotation * Math.PI / 180;
+                    anchorX += (dx * Math.cos(angle) - dy * Math.sin(angle)) * character.sx * characterScale;
+                    anchorY += (dx * Math.sin(angle) + dy * Math.cos(angle)) * character.sy * characterScale;
+                }
+            }
+        }
+        // Projectiles begin at a character tag, but their own LWF timeline
+        // carries them across the battlefield. Older scripts then move the
+        // firing character off-stage. Keep the last on-stage tag position for
+        // those projectiles so a departing character cannot drag the beam
+        // back out of the frame and crop it to a thin strip.
+        const isAttachedProjectile = command.lifeLimited
+            && (Number(command.attr) & 0x40) !== 0
+            && Number(command.tparam) >= 100;
+        if (isAttachedProjectile) {
+            const halfStageWidth = (this.targetWidth || 852) / 2;
+            if (entry.projectileAnchor) {
+                anchorX = entry.projectileAnchor.x;
+                anchorY = entry.projectileAnchor.y;
+            } else if (Math.abs(anchorX) <= halfStageWidth) {
+                entry.lastOnStageProjectileAnchor = { x: anchorX, y: anchorY };
+            } else if (entry.lastOnStageProjectileAnchor) {
+                entry.projectileAnchor = entry.lastOnStageProjectileAnchor;
+                anchorX = entry.projectileAnchor.x;
+                anchorY = entry.projectileAnchor.y;
+            }
+        }
         entry.canvas.style.opacity = String(Math.max(0, Math.min(1, alpha / 255)));
-        entry.wrap.style.transform = `translate(${((x + shakeX) * stageScale).toFixed(2)}px, ${((-y + shakeY) * stageScale).toFixed(2)}px) scale(${sx}, ${sy}) rotate(${rotation}deg)`;
+        entry.wrap.style.transform = `translate(${(anchorX + (x + shakeX) * stageScale).toFixed(2)}px, ${(anchorY + (-y + shakeY) * stageScale).toFixed(2)}px) scale(${sx}, ${sy}) rotate(${rotation}deg)`;
     }
 
     _fadeValues(command) {

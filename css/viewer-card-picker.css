@@ -43,6 +43,14 @@
     color: #fff7b2 !important;
 }
 
+:where(body.card-viewer-page, body.is-published) .hud-nav-group #nav-btn-viewer .viewer-nav-label-wrap {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    line-height: 1 !important;
+}
+
 :where(body.card-viewer-page, body.is-published) .hud-nav-group #nav-btn-viewer .viewer-nav-cue {
     width: 11px !important;
     height: 11px !important;

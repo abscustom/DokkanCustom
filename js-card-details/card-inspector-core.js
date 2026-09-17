@@ -1634,7 +1634,18 @@ function renderCardDetails(card, mode = currentEzaMode) {
         }
         if (thumbImgEl) { 
             delete thumbImgEl.dataset.failed; 
-            thumbImgEl.src = thumbUrl; 
+            const isAbsClean = document.body.classList.contains('theme-abs-clean');
+            const { circleUrl } = (typeof getViewerCircleAsset === 'function') ? getViewerCircleAsset(card) : { circleUrl: '' };
+            thumbImgEl.onerror = null;
+            if (isAbsClean && circleUrl) {
+                thumbImgEl.src = circleUrl;
+                thumbImgEl.onerror = function() {
+                    this.onerror = null;
+                    this.src = thumbUrl;
+                };
+            } else {
+                thumbImgEl.src = thumbUrl; 
+            }
         }
 
         const frameEl = document.getElementById("abs-frame-img");

@@ -297,7 +297,7 @@ body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-st
 /* Presentation keep their existing contracts. The values mirror the shared
    editor layout: the page scale is 0.70 and the centered content track keeps
    the global 0.96 adjustment. */
-body.card-viewer-page.theme-abs-clean {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean {
     --abs-clean-ui-scale: 0.70 !important;
     min-height: 100vh !important;
     background-color: #f8fafc !important;
@@ -306,8 +306,8 @@ body.card-viewer-page.theme-abs-clean {
     background-attachment: fixed !important;
 }
 
-body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark,
-body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean-dark,
+:where(body.card-viewer-page, body.is-published).theme-abs-clean[data-abs-clean-mode="dark"] {
     background-color: #07101b !important;
     background:
         radial-gradient(ellipse 60% 40% at 50% 30%, rgba(15, 28, 52, 0.35), transparent 70%),
@@ -317,31 +317,31 @@ body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] {
     color: #e2e8f0 !important;
 }
 
-body.card-viewer-page.fx-static,
-body.card-viewer-page.theme-abs-clean.fx-static {
+:where(body.card-viewer-page, body.is-published).fx-static,
+:where(body.card-viewer-page, body.is-published).theme-abs-clean.fx-static {
     background: #060913 !important;
     background-color: #060913 !important;
     background-image: none !important;
 }
 
-body.card-viewer-page.fx-static #abs-clean-grid-circuit,
-body.card-viewer-page.fx-static #abs-clean-lr-aura,
-body.card-viewer-page.fx-static #abs-clean-lr-lightning,
-body.card-viewer-page.fx-static #abs-clean-ring-effect,
-body.card-viewer-page.fx-static #abs-card-bg-lwf-canvas {
+:where(body.card-viewer-page, body.is-published).fx-static #abs-clean-grid-circuit,
+:where(body.card-viewer-page, body.is-published).fx-static #abs-clean-lr-aura,
+:where(body.card-viewer-page, body.is-published).fx-static #abs-clean-lr-lightning,
+:where(body.card-viewer-page, body.is-published).fx-static #abs-clean-ring-effect,
+:where(body.card-viewer-page, body.is-published).fx-static #abs-card-bg-lwf-canvas {
     display: none !important;
 }
 
-body.card-viewer-page.theme-abs-clean #app,
-body.card-viewer-page.theme-abs-clean #top-content,
-body.card-viewer-page.theme-abs-clean #top-content > .container-1220,
-body.card-viewer-page.theme-abs-clean #layout-abs-style {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #app,
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #top-content,
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #top-content > .container-1220,
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
 }
 
-body.card-viewer-page.theme-abs-clean #abs-clean-grid-circuit {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #abs-clean-grid-circuit {
     display: block !important;
     position: fixed !important;
     inset: 0 !important;
@@ -351,19 +351,19 @@ body.card-viewer-page.theme-abs-clean #abs-clean-grid-circuit {
     z-index: 0 !important;
 }
 
-body.card-viewer-page.theme-abs-clean #top-content {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #top-content {
     zoom: var(--abs-clean-ui-scale, 0.70) !important;
 }
 
-body.card-viewer-page.theme-abs-clean #top-content > .container-1220 {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #top-content > .container-1220 {
     zoom: 0.96 !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style {
     zoom: 1 !important;
 }
 
-body.card-viewer-page.theme-abs-clean #abs-clean-leader-banner-slot {
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #abs-clean-leader-banner-slot {
     display: block !important;
     visibility: visible !important;
 }

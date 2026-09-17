@@ -29,14 +29,16 @@ let shellMarkup = content.substring(bodyStartIndex, scriptsIndex).trim();
 
 // On custom cards, the Viewer tab is active and toggles the card picker popover, while Editor tab is inactive
 const viewerBtnMarkup = `<button type="button" class="hud-nav-link active" id="nav-btn-viewer" onclick="window.toggleViewerCardPicker ? window.toggleViewerCardPicker() : null" aria-expanded="false" aria-controls="viewer-card-picker" aria-haspopup="dialog" aria-label="Viewer card picker" aria-current="page" title="Click to choose a viewer card">
-                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M2.5 12S5.9 6 12 6s9.5 6 9.5 6-3.4 6-9.5 6-9.5-6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                            <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="2"/>
+                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/>
+                            <circle cx="12" cy="12" r="3"/>
                         </svg>
-                        <span>Viewer</span>
-                        <svg class="viewer-nav-cue" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="m4 10 4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
+                        <span class="viewer-nav-label-wrap">
+                            <span>Viewer</span>
+                            <svg class="viewer-nav-cue" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                                <path d="m4 10 4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </span>
                     </button>`;
 
 shellMarkup = shellMarkup.replace(

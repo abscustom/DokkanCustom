@@ -195,7 +195,7 @@
     loadScript(`${repoRoot}js-graphics/lwf-loader.js`, true);
 
     // 10. Configure Published Card Runtime and Viewport
-    document.body.classList.add('is-published');
+    document.body.classList.add('is-published', 'card-viewer-page');
     window.ensurePublishedCustomCardRuntime?.();
 
     const sidebar = document.getElementById('editor');

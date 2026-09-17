@@ -729,6 +729,7 @@ function resolveCardAssets(card) {
             charUrl: card.art_url,
             effectUrl: card.effect_url || '',
             thumbUrl: card.thumb_url,
+            circleUrl: card.circle_url || card.circleUrl || card.circle_thumb_url || card.circleThumbUrl || card.thumb_url,
             artUrl: card.art_url
         };
     }
@@ -746,6 +747,7 @@ function resolveCardAssets(card) {
             charUrl: `./${card.folder}/card_${folderId}_character.png`,
             effectUrl: `./${card.folder}/card_${folderId}_effect.png`,
             thumbUrl: `./${card.folder}/card_${folderId}_thumb.png`,
+            circleUrl: `./${card.folder}/card_${folderId}_circle.png`,
             artUrl: `./${card.folder}/card_${folderId}_character.png`
         };
     }
@@ -758,6 +760,7 @@ function resolveCardAssets(card) {
         effectUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_effect.png`,
         thumbUrl: `${basePrefix}assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`,
         parentThumbUrl: `${basePrefix}assets/card-art/thumbnails/card_${parentFolderId}_thumb/card_${parentFolderId}_thumb.png`,
+        circleUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_circle.png`,
         artUrl: `${basePrefix}assets/card-art/cards/${folderId}/card_${folderId}_character.png`
     };
 }

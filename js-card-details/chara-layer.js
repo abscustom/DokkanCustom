@@ -274,6 +274,15 @@ export class CharaLayer {
             throw new Error(`Missing character atlas: ${prepared.missing.join(', ')}`);
         }
         const movies = await player.load();
+        // Attack poses extend beyond the pack's small header rectangle. Add
+        // transparent raster margins, preserving the original world-space scale.
+        const padX = canvas.width;
+        const padY = canvas.height;
+        canvas.width += padX * 2;
+        canvas.height += padY * 2;
+        const property = player.lwf?.property;
+        if (typeof property?.moveTo === 'function') property.moveTo(padX, padY);
+        else if (property) { property.x = padX; property.y = padY; }
         this.centerCanvas(canvas);
         return { player, movies };
     }
