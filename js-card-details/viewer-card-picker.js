@@ -12,6 +12,41 @@
     let initialized = false;
     let pickerIsOpen = false;
     let closeTimer = null;
+    let isLoadingCards = false;
+    let cardsLoadPromise = null;
+
+    async function ensureCardsAvailable() {
+        if (Array.isArray(window.DB?.cards) && window.DB.cards.length > 0) return;
+        if (cardsLoadPromise) return cardsLoadPromise;
+
+        isLoadingCards = true;
+        cardsLoadPromise = (async () => {
+            try {
+                if (typeof window.ensureDokkanDatabase === 'function') {
+                    await window.ensureDokkanDatabase();
+                } else if (typeof ensureDokkanDatabase === 'function') {
+                    await ensureDokkanDatabase();
+                } else {
+                    const base = document.baseURI || window.location.href;
+                    const res = await fetch(new URL('json/cards.json', base).href);
+                    if (res.ok) {
+                        const data = await res.json();
+                        window.DB = window.DB || {};
+                        window.DB.cards = Array.isArray(data) ? data : Object.values(data);
+                    }
+                }
+            } catch (e) {
+                console.warn('[Viewer Card Picker] Could not load cards database:', e);
+            } finally {
+                isLoadingCards = false;
+                cardScreenOrderCache = null;
+                if (pickerIsOpen) {
+                    renderViewerCardPicker(document.getElementById('viewer-card-picker-input')?.value || '');
+                }
+            }
+        })();
+        return cardsLoadPromise;
+    }
 
     function readSelection() {
         try {
@@ -175,7 +210,7 @@
         const nowPlus30Days = Date.now() + (30 * 24 * 60 * 60 * 1000);
         const records = hubCards.map(card => {
             const rawId = parseInt(card.id, 10);
-            const parentId = Number(card.parent_id || (typeof getCardParentId === 'function' ? getCardParentId(rawId) : rawId)) || rawId;
+            const parentId = Number(card.parent_id || (typeof getCardParentId === 'function' ? getCardParentId(rawId) : (typeof window.getCardParentId === 'function' ? window.getCardParentId(rawId) : rawId))) || rawId;
             const ezaCard = ezaMap.get(parentId) || ezaMap.get(rawId) || ezaMap.get(rawId * 10 + 8);
             const sezaCard = sezaMap.get(parentId) || sezaMap.get(rawId) || sezaMap.get(rawId * 10 + 9);
             const baseTime = cardDokkanRouteDates.get(parentId) || cardDokkanRouteDates.get(rawId) || parseCardReleaseTime(card.open_at || card.start_at || card.release_date);
@@ -250,8 +285,9 @@
 
     function cardTypeLabel(card) {
         try {
-            if (typeof getCardClassAndType === 'function') {
-                const type = getCardClassAndType(card?.element ?? card?.attribute ?? 0)?.cardType;
+            const fn = (typeof getCardClassAndType === 'function') ? getCardClassAndType : window.getCardClassAndType;
+            if (typeof fn === 'function') {
+                const type = fn(card?.element ?? card?.attribute ?? 0)?.cardType;
                 if (type) return String(type).toUpperCase();
             }
         } catch (error) {}
@@ -260,8 +296,9 @@
 
     function cardRarityLabel(card) {
         try {
-            if (typeof getCardExactRarity === 'function') {
-                return String(getCardExactRarity(card) || 'SSR').toUpperCase();
+            const fn = (typeof getCardExactRarity === 'function') ? getCardExactRarity : window.getCardExactRarity;
+            if (typeof fn === 'function') {
+                return String(fn(card) || 'SSR').toUpperCase();
             }
         } catch (error) {}
         return String(card?.rarity || 'SSR').toUpperCase();
@@ -276,12 +313,17 @@
                     fallback: asset.fallbackUrl || ''
                 };
             }
-            if (typeof resolveCardAssets === 'function') {
-                const assets = resolveCardAssets(card) || {};
+            const resolveFn = (typeof resolveCardAssets === 'function') ? resolveCardAssets : window.resolveCardAssets;
+            if (typeof resolveFn === 'function') {
+                const assets = resolveFn(card) || {};
                 return { primary: assets.thumbUrl || assets.artUrl || '', fallback: assets.artUrl || '' };
             }
         } catch (error) {}
-        return { primary: '', fallback: '' };
+        const cid = cardId(card);
+        return {
+            primary: cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : '',
+            fallback: 'assets/images/SSR_Icon.png'
+        };
     }
 
     function getCardPool() {
@@ -357,7 +399,9 @@
         if (!matchingCards.length) {
             const empty = document.createElement('div');
             empty.className = 'viewer-card-picker-empty';
-            empty.textContent = normalizedQuery ? 'No cards match that search.' : 'No cards are available yet.';
+            empty.textContent = isLoadingCards
+                ? 'Loading cards...'
+                : (normalizedQuery ? 'No cards match that search.' : 'No cards are available yet.');
             results.append(empty);
             return;
         }
@@ -379,6 +423,22 @@
             window.selectCard(id, false, mode);
         } else if (typeof selectCard === 'function') {
             selectCard(id, false, mode);
+        } else {
+            const baseUri = document.baseURI || window.location.href;
+            if (card?.url) {
+                window.location.href = new URL(card.url, baseUri).href;
+                return;
+            }
+            const navViewer = document.getElementById('nav-btn-viewer');
+            let viewerBase = 'card.html';
+            if (navViewer && navViewer.getAttribute('data-viewer-url')) {
+                viewerBase = navViewer.getAttribute('data-viewer-url');
+            } else if (navViewer && navViewer.getAttribute('href')) {
+                viewerBase = navViewer.getAttribute('href');
+            }
+            const [viewerPath] = viewerBase.split('?');
+            const targetUrl = new URL(`${viewerPath}?viewer=1&id=${encodeURIComponent(id)}&mode=${encodeURIComponent(mode)}`, baseUri).href;
+            window.location.href = targetUrl;
         }
     }
 
@@ -391,10 +451,14 @@
         window.clearTimeout(closeTimer);
 
         if (pickerIsOpen) {
+            document.body.classList.add('viewer-picker-open');
             picker.hidden = false;
             picker.setAttribute('aria-hidden', 'false');
             picker.classList.remove('is-closing');
             button?.setAttribute('aria-expanded', 'true');
+            if (!Array.isArray(window.DB?.cards) || window.DB.cards.length === 0) {
+                ensureCardsAvailable();
+            }
             renderViewerCardPicker(document.getElementById('viewer-card-picker-input')?.value || '');
             window.requestAnimationFrame(() => {
                 picker.classList.add('is-open');
@@ -402,6 +466,7 @@
             });
             window.setTimeout(() => document.getElementById('viewer-card-picker-input')?.focus(), 0);
         } else {
+            document.body.classList.remove('viewer-picker-open');
             picker.classList.add('is-closing');
             picker.classList.remove('is-open');
             picker.setAttribute('aria-hidden', 'true');

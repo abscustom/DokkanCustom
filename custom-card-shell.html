@@ -446,13 +446,16 @@
                         <span>Cards</span>
                     </a>
 
-                    <a href="card.html?viewer=1" class="hud-nav-link active" id="nav-btn-viewer" aria-current="page" aria-label="Viewer" title="Viewer">
+                    <button type="button" class="hud-nav-link active" id="nav-btn-viewer" onclick="window.toggleViewerCardPicker ? window.toggleViewerCardPicker() : null" aria-expanded="false" aria-controls="viewer-card-picker" aria-haspopup="dialog" aria-label="Viewer card picker" aria-current="page" title="Click to choose a viewer card">
                         <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                            <path d="M2.5 12S5.9 6 12 6s9.5 6 9.5 6-3.4 6-9.5 6-9.5-6-9.5-6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2.5 12S5.9 6 12 6s9.5 6 9.5 6-3.4 6-9.5 6-9.5-6Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                             <circle cx="12" cy="12" r="2.5" stroke="currentColor" stroke-width="2"/>
                         </svg>
                         <span>Viewer</span>
-                    </a>
+                        <svg class="viewer-nav-cue" viewBox="0 0 16 16" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                            <path d="m4 10 4-4 4 4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </button>
 
                     <a href="calculator.html" class="hud-nav-link" aria-label="Calculator" title="Calculator">
                         <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -495,6 +498,19 @@
             </nav>
         </div>
     </header>
+
+    <!-- COMPACT VIEWER CARD SWITCHER (OPENS UP FROM THE VIEWER TAB) -->
+    <section id="viewer-card-picker" class="viewer-card-picker" hidden aria-hidden="true" role="dialog" aria-label="Choose viewer card">
+        <label class="viewer-card-picker-search" for="viewer-card-picker-input">
+            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
+                <path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+            </svg>
+            <input id="viewer-card-picker-input" type="search" placeholder="Search cards by name or ID" autocomplete="off">
+        </label>
+        <div id="viewer-card-picker-results" class="viewer-card-picker-results" role="listbox" aria-label="Viewer cards"></div>
+    </section>
+
 
 <!-- CARD PREVIEW CONTENT -->
 <div class="content" id="app">
@@ -896,8 +912,8 @@
                         <!-- PASSIVE SKILL (WITH SMART IN-GAME ABILITY ICONS STRIP) -->
                         <div class="abs-box" id="abs-passive-skill-box" data-edit="passive">
                             <div id="abs-passive-summary" class="abs-passive-summary" hidden aria-label="Passive percentage totals"></div>
-                            <div class="abs-header" id="abs-passive-name">
-                                <div class="abs-passive-header-title">
+                            <div class="abs-header justify-content-center text-center" id="abs-passive-name">
+                                <div class="abs-passive-header-title justify-content-center text-center">
                                     <span>Passive Skill</span>
                                 </div>
                             </div>

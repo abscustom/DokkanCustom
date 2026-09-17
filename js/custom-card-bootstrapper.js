@@ -51,7 +51,8 @@
         `${repoRoot}css/sba-side-dock.css`,
         `${repoRoot}css/sba-bottom-nav.css`,
         `${repoRoot}css/tool-sba-nav.css`,
-        `${repoRoot}css/card-viewer-settings.css`
+        `${repoRoot}css/card-viewer-settings.css`,
+        `${repoRoot}css/viewer-card-picker.css`
     ];
 
     styles.forEach(href => {
@@ -182,7 +183,8 @@
         'js/sba-ring-effects.js',
         'js/tool-sba-nav.js',
         'js/loading-screen.js',
-        'js/stars-pingpong.js'
+        'js/stars-pingpong.js',
+        'js-card-details/viewer-card-picker.js'
     ];
 
     for (const s of scripts) {

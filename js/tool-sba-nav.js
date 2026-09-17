@@ -195,11 +195,14 @@
     const isEditorSidebarActive = () => {
         const editor = document.getElementById('editor');
         const toggleBtn = document.getElementById('toggleBtn');
+        const picker = document.getElementById('viewer-card-picker');
         return document.body.classList.contains('editor-sidebar-open') ||
                Boolean(editor?.classList.contains('open')) ||
                Boolean(editor?.classList.contains('is-open')) ||
                Boolean(toggleBtn?.classList.contains('active')) ||
-               document.body.classList.contains('sba-side-settings-open');
+               document.body.classList.contains('sba-side-settings-open') ||
+               document.body.classList.contains('viewer-picker-open') ||
+               Boolean(picker && !picker.hidden && picker.classList.contains('is-open'));
     };
 
     const isPublishedEditorLocked = () => {
@@ -236,11 +239,13 @@
         const nav = document.querySelector('.hud-nav-group');
         const drawer = document.getElementById('settingsDrawer');
         const editor = document.getElementById('editor');
+        const picker = document.getElementById('viewer-card-picker');
         const isInsideNav = Boolean(nav?.contains(event.target));
         const isInsideDrawer = Boolean(drawer?.contains(event.target));
         const isInsideEditor = Boolean(editor?.contains(event.target));
+        const isInsidePicker = Boolean(picker?.contains(event.target));
         const isNearBottom = event.clientY >= window.innerHeight - 112;
-        if (isNearBottom || isInsideNav || isInsideDrawer || isInsideEditor || isEditorSidebarActive()) {
+        if (isNearBottom || isInsideNav || isInsideDrawer || isInsideEditor || isInsidePicker || isEditorSidebarActive()) {
             revealToolSbaNav();
         } else {
             scheduleToolSbaNavHide();
