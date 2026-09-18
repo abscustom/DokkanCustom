@@ -315,6 +315,28 @@ export class AssetPartitioner {
     return [];
   }
 
+  syncAllMovies() {
+    console.log('Syncing all USM cutscene movies to core...');
+    const movieDir = path.join(this.assetsRoot, 'movie');
+    if (fs.existsSync(movieDir)) {
+      const results = copyAssetFolder(movieDir, this.assetsRoot, this.repoPaths, this.dryRun);
+      console.log(`Movie sync complete! Synced ${results.length} files.`);
+      return results;
+    }
+    return [];
+  }
+
+  syncSpEffects() {
+    console.log('Partitioning and syncing all 2,203 sp_effects across spfx-a, spfx-b, and core...');
+    const spDir = path.join(this.assetsRoot, 'ingame', 'battle', 'sp_effect');
+    if (fs.existsSync(spDir)) {
+      const results = copyAssetFolder(spDir, this.assetsRoot, this.repoPaths, this.dryRun);
+      console.log(`sp_effect partition complete! Synced ${results.length} files.`);
+      return results;
+    }
+    return [];
+  }
+
   syncAll() {
     console.log('Starting full asset partition across 3 repositories...');
     const results = [];
@@ -405,6 +427,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     else if (args[i] === '--common') flags.common = true;
     else if (args[i] === '--effects') flags.effects = true;
     else if (args[i] === '--characters') flags.characters = true;
+    else if (args[i] === '--movies') flags.movies = true;
+    else if (args[i] === '--sp') flags.sp = true;
     else if (args[i] === '--all') flags.all = true;
     else if (args[i] === '--dry-run') flags.dryRun = true;
   }
@@ -423,6 +447,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     partitioner.syncAllCharacters();
   }
 
+  if (flags.movies) {
+    partitioner.syncAllMovies();
+  }
+
+  if (flags.sp) {
+    partitioner.syncSpEffects();
+  }
+
   if (flags.script) {
     const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);
     for (const script of scripts) {
@@ -430,7 +462,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
   } else if (flags.all) {
     partitioner.syncAll();
-  } else if (!flags.common && !flags.effects && !flags.characters) {
-    console.log('Usage: node sync-animation-asset-repos.mjs [--common] [--effects] [--characters] [--script <name> --card <id>] | [--all] [--dry-run]');
+  } else if (!flags.common && !flags.effects && !flags.characters && !flags.movies && !flags.sp) {
+    console.log('Usage: node sync-animation-asset-repos.mjs [--common] [--effects] [--characters] [--movies] [--sp] [--script <name> --card <id>] | [--all] [--dry-run]');
   }
 }
