@@ -1032,9 +1032,11 @@
         const preferred = idleNames.find((name) => /c00_idl_front_p$/i.test(String(name)))
             || idleNames.find((name) => /c00_idl_front_e$/i.test(String(name)))
             || idleNames.find((name) => /c00_idl_front/i.test(String(name)))
-            || idleNames.find((name) => /idl_front/i.test(String(name)));
-        const richIdle = names.find((name) => /c16_heapup_back_p$/i.test(String(name)))
-            || idleNames.find((name) => /c22_rich_idl_back_p$/i.test(String(name)));
+            || idleNames.find((name) => /c22_rich_idl_back_p$/i.test(String(name)))
+            || idleNames.find((name) => /idl_front/i.test(String(name)))
+            || idleNames.find((name) => /idl_back/i.test(String(name)));
+        const richIdle = idleNames.find((name) => /c22_rich_idl_back_p$/i.test(String(name)))
+            || idleNames[0];
         return preferred || richIdle || idleNames[0] || names[0] || null;
     }
 
@@ -1298,7 +1300,7 @@
             // clock advances them.
             const layerCanvas = document.createElement('canvas');
             idleLayerPlayer = new LwfPackPlayer(layerCanvas, () => {}, playerOptions);
-            const layerIngested = idleLayerPlayer.ingestFiles(files);
+            const layerIngested = idleLayerPlayer.ingestFiles(player.files || files);
             const layerPrepared = await idleLayerPlayer.prepare(layerIngested.lwfFile);
             if (!layerIngested.lwfFile || layerPrepared.missing?.length) {
                 idleLayerPlayer.clear?.();

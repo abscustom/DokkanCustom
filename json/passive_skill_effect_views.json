@@ -1,6 +1,6 @@
 {
   "generated_from": "database_decrypted.db",
-  "generated_at": "2026-08-31T22:19:25.309Z",
+  "generated_at": "2026-09-18T06:14:59.811Z",
   "by_passive_skill_set": {
     "2727": [
       {
@@ -1354,12 +1354,28 @@
         "bgm_id": 320
       }
     ],
+    "5032": [
+      {
+        "effect_id": 129,
+        "script_name": "pse0126",
+        "lite_flicker_rate": 50,
+        "bgm_id": 540
+      }
+    ],
     "5036": [
       {
         "effect_id": 40,
         "script_name": "pse0041",
         "lite_flicker_rate": 70,
         "bgm_id": 322
+      }
+    ],
+    "5039": [
+      {
+        "effect_id": 130,
+        "script_name": "pse0125",
+        "lite_flicker_rate": 50,
+        "bgm_id": 538
       }
     ]
   }

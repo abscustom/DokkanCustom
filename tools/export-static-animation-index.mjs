@@ -658,15 +658,34 @@ export class StaticAnimationExporter {
       return false;
     }
     this.writeJsonFile(`api/animation/${scriptName}.json`, payload);
-
     for (const effect of payload.effects || []) {
-      const effPayload = this.effectPayload(effect.id);
-      if (effPayload) {
-        this.writeJsonFile(`api/effect/${effect.id}.json`, effPayload);
-      }
+      this.exportEffect(effect.id);
     }
     return true;
   }
+
+  exportEffect(effectId) {
+    const effPayload = this.effectPayload(effectId);
+    if (!effPayload) return false;
+    this.writeJsonFile(`api/effect/${effectId}.json`, effPayload);
+    return true;
+  }
+
+  exportAllEffects(onlyMissing = false) {
+    const rows = this.db.prepare('SELECT id FROM effect_packs').all();
+    let count = 0;
+    for (const r of rows) {
+      if (onlyMissing && fs.existsSync(path.join(this.outputDir, 'api', 'effect', `${r.id}.json`))) {
+        continue;
+      }
+      if (this.exportEffect(r.id)) {
+        count++;
+      }
+    }
+    console.log(`Exported ${count} effect packs.`);
+    return count;
+  }
+
 
   exportCard(cardId) {
     const cardData = this.cardPayload(cardId);
@@ -702,6 +721,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     else if (args[i] === '--bg' && args[i + 1]) flags.bg = args[++i];
     else if (args[i] === '--out' && args[i + 1]) flags.out = args[++i];
     else if (args[i] === '--all') flags.all = true;
+    else if (args[i] === '--all-effects') flags.allEffects = true;
     else if (args[i] === '--dry-run') flags.dryRun = true;
   }
 
@@ -712,6 +732,11 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
 
   console.log(`Initialized exporter targeting: ${exporter.outputDir}`);
   exporter.exportManifests();
+
+  if (flags.allEffects) {
+    console.log('Exporting all missing effect manifests...');
+    exporter.exportAllEffects(true);
+  }
 
   if (flags.script) {
     const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);

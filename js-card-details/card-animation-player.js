@@ -419,11 +419,12 @@
         const canHaveKo = safeContext === 'sa1' || safeContext === 'sa2' || safeContext === 'active' || safeContext === 'standby' || safeContext === 'finish';
 
         return `
-            <span class="abs-animation-header-actions">
+            <span class="abs-animation-header-actions" data-animation-script="${safeScript}">
                 <button type="button"
                         class="abs-animation-play-btn${buttonText ? ' abs-animation-play-btn--with-text' : ''}"
                         title="${attrLabel}: ${safeScript}"
                         aria-label="${attrLabel}"
+                        data-animation-script="${safeScript}"
                         data-animation-context="${safeContext}"
                         onclick="event.stopPropagation(); window.DokkanAnimation.open('${safeScript}', '${safeLabel}', '${safeContext}')">
                     <svg viewBox="0 0 24 24" aria-hidden="true">
