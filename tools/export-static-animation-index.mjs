@@ -48,6 +48,9 @@ export const DEFAULT_VGMSTREAM_PATH = path.join(DEFAULT_CARDHUB_ROOT, 'tools', '
 // Routing logic
 export function getAssetRepoForPath(relativePath) {
   const norm = relativePath.replaceAll('\\', '/').replace(/^\/+/, '');
+  if (norm.startsWith('movie/') || norm.startsWith('lua/') || norm.startsWith('audio/') || norm.startsWith('se/') || norm.startsWith('voice/')) {
+    return REPO_CORE;
+  }
   const spMatch = norm.match(/(?:^|\/)sp_effect_(a[0-9]|b[1-9])_[^/]+/i);
   if (spMatch) {
     const group = spMatch[1].toLowerCase();
@@ -707,13 +710,19 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   exporter.exportManifests();
 
   if (flags.script) {
-    console.log(`Exporting animation script: ${flags.script}`);
-    exporter.exportScript(flags.script);
+    const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);
+    for (const script of scripts) {
+      console.log(`Exporting animation script: ${script}`);
+      exporter.exportScript(script);
+    }
   }
 
   if (flags.card) {
-    console.log(`Exporting card: ${flags.card}`);
-    exporter.exportCard(flags.card);
+    const cards = flags.card.split(',').map((c) => c.trim()).filter(Boolean);
+    for (const card of cards) {
+      console.log(`Exporting card: ${card}`);
+      exporter.exportCard(card);
+    }
   }
 
   if (flags.bg) {

@@ -138,12 +138,14 @@ export class AssetPartitioner {
       const card = db.prepare('SELECT character_id, special_motion FROM cards WHERE id = ?').get(Number(cardId));
       if (card) {
         const charaStr = String(card.character_id).padStart(5, '0');
-        const spStr = `sp${String(card.special_motion || 1).padStart(2, '0')}`;
-        const charaBattleDir = path.join(this.assetsRoot, 'ingame', 'battle', 'character', charaStr, 'battle');
-        const charaSpDir = path.join(this.assetsRoot, 'ingame', 'battle', 'character', charaStr, spStr);
-
-        results.push(...copyAssetFolder(charaBattleDir, this.assetsRoot, this.repoPaths, this.dryRun));
-        results.push(...copyAssetFolder(charaSpDir, this.assetsRoot, this.repoPaths, this.dryRun));
+        const charaBaseDir = path.join(this.assetsRoot, 'ingame', 'battle', 'character', charaStr);
+        if (fs.existsSync(charaBaseDir)) {
+          for (const entry of fs.readdirSync(charaBaseDir, { withFileTypes: true })) {
+            if (entry.isDirectory() && entry.name.toLowerCase() !== 'idle') {
+              results.push(...copyAssetFolder(path.join(charaBaseDir, entry.name), this.assetsRoot, this.repoPaths, this.dryRun));
+            }
+          }
+        }
       }
     }
 
@@ -175,6 +177,23 @@ export class AssetPartitioner {
         for (const dir of candidates) {
           if (fs.existsSync(dir)) {
             results.push(...copyAssetFolder(dir, this.assetsRoot, this.repoPaths, this.dryRun));
+          }
+        }
+
+        const movieCandidates = [
+          path.join(this.assetsRoot, 'movie', 'en', 'ingame', 'battle', 'sp_effect', `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'en', 'ingame', 'battle', 'sp_effect', pack, `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'en', 'ingame', 'battle', 'effect', `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'en', 'ingame', 'battle', 'effect', pack, `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'ingame', 'battle', 'sp_effect', `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'ingame', 'battle', 'sp_effect', pack, `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'ingame', 'battle', 'effect', `${pack}.usm`),
+          path.join(this.assetsRoot, 'movie', 'ingame', 'battle', 'effect', pack, `${pack}.usm`),
+        ];
+        for (const mov of movieCandidates) {
+          if (fs.existsSync(mov)) {
+            const res = copyAssetFile(mov, this.assetsRoot, this.repoPaths, this.dryRun);
+            if (res) results.push(res);
           }
         }
       }
@@ -304,7 +323,10 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   const partitioner = new AssetPartitioner({ dryRun: flags.dryRun });
 
   if (flags.script) {
-    partitioner.syncScriptSlice(flags.script, flags.card);
+    const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);
+    for (const script of scripts) {
+      partitioner.syncScriptSlice(script, flags.card);
+    }
   } else if (flags.all) {
     partitioner.syncAll();
   } else {
