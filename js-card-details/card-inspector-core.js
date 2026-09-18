@@ -1241,7 +1241,7 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
             const valueEl = document.getElementById(valueId);
             const badgeEl = document.getElementById(badgeId);
             if (valueEl) valueEl.textContent = value || '';
-            if (badgeEl) badgeEl.hidden = hidden;
+            if (badgeEl) badgeEl.hidden = Boolean(hidden || !value);
         };
         setIdentityValue('abs-clean-val-rarity', 'abs-clean-badge-rarity', rarity);
         setIdentityValue('abs-clean-val-class', 'abs-clean-badge-class', String(cardClass || '').toUpperCase(), !cardClass || cardClass === 'none');
@@ -1259,8 +1259,14 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
             identity.appendChild(badgeRarity);
             if (badgeClass) identity.appendChild(badgeClass);
             identity.appendChild(badgeType);
-            if (badgeTag && unitTag) identity.appendChild(badgeTag);
-            if (badgeAwakening) identity.appendChild(badgeAwakening);
+            if (badgeTag) {
+                if (unitTag) identity.appendChild(badgeTag);
+                badgeTag.hidden = !unitTag;
+            }
+            if (badgeAwakening) {
+                if (awakening) identity.appendChild(badgeAwakening);
+                badgeAwakening.hidden = !awakening;
+            }
         }
     }
 

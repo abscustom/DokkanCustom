@@ -678,25 +678,25 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box >
 /* Passive controls belong to the real passive header, not to the centered
    title flex item. Keep them inside the passive panel at the upper-left name
    baseline. */
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-animation-header-actions {
-    position: absolute !important;
-    top: 50% !important;
-    left: 10px !important;
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-animation-header-actions,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
+    position: static !important;
     display: inline-flex !important;
     align-items: center !important;
-    gap: 4px !important;
+    gap: 6px !important;
     flex: 0 0 auto !important;
     margin: 0 !important;
     padding: 0 !important;
-    transform: translateY(-50%) !important;
-    z-index: 80 !important;
+    transform: none !important;
+    z-index: 10 !important;
     pointer-events: auto !important;
 }
 
 /* Leave a small clear lane after the action pill before the detected passive
    ability icons begin. This affects the viewer clean header only. */
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name:has(> .abs-animation-header-actions) > #abs-clean-ability-docks:not([hidden]) > #abs-clean-passive-icons > .abs-passive-icons-strip {
-    margin-left: 40px !important;
+    margin-left: 12px !important;
 }
 
 /* Light-mode clean panels recolour every header descendant with a broad
@@ -766,15 +766,15 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
     margin: 0 !important;
     padding: 0 10px !important;
     transform: none !important;
-    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    backdrop-filter: blur(12px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background: rgba(4, 12, 22, 0.28) !important;
+    background-color: rgba(4, 12, 22, 0.28) !important;
+    backdrop-filter: blur(12px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
     color: #ffffff !important;
     background-image: none !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 64%, rgba(255, 255, 255, 0.38)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.18)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
+    box-shadow: 0 3px 10px rgba(2, 8, 18, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header,
@@ -794,6 +794,23 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
 }
 
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
+    font-size: 11px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
+}
+
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions,
 body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
     margin-left: 0 !important;
@@ -803,9 +820,10 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .
 body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
-    padding-left: 14px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding-left: 0 !important;
+    margin: 0 auto 10px !important;
 }
 
 @media (max-width: 680px) {
@@ -1140,14 +1158,14 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     margin: 0 !important;
     padding: 0 10px !important;
     transform: none !important;
-    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    backdrop-filter: blur(12px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background: rgba(4, 12, 22, 0.28) !important;
+    background-color: rgba(4, 12, 22, 0.28) !important;
+    backdrop-filter: blur(12px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
     background-image: none !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.18)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 3px 10px rgba(2, 8, 18, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     color: #ffffff !important;
 }
 
@@ -1173,6 +1191,8 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     align-items: center !important;
     justify-content: flex-start !important;
     text-align: left !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
@@ -1182,9 +1202,10 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
-    padding-left: 14px !important;
+    justify-content: center !important;
+    text-align: center !important;
+    padding-left: 0 !important;
+    margin: 0 auto 10px !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title,
@@ -2362,16 +2383,14 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     order: 2 !important;
     position: static !important;
     inset: auto !important;
-    top: auto !important;
-    bottom: auto !important;
-    left: auto !important;
-    right: auto !important;
     transform: none !important;
-    z-index: 10 !important;
-    width: auto !important;
+    align-self: flex-start !important;
+    width: var(--abs-clean-viewer-axis-width, 100%) !important;
     max-width: 100% !important;
-    height: auto !important;
-    margin: 8px auto 2px !important;
+    margin-top: 8px !important;
+    margin-right: 0 !important;
+    margin-bottom: 2px !important;
+    margin-left: var(--abs-clean-viewer-axis-left, 0%) !important;
     padding: 0 !important;
     display: flex !important;
     flex-direction: row !important;
@@ -2383,42 +2402,76 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
+    box-sizing: border-box !important;
+    z-index: 10 !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag {
+/* Empty or hidden identity badges must never display */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening {
     margin: 0 !important;
     flex: 0 0 auto !important;
     display: inline-flex !important;
+    flex-direction: row !important;
     align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
     width: auto !important;
     min-width: 0 !important;
+    max-width: none !important;
     height: 26px !important;
     min-height: 26px !important;
-    padding: 3px 10px !important;
+    max-height: 26px !important;
+    padding: 0 10px !important;
     border-radius: 4px !important;
     border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 42%, rgba(255, 255, 255, 0.22)) !important;
     background: rgba(4, 12, 22, 0.65) !important;
     backdrop-filter: blur(8px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    box-sizing: border-box !important;
+    gap: 6px !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label {
+    display: inline-flex !important;
+    align-items: center !important;
     color: rgba(148, 163, 184, 0.90) !important;
-    font: 800 10px/1 Arial, sans-serif !important;
+    font: 800 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
-    margin-right: 2px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val {
+    display: inline-flex !important;
+    align-items: center !important;
     color: #ffffff !important;
-    font: 900 11px/1 Arial, sans-serif !important;
-    letter-spacing: 0.04em !important;
+    font: 900 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
+    text-align: left !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,

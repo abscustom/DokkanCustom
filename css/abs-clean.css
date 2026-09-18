@@ -4522,23 +4522,36 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge {
     position: relative !important;
     inset: auto !important;
-    display: flex !important;
+    display: inline-flex !important;
     flex-direction: row !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    gap: 8px !important;
+    justify-content: center !important;
+    gap: 6px !important;
     flex: 0 0 auto !important;
-    width: 135px !important;
-    min-height: 32px !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    max-height: 26px !important;
     box-sizing: border-box !important;
-    padding: 6px 9px !important;
-    border-radius: 2px !important;
+    padding: 0 10px !important;
+    border-radius: 4px !important;
     border: 1px solid rgba(255, 255, 255, 0.22) !important;
     background: rgba(3, 7, 14, 0.45) !important;
     backdrop-filter: blur(12px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
     overflow: hidden !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
+    display: none !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:hover {
@@ -4550,27 +4563,36 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label {
-    font-size: 8px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 10px !important;
     font-weight: 800 !important;
-    letter-spacing: 0.09em !important;
+    letter-spacing: 0.08em !important;
     text-transform: uppercase !important;
     line-height: 1 !important;
-    color: rgba(255, 255, 255, 0.6) !important;
+    color: rgba(148, 163, 184, 0.90) !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
     white-space: nowrap !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val {
-    font-size: 12px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    font-size: 10px !important;
     font-weight: 900 !important;
-    letter-spacing: 0.04em !important;
-    line-height: 1.1 !important;
+    letter-spacing: 0.06em !important;
+    text-transform: uppercase !important;
+    line-height: 1 !important;
     color: #ffffff !important;
-    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.35) !important;
-    text-align: right !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
+    text-align: left !important;
     white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    vertical-align: middle !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity .abs-clean-badge-val,
@@ -4580,23 +4602,14 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     color: #ffffff !important;
 }
 
-/* Awakening badge sizes to its content so EZA/SEZA never truncates. */
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity,
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class,
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type,
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag,
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening {
-    width: var(--identity-awakening-width, auto) !important;
-    min-width: var(--identity-awakening-min-width, 118px) !important;
-}
-
-/* Rarity, Class and Type widths, individually adjustable via the variables above. */
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity {
-    width: var(--identity-rarity-width, 118px) !important;
-}
-
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class {
-    width: var(--identity-class-width, 118px) !important;
-}
-
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type {
-    width: var(--identity-type-width, 118px) !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening .abs-clean-badge-val {
@@ -20023,7 +20036,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     line-height: 1.25 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
-    text-align: left !important;
+    text-align: center !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
 }
@@ -21482,14 +21495,14 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     margin: 0 !important;
     padding: 0 10px !important;
     transform: none !important;
-    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    backdrop-filter: blur(12px) saturate(160%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background: rgba(4, 12, 22, 0.28) !important;
+    background-color: rgba(4, 12, 22, 0.28) !important;
+    backdrop-filter: blur(12px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
     background-image: none !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.18)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 3px 10px rgba(2, 8, 18, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
     overflow: visible !important;
     z-index: 20 !important;
     color: #ffffff !important;
@@ -21500,7 +21513,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     align-items: center !important;
     justify-content: flex-start !important;
     text-align: left !important;
-    gap: 7px !important;
+    gap: 8px !important;
     width: 100% !important;
     min-width: 0 !important;
     height: 100% !important;
@@ -21516,9 +21529,10 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    margin: 0 auto !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    margin: 0 !important;
+    flex: 0 0 auto !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     font-size: 11px !important;
@@ -21537,7 +21551,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     inset: auto !important;
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: flex-end !important;
+    justify-content: flex-start !important;
     gap: 4px !important;
     width: max-content !important;
     max-width: none !important;
@@ -21568,7 +21582,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     line-height: 1.25 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
-    text-align: left !important;
+    text-align: center !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
 }
@@ -21999,11 +22013,11 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
-    justify-content: flex-start !important;
-    text-align: left !important;
+    justify-content: center !important;
+    text-align: center !important;
     min-height: 28px !important;
     height: 28px !important;
-    margin: 0 0 10px 0 !important;
+    margin: 0 auto 10px auto !important;
     padding: 0 16px 0 !important;
     font-size: 15px !important;
     font-style: italic !important;
@@ -22017,11 +22031,11 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 }
 
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box:has(> #abs-clean-ability-docks:not([hidden])) .abs-passive-name-inside {
-    padding-left: 230px !important;
+    padding-left: 16px !important;
 }
 
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box:has(> #abs-passive-summary:not([hidden])) .abs-passive-name-inside {
-    padding-right: 280px !important;
+    padding-right: 16px !important;
 }
 
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-clean-ability-docks:not([hidden]) {

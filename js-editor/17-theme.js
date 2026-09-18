@@ -2664,7 +2664,9 @@ window.syncAbsCleanIdentityIcons = function() {
         if (badgeClass) dock.appendChild(badgeClass);
         dock.appendChild(badgeType);
         if (badgeTag && unitTag) dock.appendChild(badgeTag);
-        if (badgeAwakening) dock.appendChild(badgeAwakening);
+        else if (badgeTag) badgeTag.hidden = true;
+        if (badgeAwakening && activeAwakening !== 'base' && (activeAwakening === 'eza' || activeAwakening === 'seza')) dock.appendChild(badgeAwakening);
+        else if (badgeAwakening) badgeAwakening.hidden = true;
     }
 
     // 4. Release Date
