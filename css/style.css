@@ -203,7 +203,7 @@ body.hub-cards-nav-static .apple-hud-wrapper {
     display: flex !important;
     align-items: center !important;
     justify-content: space-between !important;
-    background: linear-gradient(180deg, rgba(18, 24, 38, 0.96) 0%, rgba(8, 12, 20, 0.98) 100%) !important;
+    background: linear-gradient(180deg, rgba(18, 24, 38, 0.76) 0%, rgba(8, 12, 20, 0.82) 100%) !important;
     backdrop-filter: blur(28px) saturate(180%) !important;
     -webkit-backdrop-filter: blur(28px) saturate(180%) !important;
     border-radius: 38px !important;

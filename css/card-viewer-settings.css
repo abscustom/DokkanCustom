@@ -1158,14 +1158,14 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     margin: 0 !important;
     padding: 0 10px !important;
     transform: none !important;
-    background: rgba(4, 12, 22, 0.28) !important;
-    background-color: rgba(4, 12, 22, 0.28) !important;
-    backdrop-filter: blur(12px) saturate(140%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
     background-image: none !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.18)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 3px 10px rgba(2, 8, 18, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
     color: #ffffff !important;
 }
 
@@ -1893,14 +1893,14 @@ body.card-viewer-page.theme-abs-clean .hud-nav-group:hover,
 body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:hover .hud-nav-group,
 body.card-viewer-page.theme-abs-clean .apple-hud-wrapper:focus-within .hud-nav-group {
     border-radius: 0px !important;
-    background: linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.45) 0%, rgba(4, 7, 14, 0.55) 100%) !important;
     background-image: 
         linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(8, 14, 26, 0.78) 0%, rgba(4, 7, 14, 0.90) 100%) !important;
+        linear-gradient(180deg, rgba(8, 14, 26, 0.45) 0%, rgba(4, 7, 14, 0.55) 100%) !important;
     background-size: 16px 16px, 16px 16px, auto auto !important;
-    border: 1px solid rgba(255, 255, 255, 0.22) !important;
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), inset 0 1px 0 rgba(255, 255, 255, 0.18) !important;
     backdrop-filter: blur(24px) saturate(140%) !important;
     -webkit-backdrop-filter: blur(24px) saturate(140%) !important;
 }
@@ -2406,22 +2406,12 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     z-index: 10 !important;
 }
 
-/* Empty or hidden identity badges must never display */
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
-    display: none !important;
-}
-
 body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:not([hidden]),
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening {
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag:not([hidden]),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening:not([hidden]) {
     margin: 0 !important;
     flex: 0 0 auto !important;
     display: inline-flex !important;
@@ -2446,9 +2436,33 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     gap: 6px !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label {
+/* Empty or hidden identity badges must NEVER display under any circumstance */
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity [hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening[hidden],
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening:has(#abs-clean-val-awakening:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag:has(#abs-clean-val-tag:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-label {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     color: rgba(148, 163, 184, 0.90) !important;
     font: 800 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     letter-spacing: 0.08em !important;
@@ -2457,11 +2471,15 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     padding: 0 !important;
     line-height: 1 !important;
     vertical-align: middle !important;
+    text-align: center !important;
+    white-space: nowrap !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val {
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val,
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-val {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     color: #ffffff !important;
     font: 900 10px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     letter-spacing: 0.06em !important;
@@ -2471,7 +2489,8 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
     padding: 0 !important;
     line-height: 1 !important;
     vertical-align: middle !important;
-    text-align: left !important;
+    text-align: center !important;
+    white-space: nowrap !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,

@@ -1260,12 +1260,26 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
             if (badgeClass) identity.appendChild(badgeClass);
             identity.appendChild(badgeType);
             if (badgeTag) {
-                if (unitTag) identity.appendChild(badgeTag);
-                badgeTag.hidden = !unitTag;
+                if (unitTag) {
+                    identity.appendChild(badgeTag);
+                    badgeTag.hidden = false;
+                    badgeTag.style.display = '';
+                } else {
+                    badgeTag.hidden = true;
+                    badgeTag.style.display = 'none';
+                    badgeTag.remove();
+                }
             }
             if (badgeAwakening) {
-                if (awakening) identity.appendChild(badgeAwakening);
-                badgeAwakening.hidden = !awakening;
+                if (awakening) {
+                    identity.appendChild(badgeAwakening);
+                    badgeAwakening.hidden = false;
+                    badgeAwakening.style.display = '';
+                } else {
+                    badgeAwakening.hidden = true;
+                    badgeAwakening.style.display = 'none';
+                    badgeAwakening.remove();
+                }
             }
         }
     }

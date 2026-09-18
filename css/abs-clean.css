@@ -12,8 +12,8 @@ body.theme-abs-clean {
     --abs-clean-outline-width: 1px;       /* Shared uniform stroke for the header/L contour. */
     --abs-clean-category-pill-text: var(--type-text, var(--theme-text, #dff6ff)); /* Categories pill text follows the active typing. */
     --abs-clean-header-surface:
-        radial-gradient(ellipse 70% 90% at 50% 10%, var(--abs-clean-type-glow, rgba(56, 189, 248, 0.25)), transparent 70%),
-        linear-gradient(135deg, rgba(6, 12, 22, 0.38), rgba(2, 4, 10, 0.48));
+        radial-gradient(ellipse 70% 90% at 50% 10%, var(--abs-clean-type-glow, rgba(56, 189, 248, 0.20)), transparent 70%),
+        linear-gradient(135deg, rgba(6, 12, 22, 0.22), rgba(2, 4, 10, 0.30));
     /* CHARACTER NAME SIZE (decrease to keep long names on fewer lines) */
     --abs-clean-name-font-size: clamp(19px, 1.6vw, 26px);
 
@@ -4545,15 +4545,6 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     overflow: hidden !important;
 }
 
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
-    display: none !important;
-}
-
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:hover {
     transform: none !important;
     border-color: rgba(255, 255, 255, 0.45) !important;
@@ -4562,9 +4553,29 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     filter: none !important;
 }
 
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label {
+/* Empty or hidden identity badges must NEVER display under any circumstance */
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons [hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-css-badge[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-tag[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons #abs-clean-badge-awakening[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity [hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening[hidden],
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:has(.abs-clean-badge-val:empty),
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening:has(#abs-clean-val-awakening:empty),
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag:has(#abs-clean-val-tag:empty),
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons .abs-clean-badge-val:empty {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label,
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-label {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     letter-spacing: 0.08em !important;
@@ -4576,11 +4587,14 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     margin: 0 !important;
     padding: 0 !important;
     vertical-align: middle !important;
+    text-align: center !important;
 }
 
-body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val {
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val,
+body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-val {
     display: inline-flex !important;
     align-items: center !important;
+    justify-content: center !important;
     font-size: 10px !important;
     font-weight: 900 !important;
     letter-spacing: 0.06em !important;
@@ -4588,7 +4602,7 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     line-height: 1 !important;
     color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
-    text-align: left !important;
+    text-align: center !important;
     white-space: nowrap !important;
     margin: 0 !important;
     padding: 0 !important;
@@ -7697,12 +7711,15 @@ body.theme-abs-clean #layout-abs-style #abs-clean-release-date {
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-val {
     min-width: 0 !important;
     max-width: none !important;
-    white-space: normal !important;
+    white-space: nowrap !important;
     overflow: visible !important;
-    text-overflow: clip !important;
-    overflow-wrap: anywhere !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
     font-size: 10px !important;
-    line-height: 1.05 !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
 }
 
 /* ===========================================================================
@@ -10756,11 +10773,18 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-label,
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag .abs-clean-badge-val {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    text-align: center !important;
     width: max-content !important;
     min-width: 0 !important;
     max-width: none !important;
     flex: 0 0 auto !important;
     white-space: nowrap !important;
+    font-size: 10px !important;
+    line-height: 1 !important;
+    vertical-align: middle !important;
 }
 
 /* ABS.CLEAN CATEGORY PILL TYPE COLOR
@@ -21495,14 +21519,14 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     margin: 0 !important;
     padding: 0 10px !important;
     transform: none !important;
-    background: rgba(4, 12, 22, 0.28) !important;
-    background-color: rgba(4, 12, 22, 0.28) !important;
-    backdrop-filter: blur(12px) saturate(140%) !important;
-    -webkit-backdrop-filter: blur(12px) saturate(140%) !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
     background-image: none !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.18)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 3px 10px rgba(2, 8, 18, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
     overflow: visible !important;
     z-index: 20 !important;
     color: #ffffff !important;

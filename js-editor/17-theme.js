@@ -2637,7 +2637,16 @@ window.syncAbsCleanIdentityIcons = function() {
     const valTag = document.getElementById('abs-clean-val-tag');
     const unitTag = window.normalizeAbsCleanUnitTag?.(window.absUnitTag) || '';
     if (valTag) valTag.textContent = unitTag;
-    if (badgeTag) badgeTag.hidden = !unitTag;
+    if (badgeTag) {
+        if (unitTag) {
+            badgeTag.hidden = false;
+            badgeTag.style.display = '';
+        } else {
+            badgeTag.hidden = true;
+            badgeTag.style.display = 'none';
+            badgeTag.remove();
+        }
+    }
 
     // 5. Awakening — hidden entirely on BASE; visible order is rarity, class,
     // type, tag, then awakening.
@@ -2649,12 +2658,17 @@ window.syncAbsCleanIdentityIcons = function() {
             if (labelEl) labelEl.textContent = 'AWAKENING';
             valAwakening.textContent = 'EZA';
             badgeAwakening.hidden = false;
+            badgeAwakening.style.display = '';
         } else if (activeAwakening === 'seza') {
             if (labelEl) labelEl.textContent = 'AWAKENING';
             valAwakening.textContent = 'SEZA';
             badgeAwakening.hidden = false;
+            badgeAwakening.style.display = '';
         } else {
+            valAwakening.textContent = '';
             badgeAwakening.hidden = true;
+            badgeAwakening.style.display = 'none';
+            badgeAwakening.remove();
         }
     }
 
@@ -2664,9 +2678,17 @@ window.syncAbsCleanIdentityIcons = function() {
         if (badgeClass) dock.appendChild(badgeClass);
         dock.appendChild(badgeType);
         if (badgeTag && unitTag) dock.appendChild(badgeTag);
-        else if (badgeTag) badgeTag.hidden = true;
+        else if (badgeTag) {
+            badgeTag.hidden = true;
+            badgeTag.style.display = 'none';
+            badgeTag.remove();
+        }
         if (badgeAwakening && activeAwakening !== 'base' && (activeAwakening === 'eza' || activeAwakening === 'seza')) dock.appendChild(badgeAwakening);
-        else if (badgeAwakening) badgeAwakening.hidden = true;
+        else if (badgeAwakening) {
+            badgeAwakening.hidden = true;
+            badgeAwakening.style.display = 'none';
+            badgeAwakening.remove();
+        }
     }
 
     // 4. Release Date
