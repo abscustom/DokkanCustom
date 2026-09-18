@@ -1226,7 +1226,32 @@
         const ingested = player.ingestFiles(files);
         if (!ingested.lwfFile) throw new Error('No LWF file in ' + fallbackName);
 
-        const prepared = await player.prepare(ingested.lwfFile);
+        let prepared = await player.prepare(ingested.lwfFile);
+        if (prepared.missing?.length && pack?.url) {
+            const lastSlash = pack.url.lastIndexOf('/');
+            const baseDirUrl = lastSlash !== -1 ? pack.url.slice(0, lastSlash) : '';
+            if (baseDirUrl) {
+                const fetchedMissing = await Promise.all(prepared.missing.map(async (missingName) => {
+                    try {
+                        const fileUrl = `${baseDirUrl}/${missingName}`;
+                        const resp = await fetchWithTimeout(fileUrl, { cache: 'no-store' });
+                        if (resp.ok) {
+                            const rawBlob = await resp.blob();
+                            const motionBlob = useLegacyMotionMatte
+                                ? await removeMotionBlackMatte(rawBlob)
+                                : rawBlob;
+                            return new File([motionBlob], missingName, { type: motionBlob.type || rawBlob.type || 'image/png' });
+                        }
+                    } catch {}
+                    return null;
+                }));
+                const validFiles = fetchedMissing.filter(Boolean);
+                if (validFiles.length > 0) {
+                    player.ingestFiles(validFiles);
+                    prepared = await player.prepare(ingested.lwfFile);
+                }
+            }
+        }
         if (prepared.missing?.length) {
             throw new Error('Missing idle atlas: ' + prepared.missing.join(', '));
         }
