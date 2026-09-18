@@ -264,6 +264,9 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
                 <div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
             </div>`
             : '';
+        const cleanSaFloatingFooter = (isAbsCleanTheme && specialEffectsHtml)
+            ? `<div class="abs-sa-floating-footer">${specialEffectsHtml}</div>`
+            : '';
         const cleanHeaderTitle = isAbsCleanTheme
             ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${formattedEffects}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
@@ -293,7 +296,7 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         }
 
         const html = `
-            <div class="abs-box mb-3 ${colSpanClass}${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}">
+            <div class="abs-box mb-3 ${colSpanClass}${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${cleanSaFloatingFooter ? ' has-floating-footer' : ''}">
                 ${cleanSaFloatingHeader}
                 <div class="abs-header">
                     ${cleanHeaderTitle}
@@ -303,6 +306,7 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
                 <div class="abs-content text-start">
                     ${cleanSaContent}
                 </div>
+                ${cleanSaFloatingFooter}
                 ${cleanTopStats}
             </div>
         `;
@@ -573,11 +577,23 @@ function renderActiveSkills(card) {
             iconHtml = `<img src="${actIcon}" class="${isAbsCleanTheme ? 'abs-sa-icon-name' : 'abs-sa-icon-left'}" data-tooltip="${actCategoryName}" alt="${actCategoryName}">`;
         }
 
+        const cleanActiveFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-active-floating-header abs-sa-floating-header">
+                <span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">${typeLabel}</span>${animationButton}</span>
+                <div class="abs-sa-header-meta">${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
+            </div>`
+            : '';
+        const cleanActiveHeader = isAbsCleanTheme
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group">${iconHtml}<em class="abs-sa-name-glow">${actName}</em></span></span></div>`
+            : `<div class="abs-sa-header-title">${iconHtml}<span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${actName}</em></span></div>`;
+
         const html = `
-            <div class="abs-box mb-3">
+            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}">
+                ${cleanActiveFloatingHeader}
                 <div class="abs-header">
-                    ${isAbsCleanTheme ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">${typeLabel}</span>${animationButton}</span><span class="abs-sa-title-center"><span class="abs-sa-name-group">${iconHtml}<em class="abs-sa-name-glow">${actName}</em></span></span></div><div class="abs-sa-header-meta">${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>` : `<div class="abs-sa-header-title">${iconHtml}<span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${actName}</em></span></div>`}
+                    ${cleanActiveHeader}
                     ${isAbsCleanTheme ? '' : animationButton}
+                    ${isAbsCleanTheme ? '' : (headerDamageMultiplier ? `<div class="abs-sa-header-meta"><span class="abs-sa-damage-pill">${headerDamageMultiplier}</span></div>` : '')}
                 </div>
                 <div class="abs-content text-start">
                     ${formattedCond ? `

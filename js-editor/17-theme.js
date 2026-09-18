@@ -2300,6 +2300,9 @@ window.updateAbsStyleSuperAttacks = function() {
                 <div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
             </div>`
             : '';
+        const cleanSaFloatingFooter = (isAbsCleanTheme && specialEffectsHtml)
+            ? `<div class="abs-sa-floating-footer">${specialEffectsHtml}</div>`
+            : '';
         const cleanSaHeader = isAbsCleanTheme
             ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" alt="SA Category"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${effectsFormatted}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" alt="SA Icon"><span class="abs-sa-title-text">${formattedTypeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
@@ -2308,7 +2311,7 @@ window.updateAbsStyleSuperAttacks = function() {
             : `${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${effectsFormatted}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
 
         htmlBuffer += `
-            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}" data-edit="sa">
+            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}${cleanSaFloatingFooter ? ' has-floating-footer' : ''}" data-edit="sa">
                 ${cleanSaFloatingHeader}
                 <div class="abs-header">
                     ${cleanSaHeader}
@@ -2316,6 +2319,7 @@ window.updateAbsStyleSuperAttacks = function() {
                 <div class="abs-content text-start">
                     ${cleanSaContent}
                 </div>
+                ${cleanSaFloatingFooter}
                 ${cleanSaTopStats}
             </div>
         `;
@@ -2379,8 +2383,14 @@ window.updateAbsStyleActiveSkills = function() {
         const cleanDividerClass = isDomain
             ? 'abs-clean-active-divider abs-clean-field-divider'
             : 'abs-clean-active-divider';
+        const cleanActiveFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-active-floating-header abs-sa-floating-header">
+                <span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">${cleanTypeLabel}</span></span>
+                <div class="abs-sa-header-meta">${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
+            </div>`
+            : '';
         const cleanActiveHeader = isAbsCleanTheme
-            ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">${cleanTypeLabel}</span></span><span class="abs-sa-title-center"><span class="abs-sa-name-group">${activeIconHtml.replace('abs-sa-icon-left', 'abs-sa-icon-name')}<em class="abs-sa-name-glow">${name}</em></span></span></div><div class="abs-sa-header-meta">${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>`
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group">${activeIconHtml.replace('abs-sa-icon-left', 'abs-sa-icon-name')}<em class="abs-sa-name-glow">${name}</em></span></span></div>`
             : `<div class="abs-sa-header-title">${activeIconHtml}<span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${name}</em></span></div>`;
         const cleanFieldStatBadges = isAbsCleanTheme && isDomain && typeof window.renderAbsCleanFieldStatBadges === 'function'
             ? window.renderAbsCleanFieldStatBadges(effect, block)
@@ -2396,9 +2406,11 @@ window.updateAbsStyleActiveSkills = function() {
             : '';
 
         const skillHtml = `
-            <div class="abs-box mb-3${cleanActiveClass}" data-active-kind="${activeKind}"${cleanActiveEditAttr}${cleanActiveSourceAttr}>
+            <div class="abs-box mb-3${cleanActiveClass}${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}" data-active-kind="${activeKind}"${cleanActiveEditAttr}${cleanActiveSourceAttr}>
+                ${cleanActiveFloatingHeader}
                 <div class="abs-header">
                     ${cleanActiveHeader}
+                    ${isAbsCleanTheme ? '' : (headerDamageMultiplier ? `<div class="abs-sa-header-meta"><span class="abs-sa-damage-pill">${headerDamageMultiplier}</span></div>` : '')}
                 </div>
                 <div class="abs-content text-start">
                     ${showCondition ? `

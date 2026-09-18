@@ -1792,27 +1792,38 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
    Pills (SUPER ATTACK/EX/UNIT + play button) and Ki/Multiplier float outside
    on top of the container box, matching the Passive Skill header pattern.
    =========================================================================== */
-body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box,
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container):not(:empty) > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container):not(:empty) > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box,
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row > #abs-active-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row > #abs-active-container > .abs-box {
     margin-top: 44px !important;
     position: relative !important;
     overflow: visible !important;
     clip-path: none !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty),
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty),
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container {
-    overflow: visible !important;
-    clip-path: none !important;
-    row-gap: 52px !important;
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.has-floating-footer,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.has-floating-footer,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:has(.abs-sa-floating-footer),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:has(.abs-sa-floating-footer) {
+    margin-bottom: 44px !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header {
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container):not(:empty),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container):not(:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container),
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row {
+    overflow: visible !important;
+    clip-path: none !important;
+    row-gap: 32px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
     position: absolute !important;
     top: -36px !important;
     right: 0 !important;
@@ -1853,8 +1864,149 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     box-shadow: 0 4px 14px rgba(46, 16, 101, 0.45), inset 0 1px 0 rgba(233, 213, 255, 0.25) !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-pill-actions,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-pill-actions {
+/* Mirrored Floating Footer for Stat Badges under Super Attack Container */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer {
+    position: absolute !important;
+    bottom: -36px !important;
+    right: 0 !important;
+    top: auto !important;
+    left: 0 !important;
+    display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, rgba(4, 12, 22, 0.72)) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, rgba(4, 12, 22, 0.72)) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    z-index: 30 !important;
+    pointer-events: auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-footer,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-footer {
+    background: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.72)) !important;
+    background-color: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.72)) !important;
+    border: 1px solid rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(46, 16, 101, 0.45), inset 0 1px 0 rgba(233, 213, 255, 0.25) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-special-effects-section,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-special-effects-section {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-special-effects-title {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-special-effects-groups {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    background: transparent !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-effect-group {
+    display: inline-flex !important;
+    align-items: center !important;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-group-badges-row {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-effect-badge {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    padding: 2px 7px !important;
+    border-radius: 2px !important;
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    color: #ffffff !important;
+    font-size: 10.5px !important;
+    line-height: 1 !important;
+    height: 20px !important;
+    text-transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-effect-badge img {
+    width: 14px !important;
+    height: 14px !important;
+    object-fit: contain !important;
+    margin: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-badge-val {
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    font-size: 10.5px !important;
+    text-transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-badge-sep {
+    color: rgba(255, 255, 255, 0.45) !important;
+    font-size: 10px !important;
+    margin: 0 1px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-badge-turns {
+    color: rgba(255, 255, 255, 0.88) !important;
+    font-size: 10px !important;
+    text-transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-effect-group.enemy .abs-effect-badge {
+    background: rgba(239, 68, 68, 0.20) !important;
+    border-color: rgba(239, 68, 68, 0.45) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-sa-floating-footer .abs-effect-group.allies .abs-effect-badge {
+    background: rgba(59, 130, 246, 0.20) !important;
+    border-color: rgba(59, 130, 246, 0.45) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions {
     position: static !important;
     inset: auto !important;
     display: inline-flex !important;
@@ -1867,8 +2019,8 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     flex: 0 0 auto !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-header-meta,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-header-meta {
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-header-meta,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-header-meta {
     position: static !important;
     inset: auto !important;
     display: inline-flex !important;
@@ -1881,15 +2033,26 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     flex: 0 0 auto !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header {
+/* Remove uppercase casing on Ki and Multiplier */
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-ki-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-ki-pill,
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-damage-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-damage-pill {
+    text-transform: none !important;
+}
+
+/* Box header inside container: zero dead space / gap above skill name */
+body.card-viewer-page.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header {
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
-    padding: 8px 10px 6px !important;
+    padding: 4px 10px 4px !important;
+    margin: 0 !important;
     min-height: 0 !important;
     height: auto !important;
+    background: transparent !important;
     border-bottom: none !important;
 }
 
