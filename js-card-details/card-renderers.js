@@ -260,12 +260,18 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         const cleanTopStats = isAbsCleanTheme && specialEffectsHtml
             ? `<div class="abs-sa-top-stats">${specialEffectsHtml}</div>`
             : '';
+        const cleanSaFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-sa-floating-header">
+                <span class="abs-sa-pill-actions">${cleanTypePills}${animationButton}</span>
+                <div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
+            </div>`
+            : '';
         const cleanHeaderTitle = isAbsCleanTheme
-            ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions">${cleanTypePills}${animationButton}</span><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${formattedEffects}</span></div>`
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${formattedEffects}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
         const cleanHeaderMeta = isAbsCleanTheme
-            ? `<div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>`
-            : '';
+            ? ''
+            : `<div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>`;
         const cleanExConditionDividerHtml = isAbsCleanTheme && isExSuperAttack && formattedSaCond
             ? '<div class="abs-clean-ex-condition-divider" aria-hidden="true"><hr class="divider"></div>'
             : '';
@@ -290,6 +296,7 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
 
         const html = `
             <div class="abs-box mb-3 ${colSpanClass}${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}">
+                ${cleanSaFloatingHeader}
                 <div class="abs-header">
                     ${cleanHeaderTitle}
                     ${isAbsCleanTheme ? '' : animationButton}

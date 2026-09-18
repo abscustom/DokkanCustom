@@ -2296,8 +2296,14 @@ window.updateAbsStyleSuperAttacks = function() {
         const cleanSaTopStats = document.body.classList.contains('theme-abs-clean') && specialEffectsHtml
             ? `<div class="abs-sa-top-stats">${specialEffectsHtml}</div>`
             : '';
-        const cleanSaHeader = document.body.classList.contains('theme-abs-clean')
-            ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions">${cleanTypePills}</span><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" alt="SA Category"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${effectsFormatted}</span></div><div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>`
+        const cleanSaFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-sa-floating-header">
+                <span class="abs-sa-pill-actions">${cleanTypePills}</span>
+                <div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>
+            </div>`
+            : '';
+        const cleanSaHeader = isAbsCleanTheme
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" alt="SA Category"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${effectsFormatted}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" alt="SA Icon"><span class="abs-sa-title-text">${formattedTypeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
         const cleanSaContent = isAbsCleanTheme
             ? `<div class="abs-sa-clean-layout"><div class="abs-sa-clean-copy">${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}</div></div>`
@@ -2305,6 +2311,7 @@ window.updateAbsStyleSuperAttacks = function() {
 
         htmlBuffer += `
             <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}" data-edit="sa">
+                ${cleanSaFloatingHeader}
                 <div class="abs-header">
                     ${cleanSaHeader}
                 </div>

@@ -1264,7 +1264,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     max-width: none !important;
     min-width: 0 !important;
     min-height: 24px !important;
-    padding: 0 120px !important;
+    padding: 0 12px !important;
     box-sizing: border-box !important;
     text-align: center !important;
 }
@@ -1739,7 +1739,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     position: relative !important;
 }
 
-/* ABS.CLEAN UNIT Super Attack purple pill */
+/* ABS.CLEAN UNIT Super Attack purple pill with white text */
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill {
     position: static !important;
@@ -1756,22 +1756,117 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     max-height: 22px !important;
     padding: 0 9px !important;
     margin: 0 !important;
-    border: 1px solid rgba(233, 213, 255, 0.95) !important;
+    border: 1px solid rgba(216, 180, 254, 0.9) !important;
     border-radius: 2px !important;
-    background: linear-gradient(105deg, #4a044e 0%, #9333ea 28%, #f3e8ff 48%, #a855f7 68%, #3b0764 100%) !important;
+    background: linear-gradient(105deg, #581c87 0%, #7e22ce 25%, #9333ea 50%, #7e22ce 75%, #581c87 100%) !important;
     background-size: 220% 100% !important;
-    color: #1a0330 !important;
+    color: #ffffff !important;
     font-size: 10.5px !important;
     font-weight: 1000 !important;
     line-height: 1 !important;
     letter-spacing: 0.1em !important;
     text-transform: uppercase !important;
     white-space: nowrap !important;
-    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9), 0 0 6px rgba(168, 85, 247, 0.8) !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.45) !important;
     box-sizing: border-box !important;
     transform: none !important;
     z-index: 9 !important;
+}
+
+/* ===========================================================================
+   ABS.CLEAN FLOATING SUPER ATTACK HEADERS
+   Pills (SUPER ATTACK/EX/UNIT + play button) and Ki/Multiplier float outside
+   on top of the container box, matching the Passive Skill header pattern.
+   =========================================================================== */
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
+    margin-top: 42px !important;
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header {
+    position: absolute !important;
+    top: -36px !important;
+    right: 0 !important;
+    bottom: auto !important;
+    left: 0 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border-radius: 2px !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    color: #ffffff !important;
+    z-index: 10 !important;
+    pointer-events: auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-header {
+    background: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.65)) !important;
+    background-color: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.65)) !important;
+    border: 1px solid rgba(168, 85, 247, 0.6) !important;
+    box-shadow: 0 4px 14px rgba(46, 16, 101, 0.38), inset 0 1px 0 rgba(233, 213, 255, 0.25) !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-pill-actions,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-pill-actions {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 22px !important;
+    width: max-content !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-header-meta,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-header-meta {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    height: 22px !important;
+    width: max-content !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    flex: 0 0 auto !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header {
+    padding-top: 8px !important;
+    padding-bottom: 4px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-header-title,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-header-title {
+    padding-top: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after,
