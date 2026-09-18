@@ -34,7 +34,7 @@ function defaultBridgeUrl() {
             || !window.location.hostname;
         if (isLocal) return 'http://127.0.0.1:3137';
     }
-    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
+    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main';
 }
 
 function makeHost(className, zIndex) {
@@ -253,6 +253,10 @@ export class ActionBankRunner {
         this.charaLayer.setServerUrl(this.serverUrl);
     }
 
+    _isStatic() {
+        return !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::|\/|$)/i.test(this.serverUrl);
+    }
+
     _getHeaders() {
         return this.serverUrl && false
             ? { 'ngrok-skip-browser-warning': 'true' }
@@ -419,6 +423,22 @@ export class ActionBankRunner {
         if (this.soundBuffers.has(cacheKey)) return this.soundBuffers.get(cacheKey);
         const context = this._ensureAudioContext();
         if (!context) return null;
+
+        if (this._isStatic()) {
+            const staticAudioUrl = this.animationPayload?.audio_urls?.[`${kind}:${id}`]
+                || `https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-core/main/assets/audio/${kind}/${kind}_${id}.wav`;
+            try {
+                const response = await fetch(staticAudioUrl, { cache: 'force-cache' });
+                if (!response.ok) throw new Error(await response.text());
+                const buffer = await context.decodeAudioData((await response.arrayBuffer()).slice(0));
+                this.soundBuffers.set(cacheKey, buffer);
+                return buffer;
+            } catch (err) {
+                this.log(`Static audio ${kind}:${id} unavailable: ${err.message || err}`);
+                return null;
+            }
+        }
+
         const params = new URLSearchParams({ cue: String(id), v: AUDIO_CACHE_VERSION });
         if (kind === 'voice' && packageHint) params.set('package', packageHint);
         const headers = this._getHeaders();
@@ -710,7 +730,8 @@ export class ActionBankRunner {
         if (effect?.available && effect.files?.length) return effect;
         try {
             const headers = this._getHeaders();
-            const response = await fetch(`${this.serverUrl}/api/effect/${id}`, {
+            const ext = this._isStatic() ? '.json' : '';
+            const response = await fetch(`${this.serverUrl}/api/effect/${id}${ext}`, {
                 cache: 'no-store',
                 ...(Object.keys(headers).length ? { headers } : {})
             });
@@ -950,7 +971,8 @@ export class ActionBankRunner {
         // 2. Fetch Card Art Textures for Dynamic Injections
         try {
             const headers = this._getHeaders();
-            const cardRes = await fetch(`${this.serverUrl}/api/card/${Number(this.attackerCardId) || 0}`, {
+            const ext = this._isStatic() ? '.json' : '';
+            const cardRes = await fetch(`${this.serverUrl}/api/card/${Number(this.attackerCardId) || 0}${ext}`, {
                 ...(Object.keys(headers).length ? { headers } : {})
             });
             const cardPayload = await cardRes.json();

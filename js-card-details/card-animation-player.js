@@ -4,10 +4,11 @@
 
 (function initializeDokkanAnimationPlayer() {
     const LOCAL_SERVER = 'http://127.0.0.1:3137';
+    const STATIC_INDEX_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main';
     const GITHUB_RELEASE_BASE = 'https://github.com/abscustom/DokkanCustom/releases/download/assets-latest';
     const GITHUB_RAW_BASE = 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
-    const REMOTE_SERVER = 'https://abscustom-dokkan.loca.lt';
-    const NGROK_SERVER = REMOTE_SERVER;
+    const REMOTE_SERVER = STATIC_INDEX_BASE;
+    const NGROK_SERVER = STATIC_INDEX_BASE;
     // Track cache state per connection (0 = unknown, 1 = connected, 2 = failed)
     const serverState = new Map();
 
@@ -18,7 +19,11 @@
             || !window.location.hostname;
     }
 
-    const DEFAULT_SERVER = isLocalEnvironment() ? LOCAL_SERVER : NGROK_SERVER;
+    function isStaticServer(server) {
+        return !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::|\/|$)/i.test(server);
+    }
+
+    const DEFAULT_SERVER = isLocalEnvironment() ? LOCAL_SERVER : STATIC_INDEX_BASE;
     const SCRIPT_NAME_PATTERN = /^[A-Za-z][A-Za-z0-9_-]*$/;
     const BRIDGE_REQUEST_TIMEOUT_MS = 5000;
     const urlServerOverride = new URLSearchParams(window.location.search).get('animationServer');
@@ -80,18 +85,18 @@
         if (saved) {
             const normalized = saved.replace(/\/$/, '');
             // When running locally, do not get trapped by a stale remote ngrok URL in localStorage
-            if (isLocalEnvironment() && saved.includes('ngrok')) {
+            if (isLocalEnvironment() && (saved.includes('ngrok') || saved.includes('loca.lt') || saved.includes('raw.githubusercontent.com'))) {
                 return LOCAL_SERVER;
             }
             // A deployed page must never probe a loopback server from the
             // visitor's machine because that setting may have been saved by a
             // local checkout in the same browser profile.
             if (!isLocalEnvironment() && /^https?:\/\/(?:localhost|127\.0\.0\.1)(?::|\/|$)/i.test(normalized)) {
-                return NGROK_SERVER;
+                return STATIC_INDEX_BASE;
             }
             return normalized;
         }
-        return isLocalEnvironment() ? LOCAL_SERVER : NGROK_SERVER;
+        return isLocalEnvironment() ? LOCAL_SERVER : STATIC_INDEX_BASE;
     }
 
     async function fetchWithTimeout(url, options = {}, timeoutMs = BRIDGE_REQUEST_TIMEOUT_MS) {
@@ -114,6 +119,15 @@
         return animationResponseServers.get(response) || fallback;
     }
 
+    function formatBridgeEndpoint(endpoint, server) {
+        if (!endpoint || endpoint.endsWith('.json')) return endpoint;
+        if (isStaticServer(server)) {
+            const [pathPart, query] = endpoint.split('?');
+            return query ? `${pathPart}.json?${query}` : `${pathPart}.json`;
+        }
+        return endpoint;
+    }
+
     async function fetchFromAnimationBridge(endpoint, options = {}) {
         let server = getServerUrl();
         const buildHeaders = (targetServer) => {
@@ -124,21 +138,23 @@
             }
             return h;
         };
+        const reqEndpoint = formatBridgeEndpoint(endpoint, server);
         try {
-            const res = await fetchWithTimeout(`${server}${endpoint}`, { ...options, headers: buildHeaders(server) });
+            const res = await fetchWithTimeout(`${server}${reqEndpoint}`, { ...options, headers: buildHeaders(server) });
             if (res.ok) return tagAnimationResponse(res, server);
             if (res.status === 502 || res.status === 504 || res.status === 503) {
                 throw new Error(`Bridge returned ${res.status}`);
             }
             return tagAnimationResponse(res, server);
         } catch (err) {
-            const altServer = server === LOCAL_SERVER ? NGROK_SERVER : LOCAL_SERVER;
+            const altServer = server === LOCAL_SERVER ? STATIC_INDEX_BASE : LOCAL_SERVER;
             // Only a local page may try the local bridge as a fallback. A
             // public page must not leak a visitor's loopback endpoint into its
             // media requests.
             if (isLocalEnvironment()) {
                 try {
-                    const altRes = await fetchWithTimeout(`${altServer}${endpoint}`, { ...options, headers: buildHeaders(altServer) });
+                    const altEndpoint = formatBridgeEndpoint(endpoint, altServer);
+                    const altRes = await fetchWithTimeout(`${altServer}${altEndpoint}`, { ...options, headers: buildHeaders(altServer) });
                     if (altRes && (altRes.ok || altRes.status < 500)) {
                         if (actionBankRunner) actionBankRunner.setServerUrl(altServer);
                         return tagAnimationResponse(altRes, altServer);
@@ -152,6 +168,7 @@
     function resolveBridgeMediaUrl(value, server) {
         const raw = String(value || '');
         if (!raw || !server || /^(?:data|blob):/i.test(raw)) return value;
+        if (/^https?:\/\//i.test(raw)) return raw;
         try {
             const resolved = new URL(raw, server);
             if (!/^https?:$/i.test(resolved.protocol) || !/^\/(?:assets|api)\//i.test(resolved.pathname)) {

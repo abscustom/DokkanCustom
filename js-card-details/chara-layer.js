@@ -124,7 +124,7 @@ function defaultBridgeUrl() {
             || !window.location.hostname;
         if (isLocal) return 'http://127.0.0.1:3137';
     }
-    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom/main/assets';
+    return 'https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main';
 }
 
 export class CharaLayer {
@@ -310,7 +310,9 @@ export class CharaLayer {
         const headers = this.serverUrl && false
             ? { 'ngrok-skip-browser-warning': 'true' }
             : {};
-        const response = await fetch(`${this.serverUrl}/api/card/${Number(cardId) || 0}`, {
+        const isStatic = !/^https?:\/\/(?:localhost|127\.0\.0\.1)(?::|\/|$)/i.test(this.serverUrl);
+        const ext = isStatic ? '.json' : '';
+        const response = await fetch(`${this.serverUrl}/api/card/${Number(cardId) || 0}${ext}`, {
             cache: 'no-store',
             ...(Object.keys(headers).length ? { headers } : {})
         });
