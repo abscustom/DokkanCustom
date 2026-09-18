@@ -69,6 +69,10 @@ export function routeAssetUrl(relativePath) {
     return `${URL_CARD_ART}/${sub}`;
   }
 
+  if (norm.includes('/character/') && norm.includes('/idle/')) {
+    return `${URL_CARD_ART}/${norm}`;
+  }
+
   const repo = getAssetRepoForPath(norm);
   if (repo === REPO_SPFX_A) return `${URL_SPFX_A}/${norm}`;
   if (repo === REPO_SPFX_B) return `${URL_SPFX_B}/${norm}`;

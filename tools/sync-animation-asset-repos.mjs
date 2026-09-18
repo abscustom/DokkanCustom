@@ -229,6 +229,70 @@ export class AssetPartitioner {
     return results;
   }
 
+  syncCommonAssets() {
+    console.log('Syncing common shared assets across repositories...');
+    const results = [];
+
+    // 1. All sound effects from cache -> DokkanCustom-animation-core/assets/audio/se
+    if (fs.existsSync(this.cacheSeRoot)) {
+      console.log('Syncing all decoded WAV sound effects...');
+      const coreSeDir = path.join(this.repoPaths['DokkanCustom-animation-core'], 'assets', 'audio', 'se');
+      if (!this.dryRun) fs.mkdirSync(coreSeDir, { recursive: true });
+
+      // First copy base cache wavs
+      for (const e of fs.readdirSync(this.cacheSeRoot, { withFileTypes: true })) {
+        if (e.isFile() && e.name.toLowerCase().endsWith('.wav')) {
+          const src = path.join(this.cacheSeRoot, e.name);
+          const dest = path.join(coreSeDir, e.name);
+          if (!this.dryRun) fs.copyFileSync(src, dest);
+          results.push({ rel: `audio/se/${e.name}`, targetRepo: 'DokkanCustom-animation-core' });
+        }
+      }
+      // Then copy cue-index-v2 wavs (newer overrides)
+      const v2Dir = path.join(this.cacheSeRoot, 'cue-index-v2');
+      if (fs.existsSync(v2Dir)) {
+        for (const e of fs.readdirSync(v2Dir, { withFileTypes: true })) {
+          if (e.isFile() && e.name.toLowerCase().endsWith('.wav')) {
+            const src = path.join(v2Dir, e.name);
+            const dest = path.join(coreSeDir, e.name);
+            if (!this.dryRun) fs.copyFileSync(src, dest);
+            results.push({ rel: `audio/se/${e.name}`, targetRepo: 'DokkanCustom-animation-core' });
+          }
+        }
+      }
+    }
+
+    // 2. All battle backgrounds -> DokkanCustom-animation-core/assets/ingame/battle/bg
+    const bgDir = path.join(this.assetsRoot, 'ingame', 'battle', 'bg');
+    if (fs.existsSync(bgDir)) {
+      console.log('Syncing all battle backgrounds...');
+      results.push(...copyAssetFolder(bgDir, this.assetsRoot, this.repoPaths, this.dryRun));
+    }
+
+    // 3. All Lua scripts -> DokkanCustom-animation-core/assets/lua
+    const luaDir = path.join(this.assetsRoot, 'lua');
+    if (fs.existsSync(luaDir)) {
+      console.log('Syncing all Lua scripts...');
+      results.push(...copyAssetFolder(luaDir, this.assetsRoot, this.repoPaths, this.dryRun));
+    }
+
+    // 4. Default attacker & defender characters (00001, 00002)
+    for (const charaId of ['00001', '00002']) {
+      const charaDir = path.join(this.assetsRoot, 'ingame', 'battle', 'character', charaId);
+      if (fs.existsSync(charaDir)) {
+        console.log(`Syncing base character ${charaId}...`);
+        for (const entry of fs.readdirSync(charaDir, { withFileTypes: true })) {
+          if (entry.isDirectory() && entry.name.toLowerCase() !== 'idle') {
+            results.push(...copyAssetFolder(path.join(charaDir, entry.name), this.assetsRoot, this.repoPaths, this.dryRun));
+          }
+        }
+      }
+    }
+
+    console.log(`Common asset sync complete! Synced ${results.length} files.`);
+    return results;
+  }
+
   syncAll() {
     console.log('Starting full asset partition across 3 repositories...');
     const results = [];
@@ -316,11 +380,16 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
   for (let i = 0; i < args.length; i++) {
     if (args[i] === '--script' && args[i + 1]) flags.script = args[++i];
     else if (args[i] === '--card' && args[i + 1]) flags.card = args[++i];
+    else if (args[i] === '--common') flags.common = true;
     else if (args[i] === '--all') flags.all = true;
     else if (args[i] === '--dry-run') flags.dryRun = true;
   }
 
   const partitioner = new AssetPartitioner({ dryRun: flags.dryRun });
+
+  if (flags.common) {
+    partitioner.syncCommonAssets();
+  }
 
   if (flags.script) {
     const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);
@@ -329,7 +398,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
   } else if (flags.all) {
     partitioner.syncAll();
-  } else {
-    console.log('Usage: node sync-animation-asset-repos.mjs [--script <name> --card <id>] | [--all] [--dry-run]');
+  } else if (!flags.common) {
+    console.log('Usage: node sync-animation-asset-repos.mjs [--common] [--script <name> --card <id>] | [--all] [--dry-run]');
   }
 }
