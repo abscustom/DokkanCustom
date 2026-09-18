@@ -13,7 +13,7 @@ async function fetchJsonSafely(filename) {
     const paths = [`json/${filename}`, filename, `./json/${filename}`, `./${filename}`];
     for (const p of paths) {
         try {
-            const res = await fetch(`${p}?v=20260918-v4`, { cache: 'no-cache' });
+            const res = await fetch(`${p}?v=20260918-v5`, { cache: 'no-cache' });
             if (res.ok) {
                 return await res.json();
             }

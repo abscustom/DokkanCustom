@@ -173,6 +173,10 @@
                 url: fixIdleUrl(file?.url),
             }));
         }
+        if (!idle.rel && idle.url) {
+            const relMatch = idle.url.match(/ingame\/battle\/character\/[^\/]+\/idle/i);
+            if (relMatch) idle.rel = relMatch[0];
+        }
         return payload;
     }
 
@@ -383,8 +387,11 @@
     // those linkages replaces the character movie, the viewer looks empty for
     // a cycle even though the LWF is still advancing. Measure the rendered
     // canvas once after each hand-off and skip only a genuinely empty clip.
+    let probeCanvas = null;
+    let probeContext = null;
+
     function measureMotionVisibility(canvas) {
-        if (!canvas || typeof canvas.getContext !== 'function' || !canvas.width || !canvas.height) {
+        if (!canvas || !canvas.width || !canvas.height) {
             return {
                 pixels: 0,
                 centerPixels: 0,
@@ -395,8 +402,13 @@
             };
         }
         try {
-            const context = canvas.getContext('2d', { willReadFrequently: true });
-            if (!context) {
+            if (!probeCanvas) {
+                probeCanvas = document.createElement('canvas');
+                probeCanvas.width = 32;
+                probeCanvas.height = 32;
+                probeContext = probeCanvas.getContext('2d', { willReadFrequently: true });
+            }
+            if (!probeContext) {
                 return {
                     pixels: 0,
                     centerPixels: 0,
@@ -406,60 +418,28 @@
                     centerSubjectPixels: 0,
                 };
             }
-            const pixels = context.getImageData(0, 0, canvas.width, canvas.height).data;
-            const centerLeft = canvas.width * 0.16;
-            const centerRight = canvas.width * 0.84;
-            const centerTop = canvas.height * 0.08;
-            const centerBottom = canvas.height * 0.92;
-            const step = 8;
+            probeContext.clearRect(0, 0, 32, 32);
+            probeContext.drawImage(canvas, 0, 0, 32, 32);
+            const pixels = probeContext.getImageData(0, 0, 32, 32).data;
             let visible = 0;
-            let centerVisible = 0;
             let bright = 0;
-            let centerBright = 0;
-            let subject = 0;
-            let centerSubject = 0;
-            for (let y = 0; y < canvas.height; y += step) {
-                for (let x = 0; x < canvas.width; x += step) {
-                    const index = ((y * canvas.width) + x) * 4;
-                    const alpha = pixels[index + 3];
-                    if (alpha <= 8) continue;
-                    const red = pixels[index];
-                    const green = pixels[index + 1];
-                    const blue = pixels[index + 2];
-                    const luma = Math.max(red, green, blue);
-                    const inCenter = x >= centerLeft && x <= centerRight && y >= centerTop && y <= centerBottom;
-                    visible += 1;
-                    if (inCenter) centerVisible += 1;
-                    if (luma > 22) {
-                        bright += 1;
-                        if (inCenter) centerBright += 1;
-                    }
-                    // Aura plates are predominantly warm yellow/orange. A
-                    // complete character frame contributes cooler armor,
-                    // skin, hair shadows, or neutral linework as well. Keep a
-                    // small subject score so an aura-only frame cannot become
-                    // the fallback or pass the visibility guard.
-                    const warmAura = red > blue * 1.25
-                        && green > blue * 1.08
-                        && red > 45
-                        && green > 45;
-                    const chroma = luma - Math.min(red, green, blue);
-                    const coolSubject = luma > 22 && blue > red * 0.9 && !warmAura;
-                    const neutralSubject = luma > 55 && chroma < 28;
-                    const subjectPixel = coolSubject || neutralSubject;
-                    if (subjectPixel) {
-                        subject += 1;
-                        if (inCenter) centerSubject += 1;
-                    }
-                }
+            for (let i = 0; i < pixels.length; i += 4) {
+                const alpha = pixels[i + 3];
+                if (alpha <= 8) continue;
+                const red = pixels[i];
+                const green = pixels[i + 1];
+                const blue = pixels[i + 2];
+                const luma = Math.max(red, green, blue);
+                visible += 1;
+                if (luma > 22) bright += 1;
             }
             return {
                 pixels: visible,
-                centerPixels: centerVisible,
+                centerPixels: visible,
                 brightPixels: bright,
-                centerBrightPixels: centerBright,
-                subjectPixels: subject,
-                centerSubjectPixels: centerSubject,
+                centerBrightPixels: bright,
+                subjectPixels: visible,
+                centerSubjectPixels: visible,
             };
         } catch {
             return {
@@ -619,67 +599,26 @@
         }
         syncMotionCanvasSize(displayCanvas, outputCanvas);
 
-        const visibility = measureMotionVisibility(outputCanvas);
-        const hasPixels = visibility.pixels >= 4;
-        const hasSubject = visibility.subjectPixels >= motionFallbackMinimumSubjectPixels
-            || visibility.centerSubjectPixels >= 12;
-        if (hasSubject) player.__absMotionVisibleClip = player.clip;
-        // Power-up linkages can end with a body-less effect tail. Holding the
-        // previous bitmap for that tail looks like a pause between scenes.
-        // Only hand off after this clip has shown its body and passed halfway;
-        // setup frames, standalone previews and the final loop stay untouched.
-        if (!hasSubject
-            && player.__absMotionVisibleClip === player.clip
-            && /c16_heapup_back_p$/i.test(String(player.clip))
-            && !player.loopMovie
-            && typeof player.onEnded === 'function'
-            && Number(player.movie?.currentFrame) > Number(player.movie?.totalFrames) / 2) {
-            const onEnded = player.onEnded;
-            player.onEnded = null;
-            onEnded();
-            return rendered;
-        }
-        let shouldDisplay = true;
-
-        if (motionFallbackEnabled) {
-            // Idle rigs occasionally render an authored light plate without
-            // the body for one or more frames. Keep the last complete output
-            // on the display canvas while the private LWF canvas continues to
-            // advance. This preserves the body/effect phase and prevents the
-            // visible black flash without pausing the animation clock.
-            if (hasSubject) player.__absMotionHasCompleteFrame = true;
-            if (!hasPixels || (player.__absMotionHasCompleteFrame && !hasSubject)) {
-                shouldDisplay = false;
-            }
-        }
-
-        if (shouldDisplay) {
-            const context = displayCanvas.getContext('2d');
-            if (context) {
-                context.save();
-                context.setTransform(1, 0, 0, 1, 0, 0);
-                context.globalAlpha = 1;
-                context.globalCompositeOperation = 'source-over';
-                context.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
-                context.drawImage(
-                    outputCanvas,
-                    0,
-                    0,
-                    displayCanvas.width,
-                    displayCanvas.height,
-                );
-                context.restore();
-            }
+        const context = displayCanvas.getContext('2d');
+        if (context) {
+            context.save();
+            context.setTransform(1, 0, 0, 1, 0, 0);
+            context.globalAlpha = 1;
+            context.globalCompositeOperation = 'source-over';
+            context.clearRect(0, 0, displayCanvas.width, displayCanvas.height);
+            context.drawImage(
+                outputCanvas,
+                0,
+                0,
+                displayCanvas.width,
+                displayCanvas.height,
+            );
+            context.restore();
         }
 
         exposeMotionDebug(player);
-        if (motionFallbackEnabled && (!shouldDisplay || motionDebugEnabled)) {
-            displayCanvas.dataset.motionFallback = shouldDisplay ? 'live' : 'held';
-            displayCanvas.dataset.motionVisibility = JSON.stringify({
-                clip: player.clip || '',
-                ...visibility,
-                restored: !shouldDisplay,
-            });
+        if (motionDebugEnabled) {
+            displayCanvas.dataset.motionFallback = 'live';
         }
         return rendered;
     }
@@ -1151,11 +1090,24 @@
         if (!pack?.url) throw new Error('The animation bridge did not return an idle package.');
 
         const files = [];
-        const lwfResponse = await fetchWithTimeout(pack.url, {
-            cache: 'no-store',
-            headers: {}
-        });
-        if (!lwfResponse.ok) throw new Error('Missing ' + fallbackName);
+        let lwfResponse = null;
+        try {
+            lwfResponse = await fetchWithTimeout(pack.url, {
+                cache: 'no-store',
+                headers: {}
+            });
+        } catch {}
+        if (!lwfResponse || !lwfResponse.ok) {
+            if (pack.rel) {
+                try {
+                    lwfResponse = await fetchWithTimeout(`${GITHUB_RAW_BASE}/${pack.rel}/${fallbackName}`, {
+                        cache: 'no-store',
+                        headers: {}
+                    });
+                } catch {}
+            }
+        }
+        if (!lwfResponse || !lwfResponse.ok) throw new Error('Missing ' + fallbackName);
         files.push(new File([await lwfResponse.blob()], fallbackName));
 
         await Promise.all((pack.files || [])
@@ -1232,19 +1184,29 @@
         if (prepared.missing?.length && pack?.url) {
             const lastSlash = pack.url.lastIndexOf('/');
             const baseDirUrl = lastSlash !== -1 ? pack.url.slice(0, lastSlash) : '';
-            if (baseDirUrl) {
+            const rawFallbackDirUrl = pack.rel
+                ? `${GITHUB_RAW_BASE}/${pack.rel}`
+                : (baseDirUrl.startsWith('http') ? '' : `${GITHUB_RAW_BASE}/${baseDirUrl.replace(/^assets\/?/, '')}`);
+            if (baseDirUrl || rawFallbackDirUrl) {
                 const fetchedMissing = await Promise.all(prepared.missing.map(async (missingName) => {
-                    try {
-                        const fileUrl = `${baseDirUrl}/${missingName}`;
-                        const resp = await fetchWithTimeout(fileUrl, { cache: 'no-store' });
-                        if (resp.ok) {
-                            const rawBlob = await resp.blob();
-                            const motionBlob = useLegacyMotionMatte
-                                ? await removeMotionBlackMatte(rawBlob)
-                                : rawBlob;
-                            return new File([motionBlob], missingName, { type: motionBlob.type || rawBlob.type || 'image/png' });
-                        }
-                    } catch {}
+                    let resp = null;
+                    if (baseDirUrl) {
+                        try {
+                            resp = await fetchWithTimeout(`${baseDirUrl}/${missingName}`, { cache: 'no-store' });
+                        } catch {}
+                    }
+                    if ((!resp || !resp.ok) && rawFallbackDirUrl) {
+                        try {
+                            resp = await fetchWithTimeout(`${rawFallbackDirUrl}/${missingName}`, { cache: 'no-store' });
+                        } catch {}
+                    }
+                    if (resp && resp.ok) {
+                        const rawBlob = await resp.blob();
+                        const motionBlob = useLegacyMotionMatte
+                            ? await removeMotionBlackMatte(rawBlob)
+                            : rawBlob;
+                        return new File([motionBlob], missingName, { type: motionBlob.type || rawBlob.type || 'image/png' });
+                    }
                     return null;
                 }));
                 const validFiles = fetchedMissing.filter(Boolean);
@@ -1393,7 +1355,7 @@
                 const charaIdStr = String(charNum).padStart(5, '0');
                 const relPath = `ingame/battle/character/${charaIdStr}/idle`;
                 const lwfName = `idle_character_${charaIdStr}.lwf`;
-                const baseDir = isLocalEnvironment() ? `assets/${relPath}` : `${GITHUB_RAW_BASE}/${relPath}`;
+                const baseDir = `assets/${relPath}`;
                 payload = {
                     found: true,
                     character_id: charNum,
@@ -1401,10 +1363,7 @@
                         rel: relPath,
                         url: `${baseDir}/${lwfName}`,
                         files: [
-                            { name: lwfName, url: `${baseDir}/${lwfName}` },
-                            { name: 'lwf_image0.png', url: `${baseDir}/lwf_image0.png` },
-                            { name: 'lwf_image1.png', url: `${baseDir}/lwf_image1.png` },
-                            { name: 'lwf_image2.png', url: `${baseDir}/lwf_image2.png` }
+                            { name: lwfName, url: `${baseDir}/${lwfName}` }
                         ]
                     }
                 };
