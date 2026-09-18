@@ -2204,6 +2204,16 @@ window.updateAbsStyleSuperAttacks = function() {
         return /^ex\b/i.test(label.trim()) || /\bex\s*super\b/i.test(name);
     };
 
+    const checkIsUnitSuperBlock = (block) => {
+        if (!block) return false;
+        if (checkIsExSuperBlock(block)) return false;
+        if (block.classList.contains('unit-super-block') || block.hasAttribute('data-unit-super')) return true;
+        const label = block.querySelector('.sa-type-label')?.textContent || '';
+        const name = block.querySelector('.sa-display-name')?.textContent || '';
+        const cond = block.querySelector('.activation-text')?.textContent || '';
+        return /\bunit\b/i.test(label) || /\bunit\s*super\b/i.test(name) || /whose\s+name\s+includes|when\s+an?\s+ally/i.test(cond);
+    };
+
     const getBlockKi = (block) => {
         const kiAttr = block.getAttribute('data-ki');
         if (kiAttr) {
@@ -2249,9 +2259,13 @@ window.updateAbsStyleSuperAttacks = function() {
         }
 
         let formattedTypeLabel = typeLabel;
-        const isExSuperAttack = /^ex\b/i.test(typeLabel);
+        const isExSuperAttack = checkIsExSuperBlock(block);
+        const isUnitSuperAttack = !isExSuperAttack && checkIsUnitSuperBlock(block);
+
         if (isExSuperAttack) {
             formattedTypeLabel = typeLabel.replace(/^ex\b/i, '<span class="abs-ex-prefix">EX</span>');
+        } else if (isUnitSuperAttack) {
+            formattedTypeLabel = typeLabel.replace(/^unit\b/i, '<span class="abs-unit-prefix">UNIT</span>');
         }
 
         const stats = getStatsFromBlock(block);
@@ -2270,9 +2284,15 @@ window.updateAbsStyleSuperAttacks = function() {
             ? (typeof window.formatPassiveText === 'function' ? window.formatPassiveText(cleanCond) : cleanCond)
             : '';
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-        const cleanTypePills = isAbsCleanTheme && isExSuperAttack
-            ? `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">${typeLabel.replace(/^ex\s*/i, '') || 'Super Attack'}</span>`
-            : `<span class="abs-sa-type-pill">${formattedTypeLabel}</span>`;
+        let cleanTypePills;
+        if (isAbsCleanTheme && isExSuperAttack) {
+            cleanTypePills = `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">${typeLabel.replace(/^ex\s*/i, '') || 'Super Attack'}</span>`;
+        } else if (isAbsCleanTheme && isUnitSuperAttack) {
+            const unitSubLabel = typeLabel.replace(/^unit\s*/i, '').trim() || (typeLabel.toLowerCase().includes('ultra') ? 'Ultra Super Attack' : 'Super Attack');
+            cleanTypePills = `<span class="abs-sa-unit-pill">UNIT</span><span class="abs-sa-type-pill">${unitSubLabel}</span>`;
+        } else {
+            cleanTypePills = `<span class="abs-sa-type-pill">${formattedTypeLabel}</span>`;
+        }
         const cleanSaTopStats = document.body.classList.contains('theme-abs-clean') && specialEffectsHtml
             ? `<div class="abs-sa-top-stats">${specialEffectsHtml}</div>`
             : '';
@@ -2284,7 +2304,7 @@ window.updateAbsStyleSuperAttacks = function() {
             : `${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${effectsFormatted}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
 
         htmlBuffer += `
-            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}" data-edit="sa">
+            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}" data-edit="sa">
                 <div class="abs-header">
                     ${cleanSaHeader}
                 </div>

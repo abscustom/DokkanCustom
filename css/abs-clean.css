@@ -21636,11 +21636,13 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean:not(.theme-abs-clean-dark) 
    =========================================================================== */
 body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-type-pill,
 body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-ex-pill,
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill,
 body.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-type-pill,
 body.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-type-pill,
 body.theme-abs-clean #layout-abs-style #abs-standby-container .abs-sa-type-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-type-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-ex-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-type-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-type-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-standby-container .abs-sa-type-pill {
@@ -21911,6 +21913,19 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill + .abs-sa-type-pill,
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-ex-pill + .abs-sa-type-pill {
     left: 49px !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-unit-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-unit-pill {
+    position: absolute !important;
+    top: 0 !important;
+    left: 11px !important;
+    z-index: 9 !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-unit-pill + .abs-sa-type-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-title > .abs-sa-unit-pill + .abs-sa-type-pill {
+    left: 64px !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-active-container .abs-sa-header-title > .abs-sa-type-pill,
@@ -22896,8 +22911,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     border-bottom: none !important;
     position: relative !important;
 }
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header::after,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header::after {
     content: "" !important;
     display: block !important;
     grid-column: 1 / -1 !important;
@@ -22917,6 +22931,94 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
         transparent 100%
     ) !important;
     box-shadow: 0 0 7px color-mix(in srgb, var(--theme-border, #38bdf8) 30%, transparent) !important;
+}
+
+/* UNIT Super Attack purple badge */
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-unit-pill {
+    position: static !important;
+    inset: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    width: max-content !important;
+    min-width: 0 !important;
+    max-width: none !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    max-height: 22px !important;
+    padding: 0 9px !important;
+    margin: 0 !important;
+    border: 1px solid rgba(233, 213, 255, 0.95) !important;
+    border-radius: 2px !important;
+    background: linear-gradient(105deg, #4a044e 0%, #9333ea 28%, #f3e8ff 48%, #a855f7 68%, #3b0764 100%) !important;
+    background-size: 220% 100% !important;
+    color: #1a0330 !important;
+    font-size: 10.5px !important;
+    font-weight: 1000 !important;
+    line-height: 1 !important;
+    letter-spacing: 0.1em !important;
+    text-transform: uppercase !important;
+    white-space: nowrap !important;
+    text-shadow: 0 1px 0 rgba(255, 255, 255, 0.75) !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.7), inset 0 1px 0 rgba(255, 255, 255, 0.85) !important;
+    box-sizing: border-box !important;
+    transform: none !important;
+    z-index: 9 !important;
+}
+
+/* Unit Super Attack: high-visibility purple glowing divider line */
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after {
+    content: "" !important;
+    display: block !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    height: 2px !important;
+    min-height: 2px !important;
+    max-height: 2px !important;
+    margin: 12px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    opacity: 1 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(168, 85, 247, 0.45) 12%,
+        #f3e8ff 35%,
+        #c084fc 50%,
+        #f3e8ff 65%,
+        rgba(168, 85, 247, 0.45) 88%,
+        transparent 100%
+    ) !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.85), 0 0 3px rgba(255, 255, 255, 0.9) !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-clean-ex-condition-divider,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-clean-ex-condition-divider {
+    height: 2px !important;
+    min-height: 2px !important;
+    opacity: 1 !important;
+    margin: 8px 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(168, 85, 247, 0.45) 12%,
+        #f3e8ff 45%,
+        #c084fc 50%,
+        #f3e8ff 55%,
+        rgba(168, 85, 247, 0.45) 88%,
+        transparent 100%
+    ) !important;
+    box-shadow: 0 0 10px rgba(168, 85, 247, 0.85), 0 0 3px rgba(255, 255, 255, 0.9) !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-type-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-type-pill {
+    border: 1px solid rgba(192, 132, 252, 0.5) !important;
+    background: color-mix(in srgb, #a855f7 18%, rgba(4, 10, 20, 0.75)) !important;
+    color: #ffffff !important;
 }
 
 /* Active skill divider less thick (1px) */

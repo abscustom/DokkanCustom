@@ -246,9 +246,17 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
             || (idx === 0 ? 'sa1' : 'sa2');
         const animationButton = window.DokkanAnimation?.buttonHtml(animationScript, 'Play Super Attack', animationContext) || '';
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-        const cleanTypePills = isAbsCleanTheme && isExSuperAttack
-            ? `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">Super Attack</span>`
-            : `<span class="abs-sa-type-pill">${typeLabel}</span>`;
+        let cleanTypePills;
+        if (isAbsCleanTheme && isExSuperAttack) {
+            cleanTypePills = `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">Super Attack</span>`;
+        } else if (isAbsCleanTheme && isUnitSa) {
+            const unitSubLabel = (startKi >= 18 || (isLR && idx >= 1) || /ultra/i.test(typeLabel))
+                ? 'Ultra Super Attack'
+                : 'Super Attack';
+            cleanTypePills = `<span class="abs-sa-unit-pill">UNIT</span><span class="abs-sa-type-pill">${unitSubLabel}</span>`;
+        } else {
+            cleanTypePills = `<span class="abs-sa-type-pill">${typeLabel}</span>`;
+        }
         const cleanTopStats = isAbsCleanTheme && specialEffectsHtml
             ? `<div class="abs-sa-top-stats">${specialEffectsHtml}</div>`
             : '';
