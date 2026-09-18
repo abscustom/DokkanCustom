@@ -2283,7 +2283,7 @@ window.updateAbsStyleSuperAttacks = function() {
         const formattedCond = cleanCond
             ? (typeof window.formatPassiveText === 'function' ? window.formatPassiveText(cleanCond) : cleanCond)
             : '';
-        const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
+        const isAbsCleanTheme = document.body?.classList.contains('theme-abs-clean') || document.getElementById('app')?.classList.contains('theme-abs-clean');
         let cleanTypePills;
         if (isAbsCleanTheme && isExSuperAttack) {
             cleanTypePills = `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">${typeLabel.replace(/^ex\s*/i, '') || 'Super Attack'}</span>`;
@@ -2293,9 +2293,7 @@ window.updateAbsStyleSuperAttacks = function() {
         } else {
             cleanTypePills = `<span class="abs-sa-type-pill">${formattedTypeLabel}</span>`;
         }
-        const cleanSaTopStats = document.body.classList.contains('theme-abs-clean') && specialEffectsHtml
-            ? `<div class="abs-sa-top-stats">${specialEffectsHtml}</div>`
-            : '';
+        const cleanSaTopStats = '';
         const cleanSaFloatingHeader = isAbsCleanTheme
             ? `<div class="abs-sa-floating-header">
                 <span class="abs-sa-pill-actions">${cleanTypePills}</span>

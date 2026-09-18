@@ -1249,22 +1249,31 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-standby-container >
 
 /* Super Attack - remove dead space while keeping text centered */
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header > .abs-sa-header-title {
-    grid-template-columns: minmax(0, 1fr) !important;
-    grid-template-rows: auto auto !important;
-    row-gap: 8px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 4px !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-title-center {
-    grid-column: 1 !important;
+    grid-column: 1 / -1 !important;
     grid-row: 1 !important;
     display: flex !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
-    max-width: none !important;
+    max-width: 100% !important;
     min-width: 0 !important;
-    min-height: 24px !important;
-    padding: 0 12px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
     box-sizing: border-box !important;
     text-align: center !important;
 }
@@ -1281,7 +1290,11 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-effect-inline {
-    margin: 8px 0 10px !important;
+    display: block !important;
+    text-align: center !important;
+    width: 100% !important;
+    margin: 4px 0 0 !important;
+    padding: 0 4px !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-content {
@@ -1779,10 +1792,23 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
    Pills (SUPER ATTACK/EX/UNIT + play button) and Ki/Multiplier float outside
    on top of the container box, matching the Passive Skill header pattern.
    =========================================================================== */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box,
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
-    margin-top: 42px !important;
+    margin-top: 44px !important;
     position: relative !important;
+    overflow: visible !important;
+    clip-path: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty),
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container {
+    overflow: visible !important;
+    clip-path: none !important;
+    row-gap: 52px !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header,
@@ -1793,6 +1819,8 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     bottom: auto !important;
     left: 0 !important;
     display: flex !important;
+    visibility: visible !important;
+    opacity: 1 !important;
     align-items: center !important;
     justify-content: space-between !important;
     width: 100% !important;
@@ -1804,25 +1832,25 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     padding: 0 8px !important;
     box-sizing: border-box !important;
     transform: none !important;
-    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
-    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, transparent) !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, rgba(4, 12, 22, 0.72)) !important;
+    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, rgba(4, 12, 22, 0.72)) !important;
     backdrop-filter: blur(12px) saturate(160%) !important;
     -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
     background-image: none !important;
     border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
     border-radius: 2px !important;
-    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.26), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
     color: #ffffff !important;
-    z-index: 10 !important;
+    z-index: 30 !important;
     pointer-events: auto !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-header,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-sa-floating-header {
-    background: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.65)) !important;
-    background-color: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.65)) !important;
+    background: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.72)) !important;
+    background-color: color-mix(in srgb, #a855f7 26%, rgba(3, 8, 18, 0.72)) !important;
     border: 1px solid rgba(168, 85, 247, 0.6) !important;
-    box-shadow: 0 4px 14px rgba(46, 16, 101, 0.38), inset 0 1px 0 rgba(233, 213, 255, 0.25) !important;
+    box-shadow: 0 4px 14px rgba(46, 16, 101, 0.45), inset 0 1px 0 rgba(233, 213, 255, 0.25) !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header > .abs-sa-pill-actions,
@@ -1855,18 +1883,49 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-header {
-    padding-top: 8px !important;
-    padding-bottom: 4px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 8px 10px 6px !important;
+    min-height: 0 !important;
+    height: auto !important;
+    border-bottom: none !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-header-title,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-header-title {
-    padding-top: 0 !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
     justify-content: center !important;
     width: 100% !important;
+    min-height: 0 !important;
+    height: auto !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    gap: 4px !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-title-center,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box .abs-sa-title-center {
+    grid-column: 1 / -1 !important;
+    grid-row: 1 !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 0 8px !important;
+    margin: 0 !important;
+    min-height: 0 !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-header-effects .abs-sa-top-stats,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-header-effects .abs-sa-top-stats {
+    display: none !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after,
@@ -1875,10 +1934,10 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     display: block !important;
     grid-column: 1 / -1 !important;
     width: 100% !important;
-    height: 2px !important;
-    min-height: 2px !important;
-    max-height: 2px !important;
-    margin: 12px 0 0 !important;
+    height: 1.5px !important;
+    min-height: 1.5px !important;
+    max-height: 1.5px !important;
+    margin: 8px 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
     opacity: 1 !important;
@@ -1892,13 +1951,13 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
         rgba(168, 85, 247, 0.45) 88%,
         transparent 100%
     ) !important;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.85), 0 0 3px rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-clean-ex-condition-divider,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-clean-ex-condition-divider {
-    height: 2px !important;
-    min-height: 2px !important;
+    height: 1.5px !important;
+    min-height: 1.5px !important;
     opacity: 1 !important;
     margin: 8px 0 !important;
     background: linear-gradient(
@@ -1911,7 +1970,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
         rgba(168, 85, 247, 0.45) 88%,
         transparent 100%
     ) !important;
-    box-shadow: 0 0 10px rgba(168, 85, 247, 0.85), 0 0 3px rgba(255, 255, 255, 0.9) !important;
+    box-shadow: none !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-type-pill,
@@ -1966,7 +2025,8 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-box:not(.abs-clean-single-standard-super-attack):not(.abs-clean-ex-super-attack) .abs-sa-title-center {
-    padding: 0 85px !important;
+    padding: 0 8px !important;
+    max-width: 100% !important;
 }
 
 /* ===========================================================================
