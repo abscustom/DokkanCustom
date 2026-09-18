@@ -501,7 +501,8 @@ body.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-nam
     z-index: 10 !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -519,7 +520,6 @@ body.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-nam
     color: #ffffff !important;
     font: 900 9px/1 Arial, sans-serif !important;
     letter-spacing: 0.1em !important;
-    text-align: center !important;
     text-transform: uppercase !important;
     white-space: nowrap !important;
     pointer-events: auto !important;
@@ -538,7 +538,8 @@ body.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-nam
     position: relative !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     width: 100% !important;
     max-width: none !important;
     min-width: 0 !important;
@@ -4489,30 +4490,28 @@ body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-heade
     --identity-awakening-min-width: 118px;
 }
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity {
-    position: absolute !important;
-    top: -34.7px !important;
-    left: 50% !important;
+    position: static !important;
+    top: auto !important;
+    left: auto !important;
     right: auto !important;
     bottom: auto !important;
     z-index: 6 !important;
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    gap: 6px !important;
-    width: max-content !important;
-    max-width: calc(100% - 8%) !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    width: auto !important;
+    max-width: 100% !important;
     max-height: none !important;
     height: auto !important;
-    margin: 0 !important;
+    margin: 8px auto 2px !important;
     padding: 0 !important;
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
-    /* Center-anchored: `left` marks the CENTER of the row, so rarity/class/
-       type stay centered on the portrait whether awakening shows or hides. */
-    transform: translateX(-50%) !important;
+    transform: none !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-clean-identity-icons.abs-clean-header-identity[hidden],
@@ -10493,13 +10492,13 @@ body.theme-abs-clean #layout-abs-style #abs-transformations-container .abs-trans
 /* ABS.CLEAN FINAL HEADER / EDITOR POLISH (EOF CASCADE)
    This clean-only tail wins over the historical compatibility rules above. */
 body.theme-abs-clean #layout-abs-style .abs-top-header #abs-clean-identity-icons.abs-clean-header-identity {
-    left: 50% !important;
+    position: static !important;
+    left: auto !important;
     right: auto !important;
-    margin-left: 0 !important;
-    margin-right: 0 !important;
-    transform: translateX(-50%) !important;
-    width: max-content !important;
-    max-width: calc(100% - 24px) !important;
+    margin: 8px auto 2px !important;
+    transform: none !important;
+    width: auto !important;
+    max-width: 100% !important;
     justify-content: center !important;
     align-content: center !important;
     text-align: center !important;
@@ -20024,7 +20023,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     line-height: 1.25 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
-    text-align: center !important;
+    text-align: left !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
 }
@@ -21473,8 +21472,8 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     left: 0 !important;
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     width: auto !important;
     min-width: 0 !important;
     max-width: none !important;
@@ -21499,14 +21498,14 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     gap: 7px !important;
     width: 100% !important;
     min-width: 0 !important;
     height: 100% !important;
-    margin: 0 auto !important;
-    padding: 0 !important;
+    margin: 0 !important;
+    padding: 0 0 0 2px !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     background: transparent !important;
@@ -21569,7 +21568,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
     line-height: 1.25 !important;
     overflow-wrap: break-word !important;
     word-break: normal !important;
-    text-align: center !important;
+    text-align: left !important;
     text-shadow: 0 1px 3px rgba(0, 0, 0, 0.7) !important;
     border-bottom: 1px solid rgba(255, 255, 255, 0.22) !important;
 }
@@ -22000,7 +21999,8 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     min-height: 28px !important;
     height: 28px !important;
     margin: 0 0 10px 0 !important;
@@ -22189,13 +22189,17 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs
 }
 
 body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content,
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-content,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-content {
     padding-top: 4px !important;
     padding-bottom: 6px !important;
 }
 
 body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-clean-copy,
+body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-clean-copy,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-clean-copy {
     padding: 2px 12px 2px !important;
     margin: 0 !important;
 }
@@ -22836,23 +22840,26 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
 }
 
 /* Remove bottom divider line in standard Super Attacks */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:not(.abs-clean-ex-super-attack) > .abs-header {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:not(.abs-clean-ex-super-attack):not(.abs-clean-unit-super-attack) > .abs-header {
     border-bottom: none !important;
 }
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:not(.abs-clean-ex-super-attack) > .abs-content {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:not(.abs-clean-ex-super-attack):not(.abs-clean-unit-super-attack) > .abs-content {
     border-bottom: none !important;
     padding: 0 !important;
 }
 
-/* EX Super Attack: divider under effect fades out at ends, remove 2nd divider under condition */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-clean-ex-condition-divider {
+/* EX Super Attack & Unit Super Attack: divider under effect fades out at ends */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-clean-ex-condition-divider,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-clean-ex-condition-divider {
     display: none !important;
 }
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header {
     border-bottom: none !important;
     position: relative !important;
 }
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header::after {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header::after,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after {
     content: "" !important;
     display: block !important;
     grid-column: 1 / -1 !important;

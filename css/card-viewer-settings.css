@@ -777,12 +777,14 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
     box-shadow: 0 5px 14px rgba(2, 8, 18, 0.22), inset 0 1px 0 rgba(255, 255, 255, 0.14) !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
     text-align: left !important;
     padding-left: 2px !important;
+    margin: 0 !important;
     gap: 8px !important;
     width: 100% !important;
     max-width: none !important;
@@ -792,11 +794,13 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
     margin-left: 0 !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside,
+body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -1147,12 +1151,14 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     color: #ffffff !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
     text-align: left !important;
     padding-left: 2px !important;
+    margin: 0 !important;
     gap: 8px !important;
     width: 100% !important;
     max-width: none !important;
@@ -1161,7 +1167,8 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -1171,7 +1178,8 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -1179,7 +1187,8 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     padding-left: 14px !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title {
     display: flex !important;
     align-items: center !important;
     justify-content: flex-start !important;
@@ -1189,12 +1198,15 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     gap: 8px !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > span,
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > i {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > span,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > i,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > span,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > i {
     text-align: left !important;
 }
 
-:where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions,
+body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
     margin-left: 0 !important;
 }
 
@@ -1680,17 +1692,52 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-header,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header {
     padding-bottom: 4px !important;
 }
 
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header {
+    border-bottom: none !important;
+    position: relative !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-header::after {
+    content: "" !important;
+    display: block !important;
+    grid-column: 1 / -1 !important;
+    width: 100% !important;
+    height: 1px !important;
+    min-height: 1px !important;
+    max-height: 1px !important;
+    margin: 12px 0 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 18%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 88%, #ffffff 12%) 50%,
+        color-mix(in srgb, var(--theme-border, #38bdf8) 58%, transparent) 82%,
+        transparent 100%
+    ) !important;
+    box-shadow: 0 0 7px color-mix(in srgb, var(--theme-border, #38bdf8) 30%, transparent) !important;
+}
+
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack .abs-sa-effect-inline,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-effect-inline,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack .abs-sa-effect-inline {
     margin-bottom: 4px !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-ex-super-attack > .abs-content,
+body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-content,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.abs-clean-unit-super-attack > .abs-content {
     padding-top: 4px !important;
     padding-bottom: 6px !important;
 }
@@ -2312,28 +2359,26 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header #abs-c
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
-    order: initial !important;
-    align-self: auto !important;
-    position: absolute !important;
+    order: 2 !important;
+    position: static !important;
     inset: auto !important;
     top: auto !important;
-    left: var(--abs-clean-viewer-identity-left, 50%) !important;
+    bottom: auto !important;
+    left: auto !important;
     right: auto !important;
-    bottom: calc(100% - 1px) !important;
-    z-index: 80 !important;
-    transform: translateX(-50%) !important;
-    width: max-content !important;
-    max-width: calc(100% - 8%) !important;
+    transform: none !important;
+    z-index: 10 !important;
+    width: auto !important;
+    max-width: 100% !important;
     height: auto !important;
-    margin: 0 !important;
+    margin: 8px auto 2px !important;
     padding: 0 !important;
     display: flex !important;
     flex-direction: row !important;
     flex-wrap: wrap !important;
-    align-items: stretch !important;
-    justify-content: flex-start !important;
-    align-content: normal !important;
-    gap: 6px !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
     text-align: center !important;
     background: transparent !important;
     border: 0 !important;
@@ -2344,33 +2389,36 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs
 body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-tag {
     margin: 0 !important;
     flex: 0 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
     justify-content: center !important;
     text-align: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 26px !important;
+    min-height: 26px !important;
+    padding: 3px 10px !important;
+    border-radius: 4px !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 42%, rgba(255, 255, 255, 0.22)) !important;
+    background: rgba(4, 12, 22, 0.65) !important;
+    backdrop-filter: blur(8px) saturate(140%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(140%) !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.12) !important;
 }
 
-/* Compact single-row rail: shrink-wrap badges so the row stays one line
-   (~30px tall) and always fits above the header. A tall wrapped rail would
-   get clamped back down into the header by the page-top guard. */
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
-    flex-wrap: nowrap !important;
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-label {
+    color: rgba(148, 163, 184, 0.90) !important;
+    font: 800 10px/1 Arial, sans-serif !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+    margin-right: 2px !important;
 }
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-rarity,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-class,
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-type {
-    width: auto !important;
-}
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity #abs-clean-badge-awakening {
-    min-width: 0 !important;
-}
-body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge {
-    padding: 5px 8px !important;
-    gap: 6px !important;
-    min-height: 30px !important;
-}
-@media (max-width: 700px) {
-    body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
-        flex-wrap: wrap !important;
-    }
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-badge-val {
+    color: #ffffff !important;
+    font: 900 11px/1 Arial, sans-serif !important;
+    letter-spacing: 0.04em !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.5) !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark #layout-abs-style .abs-side-col > #abs-motion-box,
@@ -2541,13 +2589,13 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
 /* Published-page top spacing and page-level idle caption. */
 @media (max-width: 680px) {
     body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity {
-        position: relative !important;
+        position: static !important;
         inset: auto !important;
         transform: none !important;
-        order: -1 !important;
+        order: 2 !important;
         align-self: center !important;
         max-width: 100% !important;
-        margin: 0 0 6px !important;
+        margin: 8px auto 2px !important;
     }
 }
 body.card-viewer-page.theme-abs-clean #top-content {
