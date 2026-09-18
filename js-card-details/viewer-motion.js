@@ -153,12 +153,24 @@
 
     function normalizeMotionPayload(payload, server) {
         const idle = payload?.idle;
-        if (!idle || !server) return payload;
-        idle.url = resolveBridgeMediaUrl(idle.url, server);
+        if (!idle) return payload;
+        const fixIdleUrl = (u) => {
+            let str = String(u || '');
+            if (!str) return str;
+            if (str.includes('DokkanCustom-animation-core') && str.includes('/idle/')) {
+                str = str.replace('DokkanCustom-animation-core', 'DokkanCustom');
+            }
+            if (isLocalEnvironment()) {
+                const match = str.match(/assets\/ingame\/battle\/character\/.*$/i);
+                if (match) return match[0];
+            }
+            return resolveBridgeMediaUrl(str, server);
+        };
+        idle.url = fixIdleUrl(idle.url);
         if (Array.isArray(idle.files)) {
             idle.files = idle.files.map((file) => ({
                 ...file,
-                url: resolveBridgeMediaUrl(file?.url, server),
+                url: fixIdleUrl(file?.url),
             }));
         }
         return payload;
@@ -1354,18 +1366,18 @@
                 const charaIdStr = String(charNum).padStart(5, '0');
                 const relPath = `ingame/battle/character/${charaIdStr}/idle`;
                 const lwfName = `idle_character_${charaIdStr}.lwf`;
-                const cdnBase = `${GITHUB_RAW_BASE}/${relPath}`;
+                const baseDir = isLocalEnvironment() ? `assets/${relPath}` : `${GITHUB_RAW_BASE}/${relPath}`;
                 payload = {
                     found: true,
                     character_id: charNum,
                     idle: {
                         rel: relPath,
-                        url: `${cdnBase}/${lwfName}`,
+                        url: `${baseDir}/${lwfName}`,
                         files: [
-                            { name: lwfName, url: `${cdnBase}/${lwfName}` },
-                            { name: 'lwf_image0.png', url: `${cdnBase}/lwf_image0.png` },
-                            { name: 'lwf_image1.png', url: `${cdnBase}/lwf_image1.png` },
-                            { name: 'lwf_image2.png', url: `${cdnBase}/lwf_image2.png` }
+                            { name: lwfName, url: `${baseDir}/${lwfName}` },
+                            { name: 'lwf_image0.png', url: `${baseDir}/lwf_image0.png` },
+                            { name: 'lwf_image1.png', url: `${baseDir}/lwf_image1.png` },
+                            { name: 'lwf_image2.png', url: `${baseDir}/lwf_image2.png` }
                         ]
                     }
                 };

@@ -293,6 +293,28 @@ export class AssetPartitioner {
     return results;
   }
 
+  syncBattleEffects() {
+    console.log('Syncing all common battle effects...');
+    const effDir = path.join(this.assetsRoot, 'ingame', 'battle', 'effect');
+    if (fs.existsSync(effDir)) {
+      const results = copyAssetFolder(effDir, this.assetsRoot, this.repoPaths, this.dryRun);
+      console.log(`Battle effects sync complete! Synced ${results.length} files.`);
+      return results;
+    }
+    return [];
+  }
+
+  syncAllCharacters() {
+    console.log('Syncing all character battle and special motion rigs (excluding idle)...');
+    const charaDir = path.join(this.assetsRoot, 'ingame', 'battle', 'character');
+    if (fs.existsSync(charaDir)) {
+      const results = copyAssetFolder(charaDir, this.assetsRoot, this.repoPaths, this.dryRun);
+      console.log(`Character sync complete! Synced ${results.length} files.`);
+      return results;
+    }
+    return [];
+  }
+
   syncAll() {
     console.log('Starting full asset partition across 3 repositories...');
     const results = [];
@@ -381,6 +403,8 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     if (args[i] === '--script' && args[i + 1]) flags.script = args[++i];
     else if (args[i] === '--card' && args[i + 1]) flags.card = args[++i];
     else if (args[i] === '--common') flags.common = true;
+    else if (args[i] === '--effects') flags.effects = true;
+    else if (args[i] === '--characters') flags.characters = true;
     else if (args[i] === '--all') flags.all = true;
     else if (args[i] === '--dry-run') flags.dryRun = true;
   }
@@ -391,6 +415,14 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     partitioner.syncCommonAssets();
   }
 
+  if (flags.effects) {
+    partitioner.syncBattleEffects();
+  }
+
+  if (flags.characters) {
+    partitioner.syncAllCharacters();
+  }
+
   if (flags.script) {
     const scripts = flags.script.split(',').map((s) => s.trim()).filter(Boolean);
     for (const script of scripts) {
@@ -398,7 +430,7 @@ if (process.argv[1] === fileURLToPath(import.meta.url)) {
     }
   } else if (flags.all) {
     partitioner.syncAll();
-  } else if (!flags.common) {
-    console.log('Usage: node sync-animation-asset-repos.mjs [--common] [--script <name> --card <id>] | [--all] [--dry-run]');
+  } else if (!flags.common && !flags.effects && !flags.characters) {
+    console.log('Usage: node sync-animation-asset-repos.mjs [--common] [--effects] [--characters] [--script <name> --card <id>] | [--all] [--dry-run]');
   }
 }
