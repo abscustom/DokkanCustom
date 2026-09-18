@@ -945,6 +945,13 @@ export class ActionBankRunner {
                 video,
                 usmResult,
                 meta: usmResult.meta,
+                hasError: false,
+            };
+            video.onerror = () => {
+                this.log(`[USM] Movie ${contentId} video playback failed in browser; falling back to LWF`);
+                entry.hasError = true;
+                video.style.display = 'none';
+                try { video.remove(); } catch {}
             };
             this.preparedMovies.set(contentId, entry);
             return entry;
@@ -1498,7 +1505,7 @@ export class ActionBankRunner {
             case 'setupMovie': {
                 const contentId = Number(command.contentId);
                 const movie = this.preparedMovies.get(contentId);
-                if (movie) {
+                if (movie && !movie.hasError) {
                     this._stopActiveMovies({ exceptContentId: contentId });
                     for (const [workId, effectEntry] of [...this.activeEffects.entries()]) {
                         if (Number(effectEntry.command.effectId) === contentId) this._deactivateEffect(workId);

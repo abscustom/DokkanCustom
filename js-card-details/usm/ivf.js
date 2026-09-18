@@ -31,6 +31,10 @@ export function isVp9(header) {
   return header.fourcc === 'VP90';
 }
 
+export function isAv1(header) {
+  return header.fourcc === 'AV01';
+}
+
 export function getFramerate(header) {
   return header.framerateN / header.framerateD;
 }
@@ -88,8 +92,10 @@ export function inspectVp9Frame(frame) {
 
 export function extractIvfFrames(ivfData) {
   const header = parseIvfHeader(ivfData);
-  if (!isVp9(header)) {
-    throw new Error(`Unsupported IVF FourCC "${header.fourcc}" (need VP90)`);
+  const vp9 = isVp9(header);
+  const av1 = isAv1(header);
+  if (!vp9 && !av1) {
+    throw new Error(`Unsupported IVF FourCC "${header.fourcc}" (need VP90 or AV01)`);
   }
 
   let offset = header.headerLength;
@@ -106,15 +112,26 @@ export function extractIvfFrames(ivfData) {
     const data = ivfData.subarray(offset, offset + frameSize);
     offset += frameSize;
 
-    const info = inspectVp9Frame(data);
-    frames.push({
-      data,
-      timestamp,
-      isKeyframe: frames.length === 0 ? true : info.isKeyframe,
-      profile: info.profile,
-      bitDepth: info.bitDepth,
-    });
+    if (vp9) {
+      const info = inspectVp9Frame(data);
+      frames.push({
+        data,
+        timestamp,
+        isKeyframe: frames.length === 0 ? true : info.isKeyframe,
+        profile: info.profile,
+        bitDepth: info.bitDepth,
+      });
+    } else {
+      const isKey = frames.length === 0 || (data[0] === 0x12 && (data[1] === 0x0a || data[2] === 0x0a));
+      frames.push({
+        data,
+        timestamp,
+        isKeyframe: isKey,
+        profile: 0,
+        bitDepth: 8,
+      });
+    }
   }
 
-  return { header, frames };
+  return { header, frames, codec: av1 ? 'av01' : 'vp09' };
 }

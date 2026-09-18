@@ -9,7 +9,8 @@ export function probeVideoPayload(data) {
 
   if (data[0] === 0x44 && data[1] === 0x4b && data[2] === 0x49 && data[3] === 0x46) {
     const fourcc = String.fromCharCode(data[8], data[9], data[10], data[11]);
-    return { kind: fourcc === 'VP90' ? 'vp9-ivf' : 'ivf', fourcc, hex };
+    const kind = fourcc === 'VP90' ? 'vp9-ivf' : (fourcc === 'AV01' ? 'av1-ivf' : 'ivf');
+    return { kind, fourcc, hex };
   }
 
   const sc3 = data[0] === 0x00 && data[1] === 0x00 && data[2] === 0x01;

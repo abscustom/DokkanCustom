@@ -1,6 +1,6 @@
 import { demuxUsm } from './usm-demux.js';
 import { extractIvfFrames, getFramerate, isIvf } from './ivf.js';
-import { muxVp9ToMp4 } from './mp4-muxer.js';
+import { muxVp9ToMp4, muxAv1ToMp4 } from './mp4-muxer.js';
 import { decodeAdx, DEFAULT_ADX_KEY_ID } from './adx-decoder.js';
 import { probeVideoPayload } from './probe.js';
 
@@ -30,18 +30,25 @@ export async function openUsm(bufferOrFile, log = () => {}, opts = {}) {
   const probe = probeVideoPayload(demuxed.video);
   log(`Video probe: ${probe.kind}`);
 
-  if (!isIvf(demuxed.video) || probe.kind !== 'vp9-ivf') {
-    throw new Error(`Video stream is not IVF/VP9 (${probe.kind})`);
+  const isAv1Codec = probe.kind === 'av1-ivf';
+  if (!isIvf(demuxed.video) || (!isAv1Codec && probe.kind !== 'vp9-ivf')) {
+    throw new Error(`Video stream is not IVF/VP9/AV1 (${probe.kind})`);
   }
 
-  log('Parsing IVF / VP9 frames…');
+  log(`Parsing IVF / ${isAv1Codec ? 'AV1' : 'VP9'} frames…`);
   const { header, frames } = extractIvfFrames(demuxed.video);
   const fps = getFramerate(header) || 30;
-  log(`VP9 ${header.width}x${header.height} @ ${fps.toFixed(3)} fps, ${frames.length} frames`);
+  log(`${isAv1Codec ? 'AV1' : 'VP9'} ${header.width}x${header.height} @ ${fps.toFixed(3)} fps, ${frames.length} frames`);
 
   const key0 = frames[0];
-  log('Remuxing VP9 → MP4 (in memory)…');
-  const mp4 = muxVp9ToMp4({
+  log(`Remuxing ${isAv1Codec ? 'AV1' : 'VP9'} → MP4 (in memory)…`);
+  const mp4 = isAv1Codec ? muxAv1ToMp4({
+    width: header.width,
+    height: header.height,
+    framerateN: header.framerateN || Math.round(fps),
+    framerateD: header.framerateD || 1,
+    frames,
+  }) : muxVp9ToMp4({
     width: header.width,
     height: header.height,
     framerateN: header.framerateN || Math.round(fps),
@@ -83,7 +90,7 @@ export async function openUsm(bufferOrFile, log = () => {}, opts = {}) {
       frames: frames.length,
       audioKind: demuxed.audioKind,
       durationSec: frames.length / fps,
-      path: 'vp9-native',
+      path: isAv1Codec ? 'av1-native' : 'vp9-native',
       probe: probe.kind,
       adxKey,
     },
