@@ -35,6 +35,7 @@
     let activeEffect = null;
     let activeEffectOptions = null;
     let activePayload = null;
+    let activeAnimationSessionToken = 0;
     let activeMode = 'sequence'; // 'sequence' | 'composite' | 'single' | 'ko'
     let activeAnimationContext = 'sa1';
     let is2xSpeed = false;
@@ -930,7 +931,7 @@
 
     async function getRunner() {
         if (!actionBankRunner) {
-            const { ActionBankRunner } = await import('./action-bank-runner.js?v=20260905-responsive-stage-v4');
+            const { ActionBankRunner } = await import('./action-bank-runner.js?v=20260918-v8');
             const stack = document.getElementById('abs-animation-stage-stack');
             actionBankRunner = new ActionBankRunner({
                 stageStack: stack,
@@ -1348,11 +1349,12 @@
         document.querySelector('.abs-animation-ko-btn')?.classList.toggle('active', mode === 'ko');
     }
 
-    async function playSequence(payload = activePayload) {
+    async function playSequence(payload = activePayload, sessionToken = activeAnimationSessionToken) {
         if (!payload?.lua_source) {
             setStatus('No Lua source code was returned for this animation.', true);
             return;
         }
+        if (sessionToken !== activeAnimationSessionToken) return;
         destroyPlayers();
         resetStage();
         activeMode = 'sequence';
@@ -1361,6 +1363,10 @@
 
         try {
             const runner = await getRunner();
+            if (sessionToken !== activeAnimationSessionToken) {
+                runner?.stop?.();
+                return;
+            }
             runner.setPayload(payload);
             runner.setHighSpeed(is2xSpeed);
             runner.setMasterVolume(masterVolume);
@@ -1385,20 +1391,26 @@
                 backgroundId,
                 animationContext: activeAnimationContext,
             });
+            if (sessionToken !== activeAnimationSessionToken) {
+                runner.stop();
+                return;
+            }
             setStatus(`Playing Lua sequence (${cmdCount} events, ${runner.maxFrame} frames)…`);
             runner.play();
             updateSequenceControls();
         } catch (error) {
+            if (sessionToken !== activeAnimationSessionToken) return;
             console.error('Dokkan Lua sequence playback failed:', error);
             setStatus(error.message || 'Lua sequence failed to execute.', true);
         }
     }
 
-    async function playEffect(effect, options = {}) {
+    async function playEffect(effect, options = {}, sessionToken = activeAnimationSessionToken) {
         if (!effect?.available || !Array.isArray(effect.files) || !effect.files.length) {
             setStatus(`The ${effect?.pack_name || 'selected'} LWF pack is not in the local asset folder.`, true);
             return;
         }
+        if (sessionToken !== activeAnimationSessionToken) return;
         destroyPlayers();
         resetStage();
         activeEffect = effect;
@@ -1408,21 +1420,28 @@
         setStatus(`Loading ${options.label || effect.pack_name}…`);
         try {
             const canvas = document.getElementById('abs-animation-canvas');
-            activePlayers = [await createEffectPlayer(effect, canvas, options)];
+            const player = await createEffectPlayer(effect, canvas, options);
+            if (sessionToken !== activeAnimationSessionToken) {
+                try { player?.clear?.(); } catch {}
+                return;
+            }
+            activePlayers = [player];
             setStatus('');
             updateSequenceControls();
         } catch (error) {
+            if (sessionToken !== activeAnimationSessionToken) return;
             console.error('Dokkan local animation preview failed:', error);
             setStatus(error.message || 'The local LWF preview could not be loaded.', true);
         }
     }
 
-    async function playKoScreen(payload = activePayload) {
+    async function playKoScreen(payload = activePayload, extraOptions = {}, sessionToken = activeAnimationSessionToken) {
         const koEffects = getKoEffects(payload);
         if (!koEffects.length) {
             setStatus('No separate KO-screen effect was detected in this animation.', true);
             return;
         }
+        if (sessionToken !== activeAnimationSessionToken) return;
         const hasStandaloneKoScenesOnly = koEffects.length > 0
             && koEffects.every((effect) => Boolean(effect?.ko_standalone_scene));
         const options = {
@@ -1439,6 +1458,7 @@
             freezeOnStaticTail: !hasStandaloneKoScenesOnly,
             staticTailMinFrames: 18,
             waitForNestedMoviesAtEnd: hasStandaloneKoScenesOnly,
+            ...extraOptions,
         };
         // A KO pack may carry a USM scene plate as well as its LWF support
         // layer. The LWF alone often contains only sparks, impact lettering,
@@ -1469,15 +1489,21 @@
             markSelectedEffects(koEffects.map((effect) => String(effect.id)), 'ko');
             setStatus(`Loading ${movieKoEffect.pack_name} KO movie…`);
             try {
-                activePlayers = [await createKoMoviePlayer(movieKoEffect, stack, {
+                const player = await createKoMoviePlayer(movieKoEffect, stack, {
                     koStartRatio: Number(movieKoEffect.ko_start_ratio) || 0,
                     koStartFrame: Number(movieKoEffect.ko_start_frame) || 0,
                     koEndFrame: Number(movieKoEffect.ko_end_frame) || 0,
-                })];
+                });
+                if (sessionToken !== activeAnimationSessionToken) {
+                    try { player?.clear?.(); } catch {}
+                    return;
+                }
+                activePlayers = [player];
                 setStatus('');
                 updateSequenceControls();
                 return;
             } catch (error) {
+                if (sessionToken !== activeAnimationSessionToken) return;
                 // Not every legacy USM is browser-decodable. The LWF remains
                 // a valid lower-fidelity fallback rather than hiding the KO
                 // control altogether.
@@ -1494,6 +1520,7 @@
             effect?.ko_runtime_result && Number(effect?.ko_damage_frame) > 0
         );
         const battleResultEffect = useBattleResultLayer ? await fetchEffectPayload(1700) : null;
+        if (sessionToken !== activeAnimationSessionToken) return;
 
         if (koEffects.length === 1 && !battleResultEffect) {
             const effect = koEffects[0];
@@ -1510,7 +1537,7 @@
                     ? authoredDamageFrame || Number(effect.ko_start_frame) || 0
                     : Number(effect.ko_start_frame) || 0,
                 koEndFrame: Number(effect.ko_end_frame) || 0,
-            });
+            }, sessionToken);
             return;
         }
 
@@ -1525,7 +1552,7 @@
         try {
             const layers = orderEffectLayers(koEffects);
             if (battleResultEffect) layers.push(battleResultEffect);
-            activePlayers = await Promise.all(layers.map(async (effect) => {
+            const created = await Promise.all(layers.map(async (effect) => {
                 const canvas = document.createElement('canvas');
                 canvas.className = 'abs-animation-layer-canvas';
                 stack.appendChild(canvas);
@@ -1556,20 +1583,27 @@
                 }
                 return player;
             }));
+            if (sessionToken !== activeAnimationSessionToken) {
+                created.forEach((p) => { try { p?.clear?.(); } catch {} });
+                return;
+            }
+            activePlayers = created;
             setStatus('');
             updateSequenceControls();
         } catch (error) {
+            if (sessionToken !== activeAnimationSessionToken) return;
             console.error('Dokkan KO-screen preview failed:', error);
             setStatus(error.message || 'The KO-screen layers could not be loaded.', true);
         }
     }
 
-    async function playComposite(payload = activePayload) {
+    async function playComposite(payload = activePayload, sessionToken = activeAnimationSessionToken) {
         const effects = (payload?.effects || []).filter((effect) => effect.available && effect.files?.length);
         if (!effects.length) {
             setStatus('None of this animation’s linked LWF packs are available locally.', true);
             return;
         }
+        if (sessionToken !== activeAnimationSessionToken) return;
         destroyPlayers();
         const stack = resetStage();
         stack.innerHTML = '';
@@ -1585,9 +1619,14 @@
                 stack.appendChild(canvas);
                 return createEffectPlayer(effect, canvas);
             }));
+            if (sessionToken !== activeAnimationSessionToken) {
+                loaded.forEach((p) => { try { p?.clear?.(); } catch {} });
+                return;
+            }
             activePlayers = loaded;
             setStatus('');
         } catch (error) {
+            if (sessionToken !== activeAnimationSessionToken) return;
             console.error('Dokkan composite animation preview failed:', error);
             setStatus(error.message || 'The linked animation layers could not be combined.', true);
         }
@@ -1606,7 +1645,10 @@
                 <span>▶ Play Full Sequence (1:1)</span>
                 <small>Lua ActionBank runtime · timed sequence</small>
             `;
-            seqBtn.addEventListener('click', () => playSequence(payload));
+            seqBtn.addEventListener('click', () => {
+                const sessionToken = ++activeAnimationSessionToken;
+                playSequence(payload, sessionToken);
+            });
             list.appendChild(seqBtn);
         }
 
@@ -1619,7 +1661,10 @@
                 <span>▶ Play KO Screen</span>
                 <small>${koEffects[0].pack_name}</small>
             `;
-            koButton.addEventListener('click', () => playKoScreen(payload));
+            koButton.addEventListener('click', () => {
+                const sessionToken = ++activeAnimationSessionToken;
+                playKoScreen(payload, {}, sessionToken);
+            });
             list.appendChild(koButton);
         }
 
@@ -1630,7 +1675,10 @@
             composite.type = 'button';
             composite.className = 'abs-animation-effect-btn abs-animation-composite-btn';
             composite.innerHTML = `<span>Play effect stack</span><small>${availableCount} linked LWF layers</small>`;
-            composite.addEventListener('click', () => playComposite(payload));
+            composite.addEventListener('click', () => {
+                const sessionToken = ++activeAnimationSessionToken;
+                playComposite(payload, sessionToken);
+            });
             list.appendChild(composite);
         }
 
@@ -1645,7 +1693,10 @@
                 <span>${effect.primary ? 'Main effect' : 'Effect'} ${effect.id}</span>
                 <small>${effect.pack_name} · ${effect.scene_name}${effect.available ? '' : ' · missing'}</small>
             `;
-            button.addEventListener('click', () => playEffect(effect));
+            button.addEventListener('click', () => {
+                const sessionToken = ++activeAnimationSessionToken;
+                playEffect(effect, {}, sessionToken);
+            });
             list.appendChild(button);
         }
 
@@ -1656,6 +1707,7 @@
 
     async function open(scriptName, label = 'Animation', animationContext = 'sa1', requestedMode = 'sequence') {
         if (!SCRIPT_NAME_PATTERN.test(String(scriptName || ''))) return;
+        const sessionToken = ++activeAnimationSessionToken;
         activeAnimationContext = normalizeAnimationContext(animationContext);
         const overlay = ensureModal();
         overlay.classList.remove('is-closing');
@@ -1676,27 +1728,31 @@
 
         try {
             const response = await fetchFromAnimationBridge(`/api/animation/${encodeURIComponent(scriptName)}`, { cache: 'no-store' });
+            if (sessionToken !== activeAnimationSessionToken) return;
             const payload = await response.json().catch(() => ({}));
+            if (sessionToken !== activeAnimationSessionToken) return;
             if (!response.ok) throw new Error(payload.error || `Animation server returned ${response.status}.`);
             setAnimationViewport(activeAnimationContext, payload, requestedMode);
             await hydrateReferencedKoEffects(payload);
+            if (sessionToken !== activeAnimationSessionToken) return;
             activePayload = payload;
             revealKoLaunchButtons(scriptName, payload);
             renderEffectList(payload);
 
             if (requestedMode === 'ko') {
-                await playKoScreen(payload);
+                await playKoScreen(payload, {}, sessionToken);
             } else if (payload.lua_source) {
-                await playSequence(payload);
+                await playSequence(payload, sessionToken);
             } else {
                 const availableCount = (payload.effects || []).filter((effect) => effect.available).length;
                 const primary = payload.effects?.find((effect) => effect.primary && effect.available)
                     || payload.effects?.find((effect) => effect.available);
-                if (availableCount > 1) await playComposite(payload);
-                else if (primary) await playEffect(primary);
+                if (availableCount > 1) await playComposite(payload, sessionToken);
+                else if (primary) await playEffect(primary, {}, sessionToken);
                 else setStatus('The Lua script was found, but none of its linked LWF packs are available locally.', true);
             }
         } catch (error) {
+            if (sessionToken !== activeAnimationSessionToken) return;
             console.error('Local animation server connection failed:', error);
             setStatus('Start start-animation-server.cmd, keep its window open, then press Play again.', true);
         }
@@ -1707,13 +1763,18 @@
     }
 
     function restart() {
-        if (activeMode === 'sequence' && activePayload) playSequence(activePayload);
-        else if (activeMode === 'composite') playComposite(activePayload);
-        else if (activeMode === 'ko' && activePayload) playKoScreen(activePayload);
-        else if (activeEffect) playEffect(activeEffect, activeEffectOptions || {});
+        const sessionToken = ++activeAnimationSessionToken;
+        if (activeMode === 'sequence' && activePayload) playSequence(activePayload, sessionToken);
+        else if (activeMode === 'composite') playComposite(activePayload, sessionToken);
+        else if (activeMode === 'ko' && activePayload) playKoScreen(activePayload, {}, sessionToken);
+        else if (activeEffect) playEffect(activeEffect, activeEffectOptions || {}, sessionToken);
     }
 
     function close() {
+        // Invalidate active session and stop all players immediately
+        activeAnimationSessionToken++;
+        destroyPlayers();
+
         const overlay = document.getElementById('abs-animation-modal');
         if (!overlay || overlay.hidden) return;
         overlay.classList.add('is-closing');
@@ -1723,7 +1784,6 @@
             document.body.classList.remove('abs-animation-open');
             activePayload = null;
             activeAnimationContext = 'sa1';
-            destroyPlayers();
         }, 200);
     }
 

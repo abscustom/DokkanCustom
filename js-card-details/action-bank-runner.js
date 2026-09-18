@@ -215,6 +215,7 @@ export class ActionBankRunner {
         this.soundTimeStretch = new Map();
         this.soundVolumeKeys = new Map();
         this.voiceVolumes = new Map();
+        this._cancelled = false;
     }
 
     _ensureStageLayers() {
@@ -568,6 +569,7 @@ export class ActionBankRunner {
         animationContext = 'sa1',
     }) {
         this.reset();
+        this._cancelled = false;
         this.animationContext = normalizeAnimationContext(animationContext);
         this.scriptName = String(scriptName || '')
             .replace(/\\/g, '/')
@@ -595,6 +597,10 @@ export class ActionBankRunner {
         this._ensureStageLayers();
         this.setBattleBg(backgroundId);
         await ensureFengari();
+        if (this._cancelled) {
+            this.clearStage();
+            return 0;
+        }
 
         const attackerId = Number(card?.id || this.attackerCardId || 1000010);
         const defenderId = Number(enemyId || this.enemyCardId || 1000020);
@@ -609,16 +615,8 @@ export class ActionBankRunner {
         host.setGlobalNumber('fcolor_b', 245);
         host.setGlobalNumber('_IS_SKIP_', 0);
         host.setGlobalNumber('_IS_PLAYER_SIDE_', 1);
-        // Multi-target scripts contain a full cinematic for their first enemy
-        // and a short follow-up branch for every later enemy.  Lua treats an
-        // undefined value as nil (not 0), which previously selected the
-        // follow-up branch in previews such as ut0052.  A normal one-enemy
-        // card-viewer preview is always the first target.
         host.setGlobalNumber('_IS_SPECIAL_AIM_ALL_', 0);
         host.setGlobalNumber('_IS_DODGE_', 0);
-        // Counter Lua files use these battle-result flags just like super
-        // attacks. Define their normal-preview values explicitly so Fengari
-        // does not take a nil-only branch while previewing a counter.
         host.setGlobalNumber('_IS_CRITICAL_', 0);
         host.setGlobalNumber('_IS_DEAD_', 0);
         host.setGlobalNumber('_IS_GUARD_', 0);
@@ -646,6 +644,11 @@ export class ActionBankRunner {
             })
             : Promise.resolve(null);
         await Promise.all([backgroundPromise, this.preload()]);
+        if (this._cancelled) {
+            this.clearStage();
+            this.ready = false;
+            return 0;
+        }
         this.ready = true;
         this.onStatus?.('ready', this);
         return this.commands.length;
@@ -962,6 +965,7 @@ export class ActionBankRunner {
     }
 
     async preload() {
+        if (this._cancelled) return;
         this.onStatus?.('preloading', this);
 
         // 1. Preload Character Models
@@ -969,11 +973,14 @@ export class ActionBankRunner {
             this.charaLayer.preloadCharacter(0, this.attackerCardId),
             this.charaLayer.preloadCharacter(1, this.enemyCardId),
         ]);
+        if (this._cancelled) return;
         characterResults.forEach((result, index) => {
             if (result.status === 'rejected') {
                 this.log(`${index === 0 ? 'Attacker' : 'Enemy'} rig failed: ${result.reason?.message || result.reason}`);
             }
         });
+
+        if (this._cancelled) return;
 
         // 2. Fetch Card Art Textures for Dynamic Injections
         try {
@@ -982,14 +989,18 @@ export class ActionBankRunner {
             const cardRes = await fetch(`${this.serverUrl}/api/card/${Number(this.attackerCardId) || 0}${ext}`, {
                 ...(Object.keys(headers).length ? { headers } : {})
             });
+            if (this._cancelled) return;
             const cardPayload = await cardRes.json();
             if (cardPayload?.textures) {
                 for (const [slot, tex] of Object.entries(cardPayload.textures)) {
+                    if (this._cancelled) return;
                     if (tex?.url) {
                         try {
                             const texRes = await fetch(tex.url);
+                            if (this._cancelled) return;
                             if (texRes.ok) {
                                 const blob = await texRes.blob();
+                                if (this._cancelled) return;
                                 this.cardTextures.set(slot, new File([blob], tex.name));
                             }
                         } catch {}
@@ -997,8 +1008,11 @@ export class ActionBankRunner {
                 }
             }
         } catch (err) {
+            if (this._cancelled) return;
             this.log(`Card texture fetch failed: ${err.message}`);
         }
+
+        if (this._cancelled) return;
 
         // 3. Preload USM movies. Their paired LWF still has to remain complete:
         // Dokkan uses it for supplementary animation layers such as splashes,
@@ -1006,11 +1020,14 @@ export class ActionBankRunner {
         // encoded movie plate.
         const movieCommands = this.commands.filter((command) => command.type === 'setupMovie' && Number.isFinite(Number(command.contentId)));
         const movieResults = await Promise.allSettled(movieCommands.map((command) => this._prepareMovie(command)));
+        if (this._cancelled) return;
         movieResults.forEach((result, index) => {
             if (result.status === 'rejected') {
                 this.log(`Movie ${movieCommands[index]?.contentId} preload failed: ${result.reason?.message || result.reason}`);
             }
         });
+
+        if (this._cancelled) return;
 
         // 4. Preload LWF Effect Sequences
         const entries = this.commands.filter((command) => command.type === 'entryEffect' && Number.isFinite(Number(command.effectId)));
@@ -1020,18 +1037,22 @@ export class ActionBankRunner {
         // to a white/black placeholder. Prepare them in script order instead.
         const results = [];
         for (const command of entries) {
+            if (this._cancelled) return;
             try {
                 results.push({ status: 'fulfilled', value: await this._prepareEffect(command) });
             } catch (reason) {
                 results.push({ status: 'rejected', reason });
             }
         }
+        if (this._cancelled) return;
         results.forEach((result, index) => {
             if (result.status === 'rejected') {
                 this.log(`Effect ${entries[index]?.effectId} preload failed: ${result.reason?.message || result.reason}`);
             }
         });
         this.log(`Preloaded ${this.preparedEffects.size}/${entries.length} scheduled effect instance(s)`);
+
+        if (this._cancelled) return;
 
         // 5. Decode only the SE cues referenced by this Lua sequence. The
         // bridge converts CRI ACB streams to cached WAV files on demand.
@@ -1050,8 +1071,8 @@ export class ActionBankRunner {
     }
 
     play() {
-        if (!this.ready || !this.commands.length) {
-            this.log('Cannot play: sequence is not ready');
+        if (this._cancelled || !this.ready || !this.commands.length) {
+            this.log('Cannot play: sequence is not ready or has been cancelled');
             return false;
         }
         if (this.playing && this.userPaused) {
@@ -1111,9 +1132,16 @@ export class ActionBankRunner {
     }
 
     stop() {
+        this._cancelled = true;
         this._haltClock();
         this.clearStage();
         this.ready = false;
+        try {
+            if (this.audioMaster && this.audioContext) {
+                this.audioMaster.gain.setValueAtTime(0, this.audioContext.currentTime);
+            }
+            void this.audioContext?.suspend?.();
+        } catch {}
         this.onStatus?.('stopped', this);
     }
 

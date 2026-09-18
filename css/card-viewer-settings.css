@@ -256,7 +256,7 @@ body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-st
         grid-template-areas:
             "side header"
             "side main" !important;
-        margin-top: 24px !important;
+        margin-top: 0px !important;
     }
 
     body.card-viewer-page.theme-abs-clean #layout-abs-style > .abs-top-header {
@@ -286,9 +286,9 @@ body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #layout-abs-st
 
 @media (max-width: 680px) {
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
-        height: 148px !important;
-        min-height: 148px !important;
-        max-height: 148px !important;
+        height: var(--abs-viewer-motion-height, 176px) !important;
+        min-height: var(--abs-viewer-motion-height, 176px) !important;
+        max-height: var(--abs-viewer-motion-height, 176px) !important;
     }
 }
 
@@ -565,11 +565,11 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch
     align-items: center !important;
     justify-content: center !important;
     gap: 4px !important;
-    color: #ff4d4d !important;
-    background: rgba(127, 29, 29, 0.72) !important;
-    border-color: rgba(248, 113, 113, 0.95) !important;
+    color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border: 1px solid rgba(255, 255, 255, 0.84) !important;
     border-radius: 2px !important;
-    box-shadow: inset 0 1px 0 rgba(254, 202, 202, 0.18), 0 0 8px rgba(239, 68, 68, 0.18) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.20), 0 0 8px rgba(255, 255, 255, 0.08) !important;
     white-space: nowrap !important;
     line-height: 1 !important;
     vertical-align: middle !important;
@@ -591,21 +591,25 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch
     justify-content: center !important;
     visibility: visible !important;
     opacity: 1 !important;
-    color: #ff4d4d !important;
-    -webkit-text-fill-color: #ff4d4d !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
     font-size: 10px !important;
     font-weight: 800 !important;
     letter-spacing: 0.6px !important;
     text-transform: uppercase !important;
     line-height: 1 !important;
-    text-shadow: 0 0 6px rgba(239, 68, 68, 0.6) !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    transform: none !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.75) !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):hover,
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):focus-visible {
     color: #ffffff !important;
-    background: rgba(185, 28, 28, 0.90) !important;
-    border-color: #fecaca !important;
+    background: rgba(255, 255, 255, 0.22) !important;
+    border-color: #ffffff !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.35), 0 0 10px rgba(255, 255, 255, 0.20) !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-animation-ko-launch:not([hidden]):hover > svg,
@@ -710,8 +714,8 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .ab
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn.abs-animation-ko-launch:not([hidden]),
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-box .abs-header .abs-animation-header-actions > .abs-animation-play-btn.abs-animation-ko-launch:not([hidden]) > span {
-    color: #fecaca !important;
-    -webkit-text-fill-color: #fecaca !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
 }
 
 @media (max-width: 680px) {
@@ -767,9 +771,10 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    gap: 7px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding-left: 2px !important;
+    gap: 8px !important;
     width: 100% !important;
     max-width: none !important;
 
@@ -780,6 +785,11 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
 
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-header-actions {
     margin-left: 0 !important;
+}
+
+:where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-name-inside {
+    text-align: left !important;
+    padding-left: 14px !important;
 }
 
 @media (max-width: 680px) {
@@ -793,15 +803,16 @@ body.is-published.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #ab
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding-left: 2px !important;
     width: 100% !important;
-    gap: 6px !important;
+    gap: 8px !important;
 }
 
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > span,
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > i {
-    text-align: center !important;
+    text-align: left !important;
 }
 
 :where(body.card-viewer-page, body.is-published).theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-header-title > .abs-animation-header-actions,
@@ -834,10 +845,10 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box >
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-ko-launch:not([hidden]),
 body.card-viewer-page.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name .abs-animation-ko-launch:not([hidden]) > span {
-    color: #fecaca !important;
-    -webkit-text-fill-color: #fecaca !important;
-    background: rgba(127, 29, 29, 0.72) !important;
-    border-color: rgba(248, 113, 113, 0.95) !important;
+    color: #ffffff !important;
+    -webkit-text-fill-color: #ffffff !important;
+    background: rgba(255, 255, 255, 0.10) !important;
+    border-color: rgba(255, 255, 255, 0.84) !important;
 }
 
 /* Published clean cards without an Active Skill should not inherit the
@@ -1124,9 +1135,10 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
 :where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box > #abs-passive-name > .abs-passive-external-header {
     display: flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
-    gap: 7px !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
+    padding-left: 2px !important;
+    gap: 8px !important;
     width: 100% !important;
     max-width: none !important;
     color: #ffffff !important;
@@ -1137,8 +1149,8 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
 :where(body.card-viewer-page, body.is-published).theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box .abs-passive-external-label {
     display: inline-flex !important;
     align-items: center !important;
-    justify-content: center !important;
-    text-align: center !important;
+    justify-content: flex-start !important;
+    text-align: left !important;
     color: #ffffff !important;
     -webkit-text-fill-color: #ffffff !important;
     text-shadow: 0 1px 2px rgba(0, 0, 0, 0.55) !important;
@@ -1396,24 +1408,55 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     content: none !important;
 }
 
-/* Single Super Attack allowed to span full length; EX Super Attack claims full row and appears below standard SAs */
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:not(.abs-clean-ex-super-attack) {
-    order: 1 !important;
-}
-
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-single-standard-super-attack,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:only-child,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-ex-super-attack {
-    grid-column: 1 / -1 !important;
+/* Super Attack 12-column shared row layout */
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) {
+    display: grid !important;
+    grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    column-gap: 14px !important;
+    row-gap: 14px !important;
     width: 100% !important;
 }
 
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-12,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-12,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-single-standard-super-attack,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:only-child,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-ex-super-attack {
-    order: 2 !important;
+    grid-column: span 12 !important;
+    width: 100% !important;
 }
 
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:has(> .abs-box:only-child) {
-    grid-template-columns: 1fr !important;
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6 {
+    grid-column: span 6 !important;
+    width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-4,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-4 {
+    grid-column: span 4 !important;
+    width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-3,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-3 {
+    grid-column: span 3 !important;
+    width: 100% !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-12,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-4,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-3,
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-12,
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6,
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-4,
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-3 {
+        grid-column: span 12 !important;
+        width: 100% !important;
+    }
 }
 
 /* Standby Skill fading divider between condition and standby skill effect */
@@ -2077,7 +2120,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
     box-sizing: border-box !important;
     overflow: hidden !important;
     border: 1px solid var(--abs-liquid-border, rgba(226, 245, 255, 0.32)) !important;
-    border-radius: 2px !important;
+    border-radius: 0px !important;
     background: var(--abs-liquid-light-fill, rgba(3, 10, 18, 0.54)) !important;
     background-color: transparent !important;
     background-image: var(--abs-liquid-light-fill, none) !important;
@@ -2409,7 +2452,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
     background-color: rgba(9, 20, 32, 0.42) !important;
     background-image: none !important;
     border: 2px solid rgba(148, 163, 184, 0.28) !important;
-    border-radius: 4px !important;
+    border-radius: 0px !important;
     box-shadow: 0 8px 20px rgba(2, 8, 18, 0.18) !important;
 }
 
@@ -2418,7 +2461,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
     min-height: 0 !important;
     height: 100% !important;
     border: 0 !important;
-    border-radius: 0 !important;
+    border-radius: 0px !important;
     background: var(--abs-viewer-motion-backdrop) !important;
     background-color: var(--abs-viewer-motion-backdrop) !important;
     box-shadow: none !important;
@@ -2427,7 +2470,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
     background: transparent !important;
     background-color: transparent !important;
-    transform: scale(1.35) !important;
+    transform: scale(1.65) !important;
     object-fit: contain !important;
 }
 
@@ -2437,10 +2480,20 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
 
 @media (max-width: 680px) {
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
-        --abs-viewer-motion-scale: 1.28;
+        --abs-viewer-motion-scale: 1.5;
         --abs-viewer-motion-height: 176px;
         --abs-viewer-motion-margin-top: 12px;
         --abs-viewer-motion-margin-bottom: 20px;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+        width: 100% !important;
+        max-width: 410px !important;
+        margin: var(--abs-viewer-motion-margin-top) auto var(--abs-viewer-motion-margin-bottom) !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box #abs-motion-canvas {
+        transform: scale(1.5) !important;
     }
 
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box > .abs-motion-external-label {
@@ -2460,7 +2513,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
     }
 }
 body.card-viewer-page.theme-abs-clean #top-content {
-    padding-top: 8px !important;
+    padding-top: 0px !important;
 }
 body.card-viewer-page > .abs-motion-page-label {
     display: none;

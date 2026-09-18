@@ -142,24 +142,44 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         return 12;
     };
 
-    // 2. Sort specials:
-    // Regular Super Attacks (12 Ki, 18 Ki Ultra) must sit together first in the 2-column grid,
-    // followed by EX Super Attacks spanning the full width below them.
-    const sortedSpecials = [...saList].sort((a, b) => {
-        const aEx = checkIsExSuper(a);
-        const bEx = checkIsExSuper(b);
-        if (aEx !== bEx) {
-            return aEx ? 1 : -1;
-        }
-        const aKi = getSpecialKi(a);
-        const bKi = getSpecialKi(b);
-        if (aKi !== bKi) {
-            return aKi - bKi;
-        }
-        return 0;
-    });
+    // Helper to identify Unit Super Attacks
+    const checkIsUnitSuper = (spec) => {
+        if (!spec) return false;
+        if (checkIsExSuper(spec)) return false;
+        if (spec.is_unit_sa === true || spec.is_unit_sa === 1 || spec.is_unit_sa === 'true') return true;
+        if (typeof isStrictUnitSuperAttack === 'function' && isStrictUnitSuperAttack(spec)) return true;
+        const typeLabel = String(spec.type_label || spec.category || spec.type || '').toLowerCase();
+        if (typeLabel.includes('unit')) return true;
+        const name = String(spec.name || spec.special_name || spec.title || '').toLowerCase();
+        if (name.includes('unit')) return true;
+        const rawSaCond = String(spec.condition || spec.activation_condition || spec.causality_description || '');
+        return /whose\s+name\s+includes|when\s+an?\s+ally/i.test(rawSaCond);
+    };
 
-    const standardAttackCount = sortedSpecials.filter(spec => !checkIsExSuper(spec)).length;
+    // 2. Partition specials:
+    // Regular Super Attacks take the top row(s),
+    // followed by Unit Super Attacks grouped on their own shared row,
+    // followed by EX Super Attacks spanning the full width below.
+    const exAttacks = [];
+    const unitAttacks = [];
+    const regularAttacks = [];
+
+    for (const spec of saList) {
+        if (checkIsExSuper(spec)) {
+            exAttacks.push(spec);
+        } else if (checkIsUnitSuper(spec)) {
+            unitAttacks.push(spec);
+        } else {
+            regularAttacks.push(spec);
+        }
+    }
+
+    const sortByKi = (a, b) => getSpecialKi(a) - getSpecialKi(b);
+    regularAttacks.sort(sortByKi);
+    unitAttacks.sort(sortByKi);
+    exAttacks.sort(sortByKi);
+
+    const sortedSpecials = [...regularAttacks, ...unitAttacks, ...exAttacks];
 
     // 3. Render each Super Attack box in authentic abs.style layout
     sortedSpecials.forEach((specObj, idx) => {
@@ -178,22 +198,14 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         const formattedSaCond = formatOfficialText(rawSaCond, true).replace(/\n/g, ' ').trim();
 
         let typeLabel = specObj.type_label || specObj.category || specObj.type || "";
-        const saNameLow = (specObj.name || '').toLowerCase();
-        const saDescLow = (rawDesc + ' ' + rawSaCond).toLowerCase();
-        const saTypeLow = String(typeLabel).toLowerCase();
-
         const startKi = specObj.eball_num_start || specObj.need_ki || 0;
         const endKi = specObj.eball_num_end || 0;
         const isLR = (card.rarity === 5 || card.rarity === 'lr');
 
-        // Strict Unit SA detection
-        const isUnitSa = specObj.is_unit_sa === true || 
-                         (typeof isStrictUnitSuperAttack === 'function' ? isStrictUnitSuperAttack(specObj) : false) ||
-                         saTypeLow.includes("unit") || 
-                         saNameLow.includes("unit") || 
-                         /whose\s+name\s+includes|when\s+an?\s+ally/i.test(rawSaCond);
-
+        // Strict Unit SA & EX detection
         const isExSuperAttack = checkIsExSuper(specObj);
+        const isUnitSa = !isExSuperAttack && checkIsUnitSuper(specObj);
+
         if (isExSuperAttack) {
             typeLabel = '<span class="abs-ex-prefix">EX</span> Super Attack';
         } else if (isUnitSa && (startKi >= 18 || (isLR && idx >= 1))) {
@@ -253,8 +265,23 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
             ? `<div class="abs-sa-clean-layout"><div class="abs-sa-clean-copy">${formattedSaCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedSaCond}</div>${cleanExConditionDividerHtml}` : ''}</div></div>`
             : `${formattedSaCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedSaCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${formattedEffects}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
         
+        // Calculate grid column class
+        let colSpanClass = 'abs-sa-col-12';
+        if (isExSuperAttack) {
+            colSpanClass = 'abs-sa-col-12 abs-clean-ex-super-attack';
+        } else if (isUnitSa) {
+            if (unitAttacks.length === 1) colSpanClass = 'abs-sa-col-12 abs-clean-unit-super-attack';
+            else if (unitAttacks.length === 2) colSpanClass = 'abs-sa-col-6 abs-clean-unit-super-attack';
+            else if (unitAttacks.length === 3) colSpanClass = 'abs-sa-col-4 abs-clean-unit-super-attack';
+            else colSpanClass = 'abs-sa-col-3 abs-clean-unit-super-attack';
+        } else {
+            if (regularAttacks.length === 1) colSpanClass = 'abs-sa-col-12 abs-clean-single-standard-super-attack';
+            else if (regularAttacks.length === 2) colSpanClass = 'abs-sa-col-6';
+            else colSpanClass = 'abs-sa-col-6';
+        }
+
         const html = `
-            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}">
+            <div class="abs-box mb-3 ${colSpanClass}${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}">
                 <div class="abs-header">
                     ${cleanHeaderTitle}
                     ${isAbsCleanTheme ? '' : animationButton}

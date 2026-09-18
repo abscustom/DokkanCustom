@@ -8,6 +8,7 @@ let currentEzaMode = 'base';
 let currentCardArtMode = 'animated';
 let currentCardAnimType = null;
 let activeStickerRunner = null;
+let currentCardArtAnimToken = 0;
 let calculatedStats = { hp: {}, atk: {}, def: {} };
 let currentStatPercent = '100%';
 
@@ -1612,6 +1613,36 @@ function renderCardDetails(card, mode = currentEzaMode) {
         }).join('');
         document.getElementById("abs-category-container").innerHTML = catsHtml;
         window.syncAbsCleanCardLinkCategoryPlacement?.();
+
+        // Invalidate any running card art animations immediately so switching characters doesn't leak or race
+        currentCardArtAnimToken++;
+        if (activeStickerRunner) {
+            activeStickerRunner.destroy();
+            activeStickerRunner = null;
+        }
+        const stickerCanvasEl = document.getElementById('abs-tur-sticker-canvas');
+        if (stickerCanvasEl) {
+            stickerCanvasEl.style.display = 'none';
+            try {
+                const gl = stickerCanvasEl.getContext('webgl') || stickerCanvasEl.getContext('experimental-webgl');
+                if (gl) {
+                    gl.clearColor(0, 0, 0, 0);
+                    gl.clear(gl.COLOR_BUFFER_BIT);
+                }
+            } catch {}
+        }
+        const lwfCanvasEl = document.getElementById('abs-card-bg-lwf-canvas');
+        if (lwfCanvasEl) {
+            if (typeof window.DokkanLWF !== 'undefined') {
+                window.DokkanLWF.destroy(lwfCanvasEl.id || 'abs-card-bg-lwf-canvas');
+            }
+            lwfCanvasEl.style.display = 'none';
+            try {
+                const ctx = lwfCanvasEl.getContext('2d');
+                if (ctx) ctx.clearRect(0, 0, lwfCanvasEl.width, lwfCanvasEl.height);
+            } catch {}
+        }
+
         const bgImgEl = document.getElementById("abs-art-bg");
         const charImgEl = document.getElementById("abs-art-char");
         const effectImgEl = document.getElementById("abs-art-effect");
@@ -1825,6 +1856,7 @@ window.switchCardArtMode = function(mode) {
 };
 
 async function updateCardArtAnimation(card) {
+    const animToken = ++currentCardArtAnimToken;
     const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
     const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
     const toggleBar = document.getElementById('abs-art-toggle-bar');
@@ -1835,9 +1867,26 @@ async function updateCardArtAnimation(card) {
         activeStickerRunner.destroy();
         activeStickerRunner = null;
     }
+    if (stickerCanvas) {
+        stickerCanvas.style.display = 'none';
+        try {
+            const gl = stickerCanvas.getContext('webgl') || stickerCanvas.getContext('experimental-webgl');
+            if (gl) {
+                gl.clearColor(0, 0, 0, 0);
+                gl.clear(gl.COLOR_BUFFER_BIT);
+            }
+        } catch {}
+    }
 
     if (typeof window.DokkanLWF !== 'undefined' && lwfCanvas) {
         window.DokkanLWF.destroy(lwfCanvas.id || 'abs-card-bg-lwf-canvas');
+    }
+    if (lwfCanvas) {
+        lwfCanvas.style.display = 'none';
+        try {
+            const ctx = lwfCanvas.getContext('2d');
+            if (ctx) ctx.clearRect(0, 0, lwfCanvas.width, lwfCanvas.height);
+        } catch {}
     }
 
     const isLR = isCardLR(card);
@@ -1850,6 +1899,12 @@ async function updateCardArtAnimation(card) {
 
     if (isLR && lwfCanvas && typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachCardBgLwf) {
         let ok = await window.DokkanLWF.attachCardBgLwf(lwfCanvas, card);
+        if (animToken !== currentCardArtAnimToken) {
+            if (typeof window.DokkanLWF !== 'undefined' && lwfCanvas) {
+                window.DokkanLWF.destroy(lwfCanvas.id || 'abs-card-bg-lwf-canvas');
+            }
+            return;
+        }
         if (ok) {
             hasAnimated = true;
             currentCardAnimType = 'lr';
@@ -1865,8 +1920,16 @@ async function updateCardArtAnimation(card) {
             stickerCanvas.height = 568;
             const runner = new window.DokkanStickerRunner(stickerCanvas);
             let ok = await runner.loadConfig(folderId, card);
+            if (animToken !== currentCardArtAnimToken) {
+                runner.destroy();
+                return;
+            }
             if (!ok && parentFolderId !== folderId) {
                 ok = await runner.loadConfig(parentFolderId, card);
+                if (animToken !== currentCardArtAnimToken) {
+                    runner.destroy();
+                    return;
+                }
             }
 
             if (ok) {
@@ -1880,6 +1943,8 @@ async function updateCardArtAnimation(card) {
             console.warn("[Sticker Runner Error]", e);
         }
     }
+
+    if (animToken !== currentCardArtAnimToken) return;
 
     if (toggleBar) {
         toggleBar.style.display = hasAnimated ? 'block' : 'none';
