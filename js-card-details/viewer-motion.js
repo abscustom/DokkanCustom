@@ -228,49 +228,50 @@
         const box = document.getElementById('abs-motion-box');
         const layout = document.getElementById('layout-abs-style');
         const visible = Boolean(available);
+        const isLoading = state === 'loading';
         if (box) {
-            box.hidden = !visible;
-            box.dataset.motionAvailable = visible ? 'true' : 'false';
+            box.hidden = !visible && !isLoading;
+            box.dataset.motionAvailable = visible ? 'true' : (isLoading ? 'loading' : 'false');
             box.dataset.motionState = String(state || '');
             box.setAttribute('aria-hidden', visible ? 'false' : 'true');
-            box.classList.toggle('is-unavailable', !visible);
+            box.classList.toggle('is-unavailable', !visible && !isLoading);
             if (visible) delete box.dataset.motionUnavailableReason;
             else box.dataset.motionUnavailableReason = String(state || 'unavailable');
         }
         if (layout) {
-            layout.dataset.motionAvailable = visible ? 'true' : 'false';
-            layout.classList.toggle('abs-motion-unavailable', !visible);
+            layout.dataset.motionAvailable = visible ? 'true' : (isLoading ? 'loading' : 'false');
+            layout.classList.toggle('abs-motion-unavailable', !visible && !isLoading);
         }
-        document.body?.classList.toggle('abs-motion-unavailable', !visible);
-        syncViewerHeaderAxis();
+        document.body?.classList.toggle('abs-motion-unavailable', !visible && !isLoading);
+        syncViewerHeaderAxis(state);
         scheduleViewerHeaderAxisSync();
         window.dispatchEvent(new CustomEvent('abs-motion-availability', {
             detail: { available: visible, state: String(state || '') },
         }));
     }
 
-    function syncViewerHeaderAxis() {
+    function syncViewerHeaderAxis(state = '') {
         const motionBox = document.getElementById('abs-motion-box');
         const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
-        const motionStyle = motionBox ? getComputedStyle(motionBox) : null;
-        const motionVisible = Boolean(
+        const isMotionReady = Boolean(motionBox && motionBox.dataset.motionAvailable === 'true');
+        const isMotionLoading = Boolean(state === 'loading' || (motionBox && motionBox.dataset.motionAvailable === 'loading'));
+        const motionVisible = (isMotionReady || isMotionLoading) && Boolean(
             motionBox
-            && motionBox.dataset.motionAvailable === 'true'
             && !motionBox.hidden
-            && motionStyle?.display !== 'none'
-            && (motionBox.offsetHeight > 0 || motionBox.getBoundingClientRect().height > 0),
+            && !motionBox.classList.contains('is-unavailable')
+            && motionBox.style.display !== 'none'
         );
         if (sideCol) {
             if (motionVisible) {
-                const motionHeight = Math.round(
-                    motionBox.getBoundingClientRect().height || motionBox.offsetHeight || 0,
-                );
-                if (motionHeight > 0) {
-                    sideCol.style.setProperty('--abs-viewer-motion-height', `${motionHeight}px`);
-                    sideCol.style.setProperty('--abs-viewer-motion-margin-bottom', '16px');
-                    sideCol.style.removeProperty('--abs-clean-motion-rail-top');
-                    sideCol.style.setProperty('--abs-clean-motion-rail-height', 'calc(var(--abs-viewer-motion-height) + var(--abs-viewer-motion-margin-bottom))', 'important');
-                }
+                const isMobile = window.innerWidth <= 680;
+                const motionHeight = isMobile ? 176 : 192;
+                const marginBottom = isMobile ? 20 : 16;
+                const marginTop = isMobile ? 12 : 0;
+                sideCol.style.setProperty('--abs-viewer-motion-height', `${motionHeight}px`);
+                sideCol.style.setProperty('--abs-viewer-motion-margin-top', `${marginTop}px`);
+                sideCol.style.setProperty('--abs-viewer-motion-margin-bottom', `${marginBottom}px`);
+                sideCol.style.setProperty('--abs-clean-motion-rail-top', `${marginTop}px`, 'important');
+                sideCol.style.setProperty('--abs-clean-motion-rail-height', `${motionHeight + marginBottom}px`, 'important');
             } else {
                 sideCol.style.setProperty('--abs-viewer-motion-height', '0px');
                 sideCol.style.setProperty('--abs-viewer-motion-margin-top', '0px');

@@ -2336,6 +2336,9 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col {
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box {
+    position: relative !important;
+    order: -2 !important;
+    z-index: 72 !important;
     box-sizing: border-box !important;
     overflow: visible !important;
     width: var(--abs-viewer-motion-width) !important;
@@ -2425,7 +2428,7 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-mot
     background: transparent !important;
     background-color: transparent !important;
     transform: scale(1.35) !important;
-    translate: (0px,500px) !important;
+    object-fit: contain !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-side-col > #abs-motion-box .abs-motion-note {
@@ -2504,7 +2507,7 @@ body.card-viewer-page.theme-abs-style #abs-motion-box,
 /* Media availability is decided by the bridge payload, so the published
    page starts with the optional motion surface out of flow.  This avoids a
    blank rail flashing while card data or the local bridge is still loading. */
-body.card-viewer-page #abs-motion-box:not([data-motion-available="true"]),
+body.card-viewer-page #abs-motion-box:not([data-motion-available="true"]):not([data-motion-available="loading"]),
 body.card-viewer-page #abs-motion-box[hidden],
 body.card-viewer-page #abs-motion-box.is-unavailable {
     display: none !important;
@@ -2525,21 +2528,21 @@ body.card-viewer-page .abs-animation-header-actions > .abs-animation-play-btn[hi
    top row.  The side rail moves to row two so the expanded header cannot
    overlap the portrait/art stage. */
 @media (min-width: 681px) {
-    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) {
         grid-template-areas:
             "header header"
             "side main" !important;
     }
 
-    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-top-header {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) > .abs-top-header {
         grid-area: header !important;
         width: 100% !important;
         max-width: none !important;
         min-width: 0 !important;
     }
 
-    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-grid-container > .abs-side-col,
-    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) > .abs-side-col {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) > .abs-grid-container > .abs-side-col,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) > .abs-side-col {
         grid-area: side !important;
         grid-column: 1 !important;
         grid-row: auto !important;
@@ -2548,7 +2551,7 @@ body.card-viewer-page .abs-animation-header-actions > .abs-animation-play-btn[hi
 
 /* The rail variables are also cleared synchronously by viewer-motion.js;
    these selectors keep layout stable if the optional module is unavailable. */
-body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) .abs-side-col {
+body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) .abs-side-col {
     --abs-viewer-motion-height: 0px !important;
     --abs-viewer-motion-margin-top: 0px !important;
     --abs-viewer-motion-margin-bottom: 0px !important;
@@ -2556,6 +2559,6 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-availab
     --abs-clean-motion-rail-height: 0px !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]) .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
+body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
     top: 0 !important;
 }
