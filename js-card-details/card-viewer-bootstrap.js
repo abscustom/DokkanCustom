@@ -120,7 +120,12 @@
 
     function applyViewerTheme(themeName, { persist = true, refresh = true } = {}) {
         const theme = applyViewerThemeClasses(themeName);
-        if (persist) writeStoredValue(VIEWER_THEME_KEY, theme);
+        if (persist) {
+            writeStoredValue(VIEWER_THEME_KEY, theme);
+            // Keep the legacy published-card preference synchronized so the
+            // editor, exported cards, and viewer all reopen on the same style.
+            writeStoredValue('dokkan_published_card_theme', theme === CLEAN_THEME ? 'sba' : theme);
+        }
         updateViewerThemeButtons(theme);
         window.cardViewerTheme = theme;
         window.updateSiteFavicon?.(theme);
@@ -139,7 +144,19 @@
     }
 
     function initializeViewerTheme() {
-        const savedTheme = normalizeViewerTheme(readStoredValue(VIEWER_THEME_KEY, CLEAN_THEME));
+        // Keep the published viewer in sync with the theme preference used by
+        // the editor/exported card. Older cards do not have card_viewer_theme
+        // yet, so falling back to the published/selected theme prevents an
+        // ABS.STYLE card from silently reopening as ABS.CLEAN.
+        const savedTheme = normalizeViewerTheme(
+            readStoredValue(
+                VIEWER_THEME_KEY,
+                readStoredValue(
+                    'dokkan_published_card_theme',
+                    readStoredValue('dokkan_selected_theme', CLEAN_THEME)
+                )
+            )
+        );
         applyViewerTheme(savedTheme, { persist: false, refresh: false });
     }
 

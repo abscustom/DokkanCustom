@@ -138,6 +138,14 @@ body.card-viewer-page.theme-abs-clean[data-abs-clean-mode="dark"] #abs-motion-bo
     }
 }
 
+/* The visible identity tags use a viewer-only radius override; keep them sharp. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity .abs-clean-css-badge:not([hidden]) {
+    border-radius: 0 !important;
+}
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style > .abs-top-header > #abs-clean-identity-icons.abs-clean-header-identity > :is(#abs-clean-badge-rarity, #abs-clean-badge-class, #abs-clean-badge-type, #abs-clean-badge-tag, #abs-clean-badge-awakening) {
+    border-radius: 0 !important;
+}
+
 /* The viewer uses the same floating mini GUI as the other SBA pages, but
    gives this page a stable centered anchor so the six-item dock cannot push
    the popover off either edge of a narrow viewport. */
@@ -3173,4 +3181,375 @@ body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-availab
 
 body.card-viewer-page.theme-abs-clean #layout-abs-style:not([data-motion-available="true"]):not([data-motion-available="loading"]) .abs-side-col:has(> #abs-clean-portrait-stage) > #abs-art-dock-wrapper {
     top: 0 !important;
+}
+
+/* ===========================================================================
+   ABS.CLEAN FINAL SKILL HEADER POLISH
+   This viewer stylesheet loads after abs-clean.css, so repeat the final
+   specificity here to keep the intended header, metadata, and stat-footer
+   layout from being reintroduced by viewer-only overrides.
+   =========================================================================== */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 4px 10px !important;
+    border: 0 !important;
+    background: transparent !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-header-title {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: auto !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 4px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-title-center {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 8px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-effect-inline {
+    display: block !important;
+    width: 100% !important;
+    margin: 4px 0 0 !important;
+    padding: 0 6px !important;
+    text-align: center !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    line-height: 1 !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-type-pill,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-animation-play-btn {
+    border-radius: 0 !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer {
+    border-radius: 0 !important;
+    overflow: hidden !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-section {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    height: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-groups {
+    display: flex !important;
+    flex: 0 1 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 6px !important;
+    grid-template-columns: none !important;
+    grid-template-rows: none !important;
+    overflow: visible !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-group,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-group-badges-row {
+    display: inline-flex !important;
+    flex: 0 1 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    gap: 6px !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-badge {
+    display: inline-flex !important;
+    flex: 0 1 auto !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: auto !important;
+    max-width: 100% !important;
+    height: 20px !important;
+    min-height: 20px !important;
+    margin: 0 !important;
+    padding: 2px 6px !important;
+    gap: 4px !important;
+    border-radius: 0 !important;
+    white-space: nowrap !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-badge img {
+    flex: 0 0 14px !important;
+    width: 14px !important;
+    height: 14px !important;
+    margin: 0 !important;
+    object-fit: contain !important;
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer {
+        height: auto !important;
+        min-height: 30px !important;
+        overflow: visible !important;
+    }
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-groups {
+        flex-wrap: wrap !important;
+        justify-content: center !important;
+    }
+}
+
+/* Keep Ki and multiplier values in the same square header containers as the
+   Super Attack label, while preserving their original casing. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    flex: 0 0 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    margin: 0 !important;
+    padding: 0 10px !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 38%, transparent) !important;
+    border-radius: 0 !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 15%, transparent) !important;
+    color: var(--theme-text, #38bdf8) !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    font-size: 10.5px !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.08em !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-transform: none !important;
+    white-space: nowrap !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-type-pill {
+    align-items: center !important;
+    justify-content: center !important;
+    height: 22px !important;
+    min-height: 22px !important;
+    padding: 0 12px !important;
+    box-sizing: border-box !important;
+    line-height: 1 !important;
+    text-align: center !important;
+}
+
+/* Match metadata and footer stat badges to the Super Attack's darker type
+   surface, white text, and readable shadow; keep footer contents left-aligned. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill),
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-badge {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 16%, rgba(0, 4, 12, 0.72)) !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 48%, rgba(255, 255, 255, 0.20)) !important;
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.16) !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-section,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-groups,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-group,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-group-badges-row,
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-badge {
+    justify-content: flex-start !important;
+    text-align: left !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-special-effects-groups {
+    width: 100% !important;
+}
+
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer :is(.abs-badge-val, .abs-badge-turns, .abs-badge-bottom, .abs-badge-top) {
+    color: #ffffff !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* ABS.STYLE viewer navigation: keep the shared SBA shell, but do not let the
+   ABS.CLEAN square/grid nav rules leak into this legacy presentation. */
+body.card-viewer-page.theme-abs-style .hud-nav-group,
+body.card-viewer-page.theme-abs-style .hud-nav-group:hover,
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group,
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:focus-within .hud-nav-group {
+    gap: 2px !important;
+    height: 70px !important;
+    max-height: none !important;
+    padding: 5px 11px !important;
+    border: 1px solid rgba(255, 255, 255, 0.22) !important;
+    border-radius: 35px !important;
+    background: rgba(11, 16, 28, 0.16) !important;
+    background-image: none !important;
+    box-shadow: 0 10px 24px rgba(0, 0, 0, 0.16), inset 0 1px 0 rgba(255, 255, 255, 0.20) !important;
+    backdrop-filter: blur(10px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(10px) saturate(115%) !important;
+    box-sizing: border-box !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group::before,
+body.card-viewer-page.theme-abs-style .hud-nav-group::after {
+    display: none !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]),
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:focus-within .hud-nav-group .hud-nav-link:not(.active):not([aria-expanded="true"]) {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    width: 68px !important;
+    min-width: 68px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 5px 4px !important;
+    border: 0 !important;
+    border-radius: 29px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    color: var(--sba-dock-text, rgba(247, 250, 255, 0.88)) !important;
+    line-height: 1 !important;
+    text-shadow: none !important;
+    transform: none !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link .hud-nav-svg {
+    display: block !important;
+    width: 19px !important;
+    height: 19px !important;
+    margin: 0 !important;
+    flex: 0 0 19px !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link > span {
+    display: block !important;
+    max-width: 100% !important;
+    overflow: hidden !important;
+    color: currentColor !important;
+    font-size: 9px !important;
+    font-weight: 700 !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    text-transform: uppercase !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link[aria-label="Calculator"] {
+    width: 82px !important;
+    min-width: 82px !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link[aria-label="Settings"] {
+    width: 78px !important;
+    min-width: 78px !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group,
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group,
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:focus-within .hud-nav-group {
+    opacity: 0 !important;
+    pointer-events: none !important;
+    transform: translateX(-50%) translateY(18px) !important;
+}
+
+body.card-viewer-page.theme-abs-style.sba-bottom-nav-visible .hud-nav-group,
+body.card-viewer-page.theme-abs-style.sba-bottom-nav-visible .apple-hud-wrapper:hover .hud-nav-group,
+body.card-viewer-page.theme-abs-style.sba-bottom-nav-visible .apple-hud-wrapper:focus-within .hud-nav-group {
+    opacity: 1 !important;
+    pointer-events: auto !important;
+    transform: translateX(-50%) translateY(0) !important;
+}
+
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link.active,
+body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link[aria-expanded="true"],
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link.active,
+body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group .hud-nav-link[aria-expanded="true"] {
+    display: flex !important;
+    flex-direction: column !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    width: 80px !important;
+    min-width: 80px !important;
+    height: 58px !important;
+    min-height: 58px !important;
+    padding: 5px 4px !important;
+    margin-inline: -2px !important;
+    border: 1px solid rgba(255, 255, 255, 0.52) !important;
+    border-radius: 29px !important;
+    background: rgba(255, 255, 255, 0.24) !important;
+    box-shadow: inset 1px 1px 0 rgba(255, 255, 255, 0.62), inset 0 -1px 0 rgba(21, 27, 38, 0.14), 0 5px 12px rgba(0, 0, 0, 0.12) !important;
+    color: var(--sba-dock-active, #ffffff) !important;
+    line-height: 1 !important;
+    transform: translateY(1px) !important;
 }

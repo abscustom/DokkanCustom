@@ -270,9 +270,11 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         const cleanHeaderTitle = isAbsCleanTheme
             ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${formattedEffects}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" data-tooltip="${saCategoryName}" alt="${saCategoryName}"><span class="abs-sa-title-text">${typeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
-        const cleanHeaderMeta = isAbsCleanTheme
-            ? ''
-            : `<div class="abs-sa-header-meta"><span class="abs-sa-ki-pill">${kiText}</span>${headerDamageMultiplier ? `<span class="abs-sa-damage-pill">${headerDamageMultiplier}</span>` : ''}</div>`;
+        // ABS.STYLE keeps Ki and the multiplier inside its content block's
+        // damage-multiplier component.  Only ABS.CLEAN uses the floating
+        // header metadata, so do not duplicate those values in the legacy
+        // ABS.STYLE header.
+        const cleanHeaderMeta = '';
         const cleanExConditionDividerHtml = isAbsCleanTheme && isExSuperAttack && formattedSaCond
             ? '<div class="abs-clean-ex-condition-divider" aria-hidden="true"><hr class="divider"></div>'
             : '';
