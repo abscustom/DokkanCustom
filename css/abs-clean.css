@@ -1777,8 +1777,6 @@ body.theme-abs-clean:not(.is-published) .sa-block:hover,
 body.theme-abs-clean.admin-mode-active .sa-block:hover,
 body.theme-abs-clean:not(.is-published) #abs-sa-container > div:hover,
 body.theme-abs-clean.admin-mode-active #abs-sa-container > div:hover,
-body.theme-abs-clean:not(.is-published) #abs-sa-container:hover,
-body.theme-abs-clean.admin-mode-active #abs-sa-container:hover,
 body.theme-abs-clean:not(.is-published) #abs-stats-box:hover,
 body.theme-abs-clean.admin-mode-active #abs-stats-box:hover,
 body.theme-abs-clean:not(.is-published) #abs-clean-header-stats:hover,
@@ -3372,6 +3370,22 @@ body.theme-abs-clean:not(.theme-abs-clean-dark) #abs-clean-leader-banner-slot #a
     background: rgba(15, 23, 42, 0.08) !important;
     color: #0f172a !important;
     border-color: rgba(15, 23, 42, 0.15) !important;
+}
+
+/* Keep quoted categories visibly highlighted inside ABS.Clean. The generic
+   Dokkan Info reset also matches the clean layout, so this scoped rule must
+   come after it and cover both category lists and leader categories. */
+body.theme-abs-clean #layout-abs-style .abs-category-quote,
+body.theme-abs-clean #layout-abs-style #abs-leader-skill .abs-category-quote,
+body.theme-abs-clean #layout-abs-style #abs-clean-leader-text .abs-category-quote,
+body.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill .abs-category-quote,
+body.theme-abs-clean #abs-clean-leader-banner-slot #abs-clean-leader-text .abs-category-quote,
+body.theme-abs-clean:not(.theme-abs-clean-dark) #layout-abs-style #abs-leader-skill .abs-category-quote,
+body.theme-abs-clean:not(.theme-abs-clean-dark) #abs-clean-leader-banner-slot #abs-leader-skill .abs-category-quote,
+body.theme-abs-clean #abs-clean-leader-text .abs-category-quote {
+    color: var(--theme-text, #38bdf8) !important;
+    font-weight: 700 !important;
+    text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.65)) !important;
 }
 
 /* ===========================================================================
@@ -22561,8 +22575,6 @@ body.theme-abs-clean .editor-top-hud-group .hud-nav-link.top-hud-btn.active {
 /* High-specificity override for Super Attack, Active, and Forms containers in ABS Clean */
 body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-sa-container > .abs-box:hover,
 body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-sa-container > .abs-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-sa-container:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-sa-container:hover,
 body.theme-abs-clean:not(.is-published) #layout-abs-style [data-edit="sa"]:hover,
 body.theme-abs-clean.admin-mode-active #layout-abs-style [data-edit="sa"]:hover,
 body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-active-container > .abs-box:hover,

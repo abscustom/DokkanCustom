@@ -175,8 +175,23 @@ document.addEventListener('click', function(e) {
     let editType = null;
     let target = e.target.closest('[data-edit]');
 
+    // ABS renders SAs in display order (Ki/EX), which can differ from the
+    // source .sa-block order. Resolve the rendered card by its explicit
+    // source index before opening the editor.
+    const resolveRenderedSuperAttack = (rendered) => {
+        if (!rendered) return null;
+        const sourceIndex = Number.parseInt(rendered.getAttribute('data-sa-source-index'), 10);
+        const sourceBlocks = Array.from(document.querySelectorAll('.sa-block'));
+        if (Number.isInteger(sourceIndex) && sourceBlocks[sourceIndex]) return sourceBlocks[sourceIndex];
+        return null;
+    };
+
     if (target) {
         editType = target.getAttribute('data-edit');
+        if (editType === 'sa') {
+            currentSuperAttack = resolveRenderedSuperAttack(target) || currentSuperAttack || document.querySelector('.sa-block');
+            target = currentSuperAttack || target;
+        }
         if (editType === 'active') {
             // Clean mode renders Active Skills/Dokkan Fields in separate
             // containers. Resolve that visual card back to its source block
@@ -224,9 +239,12 @@ document.addEventListener('click', function(e) {
                 const dbBlock = e.target.closest('#abs-sa-container > div');
                 const dbContainer = document.getElementById('abs-sa-container');
                 const dbBlocks = Array.from(dbContainer.children);
-                let index = dbBlocks.indexOf(dbBlock);
-                if (index === -1) index = 0;
-                clickedBlock = document.querySelectorAll('.sa-block')[index];
+                clickedBlock = resolveRenderedSuperAttack(dbBlock);
+                if (!clickedBlock) {
+                    let index = dbBlocks.indexOf(dbBlock);
+                    if (index === -1) index = 0;
+                    clickedBlock = document.querySelectorAll('.sa-block')[index];
+                }
             }
             currentSuperAttack = clickedBlock;
             target = clickedBlock || e.target.closest('#abs-sa-container > div');

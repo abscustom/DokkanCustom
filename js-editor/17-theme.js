@@ -1429,8 +1429,10 @@ window.syncToAbsLayout = function() {
                             formattedHtml += '<ul class="abs-passive-list">';
                             sib.querySelectorAll('li').forEach(li => {
                                 let liContent = li.innerHTML;
+                                // Preserve quoted category highlighting while
+                                // keeping existing inline icon markup intact.
                                 if (window.formatOfficialText) liContent = window.formatOfficialText(liContent, false);
-                                else if (window.formatCategoryQuotes) liContent = window.formatCategoryQuotes(liContent);
+                                if (window.formatCategoryQuotes) liContent = window.formatCategoryQuotes(liContent);
                                 formattedHtml += `<li>${liContent}</li>`;
                             });
                             formattedHtml += '</ul>';
@@ -1441,7 +1443,7 @@ window.syncToAbsLayout = function() {
             } else {
                 formattedHtml = tempDiv.innerHTML;
                 if (window.formatOfficialText) formattedHtml = window.formatOfficialText(formattedHtml, false);
-                else if (window.formatCategoryQuotes) formattedHtml = window.formatCategoryQuotes(formattedHtml);
+                if (window.formatCategoryQuotes) formattedHtml = window.formatCategoryQuotes(formattedHtml);
             }
 
             dbPassiveCont.innerHTML = isAbsCleanTheme
@@ -2235,6 +2237,10 @@ window.updateAbsStyleSuperAttacks = function() {
     const standardAttackCount = sortedBlocks.filter(block => !checkIsExSuperBlock(block)).length;
 
     sortedBlocks.forEach((block) => {
+        // Keep the rendered (sorted) card tied to its source editor block.
+        // The ABS layout is sorted for display, so DOM position is not a
+        // reliable way to resolve a click back to the editable SA.
+        const sourceIndex = Array.from(blocks).indexOf(block);
         let typeLabel = block.querySelector('.sa-type-label')?.textContent || 'Super Attack';
         const saName = block.querySelector('.sa-display-name')?.textContent || 'Super Attack';
         const saIcon = block.querySelector('.sa-display-icon')?.getAttribute('src') || 'https://abscustom.github.io/assets/images/sp_skill_icon_01.png';
@@ -2311,7 +2317,7 @@ window.updateAbsStyleSuperAttacks = function() {
             : `${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${effectsFormatted}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
 
         htmlBuffer += `
-            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}${cleanSaFloatingFooter ? ' has-floating-footer' : ''}" data-edit="sa">
+            <div class="abs-box mb-3${isAbsCleanTheme ? ' abs-clean-header-effects' : ''}${isAbsCleanTheme && isExSuperAttack ? ' abs-clean-ex-super-attack' : ''}${isAbsCleanTheme && isUnitSuperAttack ? ' abs-clean-unit-super-attack' : ''}${isAbsCleanTheme && !isExSuperAttack && !isUnitSuperAttack && standardAttackCount === 1 ? ' abs-clean-single-standard-super-attack' : ''}${cleanSaFloatingFooter ? ' has-floating-footer' : ''}" data-edit="sa" data-sa-source-index="${sourceIndex}">
                 ${cleanSaFloatingHeader}
                 <div class="abs-header">
                     ${cleanSaHeader}
