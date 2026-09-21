@@ -80,6 +80,10 @@ for (const folder of cardFolders) {
     ${previewImg ? `<meta itemprop="image" content="${escapeAttr(previewImg)}">\n    <meta property="og:image" content="${escapeAttr(previewImg)}">\n    <meta name="twitter:image" content="${escapeAttr(previewImg)}">` : ''}
     ${descText ? `<meta name="description" id="meta-description" content="${escapeAttr(descText)}">\n    <meta itemprop="description" id="meta-itemprop-description" content="${escapeAttr(descText)}">\n    <meta property="og:description" id="meta-og-description" content="${escapeAttr(descText)}">\n    <meta property="twitter:description" id="meta-twitter-description" content="${escapeAttr(descText)}">` : ''}
 
+    <!-- Match card.html at first paint. The dynamic bootstrapper adds the
+         rest of the viewer stylesheet set after this loader is already live. -->
+    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
+
     <script id="card-data" type="application/json">
 ${JSON.stringify(cardData, null, 2)}
     </script>

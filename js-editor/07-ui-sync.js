@@ -15,6 +15,36 @@ window.updateCardDisplay = function() {
     window.syncProgressionDisplayControls?.();
 };
 
+// The editor historically kept identity in both module globals and window
+// properties.  Quick Edit is rendered through inline handlers, so it can
+// mutate either side.  Normalize the pair before rendering or serializing so
+// a stale initial value can never overwrite the type the user just selected.
+window.getCardIdentityState = function() {
+    const validTypes = new Set(['agl', 'teq', 'int', 'str', 'phy', 'none']);
+    const validClasses = new Set(['super', 'extreme', 'none']);
+    const validRarities = new Set(['LR', 'TUR', 'SSR', 'NONE']);
+    const type = String(currentType || window.currentType || 'agl').toLowerCase();
+    const cardClass = String(currentClass || window.currentClass || 'super').toLowerCase();
+    const rarity = String(currentRarity || window.currentRarity || 'LR').toUpperCase();
+
+    currentType = validTypes.has(type) ? type : 'agl';
+    currentClass = validClasses.has(cardClass) ? cardClass : 'super';
+    currentRarity = validRarities.has(rarity) ? rarity : 'LR';
+    window.currentType = currentType;
+    window.currentClass = currentClass;
+    window.currentRarity = currentRarity;
+    return { type: currentType, cardClass: currentClass, rarity: currentRarity };
+};
+
+window.setCardClass = function(newClass) {
+    const cardClass = String(newClass || '').toLowerCase();
+    currentClass = cardClass === 'extreme' ? 'extreme' : 'super';
+    window.currentClass = currentClass;
+    window.updateIconImages();
+    window.syncToAbsLayout?.();
+    return currentClass;
+};
+
 window.applyCardTheme = function(newSuffix) {
     currentType = newSuffix;
     window.currentType = newSuffix;

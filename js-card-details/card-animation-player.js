@@ -929,6 +929,18 @@
         toggleButton.textContent = (isPlaying && !isPaused) ? 'Pause' : 'Play';
     }
 
+    function applyAnimationPlaybackRate() {
+        const rate = is2xSpeed ? 2 : 1;
+        if (actionBankRunner) actionBankRunner.setHighSpeed(is2xSpeed);
+        activePlayers.forEach((player) => {
+            if (!player) return;
+            if (typeof player.setPlaybackRate === 'function') player.setPlaybackRate(rate);
+            else if ('playbackRate' in player) player.playbackRate = rate;
+            const video = player.video || player.movie?.video;
+            if (video) video.playbackRate = rate;
+        });
+    }
+
     async function getRunner() {
         if (!actionBankRunner) {
             const { ActionBankRunner } = await import('./action-bank-runner.js?v=20260918-v8');
@@ -1056,7 +1068,7 @@
         overlay.querySelector('[data-animation-action="speed"]').addEventListener('click', (e) => {
             is2xSpeed = !is2xSpeed;
             e.target.textContent = is2xSpeed ? '2x' : '1x';
-            if (actionBankRunner) actionBankRunner.setHighSpeed(is2xSpeed);
+            applyAnimationPlaybackRate();
         });
         overlay.querySelector('[data-animation-action="volume"]').addEventListener('input', (event) => {
             masterVolume = Math.max(0, Math.min(1, Number(event.target.value) / 100));
@@ -1306,6 +1318,9 @@
         };
         const controller = {
             playing: false,
+            setPlaybackRate(rate) {
+                video.playbackRate = Math.max(0.05, Number(rate) || 1);
+            },
             pause() {
                 video.pause();
                 this.playing = false;
@@ -1323,6 +1338,7 @@
                 this.playing = false;
             },
         };
+        controller.setPlaybackRate(is2xSpeed ? 2 : 1);
         video.addEventListener('play', () => {
             controller.playing = true;
             updateSequenceControls();
@@ -1426,6 +1442,7 @@
                 return;
             }
             activePlayers = [player];
+            applyAnimationPlaybackRate();
             setStatus('');
             updateSequenceControls();
         } catch (error) {
@@ -1499,6 +1516,7 @@
                     return;
                 }
                 activePlayers = [player];
+                applyAnimationPlaybackRate();
                 setStatus('');
                 updateSequenceControls();
                 return;
@@ -1588,6 +1606,7 @@
                 return;
             }
             activePlayers = created;
+            applyAnimationPlaybackRate();
             setStatus('');
             updateSequenceControls();
         } catch (error) {
@@ -1624,6 +1643,7 @@
                 return;
             }
             activePlayers = loaded;
+            applyAnimationPlaybackRate();
             setStatus('');
         } catch (error) {
             if (sessionToken !== activeAnimationSessionToken) return;

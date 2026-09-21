@@ -94,10 +94,15 @@ window.autoSaveToCache = async function() {
         const ssrIconSrc = ssrEl?.src ? await blobUrlToDataUrl(ssrEl.src) : "";
         const mainRarityIconSrc = mainRarityEl?.src ? await blobUrlToDataUrl(mainRarityEl.src) : "";
 
+        const identity = window.getCardIdentityState?.() || {
+            type: typeof currentType !== 'undefined' ? currentType : 'agl',
+            cardClass: typeof currentClass !== 'undefined' ? currentClass : 'super',
+            rarity: typeof currentRarity !== 'undefined' ? currentRarity : 'LR'
+        };
         const projectData = {
-            currentType: typeof currentType !== 'undefined' ? currentType : "agl", 
-            currentClass: typeof currentClass !== 'undefined' ? currentClass : "super",
-            currentRarity: typeof currentRarity !== 'undefined' ? currentRarity : "LR",
+            currentType: identity.type,
+            currentClass: identity.cardClass,
+            currentRarity: identity.rarity,
             currentAwakeningMode: typeof currentAwakeningMode !== 'undefined' ? currentAwakeningMode : "none",
             counters: { sIdx: typeof sIdx !== 'undefined' ? sIdx : 0, lIdx: typeof lIdx !== 'undefined' ? lIdx : 0 }, 
             inputs: inputData,
@@ -195,6 +200,9 @@ window.loadFromCache = function() {
         currentType = data.currentType || "agl"; 
         currentClass = data.currentClass || "super";
         currentRarity = data.currentRarity || "LR";
+        window.currentType = currentType;
+        window.currentClass = currentClass;
+        window.currentRarity = currentRarity;
         currentAwakeningMode = data.currentAwakeningMode || "none";
         const legacyProgressionVisibility = data.showAwakeningProgression !== false;
         window.showSsrProgression = data.showSsrProgression !== undefined ? data.showSsrProgression !== false : legacyProgressionVisibility;

@@ -2693,19 +2693,6 @@ async function loadCustomCards() {
                 const isLR = rarityKey === 'lr';
                 const isSSR = rarityKey === 'ssr';
 
-                const iconEl = doc.querySelector(isLR ? '#img-lr' : (isSSR ? '#img-ssr' : '#img-tur')) || doc.querySelector('#abs-thumb-img');
-                // Filter out default placeholder icons — if the creator didn't upload a custom icon,
-                // the stored src is SSR_Icon.png / TUR_Icon.png / LR_Icon.png. Prefer the card-art
-                // image as the showcase thumb over a generic placeholder.
-                const isPlaceholderSrc = (src) => /\/(SSR|TUR|LR)_Icon\.png/i.test(src || '');
-                const rawIconCandidates = [
-                    cardData?.thumbMain,
-                    isLR ? cardData?.thumbLr : (isSSR ? cardData?.thumbSsr : cardData?.thumbTur),
-                    iconEl?.getAttribute('src')
-                ];
-                const rawIcon = rawIconCandidates.find(s => s && !isPlaceholderSrc(s)) || rawIconCandidates.find(Boolean);
-                const charImgSrc = fixUrl(rawIcon, `${CENTRAL_ASSET_URL}SSR_Icon.png`);
-
                 // The SBA showcase is art-led. Read the published art layers
                 // rather than using the header thumbnail as its hero image.
                 const rawCardArtImage = cardData?.cardArtImage || [
@@ -2718,6 +2705,23 @@ async function loadCustomCards() {
                     doc.querySelector('video.card-art-canvas source')?.getAttribute('src') || '';
                 const cardArtImageUrl = rawCardArtImage ? fixUrl(rawCardArtImage, '') : '';
                 const cardArtVideoUrl = rawCardArtVideo ? fixUrl(rawCardArtVideo, '') : '';
+
+                const iconEl = doc.querySelector(isLR ? '#img-lr' : (isSSR ? '#img-ssr' : '#img-tur')) || doc.querySelector('#abs-thumb-img');
+                // Older card.json files can retain a generic main icon while
+                // their actual art was uploaded. Never let that placeholder
+                // win over a valid thumbnail or card-art URL in the gallery.
+                const isPlaceholderSrc = (src) => /(?:^|\/)(?:SSR|TUR|LR)_Icon\.png(?:[?#]|$)|(?:^|\/)default\.png(?:[?#]|$)|Card(?:%20| )Art(?:%20| )Template\.png/i.test(src || '');
+                const rawIconCandidates = [
+                    cardData?.thumbMain,
+                    isLR ? cardData?.thumbLr : (isSSR ? cardData?.thumbSsr : cardData?.thumbTur),
+                    cardData?.thumbLr,
+                    cardData?.thumbTur,
+                    cardData?.thumbSsr,
+                    iconEl?.getAttribute('src'),
+                    rawCardArtImage
+                ];
+                const rawIcon = rawIconCandidates.find(src => src && !isPlaceholderSrc(src)) || rawCardArtImage || rawIconCandidates.find(Boolean);
+                const charImgSrc = fixUrl(rawIcon, cardArtImageUrl || `${CENTRAL_ASSET_URL}SSR_Icon.png`);
 
                 const frameAttr = doc.querySelector('.card-frame')?.getAttribute('src') || '';
                 const typeImgAttr = doc.querySelector('.typing-icon')?.getAttribute('src') || '';

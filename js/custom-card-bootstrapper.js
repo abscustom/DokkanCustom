@@ -6,6 +6,27 @@
 (async function initCustomCardBootstrapper() {
     'use strict';
 
+    // Older published cards were generated before the shared loader stylesheet
+    // was emitted in their <head>.  Apply the small, first-paint contract before
+    // any fetches so their raw logo never lays out in a document corner and then
+    // jumps when loading-screen.css arrives.  New exports include the full sheet
+    // directly in <head>; this is intentionally only a backwards-compatible
+    // fallback for cards already on the site.
+    function installCriticalLoaderStyles() {
+        const loader = document.getElementById('abs-loading-screen');
+        if (!loader || document.getElementById('abs-loader-critical-styles')) return;
+        const style = document.createElement('style');
+        style.id = 'abs-loader-critical-styles';
+        style.textContent = `
+            #abs-loading-screen { position: fixed; inset: 0; z-index: 2147483647; display: grid; place-items: center; overflow: hidden; background: #03060c; color: #fff; opacity: 1; visibility: visible; }
+            #abs-loading-screen .abs-loader-stage { position: relative; z-index: 5; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+            #abs-loading-screen .abs-loader-logo { display: block; width: clamp(120px, 18vw, 170px); height: auto; object-fit: contain; }
+        `;
+        document.head.prepend(style);
+    }
+
+    installCriticalLoaderStyles();
+
     // 1. Resolve DokkanCustom repo root
     function resolveRepoRoot() {
         const origin = window.location.origin;
@@ -111,6 +132,15 @@
         if (existingLoader) {
             const shellLoader = container.querySelector('#abs-loading-screen');
             if (shellLoader) shellLoader.remove();
+        } else {
+            // Dynamic viewers use the same readiness contract as card.html.
+            // The shell is also used by the editor, whose legacy event would
+            // otherwise leave this loader mounted until its safety timeout.
+            const shellLoader = container.querySelector('#abs-loading-screen');
+            if (shellLoader) {
+                shellLoader.dataset.loaderReadyEvent = 'abs-card-content-ready';
+                shellLoader.dataset.loaderReadyFlag = 'absCardContentReady';
+            }
         }
 
         while (container.firstChild) {
@@ -217,6 +247,10 @@
         window.loadProjectData(cardData, currentFolderUrl, true);
     }
     window.__absDynamicBootstrapping = false;
+    if (!window.absCardContentReady) {
+        window.absCardContentReady = true;
+        window.dispatchEvent(new Event('abs-card-content-ready'));
+    }
 
     // 12. Switch to Preferred / Published Theme
     const preferredTheme = localStorage.getItem('dokkan_published_card_theme') || cardData.themeVariant || cardData.themeStyle || 'abs-style';
@@ -233,19 +267,6 @@
         window.refreshEditorLinkingPartners?.();
         window.scheduleEditorLwfHydration?.();
     }, 150);
-
-    // 14. Fade out Loading Screen
-    setTimeout(() => {
-        const loader = document.getElementById('abs-loading-screen');
-        if (loader) {
-            loader.style.transition = 'opacity 0.4s ease';
-            loader.style.opacity = '0';
-            setTimeout(() => {
-                loader.style.visibility = 'hidden';
-                loader.style.display = 'none';
-            }, 450);
-        }
-    }, 350);
 
     console.log('[Custom Bootstrapper] Dynamic card loaded successfully! Press Ctrl+Shift+A to unlock Admin Mode.');
 })();

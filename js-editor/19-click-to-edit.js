@@ -416,9 +416,10 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
     switch(editType) {
         case 'identity':
             titleHTML = `${identitySvgIcon} Character Identity & Options`;
-            const curRarity = window.currentRarity || currentRarity;
-            const curClass = window.currentClass || currentClass;
-            const curType = window.currentType || currentType;
+            const identityState = window.getCardIdentityState?.();
+            const curRarity = identityState?.rarity || window.currentRarity || currentRarity;
+            const curClass = identityState?.cardClass || window.currentClass || currentClass;
+            const curType = identityState?.type || window.currentType || currentType;
             const curAwakening = window.currentAwakeningMode || currentAwakeningMode;
             const selGlow = "background:#facc15 !important; color:#000 !important; font-weight:900 !important; border-color:#facc15 !important;";
 
@@ -450,8 +451,8 @@ function openContextGUI(mouseX, mouseY, editType, targetElement) {
 
                 <label class="form-label mb-1">Class</label>
                 <div class="gui-btn-grid mb-2">
-                    <button type="button" class="gui-preset-btn" style="${curClass === 'super' ? selGlow : ''}" onclick="currentClass='super'; updateIconImages(); openContextGUI(0,0,'identity');">Super</button>
-                    <button type="button" class="gui-preset-btn" style="${curClass === 'extreme' ? selGlow : ''}" onclick="currentClass='extreme'; updateIconImages(); openContextGUI(0,0,'identity');">Extreme</button>
+                    <button type="button" class="gui-preset-btn" style="${curClass === 'super' ? selGlow : ''}" onclick="window.setCardClass?.('super'); openContextGUI(0,0,'identity');">Super</button>
+                    <button type="button" class="gui-preset-btn" style="${curClass === 'extreme' ? selGlow : ''}" onclick="window.setCardClass?.('extreme'); openContextGUI(0,0,'identity');">Extreme</button>
                 </div>
 
                 <label class="form-label mb-1">Typing</label>

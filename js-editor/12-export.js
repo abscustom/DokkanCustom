@@ -71,6 +71,11 @@ window.hideHudLoader = function() {
 // ============================================================
 
 window.getProjectDataObject = function() {
+    const identity = window.getCardIdentityState?.() || {
+        type: currentType,
+        cardClass: currentClass,
+        rarity: currentRarity
+    };
     let inputData = {};
     savedInputs.forEach(id => { 
         const el = document.getElementById(id); 
@@ -110,9 +115,9 @@ window.getProjectDataObject = function() {
         officialCardAwakeningMode: window.currentCardSource === 'official'
             ? (window.currentOfficialCardAwakeningMode || currentAwakeningMode || "")
             : "",
-        currentType: currentType, 
-        currentClass: currentClass,
-        currentRarity: currentRarity,
+        currentType: identity.type,
+        currentClass: identity.cardClass,
+        currentRarity: identity.rarity,
         currentAwakeningMode: currentAwakeningMode,
         counters: { sIdx: sIdx, lIdx: lIdx }, 
         inputs: inputData,
@@ -242,6 +247,9 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     currentType = projectData.currentType || "agl";
     currentClass = projectData.currentClass || "super";
     currentRarity = projectData.currentRarity || "LR";
+    window.currentType = currentType;
+    window.currentClass = currentClass;
+    window.currentRarity = currentRarity;
     currentAwakeningMode = projectData.currentAwakeningMode || "none";
 
     window.updateRarityStats(currentRarity);
@@ -582,6 +590,11 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
     <meta name="apple-mobile-web-app-title" content="${escapeAttr(fullTitle)}">
     ${previewImg ? `<meta itemprop="image" content="${escapeAttr(previewImg)}">\n    <meta property="og:image" content="${escapeAttr(previewImg)}">\n    <meta name="twitter:image" content="${escapeAttr(previewImg)}">` : ''}
     ${descText ? `<meta name="description" id="meta-description" content="${escapeAttr(descText)}">\n    <meta itemprop="description" id="meta-itemprop-description" content="${escapeAttr(descText)}">\n    <meta property="og:description" id="meta-og-description" content="${escapeAttr(descText)}">\n    <meta property="twitter:description" id="meta-twitter-description" content="${escapeAttr(descText)}">` : ''}
+
+    <!-- Keep the published-card first paint identical to card.html. The
+         bootstrapper loads the rest of the viewer later, but this stylesheet
+         must be parser-discovered before the loader markup is painted. -->
+    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
 
     <script id="card-data" type="application/json">
 ${JSON.stringify(projectData || {}, null, 2)}
@@ -1112,9 +1125,50 @@ function syncPublishedFormsDataFromClone(projectData, clone) {
     projectData.containers.forms = clone.querySelector('#forms-container')?.innerHTML || '';
 }
 
+// card.json is consumed by the Hub independently of the card page. Its media
+// must therefore use the same published URLs written into the export clone,
+// rather than the editor's temporary blob/data URLs.
+function syncPublishedCardMediaFromClone(projectData, clone) {
+    if (!projectData || !clone) return;
+    const imageSrc = (...selectors) => selectors
+        .map(selector => clone.querySelector(selector)?.getAttribute('src') || '')
+        .find(Boolean) || '';
+    const videoSrc = clone.querySelector('#myOverlayVideo source')?.getAttribute('src') ||
+        clone.querySelector('#myOverlayVideo')?.getAttribute('src') || '';
+
+    projectData.thumbSsr = imageSrc('#ssr-row #img-ssr, #img-ssr') || projectData.thumbSsr || '';
+    projectData.thumbTur = imageSrc('#tur-row #img-tur, #img-tur') || projectData.thumbTur || '';
+    projectData.thumbLr = imageSrc('#img-lr') || projectData.thumbLr || '';
+    projectData.thumbMain = imageSrc('#abs-thumb-img') || projectData.thumbMain || '';
+    projectData.cardArtImage = imageSrc('#abs-art-img', '#myOverlayImage') || projectData.cardArtImage || '';
+    projectData.cardArtVideo = videoSrc || projectData.cardArtVideo || '';
+}
+
 async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileMap) {
     const cloneImgs = clone.querySelectorAll('img');
     const bundledOfficialArt = new Map();
+    const uploadedPathByHash = new Map();
+    const hashBlob = async (blob) => {
+        if (!globalThis.crypto?.subtle) return '';
+        try {
+            const digest = await globalThis.crypto.subtle.digest('SHA-256', await blob.arrayBuffer());
+            return Array.from(new Uint8Array(digest), byte => byte.toString(16).padStart(2, '0')).join('');
+        } catch (error) {
+            console.warn('Could not hash upload asset; keeping the original upload path.', error);
+            return '';
+        }
+    };
+    const queueBlob = async (blob, fullPath) => {
+        const hash = await hashBlob(blob);
+        const existingPath = hash && uploadedPathByHash.get(hash);
+        if (existingPath) return existingPath;
+        if (!fileMap.has(fullPath)) {
+            filesToUpload.push({ path: fullPath, blob });
+            fileMap.set(fullPath, true);
+        }
+        if (hash) uploadedPathByHash.set(hash, fullPath);
+        return fullPath;
+    };
     for (let idx = 0; idx < cloneImgs.length; idx++) {
         const img = cloneImgs[idx];
         const exportName = img.getAttribute('data-export-name');
@@ -1147,11 +1201,8 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
                 const relPath = `images/${cleanFileName}`;
                 const fullPath = `${basePath}/${relPath}`;
 
-                if (!fileMap.has(fullPath)) {
-                    filesToUpload.push({ path: fullPath, blob });
-                    fileMap.set(fullPath, true);
-                }
-                const publishedUrl = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(fullPath)}`;
+                const uploadedPath = await queueBlob(blob, fullPath);
+                const publishedUrl = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(uploadedPath)}`;
                 img.setAttribute('src', publishedUrl);
                 if (isOfficialCardArt) bundledOfficialArt.set(src, publishedUrl);
             } else if (exportName) {
@@ -1172,11 +1223,8 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
                 const relPath = `images/Form_Thumb_${idx + 1}_${Date.now().toString(36)}.${ext}`;
                 const fullPath = `${basePath}/${relPath}`;
 
-                if (!fileMap.has(fullPath)) {
-                    filesToUpload.push({ path: fullPath, blob });
-                    fileMap.set(fullPath, true);
-                }
-                formEl.setAttribute('data-thumb-src', `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(fullPath)}`);
+                const uploadedPath = await queueBlob(blob, fullPath);
+                formEl.setAttribute('data-thumb-src', `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(uploadedPath)}`);
             }
         }
     }
@@ -1708,6 +1756,7 @@ jobs:
             projectData.showSsrProgression = publishedShowSsr;
             projectData.showTurProgression = publishedShowTur;
             projectData.showAwakeningProgression = publishedShowSsr || publishedShowTur;
+            syncPublishedCardMediaFromClone(projectData, clone);
             syncPublishedFormsDataFromClone(projectData, clone);
             filesToUpload.push({
                 path: `${basePath}/card.json`,
@@ -1927,6 +1976,7 @@ window.executeQuickSave = async function() {
             projectData.showSsrProgression = publishedShowSsr;
             projectData.showTurProgression = publishedShowTur;
             projectData.showAwakeningProgression = publishedShowSsr || publishedShowTur;
+            syncPublishedCardMediaFromClone(projectData, clone);
             syncPublishedFormsDataFromClone(projectData, clone);
             filesToUpload.push({
                 path: `${folderName}/card.json`,

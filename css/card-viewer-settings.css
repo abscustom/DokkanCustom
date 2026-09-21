@@ -3553,3 +3553,50 @@ body.card-viewer-page.theme-abs-style .apple-hud-wrapper:hover .hud-nav-group .h
     line-height: 1 !important;
     transform: translateY(1px) !important;
 }
+
+/* Final viewer Super Attack grid contract. This stylesheet is loaded after
+   abs-clean.css; keep direct cards from falling into the legacy 12-column
+   utility grid when no .abs-sa-col-* class is present. */
+@media (min-width: 681px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-auto-flow: row !important;
+        grid-auto-rows: auto !important;
+        align-items: stretch !important;
+        gap: 14px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        align-self: stretch !important;
+        width: auto !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-ex-super-attack,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box.abs-clean-single-standard-super-attack,
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:only-child {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+    }
+}
+
+@media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        gap: 12px !important;
+    }
+
+    body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+    }
+}

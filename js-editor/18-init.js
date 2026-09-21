@@ -8,22 +8,29 @@
 /* ======================================================================= */
 (function setupAutoHidingScrollbars() {
     let scrollTimer = null;
+    let scrollFrame = 0;
+    const scrollingTargets = new Set();
 
     const handleScrollActivity = (e) => {
         const target = (e && e.target && e.target.nodeType === 1) ? e.target : document.body;
-        
-        document.body.classList.add('is-scrolling');
-        if (target) target.classList.add('is-scrolling');
+        if (target) scrollingTargets.add(target);
+        if (scrollFrame) return;
 
-        clearTimeout(scrollTimer);
+        // Scroll, wheel, and touchmove can fire many times per frame. Batch
+        // the class writes so scrolling never causes a DOM mutation per event.
+        scrollFrame = requestAnimationFrame(() => {
+            scrollFrame = 0;
+            document.body.classList.add('is-scrolling');
+            scrollingTargets.forEach((element) => element.classList.add('is-scrolling'));
+            clearTimeout(scrollTimer);
 
-        // Fades scrollbar out 1.2 seconds after scrolling stops
-        scrollTimer = setTimeout(() => {
-            document.body.classList.remove('is-scrolling');
-            document.querySelectorAll('.is-scrolling').forEach(el => {
-                el.classList.remove('is-scrolling');
-            });
-        }, 1200);
+            // Fades scrollbar out 1.2 seconds after scrolling stops.
+            scrollTimer = setTimeout(() => {
+                document.body.classList.remove('is-scrolling');
+                scrollingTargets.forEach((element) => element.classList.remove('is-scrolling'));
+                scrollingTargets.clear();
+            }, 1200);
+        });
     };
 
     // Trigger ONLY on actual scroll/wheel/touchmove events (NOT mousemove)
