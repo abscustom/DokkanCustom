@@ -9,6 +9,9 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
+/* Body is transparent so the fluted-glass canvas (positioned below) shows through.
+   html gets its own dark background AFTER this rule so it wins the cascade and
+   prevents the browser's default white from flashing before the WebGL canvas paints. */
 html, body, body.theme-abs-style, body.calc-liquid-body {
     background: transparent !important;
     background-color: transparent !important;
@@ -16,6 +19,12 @@ html, body, body.theme-abs-style, body.calc-liquid-body {
     overflow-x: hidden;
     min-height: 100vh;
 }
+
+/* Must come AFTER the combined rule above to win the cascade with !important. */
+html {
+    background-color: #03060c !important;
+}
+
 
 #bg-video, video#bg-video { display: none !important; }
 
@@ -382,7 +391,7 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
     position: relative !important;
     width: 68px !important;
     height: 68px !important;
-    overflow: visible !important;
+    overflow: hidden !important;
     border: 3px solid var(--type-ring);
     border-radius: 50%;
     background: #020617;
@@ -413,6 +422,12 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
     inset: -18% !important;
     width: 180% !important;
     height: 180% !important;
+}
+
+/* Custom cards use rectangular card art. Fill the normal portrait frame and
+   crop it at the circular edge so it reads like an intentional portrait. */
+.calc-composed-card-icon .char-circle.is-custom-thumb {
+    transform: scale(1.58) !important;
 }
 
 .calc-icon-badge-grid {

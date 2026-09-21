@@ -75,11 +75,10 @@ body.has-fluted-glass-background.fluted-glass-disabled #wave-bg-container {
 }
 
 body.fluted-glass-fallback {
-    background:
-        repeating-linear-gradient(92deg, #f7fbff 0 16px, #dfeaf6 17px 20px, #edf5fc 21px 37px) !important;
+    background: #03060c !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
     .fluted-glass-background { display: none; }
-    body.has-fluted-glass-background:not(.fluted-glass-disabled) { background: #edf5fc !important; }
+    body.has-fluted-glass-background:not(.fluted-glass-disabled) { background: #03060c !important; }
 }

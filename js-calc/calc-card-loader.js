@@ -991,7 +991,7 @@ function resetCalculatorForNewCharacterSelection() {
     if (charThumb) {
         charThumb.removeAttribute('src');
         charThumb.removeAttribute('onerror');
-        charThumb.classList.remove('is-fallback-thumb');
+        charThumb.classList.remove('is-fallback-thumb', 'is-custom-thumb');
     }
     const awakeningImage = document.getElementById('calc-awakening-img');
     if (awakeningImage) awakeningImage.style.display = 'none';
@@ -1278,7 +1278,7 @@ async function loadOfficialDokkanCardIntoCalculator(cardId, rawCard, cardItemMet
         
         const thumbImg = document.getElementById('calc-char-thumb');
         if (thumbImg) {
-            thumbImg.classList.remove('is-fallback-thumb');
+            thumbImg.classList.remove('is-fallback-thumb', 'is-custom-thumb');
             thumbImg.src = `assets/card-art/cards/${circleCardId}/card_${circleCardId}_circle.png`;
             thumbImg.setAttribute('onerror', `this.onerror=null; this.classList.add('is-fallback-thumb'); this.src='https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png'`);
         }
@@ -1917,12 +1917,23 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
         return parseInt(el.textContent.replace(/[^0-9]/g, ''), 10) || 0;
     };
 
-    let atk100 = cardData?.stats?.atkMax || cardData?.stats?.atk || getNum('#stat-atk-100') || getNum('#abs-stat-atk-val') || 19995;
-    let def100 = cardData?.stats?.defMax || cardData?.stats?.def || getNum('#stat-def-100') || getNum('#abs-stat-def-val') || 14869;
+    // Use the saved 100% potential stat (atk100) if available; otherwise read from DOM #stat-atk-100.
+    // NOTE: stats.atkMax is the base max level stat (0% hipo), NOT the 100% potential stat — do not
+    // use it as rainbow100. Fall back to computing 100% from atkMax + a typical rainbow bonus only
+    // as a last resort when the DOM column is also missing.
+    const atkBase = cardData?.stats?.atkMax || getNum('#stat-atk-max') || 0;
+    const defBase = cardData?.stats?.defMax || getNum('#stat-def-max') || 0;
+    const cardTypeKey = (cardItem?.type || 'agl').toLowerCase();
+    const RAINBOW_BONUS = { agl: 5000, teq: 5400, int: 5000, str: 5400, phy: 5000 };
+    const rainbowAtk = RAINBOW_BONUS[cardTypeKey] ?? 5000;
+    const rainbowDef = RAINBOW_BONUS[cardTypeKey] ?? 5000;
+
+    let atk100 = cardData?.stats?.atk100 || getNum('#stat-atk-100') || (atkBase ? atkBase + rainbowAtk : 0) || getNum('#abs-stat-atk-val') || 19995;
+    let def100 = cardData?.stats?.def100 || getNum('#stat-def-100') || (defBase ? defBase + rainbowDef : 0) || getNum('#abs-stat-def-val') || 14869;
     cardParsedStats.rainbow100.atk = atk100;
     cardParsedStats.rainbow100.def = def100;
-    cardParsedStats.hipo55.atk = cardData?.stats?.atk55 || getNum('#stat-atk-55') || (atk100 - 3400);
-    cardParsedStats.hipo55.def = cardData?.stats?.def55 || getNum('#stat-def-55') || (def100 - 3000);
+    cardParsedStats.hipo55.atk = cardData?.stats?.atk55 || getNum('#stat-atk-55') || (atkBase ? atkBase + 2000 : atk100 - 3400);
+    cardParsedStats.hipo55.def = cardData?.stats?.def55 || getNum('#stat-def-55') || (defBase ? defBase + 2000 : def100 - 3000);
 
     applyHipoPreset(currentHipoPreset);
 
@@ -1948,6 +1959,7 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
         if (thumbImg) {
             thumbImg.removeAttribute('onerror');
             thumbImg.classList.remove('is-fallback-thumb');
+            thumbImg.classList.add('is-custom-thumb');
             thumbImg.src = cardItem.thumbUrl;
         }
     }

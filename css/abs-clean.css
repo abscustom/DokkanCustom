@@ -3383,9 +3383,9 @@ body.theme-abs-clean #abs-clean-leader-banner-slot #abs-clean-leader-text .abs-c
 body.theme-abs-clean:not(.theme-abs-clean-dark) #layout-abs-style #abs-leader-skill .abs-category-quote,
 body.theme-abs-clean:not(.theme-abs-clean-dark) #abs-clean-leader-banner-slot #abs-leader-skill .abs-category-quote,
 body.theme-abs-clean #abs-clean-leader-text .abs-category-quote {
-    color: var(--theme-text, #38bdf8) !important;
+    color: #ffffff !important;
     font-weight: 700 !important;
-    text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.65)) !important;
+    text-shadow: 0 0 8px rgba(255, 255, 255, 0.8), 0 1px 3px rgba(0, 0, 0, 0.7) !important;
 }
 
 /* ===========================================================================
@@ -11365,7 +11365,7 @@ body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box {
     background-origin: border-box !important;
     background-clip: border-box !important;
     border: 2px solid rgba(148, 163, 184, 0.28) !important;
-    border-radius: 4px !important;
+    border-radius: 0 !important;
     outline: none !important;
     box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 8px 20px rgba(2, 8, 18, 0.18) !important;
     backdrop-filter: none !important;

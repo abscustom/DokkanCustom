@@ -77,7 +77,14 @@ void main(){vec2 uv=gl_FragCoord.xy/u_resolution,screenUv=uv,p=(gl_FragCoord.xy-
         window.setFlutedGlassEnabled = apply;
         document.body.classList.add('has-fluted-glass-background'); document.body.classList.toggle('fluted-glass-disabled', !enabled); controls();
         const gl = canvas.getContext('webgl', { alpha: false, antialias: false, powerPreference: 'low-power' });
-        if (!gl) return;
+        if (!gl) {
+            // WebGL unavailable — remove the class that hides the wave background so the page
+            // still has a proper dark background, and mark it as the CSS fallback.
+            document.body.classList.remove('has-fluted-glass-background');
+            document.body.classList.add('fluted-glass-fallback');
+            canvas.remove();
+            return;
+        }
         const compile = (type, source) => { const shader = gl.createShader(type); gl.shaderSource(shader, source); gl.compileShader(shader); return gl.getShaderParameter(shader, gl.COMPILE_STATUS) ? shader : null; };
         const vs = compile(gl.VERTEX_SHADER, vertex), fs = compile(gl.FRAGMENT_SHADER, fragment);
         if (!vs || !fs) return;

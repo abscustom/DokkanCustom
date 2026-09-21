@@ -119,10 +119,16 @@ window.getProjectDataObject = function() {
         stats: {
             hpMax: parseInt(document.getElementById('input-hp-max')?.value || document.getElementById('stat-hp-max')?.textContent?.replace(/[^\d]/g, '') || 10000, 10),
             hpMin: parseInt(document.getElementById('input-hp-min')?.value || document.getElementById('stat-hp-min')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            hp55:  parseInt(document.getElementById('stat-hp-55')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            hp100: parseInt(document.getElementById('stat-hp-100')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
             atkMax: parseInt(document.getElementById('input-atk-max')?.value || document.getElementById('stat-atk-max')?.textContent?.replace(/[^\d]/g, '') || 10000, 10),
             atkMin: parseInt(document.getElementById('input-atk-min')?.value || document.getElementById('stat-atk-min')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            atk55:  parseInt(document.getElementById('stat-atk-55')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            atk100: parseInt(document.getElementById('stat-atk-100')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
             defMax: parseInt(document.getElementById('input-def-max')?.value || document.getElementById('stat-def-max')?.textContent?.replace(/[^\d]/g, '') || 5000, 10),
-            defMin: parseInt(document.getElementById('input-def-min')?.value || document.getElementById('stat-def-min')?.textContent?.replace(/[^\d]/g, '') || 0, 10)
+            defMin: parseInt(document.getElementById('input-def-min')?.value || document.getElementById('stat-def-min')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            def55:  parseInt(document.getElementById('stat-def-55')?.textContent?.replace(/[^\d]/g, '') || 0, 10),
+            def100: parseInt(document.getElementById('stat-def-100')?.textContent?.replace(/[^\d]/g, '') || 0, 10)
         },
         thumbSsr: document.getElementById('ssr-row')?.querySelector('#img-ssr')?.getAttribute('src') || document.getElementById('img-ssr')?.getAttribute('src') || "",
         thumbTur: document.getElementById('tur-row')?.querySelector('#img-tur')?.getAttribute('src') || document.getElementById('img-tur')?.getAttribute('src') || "",

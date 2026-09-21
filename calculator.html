@@ -5,6 +5,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png">
     <title>absCustom - Calculator</title>
+    <!-- Inline dark base: prevents the browser-default white from flashing for
+         even a single frame before the external CSS or WebGL canvas paints. -->
+    <style>html { background-color: #03060c; }</style>
     
     <!-- EARLY DEFINITION TO PREVENT ONERROR CRASH -->
     <script>
@@ -75,7 +78,7 @@
     <link rel="stylesheet" href="css/ui-toast.css?v=2">
     <link rel="stylesheet" href="css/abs-style-layout.css">
     <link rel="stylesheet" href="css/editor-ui.css">
-    <link rel="stylesheet" href="css/calculator.css?v=20260914-abs-clean-filters-settings-v1">
+    <link rel="stylesheet" href="css/calculator.css?v=20260921-dark-html-base-v1">
     <link rel="stylesheet" href="css/lwf.css">
 <link rel="stylesheet" href="css/abs-clean.css?v=20260918-release-layout-v29">
     <link rel="stylesheet" href="css/calc-auras.css">
@@ -85,8 +88,8 @@
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
     <link rel="stylesheet" href="css/sba-mobile-layout.css?v=20260905-showcase-anchor-v10">
     <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v12">
-    <link rel="stylesheet" href="css/fluted-glass-bg.css?v=20260904-exact-v3">
-    <script src="js/fluted-glass-exact.js?v=20260904-exact-v5" defer></script>
+    <link rel="stylesheet" href="css/fluted-glass-bg.css?v=20260921-dark-fallback-v2">
+    <script src="js/fluted-glass-exact.js?v=20260921-dark-fallback-v2" defer></script>
 
 </head>
 <body class="theme-sba theme-abs-clean theme-abs-clean-dark calc-liquid-body">
@@ -1284,7 +1287,7 @@
     <script src="js-calc/calc-constants.js"></script>
     <script src="js-calc/calc-state.js"></script>
     <script src="js-calc/calc-passive-parser.js?v=20260830-attack-phase-sections"></script>
-    <script src="js-calc/calc-card-loader.js?v=20260913-circle-v6"></script>
+    <script src="js-calc/calc-card-loader.js?v=20260921-stat100-fix-v1"></script>
     <script src="js-calc/calc-engine.js?v=20260903-god-orbs-v1"></script>
     <script src="js-calc/calc-ui.js?v=20260903-calc-off-def-v1"></script>
 

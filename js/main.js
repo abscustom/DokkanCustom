@@ -2694,7 +2694,16 @@ async function loadCustomCards() {
                 const isSSR = rarityKey === 'ssr';
 
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : (isSSR ? '#img-ssr' : '#img-tur')) || doc.querySelector('#abs-thumb-img');
-                const rawIcon = cardData?.thumbMain || (isLR ? cardData?.thumbLr : (isSSR ? cardData?.thumbSsr : cardData?.thumbTur)) || iconEl?.getAttribute('src');
+                // Filter out default placeholder icons — if the creator didn't upload a custom icon,
+                // the stored src is SSR_Icon.png / TUR_Icon.png / LR_Icon.png. Prefer the card-art
+                // image as the showcase thumb over a generic placeholder.
+                const isPlaceholderSrc = (src) => /\/(SSR|TUR|LR)_Icon\.png/i.test(src || '');
+                const rawIconCandidates = [
+                    cardData?.thumbMain,
+                    isLR ? cardData?.thumbLr : (isSSR ? cardData?.thumbSsr : cardData?.thumbTur),
+                    iconEl?.getAttribute('src')
+                ];
+                const rawIcon = rawIconCandidates.find(s => s && !isPlaceholderSrc(s)) || rawIconCandidates.find(Boolean);
                 const charImgSrc = fixUrl(rawIcon, `${CENTRAL_ASSET_URL}SSR_Icon.png`);
 
                 // The SBA showcase is art-led. Read the published art layers
