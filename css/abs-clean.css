@@ -7258,7 +7258,7 @@ body.theme-abs-clean #layout-abs-style #abs-field-container .abs-sa-title-center
    - --abs-clean-super-content-offset shifts the header and content inside
      each Super Attack box without moving the outer box. */
 body.theme-abs-clean #layout-abs-style .abs-main-col {
-    --abs-clean-super-top-margin: 55px;
+    --abs-clean-super-top-margin: 42px;
     --abs-clean-super-content-offset: 5px;
     --abs-clean-sa-category-icon-offset-y: -2px;
 }
@@ -23061,7 +23061,7 @@ body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.has-floating
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.has-floating-footer,
 body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:has(.abs-sa-floating-footer),
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box:has(.abs-sa-floating-footer) {
-    margin-bottom: 44px !important;
+    margin-bottom: 30px !important;
 }
 
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container):not(:empty),
@@ -23071,7 +23071,7 @@ body.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row {
     overflow: visible !important;
     clip-path: none !important;
-    row-gap: 32px !important;
+    row-gap: 22px !important;
 }
 
 body.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
@@ -23970,93 +23970,6 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     clip-path: none !important;
 }
 
-/* ===========================================================================
-   ABS.CLEAN FINAL SKILL HEADER POLISH
-   Keep the Super Attack and Active Skill headers on one centered treatment,
-   remove the residual title gap, match Ki/multiplier metadata to the square
-   header-label containers, and keep the
-   floating stat footer's badges in a contained horizontal row.  This block is
-   intentionally last: older ABS.CLEAN rules use repeated theme classes for
-   specificity and otherwise reintroduce the gap and stacked badges.
-   =========================================================================== */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 4px 10px !important;
-    border: 0 !important;
-    background: transparent !important;
-    text-align: center !important;
-}
-
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-header-title {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    min-height: 0 !important;
-    height: auto !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    gap: 4px !important;
-    text-align: center !important;
-}
-
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-title-center {
-    display: flex !important;
-    flex-direction: column !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: 100% !important;
-    max-width: 100% !important;
-    min-width: 0 !important;
-    margin: 0 !important;
-    padding: 0 8px !important;
-    text-align: center !important;
-}
-
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box.abs-clean-header-effects .abs-sa-effect-inline {
-    display: block !important;
-    width: 100% !important;
-    margin: 4px 0 0 !important;
-    padding: 0 6px !important;
-    text-align: center !important;
-}
-
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
-    display: inline-flex !important;
-    align-items: center !important;
-    justify-content: center !important;
-    width: auto !important;
-    min-width: 0 !important;
-    height: auto !important;
-    min-height: 0 !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    border-radius: 0 !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    line-height: 1 !important;
-    text-transform: none !important;
-    white-space: nowrap !important;
-}
-
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-type-pill,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-animation-play-btn {
-    border-radius: 0 !important;
-}
-
 body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer {
     border-radius: 0 !important;
     overflow: hidden !important;
@@ -24155,9 +24068,9 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     }
 }
 
-/* Keep Ki and multiplier values in the same square header containers as the
-   Super Attack label, while preserving their original casing. */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+/* Super Attack Ki and multiplier are small recessed readouts, independent of
+   the card typing surface used by their parent header. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
     display: inline-flex !important;
     align-items: center !important;
     justify-content: center !important;
@@ -24168,11 +24081,11 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     min-height: 22px !important;
     margin: 0 !important;
     padding: 0 10px !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 38%, transparent) !important;
-    border-radius: 0 !important;
-    background: color-mix(in srgb, var(--theme-border, #38bdf8) 15%, transparent) !important;
-    color: var(--theme-text, #38bdf8) !important;
-    box-shadow: none !important;
+    border: 1px solid rgba(255, 255, 255, 0.14) !important;
+    border-radius: 2px !important;
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.46), rgba(15, 23, 42, 0.64)) !important;
+    color: #f8fafc !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.62), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.20) !important;
     box-sizing: border-box !important;
     font-size: 10.5px !important;
     font-weight: 900 !important;
@@ -24194,11 +24107,9 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     text-align: center !important;
 }
 
-/* Match metadata and footer stat badges to the Super Attack's darker type
-   surface, white text, and readable shadow; keep footer contents left-aligned. */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill),
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer .abs-effect-badge {
+/* The footer itself can retain the Super Attack type surface. Its target
+   badges are colored by target farther below, never by card typing. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-footer {
     background: color-mix(in srgb, var(--theme-border, #38bdf8) 16%, rgba(0, 4, 12, 0.72)) !important;
     border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 48%, rgba(255, 255, 255, 0.20)) !important;
     color: #ffffff !important;
@@ -24233,7 +24144,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
    =========================================================================== */
 body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container):not(:empty) > .abs-box,
 body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col > #abs-clean-active-domain-row > :is(#abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box {
-    margin-top: 44px !important;
+    margin-top: 34px !important;
     position: relative !important;
     overflow: visible !important;
     clip-path: none !important;
@@ -24331,38 +24242,576 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 /* ===========================================================================
-   ABS.CLEAN SQUARED SKILL FRAMES + UPPERCASE HEADERS
-   Match the sharp Leader Skill outline/tag treatment across the floating
-   skill panels while keeping the existing floating header geometry intact.
+   ABS.CLEAN FIELD / STANDBY SQUARED FRAMES
+   Super Attack and Active Skill intentionally keep their original headers;
+   only Field and Standby retain this independent squared treatment.
    =========================================================================== */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > .abs-header,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > .abs-header,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
     border-radius: 0 !important;
 }
 
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-sa-type-pill,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-header-actions,
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-play-btn {
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-sa-type-pill,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-header-actions,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-play-btn {
     text-transform: uppercase !important;
 }
 
 /* The editor's floating-header rule has one additional body class, so mirror
-   that specificity for the final square/uppercase contract. */
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box,
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > .abs-header,
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+   that specificity for the Field/Standby-only squared contract. */
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > .abs-header,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
     border-radius: 0 !important;
 }
 
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-sa-type-pill,
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-header-actions,
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-play-btn {
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-sa-type-pill,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-header-actions,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) .abs-animation-play-btn {
     text-transform: uppercase !important;
 }
 
-/* Give the Active Skill name the same small top breathing room as the
-   Super Attack title without moving its floating header. */
-body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header .abs-sa-name-group {
-    margin-top: 4px !important;
+/* Dynamic custom-card pages are published without .card-viewer-page.  Keep
+   their Super Attack grid theme-scoped so legacy column rules cannot pin all
+   cards to the left side of the main panel. */
+@media (min-width: 681px) {
+    body.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) {
+        display: grid !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        grid-auto-flow: row !important;
+        align-items: stretch !important;
+        justify-content: stretch !important;
+        gap: 14px !important;
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+
+    body.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box {
+        display: flex !important;
+        flex-direction: column !important;
+        grid-column: auto !important;
+        grid-row: auto !important;
+        align-self: stretch !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+
+    body.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > :is(.abs-clean-ex-super-attack, .abs-clean-single-standard-super-attack, :only-child) {
+        grid-column: 1 / -1 !important;
+    }
+}
+
+@media (max-width: 680px) {
+    body.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) !important;
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        gap: 12px !important;
+    }
+
+    body.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        margin: 0 !important;
+    }
+}
+
+/* Target semantics, rather than the card's type, define all stat badges.
+   The inset layers supply a carved/debossed surface and no badge is allowed
+   to translate on hover, preventing it from clipping outside its parent. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group, #abs-field-container .abs-clean-field-stat-badge, #abs-field-container .abs-clean-field-damage-badge) {
+    transform: none !important;
+    transition: none !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.62), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.22) !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group, #abs-field-container .abs-clean-field-stat-badge, #abs-field-container .abs-clean-field-damage-badge):hover {
+    transform: none !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.self, #abs-field-container .abs-clean-field-stat-badge.self, #abs-field-container .abs-clean-field-damage-badge.self) {
+    border-color: #34d399 !important;
+    background: linear-gradient(145deg, rgba(6, 78, 59, 0.88), rgba(2, 44, 34, 0.94)) !important;
+    color: #bbf7d0 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.allies, #abs-field-container .abs-clean-field-stat-badge.allies, #abs-field-container .abs-clean-field-damage-badge.allies) {
+    border-color: #60a5fa !important;
+    background: linear-gradient(145deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.94)) !important;
+    color: #bfdbfe !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.enemy, #abs-field-container .abs-clean-field-stat-badge.enemy, #abs-field-container .abs-clean-field-damage-badge.enemy) {
+    border-color: #f87171 !important;
+    background: linear-gradient(145deg, rgba(127, 29, 29, 0.9), rgba(69, 10, 10, 0.96)) !important;
+    color: #fecaca !important;
+}
+
+/* Ki and multiplier are neutral metadata, with the same recessed depth as the
+   target badges instead of inheriting the current card type accent. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+    border-color: rgba(226, 232, 240, 0.34) !important;
+    background: linear-gradient(145deg, rgba(2, 6, 23, 0.94), rgba(15, 23, 42, 0.78)) !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.72), inset 0 -1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(0, 0, 0, 0.30) !important;
+    color: #f8fafc !important;
+}
+
+/* The visible stat badge must use its target palette too.  Styling only the
+   outer group left .abs-effect-badge free to inherit the card typing color. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group :is(.abs-effect-badge, .abs-group-badges-row),
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group {
+    transform: none !important;
+    transition: none !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.62), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.22) !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group :is(.abs-effect-badge, .abs-group-badges-row):hover,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group:hover {
+    transform: none !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.self,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.self :is(.abs-effect-badge, .abs-group-badges-row) {
+    border-color: #34d399 !important;
+    background: linear-gradient(145deg, rgba(6, 78, 59, 0.88), rgba(2, 44, 34, 0.94)) !important;
+    color: #bbf7d0 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.allies,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.allies :is(.abs-effect-badge, .abs-group-badges-row) {
+    border-color: #60a5fa !important;
+    background: linear-gradient(145deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.94)) !important;
+    color: #bfdbfe !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.enemy,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.enemy :is(.abs-effect-badge, .abs-group-badges-row) {
+    border-color: #f87171 !important;
+    background: linear-gradient(145deg, rgba(127, 29, 29, 0.90), rgba(69, 10, 10, 0.96)) !important;
+    color: #fecaca !important;
+}
+
+/* Keep the Leader outline and its compact title badge square; this is the
+   only skill section retaining the squared-edge treatment. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-leader-skill-box, .abs-box:has(#abs-leader-skill)),
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-leader-skill-box, .abs-box:has(#abs-leader-skill))::before,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box::before,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean :is(#abs-leader-skill-box .abs-header, #abs-leader-title, .abs-clean-leader-label) {
+    border-radius: 0 !important;
+}
+
+/* The editor has a more specific header rule; repeat the neutral Ki surface
+   after it so the local editor matches the published card. */
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+    border-color: rgba(226, 232, 240, 0.34) !important;
+    border-radius: 2px !important;
+    background: linear-gradient(145deg, rgba(2, 6, 23, 0.94), rgba(15, 23, 42, 0.78)) !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.72), inset 0 -1px 0 rgba(255, 255, 255, 0.14), inset 0 0 0 1px rgba(0, 0, 0, 0.30) !important;
+    color: #f8fafc !important;
+}
+
+/* ===========================================================================
+   ABS.CLEAN CENTER SKILLS: BORDER-ANCHORED HEADER BARS + SHARP SURFACES
+   Mirror the full-width stat-badge bar beneath Super Attack above the card:
+   it overlaps the top border while retaining its own visible framed surface.
+   =========================================================================== */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box {
+    position: relative !important;
+    overflow: visible !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+    top: -36px !important;
+    right: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 0 8px !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 28%, rgba(4, 12, 22, 0.72)) !important;
+    background-image: none !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 45%, rgba(255, 255, 255, 0.28)) !important;
+    border-radius: 0 !important;
+    box-shadow: 0 4px 12px rgba(2, 8, 18, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+    backdrop-filter: blur(12px) saturate(160%) !important;
+    -webkit-backdrop-filter: blur(12px) saturate(160%) !important;
+    z-index: 31 !important;
+}
+
+/* Match the footer's 6px breathing room: the header floats above the top
+   border instead of touching it in the editor. */
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+    top: -36px !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions {
+    min-height: 26px !important;
+    padding: 0 9px !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 50%, rgba(255, 255, 255, 0.24)) !important;
+    border-radius: 0 !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 18%, rgba(3, 8, 18, 0.92)) !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.58), inset 0 -1px 0 rgba(255, 255, 255, 0.13) !important;
+}
+
+/* The bar is entirely above the card, matching the stat footer below, so the
+   content retains its original top spacing. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > .abs-header {
+    padding-top: 4px !important;
+    border-radius: 0 !important;
+}
+
+/* Every container and pill in the central skill column uses crisp corners.
+   Images are intentionally excluded so category artwork preserves its source
+   shape while all surfaces/borders are square. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-leader-skill-box, #abs-passive-skill-box, #abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container, .abs-box:has(#abs-leader-skill), .abs-box:has(#abs-passive-container)) :is(.abs-box, .abs-header, .abs-content, #abs-leader-title, #abs-passive-name, .abs-sa-header-title, .abs-sa-title-center, .abs-sa-name-group, .abs-sa-effect-inline, .abs-sa-floating-header, .abs-active-floating-header, .abs-sa-floating-footer, .abs-sa-pill-actions, .abs-sa-header-meta, .abs-sa-type-pill, .abs-sa-unit-pill, .abs-sa-ki-pill, .abs-sa-damage-pill, .abs-animation-header-actions, .abs-animation-play-btn, .abs-effect-group, .abs-group-badges-row, .abs-effect-badge, .abs-clean-field-stat-badge, .abs-clean-field-damage-badge, .abs-passive-external-header, .abs-passive-external-label, .abs-passive-header-actions, .abs-passive-name-inside, .abs-passive-summary-item, .abs-passive-ability-badge, [class*="pill"], [class*="badge"]),
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-leader-skill-box, #abs-passive-skill-box, .abs-box:has(#abs-leader-skill), .abs-box:has(#abs-passive-container)),
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #abs-clean-leader-banner-slot #abs-leader-skill-box :is(.abs-header, #abs-leader-title, .abs-clean-leader-label) {
+    border-radius: 0 !important;
+}
+
+/* Header hierarchy: one outer type-tinted bar, then one dark punched-in
+   label surface. The type span itself is text-only, avoiding a third box. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions {
+    background: linear-gradient(180deg, rgba(0, 0, 0, 0.58), rgba(15, 23, 42, 0.76)) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+    box-shadow: inset 0 2px 3px rgba(0, 0, 0, 0.68), inset 0 -1px 0 rgba(255, 255, 255, 0.12), inset 0 0 0 1px rgba(0, 0, 0, 0.24) !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions > .abs-sa-type-pill,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions > .abs-sa-type-pill {
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+    font-weight: 900 !important;
+    letter-spacing: 0.08em !important;
+    text-transform: uppercase !important;
+}
+
+/* Keep the upper header and lower stat-badge rail on the same geometry.
+   The shared dark typing surface also makes Ki and multiplier read as part of
+   the same Super Attack control family without the brighter yellow/blue fill. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > :is(.abs-sa-floating-header, .abs-sa-floating-footer),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box > .abs-sa-floating-header,
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-active-floating-header,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-active-floating-header {
+    width: 100% !important;
+    min-height: 30px !important;
+    height: 30px !important;
+    padding: 0 8px !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 16%, rgba(0, 4, 12, 0.82)) !important;
+    border-color: color-mix(in srgb, var(--theme-border, #38bdf8) 42%, rgba(255, 255, 255, 0.18)) !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-sa-header-meta > :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(0, 4, 12, 0.78)) !important;
+    border-color: color-mix(in srgb, var(--theme-border, #38bdf8) 42%, rgba(255, 255, 255, 0.18)) !important;
+}
+
+/* A visible dark type tint—not black—for both header layers. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 34%, rgba(0, 4, 12, 0.70)) !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions {
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 22%, rgba(0, 4, 12, 0.86)) !important;
+}
+
+/* The editor does not need the viewer's extra page-shell breathing room. */
+body.editor-tool-page.theme-abs-clean #top-content {
+    padding-top: 20px !important;
+}
+
+/* Super Attack is a named full-width row in the clean skill grid.  Older
+   bento experiments also set grid-column: 2; that longhand displaced the
+   whole container into the narrow left/right rail after a dynamic card
+   re-render.  Reassert the named area at the end of the cascade, including
+   published cards which do not have the editor page class. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col > #abs-sa-container:not(:empty) {
+    grid-area: sa !important;
+    justify-self: stretch !important;
+    align-self: stretch !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+}
+
+/* ABS.Clean: the actual visible Super Attack / Active Skill label is this
+   small type pill, not the raw saved-card .sa-type-label.  Restore the same
+   simple outlined surface used by its Ki and multiplier neighbours. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions > .abs-sa-type-pill,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions > .abs-sa-type-pill {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 4px 10px !important;
+    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 42%, rgba(255, 255, 255, 0.18)) !important;
+    border-radius: 2px !important;
+    background: color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(0, 4, 12, 0.78)) !important;
+    box-shadow: none !important;
+    color: #ffffff !important;
+}
+
+/* Do not wrap the label in a second recessed bar.  The type pill above is
+   now the single visible header box; this parent only positions it. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) > .abs-sa-pill-actions {
+    min-height: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+    background: transparent !important;
+    box-shadow: none !important;
+}
+
+/* Field and Standby use the same floating full-header clearance as Super
+   Attack and Active Skill.  Their previous -30px offset landed flush with
+   the card and visibly overlapped its content; -36px leaves the same 6px air
+   gap used by the other two skill panels. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header),
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-field-container, #abs-standby-container) > .abs-box > :is(.abs-sa-floating-header, .abs-active-floating-header) {
+    top: -36px !important;
+}
+
+/* Keep duration copy as crisp as the stat values beside it. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) .abs-badge-turns,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) .abs-badge-turns {
+    color: #ffffff !important;
+    opacity: 1 !important;
+    font-weight: 800 !important;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.85) !important;
+}
+
+/* Tighten the central skill stack slightly without reducing the floating
+   headers' clearance from their respective panels. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col {
+    row-gap: 10px !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-passive-skill-box {
+    margin-top: 36px !important;
+}
+
+/* Shift the editor's content upward while preserving a small breathing room
+   beneath the fixed site chrome. */
+body.editor-tool-page.theme-abs-clean #top-content {
+    padding-top: 12px !important;
+}
+
+/* The viewer can receive stats from several render paths.  Apply target
+   colours directly to every visible badge layer so the current card type can
+   never recolour Self, Allies, or Enemy. */
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.self,
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.self :is(.abs-group-badges-row, .abs-effect-badge),
+body.theme-abs-clean #layout-abs-style #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).self,
+body.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) [data-target="self"] {
+    border-color: #34d399 !important;
+    background: linear-gradient(145deg, rgba(6, 78, 59, 0.88), rgba(2, 44, 34, 0.94)) !important;
+    color: #bbf7d0 !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.allies,
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.allies :is(.abs-group-badges-row, .abs-effect-badge),
+body.theme-abs-clean #layout-abs-style #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).allies,
+body.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) :is([data-target="allies"], [data-target="all"]) {
+    border-color: #60a5fa !important;
+    background: linear-gradient(145deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.94)) !important;
+    color: #bfdbfe !important;
+}
+
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.enemy,
+body.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.enemy :is(.abs-group-badges-row, .abs-effect-badge),
+body.theme-abs-clean #layout-abs-style #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).enemy,
+body.theme-abs-clean #layout-abs-style :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) [data-target="enemy"] {
+    border-color: #f87171 !important;
+    background: linear-gradient(145deg, rgba(127, 29, 29, 0.90), rgba(69, 10, 10, 0.96)) !important;
+    color: #fecaca !important;
+}
+
+/* Leave a small deliberate gap between the floating Active Skill label and
+   the skill name inside the card, without moving the outer floating header. */
+body.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header > .abs-sa-header-title,
+body.editor-tool-page.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header > .abs-sa-header-title {
+    margin-top: 6px !important;
+}
+
+/* Viewer-proof target badges.  Earlier ABS.Clean layers repeat the theme
+   class many times, so this final rule deliberately matches that specificity
+   and colours the element the viewer actually paints: .abs-effect-badge. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.self .abs-effect-badge, #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).self, :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) [data-target="self"]) {
+    border-color: #34d399 !important;
+    background: linear-gradient(145deg, rgba(6, 78, 59, 0.88), rgba(2, 44, 34, 0.94)) !important;
+    color: #bbf7d0 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.allies .abs-effect-badge, #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).allies, :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) :is([data-target="allies"], [data-target="all"])) {
+    border-color: #60a5fa !important;
+    background: linear-gradient(145deg, rgba(30, 64, 175, 0.88), rgba(23, 37, 84, 0.94)) !important;
+    color: #bfdbfe !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style :is(#abs-sa-container .abs-effect-group.enemy .abs-effect-badge, #abs-field-container :is(.abs-clean-field-stat-badge, .abs-clean-field-damage-badge).enemy, :is(#abs-sa-container, #abs-active-container, #abs-field-container, #abs-standby-container) [data-target="enemy"]) {
+    border-color: #f87171 !important;
+    background: linear-gradient(145deg, rgba(127, 29, 29, 0.90), rgba(69, 10, 10, 0.96)) !important;
+    color: #fecaca !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.self .abs-effect-badge :is(.abs-badge-val, .abs-badge-sep, .abs-badge-turns) { color: #dcfce7 !important; }
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.allies .abs-effect-badge :is(.abs-badge-val, .abs-badge-sep, .abs-badge-turns) { color: #dbeafe !important; }
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group.enemy .abs-effect-badge :is(.abs-badge-val, .abs-badge-sep, .abs-badge-turns) { color: #fee2e2 !important; }
+
+/* The viewer's existing zero-margin rule is equally specific.  Keep the
+   floating label fixed, but place only the inner Active Skill title 6px down. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header > .abs-sa-header-title,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box > .abs-header > .abs-sa-header-title {
+    margin-top: 6px !important;
+}
+
+/* Link-partner stat tiles retain their individual semantic colours as a
+   translucent glass fill, not merely as a coloured outline. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-red {
+    border-color: rgba(248, 113, 113, 0.68) !important;
+    background: linear-gradient(145deg, rgba(127, 29, 29, 0.48), rgba(69, 10, 10, 0.26)) !important;
+    color: #fee2e2 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-blue {
+    border-color: rgba(125, 211, 252, 0.68) !important;
+    background: linear-gradient(145deg, rgba(30, 64, 175, 0.48), rgba(23, 37, 84, 0.26)) !important;
+    color: #dbeafe !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-yellow {
+    border-color: rgba(253, 224, 71, 0.68) !important;
+    background: linear-gradient(145deg, rgba(161, 98, 7, 0.46), rgba(113, 63, 18, 0.25)) !important;
+    color: #fef9c3 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-green {
+    border-color: rgba(134, 239, 172, 0.68) !important;
+    background: linear-gradient(145deg, rgba(6, 78, 59, 0.48), rgba(2, 44, 34, 0.26)) !important;
+    color: #dcfce7 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-orange {
+    border-color: rgba(253, 186, 116, 0.68) !important;
+    background: linear-gradient(145deg, rgba(154, 52, 18, 0.48), rgba(67, 20, 7, 0.26)) !important;
+    color: #ffedd5 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill {
+    backdrop-filter: blur(8px) saturate(130%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(130%) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18), inset 0 -1px 0 rgba(0, 0, 0, 0.22), 0 2px 8px rgba(0, 0, 0, 0.20) !important;
+}
+
+/* The shared-link number follows the viewed card's typing instead of using a
+   fixed yellow ring. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-icon-relative .abs-clean-partner-link-total {
+    border-color: var(--theme-border, #38bdf8) !important;
+    box-shadow: 0 0 10px color-mix(in srgb, var(--theme-border, #38bdf8) 62%, transparent) !important;
+}
+
+/* Hovering a partner stat reveals its exact value in the shared tooltip and
+   enlarges the tile without changing row geometry. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill {
+    position: relative !important;
+    z-index: 1 !important;
+    cursor: help !important;
+    transition: transform 150ms ease, box-shadow 150ms ease !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-clean-link-partners-row .partner-stat-pill:hover {
+    transform: translateY(-2px) scale(1.08) !important;
+    z-index: 16 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.26), inset 0 -1px 0 rgba(0, 0, 0, 0.22), 0 7px 16px rgba(0, 0, 0, 0.36) !important;
+}
+
+/* Super Attack stat badges receive the same inspectable interaction. Their
+   tooltip text is supplied per badge (for example: "Enemy: +30% • 2 turns")
+   and their target palette remains authoritative while enlarged. */
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-group {
+    position: relative !important;
+    z-index: 1 !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-badge[data-tooltip] {
+    cursor: help !important;
+    transition: transform 150ms ease, box-shadow 150ms ease !important;
+}
+
+body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style #abs-sa-container .abs-effect-badge[data-tooltip]:hover {
+    /* Keep the first badge flush with the footer edge: its tooltip is the
+       feedback, so the badge itself must not lift or grow into the clip area. */
+    transform: none !important;
+    z-index: 1 !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+}
+
+/* Tooltip colors come from the hovered stat, never the card typing.  :has()
+   lets the body-mounted tooltip inherit that local semantic palette. */
+body.theme-abs-clean:has(#layout-abs-style #abs-sa-container .abs-effect-group.self .abs-effect-badge:hover) #abs-global-floating-tooltip,
+body.theme-abs-clean:has(#layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-green:hover) #abs-global-floating-tooltip {
+    background: linear-gradient(135deg, rgba(6, 78, 59, 0.96), rgba(2, 44, 34, 0.95)) !important;
+    border-color: rgba(134, 239, 172, 0.70) !important;
+    border-left-color: #4ade80 !important;
+    color: #dcfce7 !important;
+    box-shadow: 0 10px 28px rgba(2, 44, 34, 0.50), inset 0 1px 0 rgba(220, 252, 231, 0.14) !important;
+}
+
+body.theme-abs-clean:has(#layout-abs-style #abs-sa-container .abs-effect-group.allies .abs-effect-badge:hover) #abs-global-floating-tooltip,
+body.theme-abs-clean:has(#layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-blue:hover) #abs-global-floating-tooltip {
+    background: linear-gradient(135deg, rgba(30, 64, 175, 0.96), rgba(23, 37, 84, 0.95)) !important;
+    border-color: rgba(125, 211, 252, 0.70) !important;
+    border-left-color: #60a5fa !important;
+    color: #dbeafe !important;
+    box-shadow: 0 10px 28px rgba(23, 37, 84, 0.52), inset 0 1px 0 rgba(219, 234, 254, 0.14) !important;
+}
+
+body.theme-abs-clean:has(#layout-abs-style #abs-sa-container .abs-effect-group.enemy .abs-effect-badge:hover) #abs-global-floating-tooltip,
+body.theme-abs-clean:has(#layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-red:hover) #abs-global-floating-tooltip {
+    background: linear-gradient(135deg, rgba(127, 29, 29, 0.96), rgba(69, 10, 10, 0.95)) !important;
+    border-color: rgba(248, 113, 113, 0.70) !important;
+    border-left-color: #f87171 !important;
+    color: #fee2e2 !important;
+    box-shadow: 0 10px 28px rgba(69, 10, 10, 0.52), inset 0 1px 0 rgba(254, 226, 226, 0.14) !important;
+}
+
+body.theme-abs-clean:has(#layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-yellow:hover) #abs-global-floating-tooltip {
+    background: linear-gradient(135deg, rgba(161, 98, 7, 0.96), rgba(113, 63, 18, 0.95)) !important;
+    border-color: rgba(253, 224, 71, 0.70) !important;
+    border-left-color: #fde047 !important;
+    color: #fef9c3 !important;
+    box-shadow: 0 10px 28px rgba(113, 63, 18, 0.52), inset 0 1px 0 rgba(254, 249, 195, 0.14) !important;
+}
+
+body.theme-abs-clean:has(#layout-abs-style #abs-clean-link-partners-row .partner-stat-pill.pill-orange:hover) #abs-global-floating-tooltip {
+    background: linear-gradient(135deg, rgba(154, 52, 18, 0.96), rgba(67, 20, 7, 0.95)) !important;
+    border-color: rgba(253, 186, 116, 0.70) !important;
+    border-left-color: #fb923c !important;
+    color: #ffedd5 !important;
+    box-shadow: 0 10px 28px rgba(67, 20, 7, 0.52), inset 0 1px 0 rgba(255, 237, 213, 0.14) !important;
 }

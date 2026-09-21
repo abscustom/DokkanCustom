@@ -265,21 +265,21 @@ function filterLinkingPartners() {
         const partnerPortraitFallback = partnerThumb && partnerThumb !== partnerPortraitSrc ? partnerThumb : '';
 
         if (buffs.atk > 0) {
-            pillsHtml.push(`<span class="partner-stat-pill pill-red"><img src="${CENTRAL_ASSET_URL}st_0001.png"> +${buffs.atk}%</span>`);
+            pillsHtml.push(`<span class="partner-stat-pill pill-red" data-tooltip="ATK +${escapeHtml(buffs.atk)}%"><img src="${CENTRAL_ASSET_URL}st_0001.png"> +${buffs.atk}%</span>`);
         }
         if (buffs.def > 0) {
-            pillsHtml.push(`<span class="partner-stat-pill pill-blue"><img src="${CENTRAL_ASSET_URL}st_0002.png"> +${buffs.def}%</span>`);
+            pillsHtml.push(`<span class="partner-stat-pill pill-blue" data-tooltip="DEF +${escapeHtml(buffs.def)}%"><img src="${CENTRAL_ASSET_URL}st_0002.png"> +${buffs.def}%</span>`);
         }
 
         let subRowPills = [];
         if (buffs.ki > 0) {
-            subRowPills.push(`<span class="partner-stat-pill pill-yellow"><img src="${CENTRAL_ASSET_URL}st_0003.png"> +${buffs.ki}</span>`);
+            subRowPills.push(`<span class="partner-stat-pill pill-yellow" data-tooltip="Ki +${escapeHtml(buffs.ki)}"><img src="${CENTRAL_ASSET_URL}st_0003.png"> +${buffs.ki}</span>`);
         }
         if (buffs.hp > 0) {
-            subRowPills.push(`<span class="partner-stat-pill pill-green"><img src="${CENTRAL_ASSET_URL}st_recover.png"> +${buffs.hp}%</span>`);
+            subRowPills.push(`<span class="partner-stat-pill pill-green" data-tooltip="HP +${escapeHtml(buffs.hp)}%"><img src="${CENTRAL_ASSET_URL}st_recover.png"> +${buffs.hp}%</span>`);
         }
         if (buffs.enemyDef < 0) {
-            subRowPills.push(`<span class="partner-stat-pill pill-orange"><img src="${CENTRAL_ASSET_URL}st_0012.png"> ${buffs.enemyDef}%</span>`);
+            subRowPills.push(`<span class="partner-stat-pill pill-orange" data-tooltip="Enemy DEF ${escapeHtml(buffs.enemyDef)}%"><img src="${CENTRAL_ASSET_URL}st_0012.png"> ${buffs.enemyDef}%</span>`);
         }
 
         const partnerCountMarkup = isAbsClean

@@ -2624,8 +2624,40 @@ async function loadOfficialDatabaseCards() {
 async function loadCustomCards() {
     const cachedCustom = localStorage.getItem('hub_cached_custom_only');
     let customCardsArray = [];
+
+    // A previous hub build prefixed inline data URLs with the card folder URL
+    // (for example, `.../Custom%20Cards/kid-buu/data:image/...`).  That is a
+    // network URL, not an image, so it survives in localStorage and keeps
+    // falling through to the generic SSR thumbnail while GitHub is unavailable.
+    // Strip only that invalid prefix; real absolute URLs and unmodified data
+    // URLs remain exactly as authored in the card JSON.
+    const normalizeCustomMediaUrl = (value) => {
+        if (typeof value !== 'string') return value;
+        const source = value.trim();
+        const dataUrlOffset = source.search(/data:image\//i);
+        return dataUrlOffset > 0 ? source.slice(dataUrlOffset) : source;
+    };
+
+    const normalizeCachedCustomCard = (card) => {
+        if (!card || card.source !== 'custom') return card;
+        return {
+            ...card,
+            thumbUrl: normalizeCustomMediaUrl(card.thumbUrl),
+            cardArtImageUrl: normalizeCustomMediaUrl(card.cardArtImageUrl),
+            cardArtVideoUrl: normalizeCustomMediaUrl(card.cardArtVideoUrl)
+        };
+    };
+
     if (cachedCustom) {
-        try { customCardsArray = JSON.parse(cachedCustom); } catch(e) {}
+        try {
+            const parsedCache = JSON.parse(cachedCustom);
+            customCardsArray = Array.isArray(parsedCache)
+                ? parsedCache.map(normalizeCachedCustomCard)
+                : [];
+            // Persist the self-healed cache so a temporary API failure cannot
+            // bring the malformed URLs back on the next page load.
+            localStorage.setItem('hub_cached_custom_only', JSON.stringify(customCardsArray));
+        } catch(e) {}
     }
 
     try {
@@ -2683,8 +2715,12 @@ async function loadCustomCards() {
 
                 const fixUrl = (src, fallback) => {
                     if (!src) return fallback;
-                    if (src.startsWith('http')) return src;
-                    return `${cardUrl}${src.replace(/^\.\//, '')}`;
+                    // Legacy card.json files may hold a data URL. Prefixing
+                    // it with cardUrl creates a broken `.../data:image/...`
+                    // request and forces Home/Cards back to SSR_Icon.png.
+                    const normalizedSrc = normalizeCustomMediaUrl(src);
+                    if (/^(?:https?:)?\/\/|^data:|^blob:/i.test(normalizedSrc)) return normalizedSrc;
+                    return `${cardUrl}${normalizedSrc.replace(/^\.\//, '')}`;
                 };
 
                 const rarityAttr = doc.querySelector('#main-rarity-icon')?.getAttribute('src') || '';

@@ -62,11 +62,13 @@
         `${repoRoot}css/style.css`,
         `${repoRoot}css/ui-toast.css`,
         `${repoRoot}css/dokkan-info.css`,
-        `${repoRoot}css/abs-style-layout.css`,
+        // Version this shared layout sheet: published custom-card pages load it
+        // through this bootstrapper and otherwise may retain a stale cached copy.
+        `${repoRoot}css/abs-style-layout.css?v=20260921-sa-type-pill-v2`,
         `${repoRoot}css/editor-ui.css`,
         `${repoRoot}css/card-inspector.css`,
         `${repoRoot}css/lwf.css`,
-        `${repoRoot}css/abs-clean.css`,
+        `${repoRoot}css/abs-clean.css?v=20260921-clean-sa-type-outline-v2`,
         `${repoRoot}css/loading-screen.css`,
         `${repoRoot}css/card-admin.css`,
         `${repoRoot}css/sba-side-dock.css`,

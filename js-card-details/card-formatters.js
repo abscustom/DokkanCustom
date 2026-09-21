@@ -366,13 +366,20 @@ function renderAbsSpecialEffects(stats) {
         if (statList.length === 0) return '';
         const isNegative = typeClass === 'enemy';
         const tooltipTitle = isNegative ? 'Target: Enemy (-)' : (typeClass === 'allies' ? 'Target: Allies (+)' : 'Target: Self (+)');
+        const targetLabel = isNegative ? 'Enemy' : (typeClass === 'allies' ? 'Allies' : 'Self');
+        const escapeTooltip = value => String(value ?? '')
+            .replace(/&/g, '&amp;')
+            .replace(/"/g, '&quot;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;');
 
         const badgesHtml = statList.map(stat => {
             const cleanVal = stat.value ? String(stat.value).replace(/%/g, '').trim() : '';
             const turns = stat.turns || '1 turn';
+            const badgeTooltip = `${targetLabel}: ${cleanVal ? `+${cleanVal}%` : 'Effect'}${turns ? ` • ${turns}` : ''}`;
             if (isAbsCleanTheme) {
                 return `
-                    <div class="abs-effect-badge">
+                    <div class="abs-effect-badge" data-tooltip="${escapeTooltip(badgeTooltip)}">
                         <img src="${stat.icon}" alt="stat">
                         ${cleanVal ? `<span class="abs-badge-val">${cleanVal}%</span>` : ''}
                         ${cleanVal && turns ? `<span class="abs-badge-sep">|</span>` : ''}

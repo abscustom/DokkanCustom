@@ -1237,6 +1237,49 @@ body:not(.theme-abs-clean) .abs-link-effect {
     background: linear-gradient(180deg, var(--theme-header, #1e40af) 0%, var(--theme-main, #1d4ed8) 100%) !important;
 }
 
+/* Keep the saved Super Attack title as one small, flat label.  The coloured
+   row remains its own existing element; this intentionally does not turn the
+   full row into another header box. */
+#sa-insert-spot .sa-type-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 3px 8px !important;
+    /* Same high-contrast type-colour outline as the Ki mini container. */
+    border: 1px solid var(--theme-text, #38bdf8) !important;
+    border-radius: 0 !important;
+    background: #0e131d !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+}
+
+/* Match the small Active Skill label to the same plain outlined treatment. */
+#active-skill-insert-spot .active-type-label {
+    display: inline-flex !important;
+    align-items: center !important;
+    width: fit-content !important;
+    max-width: 100% !important;
+    min-width: 0 !important;
+    padding: 3px 8px !important;
+    border: 1px solid var(--theme-text, #38bdf8) !important;
+    border-radius: 0 !important;
+    background: #0e131d !important;
+    box-shadow: none !important;
+    box-sizing: border-box !important;
+    color: #ffffff !important;
+    font-size: 11.5px !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+}
+
 #abs-art-header-text {
     width: 100% !important;
     text-align: center !important;
