@@ -1122,10 +1122,23 @@ window.guiSetActiveTypeIcon = function(element, iconSrc) {
         }
         activeDisplayIcon.src = (iconSrc === 'none') ? 'none' : iconSrc;
         activeDisplayIcon.dataset.activeKindIconAuto = 'false';
+        const resolvedKind = window.syncActiveSkillKindFromAsset?.(act, iconSrc);
+        if (resolvedKind === 'domain') {
+            const typeInput = document.getElementById('gui-active-type');
+            if (typeInput) typeInput.value = 'Dokkan Field';
+            const sidebarTypeInput = document.getElementById('input-active-type');
+            if (sidebarTypeInput) sidebarTypeInput.value = 'Dokkan Field';
+            document.querySelectorAll('#context-gui [data-active-kind-option]').forEach(button => {
+                const isSelected = button.dataset.activeKindOption === 'domain';
+                button.classList.toggle('active-glow-btn', isSelected);
+                button.setAttribute('aria-pressed', String(isSelected));
+            });
+        }
         currentActiveSkill = act;
     }
     window.updateAbsStyleActiveSkills?.();
     if (window.syncToAbsLayout) window.syncToAbsLayout();
+    window.autoSaveToCache?.();
 };
 window.guiSetActiveKind = function(kind) {
     const act = window.resolveActiveSkillBlock?.(currentActiveSkill) || currentActiveSkill || document.querySelector('.active-block');

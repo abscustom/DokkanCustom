@@ -23,6 +23,11 @@ const normalizeActiveSkillKind = value => {
         : ACTIVE_SKILL_KIND.ACTIVE;
 };
 
+// The field label is an asset-level signal, not just presentation.  Keep this
+// deliberately narrow so a regular Active Skill image cannot change the kind.
+const isDomainActiveSkillAsset = value => /(?:ing_label_field|dokkan[\s_-]*field|(?:^|[\\/_-])domain(?:[\\/_.-]|$))/i.test(String(value || ''));
+window.isDomainActiveSkillAsset = isDomainActiveSkillAsset;
+
 const inferActiveSkillKind = block => {
     const typeLabel = block?.querySelector?.('.active-type-label')?.textContent || '';
     return normalizeActiveSkillKind(typeLabel) || ACTIVE_SKILL_KIND.ACTIVE;
@@ -77,6 +82,17 @@ window.setActiveSkillKind = function(block, kind, options = {}) {
     }
 
     return normalizedKind;
+};
+
+// Selecting the Dokkan Field art must update the underlying kind as well as
+// the visible icon; otherwise a later sync/export serializes it as Active.
+window.syncActiveSkillKindFromAsset = function(block, assetUrl) {
+    if (!isDomainActiveSkillAsset(assetUrl)) return window.getActiveSkillKind?.(block) || ACTIVE_SKILL_KIND.ACTIVE;
+    return window.setActiveSkillKind(block, ACTIVE_SKILL_KIND.DOMAIN, {
+        updateLabel: true,
+        updateIcon: false,
+        ensureIcon: false
+    });
 };
 
 window.ensureActiveSkillKind = function(block) {

@@ -1162,12 +1162,19 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
         const hash = await hashBlob(blob);
         const existingPath = hash && uploadedPathByHash.get(hash);
         if (existingPath) return existingPath;
-        if (!fileMap.has(fullPath)) {
-            filesToUpload.push({ path: fullPath, blob });
-            fileMap.set(fullPath, true);
+        // Timestamped paths made an unchanged blob look new on every Quick
+        // Save.  A content-addressed path is stable across save attempts and
+        // collapses duplicate form thumbnails and image nodes to one upload.
+        const extension = fullPath.match(/\.[a-z0-9]+$/i)?.[0]?.toLowerCase() || '';
+        const canonicalPath = hash
+            ? `${basePath}/images/asset-${hash}${extension}`
+            : fullPath;
+        if (!fileMap.has(canonicalPath)) {
+            filesToUpload.push({ path: canonicalPath, blob });
+            fileMap.set(canonicalPath, true);
         }
-        if (hash) uploadedPathByHash.set(hash, fullPath);
-        return fullPath;
+        if (hash) uploadedPathByHash.set(hash, canonicalPath);
+        return canonicalPath;
     };
     for (let idx = 0; idx < cloneImgs.length; idx++) {
         const img = cloneImgs[idx];
@@ -1203,6 +1210,7 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
 
                 const uploadedPath = await queueBlob(blob, fullPath);
                 const publishedUrl = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(uploadedPath)}`;
+                img.dataset.publishedSourceSrc = src;
                 img.setAttribute('src', publishedUrl);
                 if (isOfficialCardArt) bundledOfficialArt.set(src, publishedUrl);
             } else if (exportName) {
@@ -1224,10 +1232,34 @@ async function processCloneImagesForUpload(clone, basePath, filesToUpload, fileM
                 const fullPath = `${basePath}/${relPath}`;
 
                 const uploadedPath = await queueBlob(blob, fullPath);
+                formEl.dataset.publishedThumbSource = thumbSrc;
                 formEl.setAttribute('data-thumb-src', `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(uploadedPath)}`);
             }
         }
     }
+}
+
+// Only persist these replacements after GitHub confirms the batch.  That
+// clears blob/data URLs from the live editor, so a second Quick Save neither
+// re-uploads the asset nor creates another storage entry.
+function persistPublishedCloneImageUrls(clone) {
+    const replaceLiveAttribute = (cloneSelector, liveSelector, attribute, marker) => {
+        clone.querySelectorAll(cloneSelector).forEach(cloneElement => {
+            const originalValue = cloneElement.dataset[marker] || '';
+            const publishedValue = cloneElement.getAttribute(attribute) || '';
+            if (!originalValue || !publishedValue.startsWith(PUBLISHED_CARD_SITE_ROOT)) return;
+
+            document.querySelectorAll(liveSelector).forEach(liveElement => {
+                if (liveElement.getAttribute(attribute) === originalValue) {
+                    liveElement.setAttribute(attribute, publishedValue);
+                }
+            });
+            delete cloneElement.dataset[marker];
+        });
+    };
+
+    replaceLiveAttribute('img[data-published-source-src]', 'img', 'src', 'publishedSourceSrc');
+    replaceLiveAttribute('[data-published-thumb-source]', '[data-thumb-src]', 'data-thumb-src', 'publishedThumbSource');
 }
 
 // ============================================================
@@ -1775,6 +1807,7 @@ jobs:
         await uploadBatchToGitHub(
             githubToken, owner, repo, filesToUpload, `Add/Update: ${fullDisplayName}`
         );
+        persistPublishedCloneImageUrls(clone);
 
         const websiteUrl = `https://abscustom.github.io/${encodePublishedRepoPath(basePath)}/`;
         
@@ -1991,6 +2024,7 @@ window.executeQuickSave = async function() {
         filesToUpload.push({ path: `${folderName}/index.html`, blob: new Blob([htmlContent], { type: 'text/html' }) });
 
         await uploadBatchToGitHub(token, owner, repo, filesToUpload, `Live Quick Edit Update`);
+        persistPublishedCloneImageUrls(clone);
 
         window.showHudSuccess('SAVED LIVE!');
         window.closeQuickSaveModal();

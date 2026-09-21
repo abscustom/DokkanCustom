@@ -408,9 +408,6 @@ function renderDokkanFields(card) {
         const cleanFieldStatBadges = isAbsCleanTheme && typeof window.renderAbsCleanFieldStatBadges === 'function'
             ? window.renderAbsCleanFieldStatBadges(rawEffect, fieldObj)
             : '';
-        const cleanFieldDividerHtml = isAbsCleanTheme
-            ? '<div class="abs-clean-active-divider abs-clean-field-divider" aria-hidden="true"><hr class="divider py bg-secondary"></div>'
-            : '';
 
         const html = `
             <div class="abs-box mb-3 abs-domain-rendered" data-active-kind="domain">
@@ -424,7 +421,6 @@ function renderDokkanFields(card) {
                     ` : ''}
                     <div class="abs-skill-label text-warning mb-1">Dokkan Field Effect:</div>
                     <div class="abs-clean-field-effect-copy">${formattedEffect || "Dokkan Field effect details unavailable."}</div>
-                    ${cleanFieldDividerHtml}
                     ${cleanFieldStatBadges}
                 </div>
             </div>

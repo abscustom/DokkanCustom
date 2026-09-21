@@ -2385,7 +2385,9 @@ window.updateAbsStyleActiveSkills = function() {
         const damageMultiplierHtml = window.renderAbsDamageMultiplier(effect, typeLabel, true, '');
         const headerDamageMultiplier = damageMultiplierHtml.match(/class="pill-val">([^<]+)</)?.[1] || '';
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-        const showCleanDivider = isAbsCleanTheme;
+        // Fields lead straight into their target badges; only Active/Standby
+        // conditions retain the visual divider.
+        const showCleanDivider = isAbsCleanTheme && !isDomain;
         const cleanDividerClass = isDomain
             ? 'abs-clean-active-divider abs-clean-field-divider'
             : 'abs-clean-active-divider';
@@ -2426,7 +2428,6 @@ window.updateAbsStyleActiveSkills = function() {
                     ${(isActiveSkill || isStandby) && showCondition && showCleanDivider ? `<div class="${cleanDividerClass} abs-clean-standby-divider" aria-hidden="true"><hr class="divider py bg-secondary"></div>` : ''}
                     <div class="abs-skill-label text-warning mb-1">${isDomain ? 'Dokkan Field Effect:' : (isStandby ? 'Standby Skill Effect:' : 'Effect:')}</div>
                     <div class="${isDomain && isAbsCleanTheme ? 'abs-clean-field-effect-copy' : (isStandby && isAbsCleanTheme ? 'abs-clean-standby-effect-copy' : '')}">${effect}</div>
-                    ${isDomain && showCleanDivider ? `<div class="${cleanDividerClass}" aria-hidden="true"><hr class="divider py bg-secondary"></div>` : ''}
                     ${cleanFieldStatBadges}
                     ${isAbsCleanTheme ? '' : damageMultiplierHtml}
                 </div>

@@ -550,9 +550,17 @@ function renderAbsCleanFieldStatBadges(text, source = null) {
     const damageText = damageClauses.join(' ');
 
     const getClauseTargets = clause => {
+        // Limit target detection to the stat phrase.  A redirect such as
+        // "Directs enemy's attack ... all allies ATK 10%" mentions an enemy,
+        // but the enemy is not the recipient of the ATK increase.
+        const statIndex = clause.search(/\b(?:atk|def)\b/i);
+        const percentIndex = clause.search(/[+-]?\d+(?:\.\d+)?\s*%/);
+        const targetContext = clause.slice(Math.max(0, (statIndex >= 0 ? statIndex : percentIndex) - 72), percentIndex >= 0 ? percentIndex : undefined);
         const targets = [];
-        if (/\b(?:self|ally|allies|allied)\b/i.test(clause)) targets.push('self');
-        if (/\b(?:enemy|enemies)\b/i.test(clause)) targets.push('enemy');
+        if (/\ball\s+allies?\b/i.test(targetContext)) return ['self', 'allies'];
+        if (/\b(?:self|character)\b/i.test(targetContext)) targets.push('self');
+        if (/\b(?:ally|allies|allied)\b/i.test(targetContext)) targets.push('allies');
+        if (/\b(?:enemy|enemies)\b/i.test(targetContext)) targets.push('enemy');
         return targets;
     };
     const findTargetPercents = (items, target) => {
@@ -570,12 +578,16 @@ function renderAbsCleanFieldStatBadges(text, source = null) {
     };
 
     const textSelfValues = findTargetPercents(statClauses, 'self');
+    const textAlliesValues = findTargetPercents(statClauses, 'allies');
     const textEnemyValues = findTargetPercents(statClauses, 'enemy');
     const sourceSelfValues = readSourcePercents(['self_percentage', 'self_percent', 'self_value', 'ally_percentage', 'allies_percentage']);
+    const sourceAlliesValues = readSourcePercents(['ally_percentage', 'ally_percent', 'ally_value', 'allies_percentage', 'allies_percent', 'allies_value']);
     const sourceEnemyValues = readSourcePercents(['enemy_percentage', 'enemy_percent', 'enemy_value']);
     const selfValues = textSelfValues.length ? textSelfValues : sourceSelfValues;
+    const alliesValues = textAlliesValues.length ? textAlliesValues : sourceAlliesValues;
     const enemyValues = textEnemyValues.length ? textEnemyValues : sourceEnemyValues;
     const selfValue = formatStatPercentValues(selfValues);
+    const alliesValue = formatStatPercentValues(alliesValues);
     const enemyValue = formatStatPercentValues(enemyValues);
 
     const statScopeClause = statClauses.find(item => /\d+(?:\.\d+)?\s*%/.test(item)) || statText;
@@ -628,10 +640,11 @@ function renderAbsCleanFieldStatBadges(text, source = null) {
     `;
 
     let statSection = '';
-    if ((statText || selfValue || enemyValue) && (selfValue || enemyValue)) {
+    if ((statText || selfValue || alliesValue || enemyValue) && (selfValue || alliesValue || enemyValue)) {
         statSection = `
             <div class="abs-clean-field-stat-row" role="group" aria-label="Dokkan Field stat badges">
                 ${selfValue ? renderStatBadge('self', 'self', selfValue) : ''}
+                ${alliesValue ? renderStatBadge('allies', 'all allies', alliesValue) : ''}
                 ${enemyValue ? renderStatBadge('enemy', 'enemy', enemyValue) : ''}
             </div>
         `;
