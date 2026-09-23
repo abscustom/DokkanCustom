@@ -734,6 +734,57 @@
         }
     }
 
+    // Dynamic pages have no rendered forms DOM. Update their saved form rows
+    // directly, adopting an existing named placeholder rather than duplicating it.
+    function updateLinkedFormsData(data, targetCard, shouldLink, sourceCard) {
+        const forms = Array.isArray(data.formsData) ? data.formsData : [];
+        // Older linker runs could overwrite the first (current-card) row.
+        // Repair only a row whose name identifies the current card.
+        if (sourceCard && forms[0] && normalizeCardIdentityText(forms[0].name) === normalizeCardIdentityText(sourceCard.name)) {
+            forms[0] = { ...forms[0], link: sourceCard.url };
+            delete forms[0].adminLinkedSlug;
+            delete forms[0].adminLinkAdopted;
+            delete forms[0].adminPreviousHref;
+        }
+        const targetPath = decodeURIComponent(new URL(targetCard.url).pathname).replace(/\/+$/, '');
+        const matchesLink = form => {
+            if (form.adminLinkedSlug === targetCard.slug) return true;
+            try {
+                return decodeURIComponent(new URL(form.link, SITE_ROOT).pathname).replace(/\/+$/, '') === targetPath;
+            } catch { return false; }
+        };
+        if (!shouldLink) {
+            data.formsData = forms.flatMap(form => {
+                if (!matchesLink(form)) return [form];
+                if (!form.adminLinkAdopted) return [];
+                const restored = { ...form, link: form.adminPreviousHref || 'javascript:void(0)' };
+                delete restored.adminLinkedSlug;
+                delete restored.adminLinkAdopted;
+                delete restored.adminPreviousHref;
+                return [restored];
+            });
+            return;
+        }
+        const matching = forms.filter(matchesLink);
+        const placeholders = forms.filter((form, index) => index > 0 && !form.adminLinkedSlug &&
+            normalizeCardIdentityText(form.name) !== normalizeCardIdentityText(sourceCard?.name) &&
+            normalizeCardIdentityText(form.name) === normalizeCardIdentityText(targetCard.name));
+        const existing = matching[0] || (placeholders.length === 1 ? placeholders[0] : null);
+        const linked = {
+            ...(existing || {}),
+            ...(existing && !matching.length ? { adminLinkAdopted: true, adminPreviousHref: existing.link || '' } : {}),
+            imageSrc: existing?.imageSrc || targetCard.thumb,
+            imageExportName: existing?.imageExportName || '',
+            thumbSrc: existing?.thumbSrc || targetCard.thumb,
+            name: targetCard.name,
+            link: targetCard.url,
+            adminLinkedSlug: targetCard.slug
+        };
+        data.formsData = forms.filter(form => form === existing || !matchesLink(form))
+            .map(form => form === existing ? linked : form);
+        if (!existing) data.formsData.push(linked);
+    }
+
     function updateLinkedHtml(htmlText, sourceCard, targetCard, shouldLink, allowUnmatchedFallback = true) {
         const doc = new DOMParser().parseFromString(htmlText, 'text/html');
         removeLinkedCardNodes(doc, targetCard.slug);
@@ -745,22 +796,8 @@
         if (cardDataEl) {
             try {
                 const data = JSON.parse(cardDataEl.textContent);
-                data.formsData = data.formsData || [];
-                if (shouldLink) {
-                    if (!data.formsData.some(f => f.adminLinkedSlug === targetCard.slug || (f.link && f.link.includes(targetCard.slug)))) {
-                        data.formsData.push({
-                            imageSrc: targetCard.thumb,
-                            imageExportName: '',
-                            thumbSrc: targetCard.thumb,
-                            name: targetCard.name,
-                            link: targetCard.url,
-                            adminLinkedSlug: targetCard.slug
-                        });
-                    }
-                } else {
-                    data.formsData = data.formsData.filter(f => f.adminLinkedSlug !== targetCard.slug && !(f.link && f.link.includes(targetCard.slug)));
-                }
-                cardDataEl.textContent = JSON.stringify(data, null, 2);
+                updateLinkedFormsData(data, targetCard, shouldLink, sourceCard);
+                cardDataEl.textContent = JSON.stringify(data, null, 2).replace(/</g, '\\u003c');
             } catch (e) {}
         }
 
@@ -784,7 +821,7 @@
             .some(node => node.getAttribute('data-admin-linked-slug') === targetSlug);
     }
 
-    function updateLinkedJson(jsonText, updatedHtml, targetCard, shouldLink) {
+    function updateLinkedJson(jsonText, updatedHtml, targetCard, shouldLink, sourceCard) {
         if (!jsonText) return null;
         let data;
         try {
@@ -813,21 +850,7 @@
             data.containers = data.containers || {};
             data.containers.forms = updatedDoc.getElementById('forms-container')?.innerHTML || '';
         } else {
-            data.formsData = data.formsData || [];
-            if (shouldLink) {
-                if (!data.formsData.some(f => f.adminLinkedSlug === targetCard.slug || (f.link && f.link.includes(targetCard.slug)))) {
-                    data.formsData.push({
-                        imageSrc: targetCard.thumb,
-                        imageExportName: '',
-                        thumbSrc: targetCard.thumb,
-                        name: targetCard.name,
-                        link: targetCard.url,
-                        adminLinkedSlug: targetCard.slug
-                    });
-                }
-            } else {
-                data.formsData = data.formsData.filter(f => f.adminLinkedSlug !== targetCard.slug && !(f.link && f.link.includes(targetCard.slug)));
-            }
+            updateLinkedFormsData(data, targetCard, shouldLink, sourceCard);
         }
 
         return JSON.stringify(data, null, 2);
@@ -899,10 +922,10 @@
             formFile.htmlText = updateLinkedHtml(formFile.htmlText, formCard, baseCard, shouldLink, allowUnmatchedFallback);
 
             if (baseFile.jsonText !== null) {
-                baseFile.jsonText = updateLinkedJson(baseFile.jsonText, baseFile.htmlText, formCard, shouldLink);
+                baseFile.jsonText = updateLinkedJson(baseFile.jsonText, baseFile.htmlText, formCard, shouldLink, baseCard);
             }
             if (formFile.jsonText !== null) {
-                formFile.jsonText = updateLinkedJson(formFile.jsonText, formFile.htmlText, baseCard, shouldLink);
+                formFile.jsonText = updateLinkedJson(formFile.jsonText, formFile.htmlText, baseCard, shouldLink, formCard);
             }
         });
 

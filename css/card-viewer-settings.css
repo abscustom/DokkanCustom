@@ -1520,6 +1520,9 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     width: 100% !important;
 }
 
+/* Dynamic custom cards render editor boxes without the official col classes.
+   Give those boxes half of the viewer's 12-column row too. */
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:not(.abs-sa-col-12):not(.abs-sa-col-6):not(.abs-sa-col-4):not(.abs-sa-col-3):not(.abs-clean-single-standard-super-attack):not(.abs-clean-ex-super-attack):not(:only-child),
 body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6,
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6 {
     grid-column: span 6 !important;
@@ -1539,6 +1542,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 @media (max-width: 680px) {
+    body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container:not(:empty) > .abs-box:not(.abs-sa-col-12):not(.abs-sa-col-6):not(.abs-sa-col-4):not(.abs-sa-col-3):not(.abs-clean-single-standard-super-attack):not(.abs-clean-ex-super-attack):not(:only-child),
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-12,
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-6,
     body.card-viewer-page.theme-abs-clean #layout-abs-style .abs-main-col #abs-sa-container .abs-sa-col-4,

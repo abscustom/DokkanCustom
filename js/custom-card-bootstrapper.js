@@ -6,6 +6,10 @@
 (async function initCustomCardBootstrapper() {
     'use strict';
 
+    // Resolve card-owned data before <base> redirects shared application assets.
+    const cardFolderUrl = new URL('./', window.location.href).href;
+    const runtimeVersion = '20260922-custom-runtime-v1';
+
     // Older published cards were generated before the shared loader stylesheet
     // was emitted in their <head>.  Apply the small, first-paint contract before
     // any fetches so their raw logo never lays out in a document corner and then
@@ -68,13 +72,13 @@
         `${repoRoot}css/editor-ui.css`,
         `${repoRoot}css/card-inspector.css`,
         `${repoRoot}css/lwf.css`,
-        `${repoRoot}css/abs-clean.css?v=20260921-clean-sa-type-outline-v2`,
+        `${repoRoot}css/abs-clean.css?v=${runtimeVersion}`,
         `${repoRoot}css/loading-screen.css`,
         `${repoRoot}css/card-admin.css`,
         `${repoRoot}css/sba-side-dock.css`,
         `${repoRoot}css/sba-bottom-nav.css`,
         `${repoRoot}css/tool-sba-nav.css`,
-        `${repoRoot}css/card-viewer-settings.css`,
+        `${repoRoot}css/card-viewer-settings.css?v=${runtimeVersion}`,
         `${repoRoot}css/viewer-card-picker.css`
     ];
 
@@ -91,7 +95,7 @@
     // 4. Fetch card.json (with fallback to embedded script#card-data)
     let cardData = null;
     try {
-        const res = await fetch('./card.json', { cache: 'no-cache' });
+        const res = await fetch(new URL('card.json', cardFolderUrl).href, { cache: 'no-cache' });
         if (res.ok) {
             cardData = await res.json();
         }
@@ -220,7 +224,7 @@
     ];
 
     for (const s of scripts) {
-        await loadScript(`${repoRoot}${s}`);
+        await loadScript(`${repoRoot}${s}?v=${runtimeVersion}`);
     }
 
     // Load LWF module loader
@@ -244,9 +248,8 @@
     if (editorNav) editorNav.classList.remove('active');
 
     // 11. Populate the Card with Project Data
-    const currentFolderUrl = window.location.href.split('?')[0].split('#')[0];
     if (typeof window.loadProjectData === 'function') {
-        window.loadProjectData(cardData, currentFolderUrl, true);
+        window.loadProjectData(cardData, cardFolderUrl, true);
     }
     window.__absDynamicBootstrapping = false;
     if (!window.absCardContentReady) {

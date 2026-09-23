@@ -90,23 +90,23 @@ ${JSON.stringify(cardData, null, 2)}
     <script>
         (function() {
             const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
             if (isLocal) {
                 const p = decodeURIComponent(location.pathname);
                 const idx = p.indexOf('/abscustom/');
                 if (idx !== -1) {
-                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js';
+                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                 } else {
                     const isGrouped = p.includes('/Custom Cards/') || p.includes('/Custom%20Cards/');
-                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js' : '../../DokkanCustom/js/custom-card-bootstrapper.js';
+                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                 }
             }
             const s = document.createElement('script');
             s.src = src;
             s.onerror = function() {
-                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js') {
+                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1') {
                     const fallback = document.createElement('script');
-                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                     document.head.appendChild(fallback);
                 }
             };

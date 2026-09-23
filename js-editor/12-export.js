@@ -103,7 +103,11 @@ window.getProjectDataObject = function() {
             imageExportName: img?.getAttribute('data-export-name') || "",
             thumbSrc: formEl.getAttribute('data-thumb-src') || "",
             name: nameSpan?.innerText || "",
-            link: formEl.querySelector(".form-link")?.getAttribute("href") || ""
+            link: formEl.querySelector(".form-link")?.getAttribute("href") || "",
+            ...(formEl.dataset.adminLinkedSlug ? { adminLinkedSlug: formEl.dataset.adminLinkedSlug } : {}),
+            ...(formEl.dataset.adminLinkAdopted === 'true' ? {
+                adminLinkAdopted: true, adminPreviousHref: formEl.dataset.adminPreviousHref || ''
+            } : {})
         });
     });
 
@@ -244,9 +248,11 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
         return trimmed;
     };
 
-    currentType = projectData.currentType || "agl";
-    currentClass = projectData.currentClass || "super";
-    currentRarity = projectData.currentRarity || "LR";
+    const savedType = String(projectData.currentType || projectData.characterState?.cardType || 'agl').trim().toLowerCase();
+    const savedClass = String(projectData.currentClass || projectData.characterState?.cardClass || 'super').trim().toLowerCase();
+    currentType = ['agl', 'teq', 'int', 'str', 'phy', 'none'].includes(savedType) ? savedType : 'agl';
+    currentClass = ['super', 'extreme', 'none'].includes(savedClass) ? savedClass : 'super';
+    currentRarity = String(projectData.currentRarity || projectData.characterState?.cardRarity || 'LR').trim().toUpperCase();
     window.currentType = currentType;
     window.currentClass = currentClass;
     window.currentRarity = currentRarity;
@@ -306,6 +312,11 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
             if (projectData.formsData && projectData.formsData.length > 0) {
                 projectData.formsData.forEach(fData => {
                     window.addFormBlock(fData.name, fixUrl(norm(fData.imageSrc)), fData.imageExportName, fixUrl(norm(fData.thumbSrc || "")));
+                    if (selectedForm && fData.adminLinkedSlug) selectedForm.dataset.adminLinkedSlug = fData.adminLinkedSlug;
+                    if (selectedForm && fData.adminLinkAdopted) {
+                        selectedForm.dataset.adminLinkAdopted = 'true';
+                        selectedForm.dataset.adminPreviousHref = fData.adminPreviousHref || '';
+                    }
                     if (fData.link && selectedForm) {
                         const anchor = selectedForm.querySelector(".form-link");
                         if (anchor) anchor.href = fData.link;
@@ -435,10 +446,11 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
 
     // Keep the selected theme intact when importing an exported project.
     // Older exports have no themeStyle, so they retain the classic default.
+    // Type application updates the Dokkan Info classes and icons as well as
+    // ABS variables. Selecting the Clean layout alone does not do that work.
+    window.applyCardTheme(currentType);
     if (projectData.themeVariant === 'sba' || projectData.themeStyle === 'sba' || projectData.themeStyle === 'abs.clean' || projectData.themeStyle === 'abs-clean') {
         window.switchCardTheme?.('sba');
-    } else {
-        window.applyCardTheme(currentType);
     }
     window.applyAwakening(currentAwakeningMode);
     window.updateIdentity(); 
@@ -602,23 +614,23 @@ ${JSON.stringify(projectData || {}, null, 2)}
     <script>
         (function() {
             const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
             if (isLocal) {
                 const p = decodeURIComponent(location.pathname);
                 const idx = p.indexOf('/abscustom/');
                 if (idx !== -1) {
-                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js';
+                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                 } else {
                     const isGrouped = p.includes('/Custom Cards/') || p.includes('/Custom%20Cards/');
-                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js' : '../../DokkanCustom/js/custom-card-bootstrapper.js';
+                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                 }
             }
             const s = document.createElement('script');
             s.src = src;
             s.onerror = function() {
-                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js') {
+                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1') {
                     const fallback = document.createElement('script');
-                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js';
+                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
                     document.head.appendChild(fallback);
                 }
             };
