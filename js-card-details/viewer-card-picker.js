@@ -93,33 +93,7 @@
     // In particular, the database's 2015-10-30 value is a valid chronological
     // value for the Cards screen and must not be treated as missing here.
     function parseCardReleaseTime(value) {
-        if (typeof value === 'number' && Number.isFinite(value)) {
-            return value > 0 && value < 100000000000 ? value * 1000 : value;
-        }
-
-        const dateStr = String(value || '').replace(/\u00a0/g, ' ').trim();
-        if (!dateStr || /^tbd$/i.test(dateStr)) return 0;
-
-        const dokkanMinEpoch = new Date('2015-01-30T00:00:00Z').getTime();
-        const isUsable = time => Number.isFinite(time) && time >= dokkanMinEpoch;
-        const nativeTime = Date.parse(dateStr);
-        if (isUsable(nativeTime)) return nativeTime;
-
-        const ymdMatch = dateStr.match(/\b(\d{4})[./-](\d{1,2})[./-](\d{1,2})\b/);
-        if (ymdMatch) {
-            const [, year, month, day] = ymdMatch;
-            const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
-            if (isUsable(time)) return time;
-        }
-
-        const mdyMatch = dateStr.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/);
-        if (mdyMatch) {
-            const [, month, day, year] = mdyMatch;
-            const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
-            if (isUsable(time)) return time;
-        }
-
-        return 0;
+        return window.parseReleaseTimestamp?.(value, { zoneLess: 'utc' }) || 0;
     }
 
     function compareCardScreenRecords(first, second) {

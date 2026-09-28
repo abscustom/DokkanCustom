@@ -943,7 +943,7 @@
 
     async function getRunner() {
         if (!actionBankRunner) {
-            const { ActionBankRunner } = await import('./action-bank-runner.js?v=20260918-v8');
+            const { ActionBankRunner } = await import('./action-bank-runner.js?v=20260928-eza-animation-assets-v1');
             const stack = document.getElementById('abs-animation-stage-stack');
             actionBankRunner = new ActionBankRunner({
                 stageStack: stack,

@@ -1242,22 +1242,6 @@ body.is-published.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clea
     margin-left: 0 !important;
 }
 
-/* Standby Container - really dark and transparent glass */
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box.abs-standby-rendered,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box.abs-clean-standby-rendered {
-    background: rgba(3, 7, 18, 0.90) !important;
-    background-color: rgba(3, 7, 18, 0.90) !important;
-    background-image: none !important;
-    backdrop-filter: blur(16px) saturate(180%) !important;
-    -webkit-backdrop-filter: blur(16px) saturate(180%) !important;
-    border: 1px solid color-mix(in srgb, var(--theme-border, #38bdf8) 32%, rgba(255, 255, 255, 0.12)) !important;
-    box-shadow: 0 12px 28px rgba(0, 0, 0, 0.70), inset 0 1px 0 rgba(255, 255, 255, 0.08) !important;
-    margin: 0 !important;
-    margin-bottom: 0 !important;
-}
-
 /* Super Attack - remove dead space while keeping text centered */
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-sa-container"] > .abs-box > .abs-header > .abs-sa-header-title {
     display: flex !important;
@@ -1379,43 +1363,10 @@ body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-
     z-index: 8 !important;
 }
 
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-pill-actions,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-pill-actions {
-    position: absolute !important;
-    top: 16px !important;
-    left: 20px !important;
-    right: auto !important;
-    bottom: auto !important;
-    inset-inline-start: 20px !important;
-    inset-inline-end: auto !important;
-    display: inline-flex !important;
-    align-items: center !important;
-    gap: 4px !important;
-    height: 22px !important;
-    width: max-content !important;
-    max-width: none !important;
-    z-index: 8 !important;
-}
-
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] .abs-sa-header-meta,
 body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] .abs-sa-header-meta {
     top: 12px !important;
     right: 18px !important;
-}
-
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-header-meta,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-header-meta {
-    top: 16px !important;
-    right: 18px !important;
-}
-
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-pill-actions > .abs-sa-type-pill,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-pill-actions > .abs-sa-type-pill {
-    position: static !important;
-    top: auto !important;
-    left: auto !important;
-    right: auto !important;
-    bottom: auto !important;
 }
 
 body.card-viewer-page.theme-abs-clean #layout-abs-clean .abs-sa-pill-actions,
@@ -1559,48 +1510,6 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     }
 }
 
-/* Standby Skill fading divider between condition and standby skill effect */
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-clean-standby-divider,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-clean-active-divider {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    overflow: visible !important;
-    position: relative !important;
-    z-index: 1 !important;
-    flex: 0 0 2px !important;
-    width: 100% !important;
-    height: 2px !important;
-    min-height: 2px !important;
-    max-height: 2px !important;
-    margin: 6px 0 10px !important;
-    padding: 0 !important;
-    box-sizing: border-box !important;
-}
-
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-clean-standby-divider > hr.divider,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-clean-active-divider > hr.divider {
-    display: block !important;
-    visibility: visible !important;
-    opacity: 1 !important;
-    position: relative !important;
-    z-index: 1 !important;
-    width: 100% !important;
-    height: 2px !important;
-    min-height: 2px !important;
-    max-height: 2px !important;
-    margin: 0 !important;
-    padding: 0 !important;
-    border: 0 !important;
-    background-color: rgba(255, 255, 255, 0.78) !important;
-    background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.88) 50%, rgba(255, 255, 255, 0.18) 88%, transparent 100%) !important;
-    background-image: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.18) 12%, rgba(255, 255, 255, 0.88) 50%, rgba(255, 255, 255, 0.18) 88%, transparent 100%) !important;
-    color: #ffffff !important;
-    box-shadow: 0 0 8px rgba(255, 255, 255, 0.24) !important;
-    filter: none !important;
-    box-sizing: border-box !important;
-}
-
 /* Leader Skill surface - transparent dark glass matching Super Attack */
 body.card-viewer-page.theme-abs-clean [data-card-element="abs-clean-leader-banner-slot"] [data-card-element="abs-leader-skill-box"],
 body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark [data-card-element="abs-clean-leader-banner-slot"] [data-card-element="abs-leader-skill-box"],
@@ -1621,14 +1530,6 @@ body.card-viewer-page.theme-abs-clean #layout-abs-clean #abs-leader-container > 
 body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-leader-skill-box"]::before {
     display: none !important;
     content: none !important;
-}
-
-/* Standby Skill margin reduction before passive */
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean .abs-main-col > #abs-clean-active-domain-row > [data-card-element="abs-standby-container"] > .abs-box {
-    margin: 0 !important;
-    margin-bottom: 0 !important;
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean .abs-main-col.abs-clean-has-standby > [data-card-element="abs-passive-skill-box"] {
@@ -1678,40 +1579,10 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     z-index: 8 !important;
 }
 
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-header-title > .abs-sa-type-pill,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] .abs-sa-header-title > .abs-sa-type-pill,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-sa-header-title > .abs-sa-type-pill,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] .abs-sa-header-title > .abs-sa-type-pill {
-    position: absolute !important;
-    top: 16px !important;
-    left: 20px !important;
-    z-index: 8 !important;
-}
-
-/* Keep published Active Skill and Standby panels on their viewer glass
-   surface. Dokkan Fields use the shared ABS.Clean panel styling. */
+/* Keep the viewer-only Active Skill surface. Domain and Standby use the
+   shared ABS.Clean presentation rules from abs-clean.css. */
 body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box {
-    background: linear-gradient(
-        145deg,
-        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
-        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
-    ) !important;
-    background-color: color-mix(in srgb, var(--theme-border, #38bdf8) 24%, rgba(5, 12, 24, 0.46)) !important;
-    background-image: linear-gradient(
-        145deg,
-        color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
-        color-mix(in srgb, var(--theme-main, #1d4ed8) 18%, rgba(3, 8, 18, 0.34)) 100%
-    ) !important;
-}
-
-/* Match the editor's dark-mode Standby surface. The earlier viewer rule is
-   intentionally more specific, so this keeps its rendered Standby panel from
-   falling back to the deprecated black fill. */
-body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box.abs-standby-rendered,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean-dark.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box.abs-clean-standby-rendered {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box {
     background: linear-gradient(
         145deg,
         color-mix(in srgb, var(--theme-border, #38bdf8) 30%, rgba(5, 12, 24, 0.50)) 0%,
@@ -2401,11 +2272,10 @@ body.card-viewer-page.theme-abs-clean #layout-abs-clean [data-card-element="abs-
 }
 
 /* ===========================================================================
-   ABS.CLEAN VIEWER ACTIVE AND STANDBY PANELS — PASSIVE-MATCHING TYPE GLASS
-   Dokkan Fields keep the shared ABS.Clean editor surface.
+   ABS.CLEAN VIEWER ACTIVE SKILL SURFACE
+   Dokkan Fields and Standby use the shared ABS.Clean editor presentation.
    =========================================================================== */
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box {
     --viewer-action-accent: var(--theme-border, #38bdf8);
     position: relative !important;
     overflow: visible !important;
@@ -2419,7 +2289,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box > .abs-header,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box > .abs-header {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box > .abs-header {
     position: relative !important;
     background: transparent !important;
     background-color: transparent !important;
@@ -2431,7 +2301,7 @@ body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
 }
 
 body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box > .abs-content,
-body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box > .abs-content {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box > .abs-content {
     background: transparent !important;
     background-color: transparent !important;
     background-image: none !important;
@@ -3724,16 +3594,16 @@ body.card-viewer-page.theme-abs-style .apple-hud-wrapper:focus-within .hud-nav-g
     transform: none !important;
 }
 
-/* In the ABS.Clean viewer, keep battle motion as a floating page-top
-   character. The invisible shell must not cover or capture clicks on the card. */
+/* Anchor motion to the document top, not the viewport. The layout sync converts
+   document coordinates into the side column's local coordinates (including zoom). */
 body.card-viewer-page.theme-abs-clean #top-content #layout-abs-clean .abs-side-col > :is(#abs-motion-box, #clean-abs-motion-box, [data-card-element="abs-motion-box"]) {
-    position: fixed !important;
+    position: absolute !important;
     display: flex !important;
     flex-direction: column !important;
-    top: 0 !important;
+    top: var(--viewer-motion-page-top, 0px) !important;
     right: auto !important;
     bottom: auto !important;
-    left: calc(50% - 54px) !important;
+    left: var(--viewer-motion-page-left, 50%) !important;
     z-index: 96 !important;
     width: clamp(190px, 27vw, 330px) !important;
     height: 192px !important;
@@ -3829,13 +3699,43 @@ body.card-viewer-page.theme-abs-clean #top-content #layout-abs-clean .abs-side-c
 
 @media (max-width: 680px) {
     body.card-viewer-page.theme-abs-clean #top-content #layout-abs-clean .abs-side-col > :is(#abs-motion-box, #clean-abs-motion-box, [data-card-element="abs-motion-box"]) {
-        top: 0 !important;
-        left: calc(50% - 44px) !important;
-        width: clamp(180px, 58vw, 250px) !important;
-        height: 176px !important;
-        min-height: 176px !important;
-        max-height: 176px !important;
+        top: var(--viewer-motion-page-top, 0px) !important;
+        left: var(--viewer-motion-page-left, 50%) !important;
+        width: clamp(156px, 48vw, 210px) !important;
+        height: 144px !important;
+        min-height: 144px !important;
+        max-height: 144px !important;
     }
+}
+
+body.card-viewer-page .abs-art-box .abs-art-loading-status {
+    position: absolute !important;
+    inset: 0 !important;
+    z-index: 12 !important;
+    display: grid !important;
+    place-items: center !important;
+    padding: 12px !important;
+    color: #f8fafc !important;
+    background: rgba(3, 8, 18, 0.66) !important;
+    font-size: 12px !important;
+    font-weight: 800 !important;
+    letter-spacing: 0.06em !important;
+    text-align: center !important;
+    text-shadow: 0 1px 4px #000 !important;
+    pointer-events: none !important;
+}
+
+body.card-viewer-page .abs-art-box .abs-art-loading-status[hidden] {
+    display: none !important;
+}
+
+body.card-viewer-page .abs-art-box.is-card-art-loading > :is(.abs-art-layer, .abs-art-bg-lwf-canvas, .abs-sticker-canvas) {
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+body.card-viewer-page #abs-composed-icon.is-viewer-card-art-loading .thumb-box {
+    visibility: hidden !important;
 }
 
 body.card-viewer-page.theme-abs-style .hud-nav-group .hud-nav-link[aria-label="Calculator"] {

@@ -1313,28 +1313,7 @@ function checkAndEnableTextScrolling() {
 
 function formatTimelineDateTime(timestamp) {
     if (!timestamp || timestamp === 0) return null;
-    const d = new Date(timestamp);
-    if (isNaN(d.getTime())) return null;
-
-    const datePart = d.toLocaleDateString("en-US", { 
-        timeZone: "America/New_York", 
-        year: 'numeric', 
-        month: 'short', 
-        day: 'numeric' 
-    });
-
-    const timePart = d.toLocaleTimeString("en-US", { 
-        timeZone: "America/New_York", 
-        hour: '2-digit', 
-        minute: '2-digit', 
-        hour12: false 
-    }) + " EST";
-
-    return {
-        fullLabel: `${datePart} • ${timePart}`,
-        dateOnly: datePart,
-        timeOnly: timePart
-    };
+    return window.formatReleaseDateTime?.(Number(timestamp)) || null;
 }
 
 function formatTimelineCountdown(timestamp) {
@@ -1980,19 +1959,7 @@ function renderHomeShowcaseGrid() {
         const formatShowcaseReleaseDate = (value) => {
             const rawDate = String(value || '').trim();
             if (!rawDate) return 'Release date unavailable';
-            const numericDate = rawDate.match(/^(\d{1,2})[/-](\d{1,2})[/-](\d{4})/);
-            const isoDate = rawDate.match(/^(\d{4})[/-](\d{1,2})[/-](\d{1,2})/);
-            const parts = numericDate
-                ? [Number(numericDate[3]), Number(numericDate[1]) - 1, Number(numericDate[2])]
-                : (isoDate ? [Number(isoDate[1]), Number(isoDate[2]) - 1, Number(isoDate[3])] : null);
-            const parsed = parts ? new Date(Date.UTC(...parts)) : new Date(rawDate.replace(' ', 'T'));
-            if (Number.isNaN(parsed.getTime())) return rawDate;
-            return new Intl.DateTimeFormat('en-US', {
-                month: 'long',
-                day: 'numeric',
-                year: 'numeric',
-                timeZone: 'UTC'
-            }).format(parsed);
+            return window.formatReleaseDateLabel?.(rawDate) || rawDate;
         };
         const activeReleaseDate = escapeShowcaseHtml(formatShowcaseReleaseDate(activeItem?.releaseDate));
         const slides = baseList.length ? visibleOffsets.map((offset) => {
@@ -2378,37 +2345,8 @@ function resetFilters() {
     resetAllInlineFilters();
 }
 
-function parseReleaseTime(dateValue) {
-    // The editor accepts several human-friendly date formats (for example
-    // "9/14/2026 1:00:00 AM EDT"), so do not force every value into ISO.
-    // Doing that made valid custom-card release dates turn into Invalid Date
-    // and caused those cards to be omitted from the timeline.
-    const dateStr = String(dateValue || '').replace(/\u00a0/g, ' ').trim();
-    if (!dateStr || /^tbd$/i.test(dateStr)) return 0;
-
-    const dokkanMinEpoch = new Date('2015-01-30T00:00:00Z').getTime();
-    const isUsable = (time) => Number.isFinite(time) && time >= dokkanMinEpoch;
-
-    const nativeTime = Date.parse(dateStr);
-    if (isUsable(nativeTime)) return nativeTime;
-
-    // Saved card markup can contain labels around the date. Extract the two
-    // date-only formats the editor and imported cards commonly produce.
-    const ymdMatch = dateStr.match(/\b(\d{4})[./-](\d{1,2})[./-](\d{1,2})\b/);
-    if (ymdMatch) {
-        const [, year, month, day] = ymdMatch;
-        const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
-        if (isUsable(time)) return time;
-    }
-
-    const mdyMatch = dateStr.match(/\b(\d{1,2})[/-](\d{1,2})[/-](\d{4})\b/);
-    if (mdyMatch) {
-        const [, month, day, year] = mdyMatch;
-        const time = Date.UTC(Number(year), Number(month) - 1, Number(day), 12);
-        if (isUsable(time)) return time;
-    }
-
-    return 0;
+function parseReleaseTime(dateValue, options = {}) {
+    return window.parseReleaseTimestamp?.(dateValue, options) || 0;
 }
 
 async function fetchJsonWithFallback(filename) {
@@ -2766,7 +2704,7 @@ async function loadCustomCards() {
                     // a labelled date such as "Release Date 9/14/2026".
                     dateText = doc.querySelector('#release-dates-container')?.textContent || '';
                 }
-                const parsedTime = parseReleaseTime(String(dateText));
+                const parsedTime = parseReleaseTime(String(dateText), { zoneLess: 'local' });
                 const linkedCardReferences = Array.from(doc.querySelectorAll(
                     '#forms-container [data-admin-linked-slug], #forms-container .form-link[href], #abs-transformations-container .abs-transform-link[href]'
                 )).map(node => (

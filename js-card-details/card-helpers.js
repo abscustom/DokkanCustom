@@ -1051,14 +1051,12 @@ function getCardExactReleaseDate(card, mode = 'base') {
     const nowPlus30Days = Date.now() + (30 * 24 * 60 * 60 * 1000);
 
     const isValidDateStr = (d) => {
-        if (!d || typeof d !== 'string') return false;
-        if (d.includes('2015-10-30') || d.startsWith('2010') || d.startsWith('1970') || d === 'TBD' || d.trim() === '') return false;
-        const iso = d.replace(" ", "T") + (d.includes("Z") ? "" : "Z");
-        const t = new Date(iso).getTime();
-        return !isNaN(t) && t >= dokkanMinEpoch;
+        if (!d || typeof d !== 'string' || d.includes('2015-10-30') || /^2010|^1970|^TBD$/i.test(d.trim())) return false;
+        const timestamp = window.parseReleaseTimestamp?.(d, { zoneLess: 'utc' }) || 0;
+        return timestamp >= dokkanMinEpoch;
     };
 
-    const getTime = (d) => new Date(d.replace(" ", "T") + (d.includes("Z") ? "" : "Z")).getTime();
+    const getTime = (d) => window.parseReleaseTimestamp?.(d, { zoneLess: 'utc' }) || 0;
 
     const familyIds = new Set([cid, parentBaseId]);
     let baseDates = [];
@@ -1135,28 +1133,7 @@ function getCardExactReleaseDate(card, mode = 'base') {
 
 function formatESTDateWithTime(utcDateStr) {
     if (!utcDateStr || utcDateStr === 'TBD' || utcDateStr.trim() === '') return "TBD";
-    try {
-        const raw = String(utcDateStr).trim();
-        if (/EST|EDT/i.test(raw)) return raw;
-        const cleanedStr = raw.replace(" ", "T") + (raw.includes("Z") ? "" : "Z");
-        let date = new Date(cleanedStr);
-        if (isNaN(date.getTime())) {
-            date = new Date(raw);
-        }
-        if (isNaN(date.getTime())) return raw;
-        return date.toLocaleString("en-US", { 
-            timeZone: "America/New_York", 
-            year: "numeric", 
-            month: "numeric", 
-            day: "numeric", 
-            hour: "2-digit", 
-            minute: "2-digit", 
-            second: "2-digit", 
-            hour12: true 
-        }) + " EST";
-    } catch (e) { 
-        return String(utcDateStr || "TBD"); 
-    }
+    return window.formatEasternReleaseDateTime?.(utcDateStr) || String(utcDateStr || "TBD");
 }
 
 function findLeaderObj(card, mode = (typeof currentEzaMode !== 'undefined' ? currentEzaMode : 'base')) {

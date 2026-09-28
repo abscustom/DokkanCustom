@@ -1488,6 +1488,25 @@ function renderCardDetails(card, mode = currentEzaMode) {
         syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, unitTag);
 
         const { bgUrl, charUrl, effectUrl, thumbUrl } = resolveCardAssets(card);
+        const artBox = cardLayoutElement('abs-art-layers-container');
+        const artLoadingStatus = artBox?.querySelector('#abs-art-loading-status') || null;
+        const composedIcon = cardLayoutElement('abs-composed-icon');
+        const { circleUrl } = (typeof getViewerCircleAsset === 'function')
+            ? getViewerCircleAsset(card)
+            : { circleUrl: '' };
+        const isCleanArt = document.body.classList.contains('theme-abs-clean');
+        const artLoadPromise = window.ViewerCardArtLoader?.shared?.load({
+            background: bgUrl,
+            character: charUrl,
+            effect: effectUrl,
+            thumb: isCleanArt && circleUrl ? [circleUrl, thumbUrl] : [thumbUrl]
+        }) || Promise.resolve({ stale: false, assets: { background: bgUrl || '', character: charUrl || '', effect: effectUrl || '', thumb: thumbUrl || '' } });
+        if (artBox) {
+            artBox.classList.add('is-card-art-loading');
+            artBox.setAttribute('aria-busy', 'true');
+        }
+        if (artLoadingStatus) artLoadingStatus.hidden = false;
+        composedIcon?.classList.add('is-viewer-card-art-loading');
 
         const fullCardTitle = title ? `[${title}] ${name}` : (name || "Character Inspector");
         document.title = `${fullCardTitle} | absCustom`;
@@ -1723,37 +1742,6 @@ function renderCardDetails(card, mode = currentEzaMode) {
         const effectImgEl = cardLayoutElement("abs-art-effect");
         const thumbImgEl = cardLayoutElement("abs-thumb-img");
 
-        if (bgImgEl) {
-            delete bgImgEl.dataset.failed; 
-            bgImgEl.style.display = 'block'; 
-            bgImgEl.src = bgUrl; 
-        }
-        if (charImgEl) { 
-            delete charImgEl.dataset.failed; 
-            charImgEl.style.display = 'block'; 
-            charImgEl.src = charUrl; 
-        }
-        if (effectImgEl) { 
-            delete effectImgEl.dataset.failed; 
-            effectImgEl.style.display = effectUrl ? 'block' : 'none'; 
-            effectImgEl.src = effectUrl; 
-        }
-        if (thumbImgEl) { 
-            delete thumbImgEl.dataset.failed; 
-            const isAbsClean = document.body.classList.contains('theme-abs-clean');
-            const { circleUrl } = (typeof getViewerCircleAsset === 'function') ? getViewerCircleAsset(card) : { circleUrl: '' };
-            thumbImgEl.onerror = null;
-            if (isAbsClean && circleUrl) {
-                thumbImgEl.src = circleUrl;
-                thumbImgEl.onerror = function() {
-                    this.onerror = null;
-                    this.src = thumbUrl;
-                };
-            } else {
-                thumbImgEl.src = thumbUrl; 
-            }
-        }
-
         const frameEl = cardLayoutElement("abs-frame-img");
         if (frameEl) frameEl.src = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
 
@@ -1822,7 +1810,39 @@ function renderCardDetails(card, mode = currentEzaMode) {
         renderLinkingPartners(card);
         updateToggleBarActiveButtons(mode); 
 
-        updateCardArtAnimation(card);
+        artLoadPromise.then(result => {
+            if (result?.stale || window.__absViewerCard !== card || window.__absViewerMode !== mode) return;
+            const setArtLayer = (image, url) => {
+                if (!image) return;
+                delete image.dataset.failed;
+                image.onerror = null;
+                if (url) {
+                    image.src = url;
+                    image.style.display = 'block';
+                } else {
+                    image.removeAttribute('src');
+                    image.style.display = 'none';
+                }
+            };
+            const assets = result?.assets || {};
+            setArtLayer(bgImgEl, assets.background);
+            setArtLayer(charImgEl, assets.character);
+            setArtLayer(effectImgEl, assets.effect);
+            setArtLayer(thumbImgEl, assets.thumb);
+            artBox?.classList.remove('is-card-art-loading');
+            artBox?.removeAttribute('aria-busy');
+            if (artLoadingStatus) artLoadingStatus.hidden = true;
+            composedIcon?.classList.remove('is-viewer-card-art-loading');
+            updateCardArtAnimation(card);
+        }).catch(error => {
+            if (window.__absViewerCard !== card || window.__absViewerMode !== mode) return;
+            artBox?.classList.remove('is-card-art-loading');
+            artBox?.removeAttribute('aria-busy');
+            if (artLoadingStatus) artLoadingStatus.hidden = true;
+            composedIcon?.classList.remove('is-viewer-card-art-loading');
+            console.warn('Card artwork could not be loaded:', error);
+            updateCardArtAnimation(card);
+        });
 
         // Keep the live passive badge dock in the Passive name row after all
         // card-view rendering has finished. This also covers the published

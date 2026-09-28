@@ -303,6 +303,21 @@
 
         if (!isCleanLayout) return;
         const header = layout?.querySelector(':scope > .abs-top-header');
+        // Anchor to the header, not window scroll coordinates. Both rectangles
+        // move together even when the page uses a nested scrolling container.
+        if (motionVisible && document.body.classList.contains('card-viewer-page')) {
+            const parent = motionBox.offsetParent;
+            if (parent && header) {
+                const rect = parent.getBoundingClientRect();
+                const headerRect = header.getBoundingClientRect();
+                const scale = parent.offsetWidth > 0 ? rect.width / parent.offsetWidth : 1;
+                if (scale > 0) {
+                    const center = headerRect.left + headerRect.width / 2 - (window.innerWidth <= 680 ? 44 : 54);
+                    motionBox.style.setProperty('--viewer-motion-page-top', `${(headerRect.top - rect.top) / scale - parent.clientTop}px`);
+                    motionBox.style.setProperty('--viewer-motion-page-left', `${(center - rect.left) / scale - parent.clientLeft}px`);
+                }
+            }
+        }
         const passive = getMotionElement('abs-passive-skill-box');
         const anchor = getMotionElement('abs-composed-icon')
             || getMotionElement('abs-art-dock-wrapper')

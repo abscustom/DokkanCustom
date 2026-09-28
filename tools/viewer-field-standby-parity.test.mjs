@@ -62,10 +62,36 @@ test('Clean fields and standby use the editor floating-header/container contract
 
 test('viewer Field and Standby share the editor floating-header positioning rule', () => {
     const css = fs.readFileSync(new URL('../css/abs-clean.css', import.meta.url), 'utf8');
+    const viewerCss = fs.readFileSync(new URL('../css/card-viewer-settings.css', import.meta.url), 'utf8');
     const shared = css.slice(css.indexOf('ABS.CLEAN SHARED FLOATING SKILL HEADERS'));
     const rule = shared.split('}').find(block => block.includes('body.card-viewer-page') && block.includes(':is(#clean-abs-field-container, #clean-abs-standby-container)') && block.includes('position: absolute !important'));
     assert.ok(rule, 'Viewer variants must use the shared absolute-positioned floating header rule');
     assert.ok(rule.includes('body.editor-tool-page') && rule.includes('.abs-sa-floating-header'));
+
+    const rules = [...css.matchAll(/([^{}]+)\{([^{}]*)\}/g)].map(([, selector, declarations]) => ({ selector, declarations }));
+    const viewerStandbyRule = fragment => rules.find(({ selector }) =>
+        selector.includes('body.card-viewer-page') &&
+        selector.includes('#clean-abs-standby-container') &&
+        selector.includes(fragment)
+    );
+    const headerRule = viewerStandbyRule('> .abs-box > .abs-header');
+    const titleRule = viewerStandbyRule('> .abs-header > .abs-sa-header-title');
+    const centeredTitleRule = viewerStandbyRule('.abs-sa-title-center');
+    assert.ok(headerRule?.selector.includes('body.editor-tool-page'), 'Viewer and editor must share the same Field/Standby header reset');
+    assert.match(headerRule.declarations, /padding:\s*0\s*!important/);
+    assert.match(headerRule.declarations, /height:\s*auto\s*!important/);
+    assert.match(titleRule?.declarations || '', /text-align:\s*center\s*!important/);
+    assert.match(titleRule?.declarations || '', /padding:\s*5px 10px 6px\s*!important/);
+    assert.match(centeredTitleRule?.declarations || '', /padding:\s*0 8px\s*!important/);
+
+    const viewerRules = [...viewerCss.matchAll(/([^{}]+)\{([^{}]*)\}/g)];
+    const standbySurfaceOverrides = viewerRules.filter(([, selector, declarations]) =>
+        selector.includes('[data-card-element="abs-standby-container"] > .abs-box') &&
+        /\b(?:background|background-color|background-image|border|padding)\s*:/i.test(declarations)
+    );
+    assert.deepEqual(standbySurfaceOverrides, [], 'Standby surface must come from the same shared rules as the editor');
+    assert.doesNotMatch(viewerCss, /\[data-card-element="abs-field-container"\]\s+\.abs-sa-pill-actions\s*\{[^}]*position:\s*absolute/i);
+    assert.doesNotMatch(viewerCss, /\[data-card-element="abs-standby-container"\][^{}]*\.abs-clean-standby-divider[^{}]*\{[^}]*display:\s*block/i);
 });
 
 test('ABS.Style keeps its inline headers without Clean floating markup', () => {
