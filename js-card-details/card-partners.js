@@ -72,17 +72,16 @@ function attachAbsCleanPartnerPortraitFallbacks(container) {
     });
 }
 
-// Manual connector control: increase/decrease this value to move the
-// vertical leg farther away from the card-art edge. The route itself is
-// built below in showAbsCleanLinkFx().
-const ABS_CLEAN_LINK_STEM_PX = 36;
+// Keep the hover connector close to the card-art edge so it stays out of
+// adjacent content; the same geometry scales with the available route bounds.
+const ABS_CLEAN_LINK_STEM_PX = 24;
 // Keep the vertical leg in the page gutter instead of letting it hug the
 // viewport edge on narrow layouts. This is intentionally separate from the
 // card-art offset above so the two route controls can be tuned independently.
 const ABS_CLEAN_LINK_EDGE_INSET_PX = 24;
 
 function getAbsCleanRenderedLinkCount() {
-    const container = document.getElementById('abs-link-container');
+    const container = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-link-container') : document.getElementById('abs-link-container'));
     if (!container) return 0;
     const badges = container.querySelectorAll('.abs-link-badge').length;
     return badges || container.children.length;
@@ -97,13 +96,13 @@ function getAbsCleanPartnerPreviewLimit() {
 }
 
 function renderLinkingPartners(card) {
-    const partnersBox = document.getElementById("abs-partners-box");
-    const partnersContainer = document.getElementById("abs-partners-container");
+    const partnersBox = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-partners-box") : document.getElementById("abs-partners-box"));
+    const partnersContainer = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-partners-container") : document.getElementById("abs-partners-container"));
     if (!partnersBox || !partnersContainer || !DB.cards) return;
 
     const normalizeLinkName = value => String(value || '').trim().replace(/\s+/g, ' ').toLowerCase();
-    const cardLinks = (card.links || card.link_skill_ids || []).map(l => {
-        if (typeof l === 'object') return l.name;
+    const cardLinks = (window.getCardLinkValues?.(card) || card.links || card.link_skill_ids || []).map(l => {
+        if (typeof l === 'object') return l.name || DB.links?.[String(l.id || l.link_id || l.link_skill_id || '')]?.name;
         if (DB.links && DB.links[l]) return DB.links[l].name;
         return l;
     }).map(link => String(link || '').trim()).filter(Boolean);
@@ -128,8 +127,8 @@ function renderLinkingPartners(card) {
         const otherFolder = getCardFolderId(otherCard);
         if (otherFolder === cardFolder) return;
 
-        const otherLinks = (otherCard.links || otherCard.link_skill_ids || []).map(l => {
-            if (typeof l === 'object') return l.name;
+        const otherLinks = (window.getCardLinkValues?.(otherCard) || otherCard.links || otherCard.link_skill_ids || []).map(l => {
+            if (typeof l === 'object') return l.name || DB.links?.[String(l.id || l.link_id || l.link_skill_id || '')]?.name;
             if (DB.links && DB.links[l]) return DB.links[l].name;
             return l;
         }).map(link => normalizeLinkName(link)).filter(Boolean);
@@ -199,8 +198,8 @@ function renderLinkingPartners(card) {
 }
 
 function filterLinkingPartners() {
-    const partnersBox = document.getElementById("abs-partners-box");
-    const partnersContainer = document.getElementById("abs-partners-container");
+    const partnersBox = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-partners-box") : document.getElementById("abs-partners-box"));
+    const partnersContainer = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-partners-container") : document.getElementById("abs-partners-container"));
 
     // Uploaded cards are standalone HTML snapshots. Upgrade the old button
     // markup at runtime so existing cards adopt the 9-card row increments
@@ -398,7 +397,7 @@ function getAbsCleanLinkFxObstacles(source) {
 }
 
 function getAbsCleanLinkFxTextObstacles() {
-    const header = document.querySelector('#layout-abs-style .abs-top-header');
+    const header = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-top-header') : document.querySelector('#layout-abs-style .abs-top-header'));
     if (!header) return [];
     return [...header.querySelectorAll('*')].filter(element => {
         const text = element.textContent?.trim();
@@ -546,11 +545,11 @@ function getAbsCleanCardAttachmentPoint(rect, towardX, towardY, overlap = 1.5) {
 function getAbsCleanLinkFxTarget() {
     // Attach the connector to the real card-art surface. The header portrait
     // remains the identity thumbnail, not the destination for partner links.
-    const art = document.querySelector('#layout-abs-style #abs-art-layers-container');
+    const art = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style #abs-art-layers-container') : document.querySelector('#layout-abs-style #abs-art-layers-container'));
     if (art) return art;
-    return document.querySelector('#layout-abs-style .abs-side-col > #abs-art-dock-wrapper') ||
-        document.querySelector('#layout-abs-style .abs-top-header #abs-composed-icon') ||
-        document.querySelector('#layout-abs-style .abs-top-header #abs-thumb-img');
+    return (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col > #abs-art-dock-wrapper') : document.querySelector('#layout-abs-style .abs-side-col > #abs-art-dock-wrapper')) ||
+        (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-top-header #abs-composed-icon') : document.querySelector('#layout-abs-style .abs-top-header #abs-composed-icon')) ||
+        (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-top-header #abs-thumb-img') : document.querySelector('#layout-abs-style .abs-top-header #abs-thumb-img'));
 }
 
 function getAbsCleanTopCardAttachmentPoint(rect) {
@@ -1066,7 +1065,7 @@ function showAbsCleanLinkFx(source, sharedLinks) {
     // The art surface is no longer a child of the header, but the page header
     // is still the correct background reference for the fallback pipe color.
     const header = target.closest('.abs-top-header') ||
-        document.querySelector('#layout-abs-style .abs-top-header');
+        (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-top-header') : document.querySelector('#layout-abs-style .abs-top-header'));
     const headerRect = header?.getBoundingClientRect();
     if (!sourceRect.width || !targetRect.width) return;
 
@@ -1130,16 +1129,20 @@ function showAbsCleanLinkFx(source, sharedLinks) {
         // This makes the count visibly travel into the connector instead of
         // appearing at an unrelated point on the card edge.
         const start = getAbsCleanClampedPoint(getAbsCleanPartnerLinkCountPoint(source, targetX), routeBounds);
-        // Anchor the vertical leg to the nearest left-side background-grid
-        // column immediately before the main portrait. This keeps the stem
-        // in the open page gutter and makes the final horizontal segment enter
-        // the portrait's left edge rather than arriving from above.
-        const stemX = getAbsCleanLeftGridStemX(targetRect, routeBounds, start.x);
+        // Keep the vertical leg just outside the artwork edge facing the
+        // partner. This retains the gutter route while avoiding a long sweep
+        // past the artwork's far-left edge when the source sits to its right.
+        const targetSide = getAbsCleanClampedPoint(
+            getAbsCleanSideCardAttachmentPoint(targetRect, start.x), routeBounds
+        );
+        const sideDirection = start.x < targetX ? -1 : 1;
+        const stemOffset = Math.max(12, ABS_CLEAN_LINK_STEM_PX);
+        const stemX = Math.max(routeBounds.left, Math.min(
+            routeBounds.right,
+            targetSide.x + (sideDirection * stemOffset)
+        ));
         const end = getAbsCleanClampedPoint(
-            // The connector must enter from the portrait's left edge. Using
-            // the explicit side attachment avoids the old top/right arrival
-            // when the target is a circular or square header portrait.
-            getAbsCleanSideCardAttachmentPoint(targetRect, stemX), routeBounds
+            targetSide, routeBounds
         );
         const elbow = { x: stemX, y: end.y };
         return {
@@ -1282,7 +1285,7 @@ function showAbsCleanLegacyMultiLinkFx(source, sharedLinks, mode = null) {
     const sourceRect = source.getBoundingClientRect();
     const targetRect = target.getBoundingClientRect();
     const header = target.closest('.abs-top-header') ||
-        document.querySelector('#layout-abs-style .abs-top-header');
+        (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-top-header') : document.querySelector('#layout-abs-style .abs-top-header'));
     const headerRect = header?.getBoundingClientRect();
     if (!sourceRect.width || !targetRect.width || !headerRect?.width || !headerRect?.height) return;
     // Include the source card as well as the header so this legacy route also
@@ -1815,7 +1818,7 @@ function absCleanSafeMove(parent, node, anchor = null) {
 }
 
 function absCleanGetCategoryBox() {
-    return document.getElementById('abs-category-container')?.closest('.abs-box') || null;
+    return (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box') || null;
 }
 
 /* Categories, Links, and Stats share the right-hand utility track, but they
@@ -1870,7 +1873,7 @@ window.restoreAbsCleanCategoryLinksColumn = function() {
         const home = window.__absCleanCategoryLinksHome;
         const parent = home?.parent?.isConnected
             ? home.parent
-            : document.querySelector('#layout-abs-style .abs-main-col');
+            : (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
         const anchor = home?.next?.parentElement === parent ? home.next : null;
         if (parent) absCleanSafeMove(parent, categoryBox, anchor);
     }
@@ -1878,8 +1881,8 @@ window.restoreAbsCleanCategoryLinksColumn = function() {
 };
 
 function absCleanFindLinkSkillsBox() {
-    return document.getElementById('abs-link-skills-box') ||
-        document.querySelector('#layout-abs-style .abs-main-col > .abs-box:has(> .abs-content > #abs-link-container)');
+    return (window.getCardLayoutElement ? window.getCardLayoutElement('abs-link-skills-box') : document.getElementById('abs-link-skills-box')) ||
+        (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col > .abs-box:has(> .abs-content > #abs-link-container)') : document.querySelector('#layout-abs-style .abs-main-col > .abs-box:has(> .abs-content > #abs-link-container)'));
 }
 
 function absCleanEnsurePartnerPanelAction(partnersBox) {
@@ -2005,10 +2008,11 @@ function absCleanRestorePartnerPanelHeader(partnersBox) {
 }
 
 window.syncAbsCleanLinkPartnersPlacement = function() {
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
     const linkSkillsBox = absCleanFindLinkSkillsBox();
-    const partnersBox = document.getElementById('abs-partners-box');
-    const partnersContainer = document.getElementById('abs-partners-container');
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const partnersBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-partners-box') : document.getElementById('abs-partners-box'));
+    const partnersContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-partners-container') : document.getElementById('abs-partners-container'));
+    const mainCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
     if (!linkSkillsBox || !partnersBox || !mainCol) return;
 
     const isClean = document.body?.classList.contains('theme-abs-clean');
@@ -2023,7 +2027,7 @@ window.syncAbsCleanLinkPartnersPlacement = function() {
     const savedHome = window.__absCleanLinkPartnersHome;
     const savedHomeIsSafe = isSafeHomeParent(linkSkillsBox, savedHome?.link?.parent) &&
         isSafeHomeParent(partnersBox, savedHome?.partners?.parent);
-    const legacyLinkSlot = document.getElementById('abs-link-skills-legacy-slot');
+    const legacyLinkSlot = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-link-skills-legacy-slot') : document.getElementById('abs-link-skills-legacy-slot'));
     if (!savedHomeIsSafe) {
         const linkParent = legacyLinkSlot ||
             (isSafeHomeParent(linkSkillsBox, linkSkillsBox.parentElement) ? linkSkillsBox.parentElement : mainCol);
@@ -2052,7 +2056,7 @@ window.syncAbsCleanLinkPartnersPlacement = function() {
         }
 
         // In abs-style, partnersBox lives in the main column immediately after Categories
-        const catBox = document.getElementById('abs-category-container')?.closest('.abs-box');
+        const catBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box');
         if (catBox && catBox.parentElement === mainCol) {
             if (catBox.nextElementSibling !== partnersBox) {
                 catBox.insertAdjacentElement('afterend', partnersBox);
@@ -2085,11 +2089,46 @@ window.syncAbsCleanLinkPartnersPlacement = function() {
         return;
     }
 
+    const cleanPresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    if (cleanPresentation?.classList.contains('abs-clean-presentation-active') && window.syncAbsCleanPresentationLayout) {
+        // The permanent Clean layout owns Categories/Links beneath Active
+        // Skills. Keep only the Partners panel on the artwork-side rail.
+        window.syncAbsCleanPresentationLayout();
+        const sideCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col') : document.querySelector('#layout-abs-style .abs-side-col'));
+        const partnerHost = sideCol || mainCol;
+        if (!row) {
+            row = document.createElement('div');
+            row.id = 'abs-clean-link-partners-row';
+            row.className = 'abs-clean-link-partners-row';
+            row.setAttribute('aria-label', 'Partners');
+        }
+        if (partnerHost && row.parentElement !== partnerHost && !row.contains(partnerHost)) {
+            absCleanSafeMove(partnerHost, row);
+        }
+        if (partnersBox.parentElement !== row && !partnersBox.contains(row)) {
+            absCleanSafeMove(row, partnersBox);
+        }
+        [partnersBox, partnersContainer].forEach(node => {
+            if (!node?.style) return;
+            node.style.removeProperty('height');
+            node.style.removeProperty('max-height');
+            node.style.removeProperty('overflow');
+        });
+        partnersBox.classList.add('abs-clean-link-partners-box');
+        const hasPartners = Boolean((window.allPartnerScores?.length || 0) || (partnersContainer?.children.length || 0));
+        row.classList.toggle('has-partners', hasPartners);
+        row.classList.add('partner-only');
+        partnersBox.hidden = !hasPartners;
+        partnersBox.style.setProperty('display', hasPartners ? 'flex' : 'none', 'important');
+        absCleanEnsurePartnerPanelAction(partnersBox);
+        return;
+    }
+
     // Links live directly below Categories in the main grid. Partners stay in
     // the clean side/art column so the relationship rail remains beside the
     // card presentation instead of becoming another main-content row.
     let linkSlot = document.getElementById('abs-clean-links-under-categories-slot');
-    const categoryBox = document.getElementById('abs-category-container')?.closest('.abs-box');
+    const categoryBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box');
     if (!linkSlot) {
         linkSlot = document.createElement('div');
         linkSlot.id = 'abs-clean-links-under-categories-slot';
@@ -2116,7 +2155,7 @@ window.syncAbsCleanLinkPartnersPlacement = function() {
         categoryLinksColumn.style.removeProperty('grid-row');
     }
 
-    const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
+    const sideCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col') : document.querySelector('#layout-abs-style .abs-side-col'));
     const partnerHost = sideCol || mainCol;
     if (!row) {
         row = document.createElement('div');
@@ -2163,6 +2202,7 @@ window.syncAbsCleanLinkPartnersPlacement = function() {
 /* The old header-right dock is retired. Keep this function as a compatibility
    hook for existing render calls, but route clean placement to the new row. */
 window.syncAbsCleanHeaderPartners = function() {
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
     const dock = document.getElementById('abs-clean-header-partners');
     if (dock) {
         dock.hidden = true;

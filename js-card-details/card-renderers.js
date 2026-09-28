@@ -75,8 +75,44 @@ function getModeSpecificDatabaseSuperAttacks(card, mode = currentEzaMode) {
     return buckets.base.length ? buckets.base : (buckets.eza.length ? buckets.eza : buckets.seza);
 }
 
-function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
-    const saContainer = document.getElementById("abs-sa-container");
+function resolveCardRenderRoot(targetRoot = null) {
+    return targetRoot?.querySelector ? targetRoot : (window.getCardLayoutRoot?.() || document);
+}
+
+function findCardRenderTarget(root, id) {
+    if (window.getCardLayoutElement) return window.getCardLayoutElement(id, root);
+    return root?.querySelector?.(`#${id}`) || document.getElementById(id);
+}
+
+function isDokkanInfoRenderRoot(root) {
+    return root?.dataset?.cardLayout === 'dokkaninfo';
+}
+
+function escapeInfoRenderText(value) {
+    return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+}
+
+function renderDokkanInfoSkillCard({ kind, type, name, condition = '', effect = '', icon = '', meta = '' }) {
+    const safeKind = escapeInfoRenderText(kind);
+    const safeType = escapeInfoRenderText(type);
+    const safeName = escapeInfoRenderText(name);
+    const iconHtml = icon
+        ? `<img class="info-skill-icon" src="${escapeInfoRenderText(icon)}" alt="">`
+        : '';
+    return `<article class="dokkan-card info-rendered-skill" data-info-skill-kind="${safeKind}">
+        <header class="info-skill-header">${iconHtml}<div class="info-skill-title"><span class="info-skill-type">${safeType}</span><strong>${safeName}</strong></div>${meta ? `<span class="info-skill-meta">${escapeInfoRenderText(meta)}</span>` : ''}</header>
+        <div class="info-skill-content">${condition ? `<section><b>Condition:</b><div>${condition}</div></section>` : ''}<section><b>Effect:</b><div>${effect || 'Effect details unavailable.'}</div></section></div>
+    </article>`;
+}
+
+function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode, targetRoot = null) {
+    const root = resolveCardRenderRoot(targetRoot);
+    const saContainer = findCardRenderTarget(root, "abs-sa-container");
     if (!saContainer) return;
     saContainer.innerHTML = "";
 
@@ -245,7 +281,8 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         const animationContext = window.DokkanAnimation?.resolveSuperAttackContext(specObj, card, idx)
             || (idx === 0 ? 'sa1' : 'sa2');
         const animationButton = window.DokkanAnimation?.buttonHtml(animationScript, 'Play Super Attack', animationContext) || '';
-        const isAbsCleanTheme = document.body?.classList.contains('theme-abs-clean') || document.getElementById('app')?.classList.contains('theme-abs-clean') || document.documentElement?.dataset?.cardViewerTheme === 'clean';
+        const isDokkanInfo = isDokkanInfoRenderRoot(root);
+        const isAbsCleanTheme = root?.dataset?.cardLayout === 'abs-clean' || document.body?.classList.contains('theme-abs-clean') || document.getElementById('app')?.classList.contains('theme-abs-clean') || document.documentElement?.dataset?.cardViewerTheme === 'clean';
         let cleanTypePills;
         if (isAbsCleanTheme && isExSuperAttack) {
             cleanTypePills = `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">Super Attack</span>`;
@@ -281,6 +318,20 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
         const cleanSaContent = isAbsCleanTheme
             ? `<div class="abs-sa-clean-layout"><div class="abs-sa-clean-copy">${formattedSaCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedSaCond}</div>${cleanExConditionDividerHtml}` : ''}</div></div>`
             : `${formattedSaCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedSaCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${formattedEffects}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
+
+        if (isDokkanInfo) {
+            const infoType = String(typeLabel).replace(/<[^>]*>/g, '').trim();
+            saContainer.insertAdjacentHTML('beforeend', renderDokkanInfoSkillCard({
+                kind: 'super-attack',
+                type: infoType,
+                name: saName,
+                condition: formattedSaCond,
+                effect: formattedEffects,
+                icon: saIcon,
+                meta: [kiText, headerDamageMultiplier].filter(Boolean).join(' · ')
+            }));
+            return;
+        }
         
         // Calculate grid column class
         let colSpanClass = 'abs-sa-col-12';
@@ -316,8 +367,9 @@ function renderSuperAttacks(card, isEZA = false, mode = currentEzaMode) {
     });
 }
 
-function renderDokkanFields(card) {
-    const fieldContainer = document.getElementById("abs-field-container");
+function renderDokkanFields(card, targetRoot = null) {
+    const root = resolveCardRenderRoot(targetRoot);
+    const fieldContainer = findCardRenderTarget(root, "abs-field-container");
     if (!fieldContainer) return;
     fieldContainer.innerHTML = "";
 
@@ -381,13 +433,14 @@ function renderDokkanFields(card) {
 
     resolvedFields.forEach(fieldObj => {
         let fieldName = (fieldObj.name || "Dokkan Field").replace(/^dokkan field\s*[-–—:]?\s*/i, '').trim();
+        const isDokkanInfo = isDokkanInfoRenderRoot(root);
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
         const rawEffect = typeof getAbsDokkanFieldEffectText === 'function'
             ? getAbsDokkanFieldEffectText(fieldObj)
             : (fieldObj.effect_description || fieldObj.description || fieldObj.itemized_description || fieldObj.effect || "");
-        const formattedEffect = isAbsCleanTheme && typeof formatAbsCleanDokkanFieldEffect === 'function'
-            ? formatAbsCleanDokkanFieldEffect(rawEffect)
-            : formatOfficialText(String(rawEffect), true).replace(/[\r\n]+/g, ' ').trim();
+        // Database newlines are game text wrapping, not paragraph breaks.
+        // Match the editor's flowing effect copy instead of inserting hard <br>s.
+        const formattedEffect = formatOfficialText(String(rawEffect).replace(/[\r\n]+/g, ' '), true).trim();
         const rawCond = fieldObj.condition || fieldObj.activation_condition || "";
         const formattedCond = formatOfficialText(String(rawCond), true).replace(/[\r\n]+/g, ' ').trim();
 
@@ -402,15 +455,43 @@ function renderDokkanFields(card) {
         const legacyFieldIconHtml = fieldId
             ? `<img src="https://abscustom.github.io/assets/images/ing_label_field.png" class="abs-sa-icon-left abs-domain-header-icon" data-tooltip="Play Domain Animation" alt="Play Domain Animation" ${fieldOnClick}>`
             : '';
+        const fieldFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-active-floating-header abs-sa-floating-header"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">Dokkan Field</span>${domainPlayButton}</span><div class="abs-sa-header-meta"></div></div>`
+            : '';
         const fieldHeader = isAbsCleanTheme
-            ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">Dokkan Field</span>${domainPlayButton}</span><span class="abs-sa-title-center">${cleanFieldIconHtml}<em class="abs-sa-name-glow">${fieldName}</em></span></div>`
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group">${cleanFieldIconHtml}<em class="abs-sa-name-glow">${fieldName}</em></span></span></div>`
             : `<div class="abs-sa-header-title">${legacyFieldIconHtml}<span class="abs-sa-title-text">Dokkan Field | <em class="abs-sa-name-glow">${fieldName}</em></span></div>`;
         const cleanFieldStatBadges = isAbsCleanTheme && typeof window.renderAbsCleanFieldStatBadges === 'function'
             ? window.renderAbsCleanFieldStatBadges(rawEffect, fieldObj)
             : '';
+        const cleanViewerFieldClasses = isAbsCleanTheme && document.body.classList.contains('card-viewer-page')
+            ? ' abs-clean-active-rendered abs-clean-domain-rendered abs-clean-header-effects'
+            : '';
+
+        if (isDokkanInfo) {
+            const infoField = renderDokkanInfoSkillCard({
+                kind: 'dokkan-field',
+                type: 'Dokkan Field',
+                name: fieldName,
+                condition: formattedCond,
+                effect: formattedEffect || 'Dokkan Field effect details unavailable.'
+            });
+            fieldContainer.insertAdjacentHTML('beforeend', infoField);
+            if (fieldId) {
+                const action = document.createElement('button');
+                action.type = 'button';
+                action.className = 'info-field-animation-button';
+                action.textContent = 'Play Dokkan Field Animation';
+                action.setAttribute('aria-label', `Play ${fieldName} animation`);
+                action.addEventListener('click', () => window.openDomainModal?.(fieldId, fieldName));
+                fieldContainer.lastElementChild?.querySelector('.info-skill-header')?.appendChild(action);
+            }
+            return;
+        }
 
         const html = `
-            <div class="abs-box mb-3 abs-domain-rendered" data-active-kind="domain">
+            <div class="abs-box mb-3 abs-domain-rendered${cleanViewerFieldClasses}" data-active-kind="domain">
+                ${fieldFloatingHeader}
                 <div class="abs-header">
                     ${fieldHeader}
                 </div>
@@ -430,8 +511,9 @@ function renderDokkanFields(card) {
     window.syncAbsCleanRightRail?.();
 }
 
-function renderStandbySkills(card) {
-    const standbyContainer = document.getElementById("abs-standby-container");
+function renderStandbySkills(card, targetRoot = null) {
+    const root = resolveCardRenderRoot(targetRoot);
+    const standbyContainer = findCardRenderTarget(root, "abs-standby-container");
     if (!standbyContainer) return;
     standbyContainer.innerHTML = "";
 
@@ -481,14 +563,25 @@ function renderStandbySkills(card) {
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
         const animationScript = window.DokkanAnimation?.resolveSkill(stObj) || '';
         const animationButton = window.DokkanAnimation?.buttonHtml(animationScript, 'Play Standby Skill', 'standby') || '';
+        if (isDokkanInfoRenderRoot(root)) {
+            standbyContainer.insertAdjacentHTML('beforeend', renderDokkanInfoSkillCard({
+                kind: 'standby-skill', type: 'Standby Skill', name,
+                condition: formattedCond, effect: formattedEffect
+            }));
+            return;
+        }
+        const standbyFloatingHeader = isAbsCleanTheme
+            ? `<div class="abs-active-floating-header abs-sa-floating-header"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">Standby</span>${animationButton}</span><div class="abs-sa-header-meta"></div></div>`
+            : '';
         const headerHtml = isAbsCleanTheme
-            ? `<div class="abs-sa-header-title"><span class="abs-sa-pill-actions"><span class="abs-sa-type-pill">Standby</span>${animationButton}</span><span class="abs-sa-title-center"><em class="abs-sa-name-glow">${name}</em></span></div>`
+            ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><em class="abs-sa-name-glow">${name}</em></span></span></div>`
             : `<div class="abs-sa-header-title"><span class="abs-sa-title-text">Standby Skill | <em class="abs-sa-name-glow">${name}</em></span></div>`;
-        const cleanClass = isAbsCleanTheme ? ' abs-clean-active-rendered abs-clean-standby-rendered' : '';
+        const cleanClass = isAbsCleanTheme ? ' abs-clean-active-rendered abs-clean-standby-rendered abs-clean-header-effects' : '';
         const editAttr = isAbsCleanTheme ? ' data-edit="active"' : '';
 
         const html = `
             <div class="abs-box mb-3 abs-standby-rendered${cleanClass}" data-active-kind="standby"${editAttr}>
+                ${standbyFloatingHeader}
                 <div class="abs-header">
                     ${headerHtml}
                     ${isAbsCleanTheme ? '' : animationButton}
@@ -509,8 +602,9 @@ function renderStandbySkills(card) {
     window.syncAbsCleanRightRail?.();
 }
 
-function renderActiveSkills(card) {
-    const activeContainer = document.getElementById("abs-active-container");
+function renderActiveSkills(card, targetRoot = null) {
+    const root = resolveCardRenderRoot(targetRoot);
+    const activeContainer = findCardRenderTarget(root, "abs-active-container");
     if (!activeContainer) return;
     activeContainer.innerHTML = "";
 
@@ -557,9 +651,20 @@ function renderActiveSkills(card) {
         const typeLabel = actObj.type_label || "Active Skill";
         const animationScript = window.DokkanAnimation?.resolveSkill(actObj) || '';
         const animationButton = window.DokkanAnimation?.buttonHtml(animationScript, 'Play Active Skill', 'active') || '';
-        const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
+        const isAbsCleanTheme = root?.dataset?.cardLayout === 'abs-clean' || document.body.classList.contains('theme-abs-clean');
         const damageMultiplierHtml = renderAbsDamageMultiplier(rawEffect, typeLabel, true, '', actObj);
         const headerDamageMultiplier = damageMultiplierHtml.match(/class="pill-val">([^<]+)</)?.[1] || '';
+        if (isDokkanInfoRenderRoot(root)) {
+            const activeIcon = actObj.special_category_id !== undefined || actObj.special_view_id
+                ? getSaIconUrl(actObj, card)
+                : '';
+            activeContainer.insertAdjacentHTML('beforeend', renderDokkanInfoSkillCard({
+                kind: 'active-skill', type: typeLabel, name: actName,
+                condition: formattedCond, effect: formattedEffect, icon: activeIcon,
+                meta: headerDamageMultiplier
+            }));
+            return;
+        }
         const cleanActiveDividerHtml = isAbsCleanTheme
             ? '<div class="abs-clean-active-divider" aria-hidden="true"><hr class="divider py bg-secondary"></div>'
             : '';
@@ -610,8 +715,9 @@ function renderActiveSkills(card) {
     window.syncAbsCleanRightRail?.();
 }
 
-function renderFinishSkills(card) {
-    const finishContainer = document.getElementById("abs-finish-container");
+function renderFinishSkills(card, targetRoot = null) {
+    const root = resolveCardRenderRoot(targetRoot);
+    const finishContainer = findCardRenderTarget(root, "abs-finish-container");
     if (!finishContainer) return;
     finishContainer.innerHTML = "";
 
@@ -664,6 +770,17 @@ function renderFinishSkills(card) {
         const formattedCond = formatOfficialText(String(rawCond), true).replace(/[\r\n]+/g, ' ').trim();
         const animationScript = window.DokkanAnimation?.resolveSkill(finObj) || '';
         const animationButton = window.DokkanAnimation?.buttonHtml(animationScript, 'Play Finish Skill', 'finish') || '';
+
+        if (isDokkanInfoRenderRoot(root)) {
+            const finishIcon = finObj.special_category_id !== undefined || finObj.special_view_id || /\b(causes|damage|ultimate|colossal|mega-colossal)\b/i.test(rawEffect)
+                ? getSaIconUrl(finObj, card)
+                : '';
+            finishContainer.insertAdjacentHTML('beforeend', renderDokkanInfoSkillCard({
+                kind: 'finish-skill', type: 'Finish Skill', name,
+                condition: formattedCond, effect: formattedEffect, icon: finishIcon
+            }));
+            return;
+        }
 
         let iconHtml = '';
         if (finObj.special_category_id !== undefined || finObj.special_view_id || /\b(causes|damage|ultimate|colossal|mega-colossal)\b/i.test(rawEffect)) {

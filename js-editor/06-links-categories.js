@@ -35,8 +35,8 @@ window.refreshLinkSkillHoverDetails = function() {
 };
 
 window.refreshEditorLinkingPartners = async function() {
-    const partnersBox = document.getElementById('abs-partners-box');
-    const partnersContainer = document.getElementById('abs-partners-container');
+    const partnersBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-partners-box') : document.getElementById('abs-partners-box'));
+    const partnersContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-partners-container') : document.getElementById('abs-partners-container'));
     if (!partnersBox || !partnersContainer) return;
 
     const links = Array.from(document.querySelectorAll('#card-link-container a'))

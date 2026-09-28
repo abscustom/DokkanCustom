@@ -8,7 +8,11 @@
 
     // Resolve card-owned data before <base> redirects shared application assets.
     const cardFolderUrl = new URL('./', window.location.href).href;
-    const runtimeVersion = '20260922-custom-runtime-v1';
+    const runtimeVersion = '20260926-clean-motion-runtime-v1';
+    const cleanPresentationVersion = '20260927-clean-presentation-v53';
+    const cleanLayoutRuntimeVersion = '20260927-clean-layout-runtime-v3';
+    const viewerSettingsVersion = '20260927-clean-floating-motion-v11';
+    const viewerMotionVersion = '20260926-clean-motion-availability-v10';
 
     // Older published cards were generated before the shared loader stylesheet
     // was emitted in their <head>.  Apply the small, first-paint contract before
@@ -65,32 +69,60 @@
         'https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css',
         `${repoRoot}css/style.css`,
         `${repoRoot}css/ui-toast.css`,
-        `${repoRoot}css/dokkan-info.css`,
-        // Version this shared layout sheet: published custom-card pages load it
-        // through this bootstrapper and otherwise may retain a stale cached copy.
-        `${repoRoot}css/abs-style-layout.css?v=20260921-sa-type-pill-v2`,
-        `${repoRoot}css/editor-ui.css`,
-        `${repoRoot}css/card-inspector.css`,
+        `${repoRoot}css/dokkan-info.css?v=${runtimeVersion}`,
+        // Keep the shared and clean layout sheets on the same cache revision.
+        // Older card pages can already have one of these filenames in their
+        // head; ensureStylesheet below upgrades that link instead of treating
+        // any version as current.
+        `${repoRoot}css/abs-style-layout.css?v=20260925-passive-header-shadow-v1`,
+        `${repoRoot}css/editor-ui.css?v=${runtimeVersion}`,
+        `${repoRoot}css/card-inspector.css?v=${runtimeVersion}`,
         `${repoRoot}css/lwf.css`,
-        `${repoRoot}css/abs-clean.css?v=${runtimeVersion}`,
+        `${repoRoot}css/abs-clean.css?v=20260925-clean-layout-v25`,
+        `${repoRoot}css/abs-clean-presentation.css?v=${cleanPresentationVersion}`,
         `${repoRoot}css/loading-screen.css`,
         `${repoRoot}css/card-admin.css`,
         `${repoRoot}css/sba-side-dock.css`,
         `${repoRoot}css/sba-bottom-nav.css`,
         `${repoRoot}css/tool-sba-nav.css`,
-        `${repoRoot}css/card-viewer-settings.css?v=${runtimeVersion}`,
+        `${repoRoot}css/card-viewer-settings.css?v=${viewerSettingsVersion}`,
         `${repoRoot}css/viewer-card-picker.css`
     ];
 
-    styles.forEach(href => {
-        const fileKey = href.split('?')[0].split('/').pop();
-        if (!document.querySelector(`link[href*="${fileKey}"]`)) {
-            const link = document.createElement('link');
-            link.rel = 'stylesheet';
-            link.href = href;
-            document.head.appendChild(link);
+    function ensureStylesheet(href) {
+        const expectedUrl = new URL(href, document.baseURI);
+        const fileName = expectedUrl.pathname.split('/').pop();
+        const candidates = Array.from(document.querySelectorAll('link[rel~="stylesheet"][href]'))
+            .filter(link => {
+                try {
+                    const path = new URL(link.href, document.baseURI).pathname;
+                    return path.endsWith(`/css/${fileName}`);
+                } catch (error) {
+                    return false;
+                }
+            });
+
+        const primary = candidates.shift();
+        if (primary) {
+            // Matching by filename alone used to leave whichever historical
+            // stylesheet happened to be present in a saved card. Upgrade that
+            // link to the canonical URL so theme switches always use one CSS
+            // revision, regardless of the card's age or browser cache.
+            if (primary.href !== expectedUrl.href) primary.href = expectedUrl.href;
+            primary.dataset.absSharedStylesheet = runtimeVersion;
+            candidates.forEach(link => link.remove());
+            return primary;
         }
-    });
+
+        const link = document.createElement('link');
+        link.rel = 'stylesheet';
+        link.href = expectedUrl.href;
+        link.dataset.absSharedStylesheet = runtimeVersion;
+        document.head.appendChild(link);
+        return link;
+    }
+
+    styles.forEach(ensureStylesheet);
 
     // 4. Fetch card.json (with fallback to embedded script#card-data)
     let cardData = null;
@@ -188,6 +220,7 @@
     // 9. Load DokkanCustom JavaScript Modules in Order
     const scripts = [
         'js-card-details/card-image-interceptor.js',
+        'js-card-details/card-layout-roots.js',
         'js-card-details/card-helpers.js',
         'js-card-details/abs-category-art-toggle.js',
         'js-card-details/card-formatters.js',
@@ -224,15 +257,22 @@
     ];
 
     for (const s of scripts) {
-        await loadScript(`${repoRoot}${s}?v=${runtimeVersion}`);
+        const scriptVersion = s === 'js-card-details/card-helpers.js'
+            ? cleanLayoutRuntimeVersion
+            : runtimeVersion;
+        await loadScript(`${repoRoot}${s}?v=${scriptVersion}`);
     }
 
-    // Load LWF module loader
-    loadScript(`${repoRoot}js-graphics/lwf-loader.js`, true);
+    await loadScript(`${repoRoot}js-card-details/abs-clean-presentation.js?v=${cleanPresentationVersion}`);
+
+    // Load LWF before the viewer motion module so published custom cards can
+    // attach the idle renderer after their active presentation root exists.
+    await loadScript(`${repoRoot}js-graphics/lwf-loader.js`, true);
 
     // 10. Configure Published Card Runtime and Viewport
     document.body.classList.add('is-published', 'card-viewer-page');
     window.ensurePublishedCustomCardRuntime?.();
+    await loadScript(`${repoRoot}js-card-details/viewer-motion.js?v=${viewerMotionVersion}`, true);
 
     const sidebar = document.getElementById('editor');
     const toggleBtn = document.getElementById('toggleBtn');
@@ -250,6 +290,19 @@
     // 11. Populate the Card with Project Data
     if (typeof window.loadProjectData === 'function') {
         window.loadProjectData(cardData, cardFolderUrl, true);
+    }
+    const folderCardId = String(window.PUBLISHED_SITE_FOLDER || '').match(/(\d{7,10})(?=-|$)/)?.[1] || '';
+    const motionCardId = String(cardData.officialCardId || cardData.cardId || cardData.id || folderCardId).trim();
+    if (motionCardId) {
+        const characterId = Number(cardData.character_id || cardData.characterId || 0);
+        window.__absViewerCard = {
+            ...(window.__absViewerCard || {}),
+            id: motionCardId,
+            ...(characterId ? { character_id: characterId } : {})
+        };
+    }
+    if (window.PUBLISHED_CARD_SOURCE === 'custom') {
+        window.renderCustomEditorSkillsInDokkanInfo?.();
     }
     window.__absDynamicBootstrapping = false;
     if (!window.absCardContentReady) {

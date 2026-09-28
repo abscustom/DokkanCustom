@@ -534,6 +534,34 @@ function getEditorCategoryItems(container) {
 window.resolveDokkanCategoryDisplay = resolveDokkanCategoryDisplay;
 window.getEditorCategoryItems = getEditorCategoryItems;
 
+// Imported and older saved cards can carry both a legacy field and its newer
+// ID field. Prefer the first populated field, not the first truthy field:
+// JavaScript treats [] as truthy, so `links || link_skill_ids` loses valid IDs
+// whenever the legacy array is present but empty.
+function getFirstPopulatedCardList(card, keys) {
+    if (!card || typeof card !== 'object') return [];
+    for (const key of keys) {
+        const value = card[key];
+        let items;
+        if (Array.isArray(value)) items = value;
+        else if (value === undefined || value === null || value === '') items = [];
+        else if (typeof value !== 'object') items = [value];
+        else if (['id', 'link_id', 'link_skill_id', 'name', 'category_id', 'category_name'].some(field => field in value)) items = [value];
+        else items = Object.values(value);
+
+        const populated = items.filter(item => item !== undefined && item !== null && item !== '');
+        if (populated.length) return populated;
+    }
+    return [];
+}
+
+window.getCardLinkValues = card => getFirstPopulatedCardList(card, [
+    'links', 'link_skill_ids', 'linkSkillIds', 'link_skills', 'linkSkills'
+]);
+window.getCardCategoryValues = card => getFirstPopulatedCardList(card, [
+    'categories', 'card_categories', 'category_ids', 'categoryIds'
+]);
+
 // Count unique characters represented by a category. Official card data uses
 // numeric category IDs, while custom/imported data may carry category names;
 // support both forms and de-duplicate transformed cards by character_id (or
@@ -560,8 +588,9 @@ window.getDokkanCategoryCharacterCount = function(categoryId, categoryName) {
 
     cards.forEach(card => {
         if (!card) return;
-        const categoryValues = [
+        const categoryValues = window.getCardCategoryValues?.(card) || [
             ...asArray(card.categories),
+            ...asArray(card.card_categories),
             ...asArray(card.category_ids),
             ...asArray(card.categoryIds)
         ];
@@ -1876,13 +1905,13 @@ window.getAbsCleanPassiveSource = function() {
     const listText = container => Array.from(container?.querySelectorAll('li') || [])
         .map(item => String(item.textContent || '').replace(/\s+/g, ' ').trim())
         .filter(Boolean);
-    const renderedItems = listText(document.getElementById('abs-passive-container'));
+    const renderedItems = listText((window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-container') : document.getElementById('abs-passive-container')));
     if (renderedItems.length) return renderedItems.join('\n');
 
     const legacyItems = listText(document.getElementById('card-passive-container'));
     if (legacyItems.length) return legacyItems.join('\n');
 
-    return document.getElementById('abs-passive-container')?.innerText ||
+    return (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-container') : document.getElementById('abs-passive-container'))?.innerText ||
         document.getElementById('card-passive-container')?.innerText || '';
 };
 
@@ -1912,7 +1941,8 @@ function renderAbsCleanPassiveSummary(rawText) {
 }
 
 window.syncAbsCleanPassiveSummary = function(rawText = null) {
-    const summary = document.getElementById('abs-passive-summary');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const summary = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-summary') : document.getElementById('abs-passive-summary'));
     if (!summary) return;
 
     const isClean = document.body?.classList.contains('theme-abs-clean');
@@ -2194,12 +2224,18 @@ window.renderPassiveIconsStrip = renderPassiveIconsStrip;
 // the Stats panel is visibly below the artwork while the Card Art/Animation
 // controls remain owned by the dock itself.
 window.syncAbsCleanStatsAndArtPlacement = function() {
-    const statsBox = document.getElementById('abs-stats-box');
-    const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const activePresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    if (activePresentation?.classList.contains('abs-clean-presentation-active')) {
+        window.syncAbsCleanPresentationLayout?.();
+        return;
+    }
+    const statsBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stats-box') : document.getElementById('abs-stats-box'));
+    const sideCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col') : document.querySelector('#layout-abs-style .abs-side-col'));
     const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
-    const categoryBox = document.getElementById('abs-category-container')?.closest('.abs-box');
+    const categoryBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box');
     const artDock = sideCol?.querySelector(':scope > #abs-art-dock-wrapper') ||
-        document.getElementById('abs-art-dock-wrapper');
+        (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-dock-wrapper') : document.getElementById('abs-art-dock-wrapper'));
     const isClean = document.body?.classList.contains('theme-abs-clean');
 
     if (!statsBox || !sideCol) return;
@@ -2298,11 +2334,11 @@ window.syncAbsCleanStatsAndArtPlacement = function() {
 // lets the editor and published card layouts converge on the same DOM shape
 // without changing the other themes.
 window.ensureAbsCleanHeaderBadgeRail = function() {
-    const abilityDocks = document.getElementById('abs-clean-ability-docks');
-    const passiveSummary = document.getElementById('abs-passive-summary');
-    const passiveBox = document.getElementById('abs-passive-skill-box');
+    const abilityDocks = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-ability-docks') : document.getElementById('abs-clean-ability-docks'));
+    const passiveSummary = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-summary') : document.getElementById('abs-passive-summary'));
+    const passiveBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-skill-box') : document.getElementById('abs-passive-skill-box'));
     const passiveName = passiveBox?.querySelector(':scope > #abs-passive-name') ||
-        document.getElementById('abs-passive-name');
+        (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-name') : document.getElementById('abs-passive-name'));
     if (!passiveBox || !passiveName) return null;
 
     const legacyRail = document.getElementById('abs-clean-header-badges-rail');
@@ -2312,8 +2348,8 @@ window.ensureAbsCleanHeaderBadgeRail = function() {
             currentParent === passiveName ||
             currentParent === passiveBox;
         const nativeParent = wasCleanMoved
-            ? (document.querySelector('#layout-abs-style .abs-header-left') ||
-                document.querySelector('#layout-abs-style .abs-side-col'))
+            ? ((window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-header-left') : document.querySelector('#layout-abs-style .abs-header-left')) ||
+                (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col') : document.querySelector('#layout-abs-style .abs-side-col')))
             : currentParent;
         if (nativeParent && nativeParent !== passiveBox && !abilityDocks.contains(nativeParent)) {
             const nativeNext = wasCleanMoved
@@ -2383,10 +2419,16 @@ window.ensureAbsCleanHeaderBadgeRail = function() {
 // Forms, Partners, or Stats independently, so one shared placement guard keeps
 // the top row out of the title header, art column, and obsolete rail.
 window.syncAbsCleanAbilityDockPlacement = function() {
-    const abilityDocks = document.getElementById('abs-clean-ability-docks');
-    const passiveSummary = document.getElementById('abs-passive-summary');
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
-    const passiveBox = document.getElementById('abs-passive-skill-box');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const activePresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    if (activePresentation?.classList.contains('abs-clean-presentation-active')) {
+        window.syncAbsCleanPresentationLayout?.();
+        return;
+    }
+    const abilityDocks = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-ability-docks') : document.getElementById('abs-clean-ability-docks'));
+    const passiveSummary = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-summary') : document.getElementById('abs-passive-summary'));
+    const mainCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
+    const passiveBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-skill-box') : document.getElementById('abs-passive-skill-box'));
     if (!document.body?.classList.contains('theme-abs-clean')) {
         const home = window.__absCleanAbilityDocksHome;
         if (abilityDocks && home?.parent?.isConnected && abilityDocks.parentElement !== home.parent && !abilityDocks.contains(home.parent)) {
@@ -2420,7 +2462,7 @@ window.syncAbsCleanAbilityDockPlacement = function() {
             passiveSummary.innerHTML = '';
             passiveSummary.hidden = true;
         }
-        const timeline = document.getElementById('abs-clean-bottom-timeline');
+        const timeline = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-bottom-timeline') : document.getElementById('abs-clean-bottom-timeline'));
         if (timeline) {
             timeline.hidden = true;
         }
@@ -2430,7 +2472,7 @@ window.syncAbsCleanAbilityDockPlacement = function() {
         return;
     }
 
-    const timeline = document.getElementById('abs-clean-bottom-timeline');
+    const timeline = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-bottom-timeline') : document.getElementById('abs-clean-bottom-timeline'));
     if (timeline) {
         timeline.hidden = false;
     }
@@ -2475,19 +2517,20 @@ window.syncAbsCleanAbilityDockPlacement = function() {
 // side-column homes, so switching away from abs.clean restores every other
 // theme without recreating or duplicating any card data.
 window.syncAbsCleanAwakeningFormsPlacement = function() {
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
-    const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
-    const headerLeft = document.querySelector('#layout-abs-style .abs-header-left');
-    const categoryContainer = document.getElementById('abs-category-container');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const mainCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
+    const sideCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-side-col') : document.querySelector('#layout-abs-style .abs-side-col'));
+    const headerLeft = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-header-left') : document.querySelector('#layout-abs-style .abs-header-left'));
+    const categoryContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'));
     const categoryBox = categoryContainer?.closest('.abs-box') || null;
-    const awakeningContainer = document.getElementById('abs-awakenings-container');
-    const transformationsContainer = document.getElementById('abs-transformations-container');
-    const headerAwakeningPortraits = document.getElementById('abs-clean-awakening-portraits');
+    const awakeningContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-awakenings-container') : document.getElementById('abs-awakenings-container'));
+    const transformationsContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-transformations-container') : document.getElementById('abs-transformations-container'));
+    const headerAwakeningPortraits = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-awakening-portraits') : document.getElementById('abs-clean-awakening-portraits'));
     if (!mainCol || !categoryBox || (!awakeningContainer && !transformationsContainer)) return;
 
     const isClean = document.body.classList.contains('theme-abs-clean');
-    const awakeningsBox = document.getElementById('abs-awakenings-box');
-    const transformationsBox = document.getElementById('abs-transformations-box');
+    const awakeningsBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-awakenings-box') : document.getElementById('abs-awakenings-box'));
+    const transformationsBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-transformations-box') : document.getElementById('abs-transformations-box'));
     const oldSplitRow = document.getElementById('abs-clean-category-awakenings-row');
     const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
 
@@ -2621,14 +2664,29 @@ window.syncAbsCleanAwakeningFormsPlacement = function() {
     const formsSlot = panel.querySelector('#abs-clean-awakening-forms-forms-slot');
     const emptyState = panel.querySelector('.abs-clean-awakening-forms-empty');
 
-    // Put the combined panel immediately below the complete layered art.
-    // In the editor the dock overlays the fixed portrait stage; in card view
-    // the dock is the art surface itself. If the dock is temporarily nested
-    // during an animation preview, fall back to the direct stage anchor.
+    // The permanent Clean layout keeps the combined panel in the lower header
+    // row with Stats. Retain the art-column destination only while that layout
+    // is initializing or when loading an older layout shell.
     const portraitStage = sideCol?.querySelector('#abs-clean-portrait-stage');
     const artDock = sideCol?.querySelector('#abs-art-dock-wrapper');
     const artAnchor = artDock?.parentElement === sideCol ? artDock : portraitStage;
-    if (sideCol) {
+    const activePresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    const usesPermanentCleanPresentation = Boolean(
+        activePresentation?.classList.contains('abs-clean-presentation-active') &&
+        window.syncAbsCleanPresentationLayout
+    );
+    const cleanHeaderControls = usesPermanentCleanPresentation
+        ? activePresentation.querySelector('[data-abs-clean-header-controls]')
+        : null;
+    const cleanPortraitStack = usesPermanentCleanPresentation
+        ? activePresentation.querySelector('[data-abs-clean-portrait-stack]')
+        : null;
+    const cleanAwakeningGroup = usesPermanentCleanPresentation
+        ? activePresentation.querySelector('[data-abs-clean-header-awakening-group]')
+        : null;
+    if (cleanHeaderControls) {
+        if (panel.parentElement !== cleanHeaderControls) cleanHeaderControls.appendChild(panel);
+    } else if (sideCol) {
         const directArtAnchor = artAnchor?.parentElement === sideCol ? artAnchor : null;
         if (panel.parentElement !== sideCol) {
             if (directArtAnchor) directArtAnchor.insertAdjacentElement('afterend', panel);
@@ -2647,23 +2705,27 @@ window.syncAbsCleanAwakeningFormsPlacement = function() {
     // node back to an obsolete art-side rail.
     if (isClean) window.syncAbsCleanAbilityDockPlacement?.();
 
-    // Categories is a direct main-grid sibling of Passive, using the narrow
-    // second track. The old lower split row is removed after both live nodes leave.
-    const passiveBox = document.getElementById('abs-passive-skill-box');
+    // The permanent Clean presentation module owns the Categories/Links row
+    // beneath Active Skills. Avoid moving the live Categories box back into
+    // the former side-rail location during a Forms refresh.
+    const passiveBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-skill-box') : document.getElementById('abs-passive-skill-box'));
     categoryBox.classList.add('abs-clean-category-box');
     const categoryIsInUtilityColumn = categoryBox.parentElement === categoryLinksColumn ||
-        categoryBox.closest('#abs-clean-category-links-column') === categoryLinksColumn;
-    if (passiveBox?.parentElement === mainCol && !categoryIsInUtilityColumn) {
+        categoryBox.closest('#abs-clean-category-links-column') === categoryLinksColumn ||
+        Boolean(categoryBox.closest('#abs-clean-active-category-link-row'));
+    if (!usesPermanentCleanPresentation && passiveBox?.parentElement === mainCol && !categoryIsInUtilityColumn) {
         if (categoryBox.parentElement !== mainCol) passiveBox.insertAdjacentElement('afterend', categoryBox);
         else if (passiveBox.nextElementSibling !== categoryBox) passiveBox.insertAdjacentElement('afterend', categoryBox);
-    } else if (!categoryIsInUtilityColumn && categoryBox.parentElement !== mainCol) {
+    } else if (!usesPermanentCleanPresentation && !categoryIsInUtilityColumn && categoryBox.parentElement !== mainCol) {
         mainCol.appendChild(categoryBox);
     }
 
     if (awakeningContainer && awakeningSlot && awakeningContainer.parentElement !== awakeningSlot && !awakeningContainer.contains(awakeningSlot)) {
         awakeningSlot.appendChild(awakeningContainer);
     }
-    if (transformationsContainer && formsSlot && transformationsContainer.parentElement !== formsSlot && !transformationsContainer.contains(formsSlot)) {
+    if (transformationsContainer && cleanPortraitStack && transformationsContainer.parentElement !== cleanPortraitStack && !transformationsContainer.contains(cleanPortraitStack)) {
+        cleanPortraitStack.appendChild(transformationsContainer);
+    } else if (transformationsContainer && formsSlot && transformationsContainer.parentElement !== formsSlot && !transformationsContainer.contains(formsSlot)) {
         formsSlot.appendChild(transformationsContainer);
     }
 
@@ -2690,7 +2752,9 @@ window.syncAbsCleanAwakeningFormsPlacement = function() {
         headerAwakeningPortraits.classList.add('abs-clean-awakening-box-portraits');
         headerPortraitsVisible = Boolean(headerAwakeningPortraits.querySelector('.abs-clean-awakening-portrait:not([hidden])'));
         headerAwakeningPortraits.hidden = !headerPortraitsVisible;
-        if (headerAwakeningPortraits.parentElement !== awakeningSlot && !headerAwakeningPortraits.contains(awakeningSlot)) {
+        if (cleanAwakeningGroup && headerAwakeningPortraits.parentElement !== cleanAwakeningGroup && !headerAwakeningPortraits.contains(cleanAwakeningGroup)) {
+            cleanAwakeningGroup.prepend(headerAwakeningPortraits);
+        } else if (!cleanAwakeningGroup && headerAwakeningPortraits.parentElement !== awakeningSlot && !headerAwakeningPortraits.contains(awakeningSlot)) {
             awakeningSlot.prepend(headerAwakeningPortraits);
         }
     }
@@ -2724,15 +2788,27 @@ window.syncAbsCleanAwakeningFormsPlacement = function() {
     if (emptyState) emptyState.hidden = awakeningsVisible || formsVisible;
     panel.classList.toggle('has-awakenings', awakeningsVisible);
     panel.classList.toggle('has-forms', formsVisible);
+    // In the permanent Clean layout, the compact awakening portraits and
+    // linked form miniatures live directly in the header row. Keep this legacy
+    // shell only as a hidden home for fallback content; it must not render as
+    // a separate Forms panel beside the artwork.
+    panel.hidden = usesPermanentCleanPresentation;
+    panel.setAttribute('aria-hidden', String(usesPermanentCleanPresentation));
 };
 
 // abs.clean gives Active and Domain a real wrapper in the live DOM. This
 // prevents either container from ever becoming a descendant of the
 // Categories box while leaving the native theme structure untouched.
 window.syncAbsCleanRightRail = function() {
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const mainCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
     const ids = ['abs-active-container', 'abs-standby-container', 'abs-finish-container', 'abs-field-container'];
-    const found = ids.map(id => document.getElementById(id)).filter(Boolean);
+    // Resolve these containers inside the active presentation root. A global
+    // ID lookup returns the ABS.Style nodes while Clean is active, which lets
+    // the Clean layout physically pull content out of Style during a switch.
+    const found = ids.map(id => window.getCardLayoutElement
+        ? window.getCardLayoutElement(id)
+        : document.getElementById(id)).filter(Boolean);
     if (!mainCol || !found.length) return;
 
     const cleanInlineProps = [
@@ -2750,9 +2826,9 @@ window.syncAbsCleanRightRail = function() {
         node.dataset.absCleanInlineLayout = 'true';
     };
 
-    const activeContainer = document.getElementById('abs-active-container');
-    const standbyContainer = document.getElementById('abs-standby-container');
-    const fieldContainer = document.getElementById('abs-field-container');
+    const activeContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-active-container') : document.getElementById('abs-active-container'));
+    const standbyContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-standby-container') : document.getElementById('abs-standby-container'));
+    const fieldContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-field-container') : document.getElementById('abs-field-container'));
     const ordered = found.slice().sort((a, b) => {
         const pos = a.compareDocumentPosition(b);
         if (pos & 4) return -1;
@@ -2770,8 +2846,7 @@ window.syncAbsCleanRightRail = function() {
 
     const home = window.__absCleanRailHome;
     const isClean = document.body.classList.contains('theme-abs-clean');
-    const isNarrow = Boolean(window.matchMedia?.('(max-width: 680px)')?.matches);
-    const categoryBox = document.getElementById('abs-category-container')?.closest('.abs-box') ||
+    const categoryBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box') ||
         Array.from(mainCol.children).find(child => child.querySelector?.('#abs-category-container')) || null;
     let rail = document.getElementById('abs-clean-right-rail');
     let pairRow = document.getElementById('abs-clean-active-domain-row');
@@ -2779,6 +2854,8 @@ window.syncAbsCleanRightRail = function() {
     const categoryIsInAwakeningsRow = categoryBox?.parentElement === categoryAwakeningsRow;
     const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
     const categoryIsInUtilityColumn = categoryBox?.parentElement === categoryLinksColumn;
+    const activeCategoryLinkRow = document.getElementById('abs-clean-active-category-link-row');
+    const categoryIsInPresentationRow = Boolean(categoryBox?.closest('#abs-clean-active-category-link-row'));
 
     if (!isClean) {
         mainCol.classList.remove('abs-clean-has-active-domain');
@@ -2805,7 +2882,7 @@ window.syncAbsCleanRightRail = function() {
         return;
     }
 
-    const passiveBox = document.getElementById('abs-passive-skill-box');
+    const passiveBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-skill-box') : document.getElementById('abs-passive-skill-box'));
     categoryBox?.classList.add('abs-clean-category-box');
     const fallbackAnchor = Array.from(mainCol.children).find(child =>
         child !== activeContainer &&
@@ -2870,12 +2947,12 @@ window.syncAbsCleanRightRail = function() {
     // Its own clean-only Categories/Awakening row is the one intentional
     // nested home, and must be preserved during subsequent sync passes.
     if (categoryBox && categoryBox.parentElement !== mainCol &&
-        !categoryIsInAwakeningsRow && !categoryIsInUtilityColumn) {
+        !categoryIsInAwakeningsRow && !categoryIsInUtilityColumn && !categoryIsInPresentationRow) {
         mainCol.insertBefore(categoryBox, pairRow);
     } else if (categoryBox && categoryBox !== pairRow && pairRow.parentElement === mainCol) {
         const categoryAnchor = categoryIsInAwakeningsRow
             ? categoryAwakeningsRow
-            : (categoryIsInUtilityColumn ? categoryLinksColumn : categoryBox);
+            : (categoryIsInUtilityColumn ? categoryLinksColumn : (categoryIsInPresentationRow ? activeCategoryLinkRow : categoryBox));
         if (categoryAnchor?.parentElement === mainCol) mainCol.insertBefore(pairRow, categoryAnchor);
     }
 
@@ -2899,7 +2976,9 @@ window.syncAbsCleanRightRail = function() {
     const hasDomain = Boolean(fieldContainer?.children.length);
     const hasStandby = Boolean(standbyContainer?.children.length);
     const hasActiveDomainContent = hasActive || hasDomain || hasStandby;
-    const hasTwoColumnSkillRow = hasActive && hasDomain && !hasStandby && !isNarrow;
+    // Active Skill, Dokkan Field, and Standby each use their own full-width
+    // row in ABS.Clean at every viewport size.
+    const hasTwoColumnSkillRow = false;
     pairRow.classList.toggle('has-active', hasActive);
     pairRow.classList.toggle('has-domain', hasDomain);
     pairRow.classList.toggle('has-standby', hasStandby);
@@ -2945,7 +3024,14 @@ window.syncAbsCleanRightRail = function() {
 
     if (!window.__absCleanRailResizeBound) {
         window.__absCleanRailResizeBound = true;
-        window.addEventListener('resize', () => window.syncAbsCleanRightRail?.(), { passive: true });
+        let resizeTimer = 0;
+        window.addEventListener('resize', () => {
+            if (!document.body.classList.contains('theme-abs-clean')) return;
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => {
+                if (document.body.classList.contains('theme-abs-clean')) window.syncAbsCleanRightRail?.();
+            }, 120);
+        }, { passive: true });
     }
 
     window.syncAbsCleanAbilityDockPlacement?.();
@@ -2954,10 +3040,19 @@ window.syncAbsCleanRightRail = function() {
 // Super Attacks get their own full-width row directly beneath the Leader
 // Skill in abs.clean. The original position is restored for every other theme.
 window.syncAbsCleanSuperAttackPlacement = function() {
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
-    const saContainer = document.getElementById('abs-sa-container');
-    const passiveBox = document.getElementById('abs-passive-skill-box');
-    const activeContainer = document.getElementById('abs-active-container');
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
+    const activePresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    if (activePresentation?.classList.contains('abs-clean-presentation-active') && window.syncAbsCleanPresentationLayout) {
+        // The permanent Clean presentation owns the attack region and its
+        // children. Avoid reparenting one of those children into the legacy
+        // ABS.Style column, where a nested anchor is not a valid insertBefore target.
+        window.syncAbsCleanPresentationLayout();
+        return;
+    }
+    const mainCol = (window.queryCardLayout ? window.queryCardLayout('#layout-abs-style .abs-main-col') : document.querySelector('#layout-abs-style .abs-main-col'));
+    const saContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-sa-container') : document.getElementById('abs-sa-container'));
+    const passiveBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-skill-box') : document.getElementById('abs-passive-skill-box'));
+    const activeContainer = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-active-container') : document.getElementById('abs-active-container'));
     const activeDomainRow = document.getElementById('abs-clean-active-domain-row');
     if (!mainCol || !saContainer) return;
 
@@ -2982,9 +3077,10 @@ window.syncAbsCleanSuperAttackPlacement = function() {
         return;
     }
 
-    const cleanAnchor = activeDomainRow?.parentElement === mainCol
+    const requestedCleanAnchor = activeDomainRow?.parentElement === mainCol
         ? activeDomainRow
         : (activeContainer?.parentElement === mainCol ? activeContainer : passiveBox);
+    const cleanAnchor = requestedCleanAnchor?.parentElement === mainCol ? requestedCleanAnchor : null;
     if (saContainer.parentElement !== mainCol || saContainer.nextElementSibling !== cleanAnchor) {
         mainCol.insertBefore(saContainer, cleanAnchor || mainCol.firstChild);
     }

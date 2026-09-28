@@ -89,8 +89,9 @@ window.getProjectDataObject = function() {
     });
 
     window.normalizeActiveSkillBlocks?.();
-    const saHTMLBlocks = Array.from(document.querySelectorAll(".sa-block")).map(b => b.outerHTML);
-    const activeHTMLBlocks = Array.from(document.querySelectorAll(".active-block")).map(b => b.outerHTML);
+    window.ensureEditorSkillSourceIds?.();
+    const saHTMLBlocks = (window.getSuperAttackSourceBlocks?.() || Array.from(document.querySelectorAll(".sa-block"))).map(b => b.outerHTML);
+    const activeHTMLBlocks = (window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll(".active-block"))).map(b => b.outerHTML);
 
     const formsData = [];
     document.querySelectorAll("#forms-container .dokkan-card").forEach((formEl) => {
@@ -113,6 +114,7 @@ window.getProjectDataObject = function() {
 
     return {
         cardSource: window.currentCardSource === 'official' ? 'official' : 'custom',
+        customAssetBaseUrl: window.currentCustomCardAssetBaseUrl || '',
         officialCardId: window.currentCardSource === 'official'
             ? (window.currentOfficialCardId || window.editorPartnerCardId || "")
             : "",
@@ -142,7 +144,7 @@ window.getProjectDataObject = function() {
         thumbSsr: document.getElementById('ssr-row')?.querySelector('#img-ssr')?.getAttribute('src') || document.getElementById('img-ssr')?.getAttribute('src') || "",
         thumbTur: document.getElementById('tur-row')?.querySelector('#img-tur')?.getAttribute('src') || document.getElementById('img-tur')?.getAttribute('src') || "",
         thumbLr: document.getElementById('img-lr')?.getAttribute('src') || "",
-        thumbMain: document.getElementById('abs-thumb-img')?.getAttribute('src') || "",
+        thumbMain: (window.getCardLayoutElement ? window.getCardLayoutElement('abs-thumb-img') : document.getElementById('abs-thumb-img'))?.getAttribute('src') || "",
         activeBlocksHTML: activeHTMLBlocks, 
         saBlocksHTML: saHTMLBlocks,         
         containers: {
@@ -202,6 +204,12 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     window.currentOfficialCardAwakeningMode = window.currentCardSource === 'official'
         ? (projectData.officialCardAwakeningMode || projectData.currentAwakeningMode || '')
         : '';
+    const savedCustomFolderId = String(projectData.inputs?.['upload-folder-id'] || '').trim();
+    window.currentCustomCardAssetBaseUrl = window.currentCardSource === 'custom'
+        ? (projectData.customAssetBaseUrl || window.currentCustomCardAssetBaseUrl || (savedCustomFolderId
+            ? `https://abscustom.github.io/Custom%20Cards/${encodeURIComponent(savedCustomFolderId)}/`
+            : ''))
+        : '';
     if (window.currentOfficialCardId) window.editorPartnerCardId = window.currentOfficialCardId;
     window.currentCardThemeVariant = projectData.themeVariant || projectData.themeStyle || 'dokkaninfo';
     const legacyProgressionVisibility = projectData.showAwakeningProgression !== false;
@@ -215,6 +223,7 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     const fixUrl = (src) => {
         if (!src) return "";
         const trimmed = String(src).trim();
+        if (window.resolveImportedAssetUrl) return window.resolveImportedAssetUrl(trimmed, baseUrl, window.currentCustomCardAssetBaseUrl);
         if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) return trimmed;
         const sourceFileName = trimmed.split(/[?#]/)[0].split('/').pop();
         const isSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(sourceFileName);
@@ -268,6 +277,7 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     if (projectData.containers) {
         const norm = (s) => {
             let str = window.normalizeAssetUrl ? window.normalizeAssetUrl(s) : s;
+            if (window.rewriteImportedAssetUrls) str = window.rewriteImportedAssetUrls(str, baseUrl, window.currentCustomCardAssetBaseUrl);
             if (baseUrl) {
                 str = str.replace(/src="(images\/[^"]+)"/g, (m, p) => `src="${fixUrl(p)}"`);
                 str = str.replace(/src="(\.\/images\/[^"]+)"/g, (m, p) => `src="${fixUrl(p)}"`);
@@ -343,9 +353,11 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
         }
     }
 
+    window.clearEditorSkillSources?.();
     document.querySelectorAll(".active-block, .sa-block").forEach(el => el.remove());
     const normBlock = (s) => {
         let str = window.normalizeAssetUrl ? window.normalizeAssetUrl(s) : s;
+        if (window.rewriteImportedAssetUrls) str = window.rewriteImportedAssetUrls(str, baseUrl, window.currentCustomCardAssetBaseUrl);
         if (baseUrl) {
             str = str.replace(/src="(images\/[^"]+)"/g, (m, p) => `src="${fixUrl(p)}"`);
             str = str.replace(/src="(\.\/images\/[^"]+)"/g, (m, p) => `src="${fixUrl(p)}"`);
@@ -354,14 +366,14 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     };
     
     if (projectData.activeBlocksHTML) {
-        const actSpot = document.getElementById("active-skill-insert-spot");
-        if (actSpot) projectData.activeBlocksHTML.forEach(html => actSpot.insertAdjacentHTML('beforebegin', normBlock(html)));
+        const actSpot = window.ensureEditorSkillSourceHost?.();
+        if (actSpot) projectData.activeBlocksHTML.forEach(html => actSpot.insertAdjacentHTML('beforeend', normBlock(html)));
     }
     window.normalizeActiveSkillBlocks?.();
     
     if (projectData.saBlocksHTML) {
-        const saSpot = document.getElementById("sa-insert-spot");
-        if (saSpot) projectData.saBlocksHTML.forEach(html => saSpot.insertAdjacentHTML('beforebegin', normBlock(html)));
+        const saSpot = window.ensureEditorSkillSourceHost?.();
+        if (saSpot) projectData.saBlocksHTML.forEach(html => saSpot.insertAdjacentHTML('beforeend', normBlock(html)));
     }
 
     if (projectData.inputs) {
@@ -418,7 +430,7 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
         if (elLr) elLr.src = fixUrl(projectData.thumbLr);
     }
     if (projectData.thumbMain) {
-        const elAbs = document.getElementById('abs-thumb-img');
+        const elAbs = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-thumb-img') : document.getElementById('abs-thumb-img'));
         if (elAbs) elAbs.src = fixUrl(projectData.thumbMain);
     }
 
@@ -466,6 +478,7 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     } else if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
+    window.renderEditorSkillsInDokkanInfo?.();
     if (window.switchEditorArtMode) window.switchEditorArtMode(preferredArtMode);
     if (window.updateAbsStyleSuperAttacks) {
         window.updateAbsStyleSuperAttacks();
@@ -578,6 +591,7 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
     const fullTitle = rawDesc ? `[${rawDesc}] ${rawName}` : rawName;
     const descText = projectData?.inputs?.leaderInput || rawDesc || '';
     const previewImg = projectData?.cardArtImage || projectData?.thumbMain || projectData?.thumbLr || projectData?.thumbTur || projectData?.thumbSsr || '';
+    const bootstrapperVersion = '20260927-clean-motion-update-v17';
     
     const escapeAttr = (str) => String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const escapeText = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -614,23 +628,23 @@ ${JSON.stringify(projectData || {}, null, 2)}
     <script>
         (function() {
             const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
+            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
             if (isLocal) {
                 const p = decodeURIComponent(location.pathname);
                 const idx = p.indexOf('/abscustom/');
                 if (idx !== -1) {
-                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
+                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                 } else {
                     const isGrouped = p.includes('/Custom Cards/') || p.includes('/Custom%20Cards/');
-                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
+                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                 }
             }
             const s = document.createElement('script');
             s.src = src;
             s.onerror = function() {
-                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1') {
+                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}') {
                     const fallback = document.createElement('script');
-                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260922-custom-runtime-v1';
+                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                     document.head.appendChild(fallback);
                 }
             };
@@ -886,14 +900,14 @@ window.ensurePublishedCustomCardRuntime = function() {
     const staticProbe = new Image();
     staticProbe.onload = () => {
         const infoImage = document.getElementById('myOverlayImage');
-        const absImage = document.getElementById('abs-art-img');
+        const absImage = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
         [infoImage, absImage].forEach(image => {
             if (!image) return;
             image.src = staticArtUrl;
             image.removeAttribute('data-failed');
             image.removeAttribute('data-official-card-art');
         });
-        const artBox = document.getElementById('abs-art-layers-container');
+        const artBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-layers-container') : document.getElementById('abs-art-layers-container'));
         if (artBox) artBox.dataset.staticArtSrc = staticArtUrl;
         window.refreshEditorArtModeAvailability?.(window.currentEditorArtMode || 'animated');
     };
@@ -1044,7 +1058,7 @@ function addPublishedCardVisibilityGuard(clone, rarityName, showSsrProgression, 
                 if (!canUseTurStage) hide(document.getElementById('tur-row'));
                 if (!canUseSsrStage && !canUseTurStage) {
                     hide(document.getElementById('awakening-progression-wrapper'));
-                    hide(document.getElementById('abs-awakenings-box'));
+                    hide((window.getCardLayoutElement ? window.getCardLayoutElement('abs-awakenings-box') : document.getElementById('abs-awakenings-box')));
                 }
                 if (!showSsr) {
                     document.querySelectorAll('#abs-awakenings-container .abs-awaken-row:has(.rarity-icon[src*="rarity_ssr_abs"])').forEach(hide);
@@ -1316,7 +1330,7 @@ function isCurrentCardReversibleExchange() {
     const passiveText = passiveContainer?.innerText || passiveContainer?.textContent || '';
     const hasReversiblePassiveIcon = Boolean(
         passiveContainer?.querySelector('img[src*="st_reversible.png"]') ||
-        document.getElementById('abs-passive-name')?.querySelector('img[src*="st_reversible.png"]')
+        (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-name') : document.getElementById('abs-passive-name'))?.querySelector('img[src*="st_reversible.png"]')
     );
 
     const activeText = Array.from(document.querySelectorAll('.active-block')).map(block => [

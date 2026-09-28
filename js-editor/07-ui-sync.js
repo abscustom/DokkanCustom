@@ -6,10 +6,13 @@ window.updateCardDisplay = function() {
     if (window.syncToAbsLayout) {
         window.syncToAbsLayout();
     }
-    if (window.syncAbsCleanIdentityIcons) {
-        window.syncAbsCleanIdentityIcons();
-    }
-    if (window.syncAbsCleanIdentityIcons) {
+    const activeLayout = window.getCardLayoutRoot?.();
+    // syncToAbsLayout refreshes the Clean identity dock for the visual themes.
+    // Dokkan Info exits that path early, so keep one direct refresh there.
+    if (window.syncAbsCleanIdentityIcons && (
+        typeof window.syncToAbsLayout !== 'function' ||
+        activeLayout?.dataset?.cardLayout === 'dokkaninfo'
+    )) {
         window.syncAbsCleanIdentityIcons();
     }
     window.syncProgressionDisplayControls?.();
@@ -65,7 +68,7 @@ window.applyCardTheme = function(newSuffix) {
     };
 
     const colors = themeColors[newSuffix] || themeColors.none;
-    const targets = [document.documentElement, document.body, document.getElementById('layout-abs-style')];
+    const targets = [document.documentElement, document.body, (window.getCardLayoutElement ? window.getCardLayoutElement('layout-abs-style') : document.getElementById('layout-abs-style'))];
     
     targets.forEach(el => {
         if (!el) return;
@@ -352,14 +355,14 @@ window.updateIdentity = function() {
     if (leaderDisplay) leaderDisplay.innerHTML = leaderRaw.replace(/\n/g, '<br>');
 
     // ABS Sync
-    const dbDesc = document.getElementById("abs-char-title");
+    const dbDesc = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-char-title") : document.getElementById("abs-char-title"));
     if (dbDesc) dbDesc.textContent = cleanTitle;
 
-    const dbName = document.getElementById("abs-char-name");
+    const dbName = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-char-name") : document.getElementById("abs-char-name"));
     if (dbName) dbName.textContent = name;
     if (window.syncAbsCleanReleaseDate) window.syncAbsCleanReleaseDate();
 
-    const dbLeader = document.getElementById("abs-leader-skill");
+    const dbLeader = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-leader-skill") : document.getElementById("abs-leader-skill"));
     if (dbLeader) dbLeader.innerHTML = window.formatCategoryQuotes(leaderRaw).replace(/\n/g, '<br>');
     if (window.syncAbsCleanLeaderBar) window.syncAbsCleanLeaderBar();
 

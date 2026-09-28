@@ -42,33 +42,68 @@
 // Autosave belongs to the editable session, not to the published viewer. A
 // published upload can opt into this session only after Admin Mode is unlocked.
 window.editorAutosaveTimer = null;
+window.editorAutosaveDebounceTimer = null;
+window.editorAutosaveChangeRevision = 0;
+window.editorAutosaveSavedRevision = -1;
+window.markEditorDirty = function() {
+    window.editorAutosaveChangeRevision += 1;
+};
 window.startEditorAutosave = function() {
     if (window.IS_PUBLISHED && window.ADMIN_MODE !== true) return false;
     if (window.editorAutosaveTimer) return true;
 
-    window.editorAutosaveTimer = window.setInterval(() => {
+    if (!window.editorAutosaveInputHandlerReady) {
+        const scheduleAutosave = event => {
+            const target = event.target;
+            if (!target?.matches?.('input, textarea, select')) return;
+            if (target.matches('[type="search"], [type="button"], [type="submit"], [type="reset"], [type="hidden"]')) return;
+            if (window.IS_RESETTING || (window.IS_PUBLISHED && window.ADMIN_MODE !== true)) return;
+            window.markEditorDirty();
+        };
+        document.addEventListener('input', scheduleAutosave, true);
+        document.addEventListener('change', scheduleAutosave, true);
+        document.addEventListener('click', event => {
+            if (event.target?.closest?.('#context-gui button, #editor button, #editor-top-bar button')) window.markEditorDirty();
+        }, true);
+        window.editorAutosaveInputHandlerReady = true;
+    }
+
+    let saving = false;
+    window.editorAutosaveTimer = window.setInterval(async () => {
         if (window.IS_RESETTING) return;
         if (window.IS_PUBLISHED && window.ADMIN_MODE !== true) return;
-        window.autoSaveToCache?.();
-    }, 15000);
+        if (saving || window.editorAutosaveSavedRevision === window.editorAutosaveChangeRevision) return;
+        saving = true;
+        try { await window.autoSaveToCache?.(); }
+        finally { saving = false; }
+    }, 5000);
     return true;
 };
 
 window.stopEditorAutosave = function() {
+    window.clearTimeout(window.editorAutosaveDebounceTimer);
+    window.editorAutosaveDebounceTimer = null;
     if (window.editorAutosaveTimer) {
         window.clearInterval(window.editorAutosaveTimer);
         window.editorAutosaveTimer = null;
     }
 };
 
-document.addEventListener("DOMContentLoaded", function() {
+document.addEventListener("DOMContentLoaded", async function() {
     
     // Clean up cache-busting query parameter if coming from a reset
     if (window.location.search.includes('reset=')) {
         try {
-            localStorage.clear();
-            sessionStorage.clear();
-        } catch(e) {}
+            await window.EditorAutosaveStore?.clear?.();
+            localStorage.removeItem('dokkan_autosave');
+            localStorage.removeItem('dokkan_selected_theme');
+        } catch(e) {
+            console.error('Could not clear the editor autosave during reset:', e);
+            window.CardHubToast?.error('Reset could not clear the saved card', {
+                detail: 'The previous autosave is still available. Retry the reset after closing other editor tabs.',
+                duration: 8000
+            });
+        }
         window.history.replaceState({}, document.title, window.location.pathname);
     }
 
@@ -101,7 +136,7 @@ document.addEventListener("DOMContentLoaded", function() {
         if (window.restoreThemeOnLoad) {
             window.restoreThemeOnLoad();
         } else if (window.currentCardThemeStyle) {
-            window.toggleCardTheme(window.currentCardThemeStyle === 'abs-style');
+            window.switchCardTheme?.(window.currentCardThemeStyle);
         }
 
         setTimeout(() => {
@@ -147,21 +182,17 @@ document.addEventListener("DOMContentLoaded", function() {
             const saLvArea = currentSuperAttack.querySelector('.sa-lv-container');
             const sidebarContainer = document.getElementById('activation-sidebar-container');
             const saActInput = document.getElementById('input-activation');
-
             if (actRow && saLvArea) {
                 if (actRow.classList.contains('d-none')) {
                     actRow.classList.remove('d-none'); saLvArea.classList.add('d-none');
                     if (sidebarContainer) sidebarContainer.style.display = 'block';
-
                     const actTextDisp = currentSuperAttack.querySelector('.activation-text');
                     if (actTextDisp) {
-                        const cleanText = (typeof window.extractCleanConditionText === 'function')
+                        const cleanText = typeof window.extractCleanConditionText === 'function'
                             ? window.extractCleanConditionText(actTextDisp)
                             : actTextDisp.innerText.replace(/^activation\s+conditions?(\(s\))?[\s:]*/i, '').trim();
                         if (saActInput) saActInput.value = cleanText;
-                        if (cleanText === '') {
-                            actTextDisp.innerHTML = `<strong>Activation Condition</strong>`;
-                        }
+                        if (cleanText === '') actTextDisp.innerHTML = '<strong>Activation Condition</strong>';
                     }
                 } else {
                     actRow.classList.add('d-none'); saLvArea.classList.remove('d-none');
@@ -171,26 +202,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    const saActInput = document.getElementById('input-activation');
-    if (saActInput) {
-        saActInput.addEventListener('input', function() {
-            if (!currentSuperAttack) return;
-            const actTextDisp = currentSuperAttack.querySelector('.activation-text');
-            if (actTextDisp) {
-                const cleanVal = (typeof window.extractCleanConditionText === 'function')
-                    ? window.extractCleanConditionText(this.value)
-                    : this.value.trim().replace(/^activation\s+conditions?(\(s\))?[\s:]*/i, '').trim();
-                if (cleanVal === "") {
-                    actTextDisp.innerHTML = `<strong>Activation Condition</strong>`;
-                } else {
-                    actTextDisp.innerHTML = `<strong>Activation Condition</strong><br>${cleanVal.replace(/\n/g, '<br>')}`;
-                }
-            }
-            if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
-            if (window.syncToAbsLayout) window.syncToAbsLayout();
-        });
-    }
-
+    // The activation input itself is bound once by 09-super-attacks.js.
     const btnAddActive = document.getElementById("btn-add-active");
     if(btnAddActive) btnAddActive.addEventListener("click", window.addActiveSkillSection);
 
@@ -360,7 +372,7 @@ document.addEventListener("DOMContentLoaded", function() {
     const passiveTitleCard = document.querySelector('.passive-name-display');
     if (passiveTitleSidebar && passiveTitleCard) {
         passiveTitleSidebar.addEventListener("input", function() {
-            passiveTitleCard.innerText = this.value;
+            window.updatePassiveName(this.value);
         });
     }
 
@@ -392,7 +404,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 vidOverlay.load();
                 vidOverlay.play().catch(() => {});
 
-                const dbArtVid = document.getElementById('abs-art-video');
+                const dbArtVid = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-video') : document.getElementById('abs-art-video'));
                 if (dbArtVid) {
                     dbArtVid.src = objUrl;
                     delete dbArtVid.dataset.failed;
@@ -412,7 +424,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 window.uploadedArtImageFile = f;
                 window.uploadedArtFile = f; 
                 window.uploadedArtType = 'image';
-                const artBox = document.getElementById('abs-art-layers-container');
+                const artBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-layers-container') : document.getElementById('abs-art-layers-container'));
                 if (artBox) delete artBox.dataset.staticArtSrc;
                 imgOverlay.style.display = 'block';
                 vidOverlay.style.display = 'none';
@@ -422,7 +434,7 @@ document.addEventListener("DOMContentLoaded", function() {
                 delete imgOverlay.dataset.failed;
                 delete imgOverlay.dataset.officialCardArt;
 
-                const dbArtImg = document.getElementById('abs-art-img');
+                const dbArtImg = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
                 if (dbArtImg) {
                     dbArtImg.src = objUrl;
                     delete dbArtImg.dataset.failed;
@@ -435,7 +447,7 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 
-    [vidOverlay, document.getElementById('abs-art-video')].forEach(video => {
+    [vidOverlay, (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-video') : document.getElementById('abs-art-video'))].forEach(video => {
         if (!video) return;
         video.addEventListener('loadedmetadata', () => {
             delete video.dataset.failed;
@@ -446,7 +458,7 @@ document.addEventListener("DOMContentLoaded", function() {
             window.refreshEditorArtModeAvailability?.();
         });
     });
-    [imgOverlay, document.getElementById('abs-art-img'), document.getElementById('abs-art-bg'), document.getElementById('abs-art-char'), document.getElementById('abs-art-effect')].forEach(image => {
+    [imgOverlay, (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img')), (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-bg') : document.getElementById('abs-art-bg')), (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-char') : document.getElementById('abs-art-char')), (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-effect') : document.getElementById('abs-art-effect'))].forEach(image => {
         if (!image) return;
         image.addEventListener('load', () => {
             delete image.dataset.failed;
@@ -461,7 +473,7 @@ document.addEventListener("DOMContentLoaded", function() {
     // ONLY RUN INITIALIZATION & CACHE LOAD IF IN EDITOR MODE (NOT PUBLISHED)
     if (!window.IS_PUBLISHED) {
         if (!window.location.search.includes('reset=')) {
-            window.loadFromCache();
+            await window.loadFromCache();
             window.startEditorAutosave();
         }
         
@@ -478,7 +490,12 @@ document.addEventListener("DOMContentLoaded", function() {
         // Enforce saved or default theme on editor startup
         const savedTheme = localStorage.getItem('dokkan_selected_theme') || 'dokkaninfo';
         if (window.switchCardTheme) {
-            window.switchCardTheme((savedTheme === 'sba' || savedTheme === 'abs.clean' || savedTheme === 'abs-clean') ? 'sba' : (savedTheme === 'abs-style' ? 'abs-style' : 'dokkaninfo'));
+            const normalizedTheme = window.normalizeCardPresentationTheme?.(savedTheme) || (
+                ['sba', 'abs.clean', 'abs-clean'].includes(String(savedTheme).toLowerCase())
+                    ? 'abs-clean'
+                    : (savedTheme === 'abs-style' ? 'abs-style' : 'dokkaninfo')
+            );
+            window.switchCardTheme(normalizedTheme);
         } else if (window.toggleCardTheme) {
             window.toggleCardTheme(savedTheme === 'abs-style');
         }
@@ -497,7 +514,7 @@ document.addEventListener("DOMContentLoaded", function() {
         cardArtWrappers.forEach(wrapper => {
             wrapper.addEventListener('contextmenu', function(e) {
                 const infoCanvas = document.getElementById('info-card-bg-lwf-canvas');
-                const absCanvas = document.getElementById('abs-card-bg-lwf-canvas');
+                const absCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-card-bg-lwf-canvas') : document.getElementById('abs-card-bg-lwf-canvas'));
                 const targetCanvas = (infoCanvas && infoCanvas.classList.contains('lwf-active')) ? infoCanvas : (absCanvas && absCanvas.classList.contains('lwf-active') ? absCanvas : null);
 
                 if (targetCanvas && window.DokkanLWF) {

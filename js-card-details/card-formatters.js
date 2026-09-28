@@ -36,7 +36,7 @@ function formatOfficialText(text, highlightQuotes = true) {
     const addAtkIcon = `<img src="${CENTRAL_ASSET_URL}st_atk_combo.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const effIcon = `<img src="${CENTRAL_ASSET_URL}st_atk_super.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const alwaysHitIcon = `<img src="${CENTRAL_ASSET_URL}st_always_hit.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
-    const guardIcon = `<img src="${CENTRAL_ASSET_URL}st_guard_all.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
+    const guardIcon = `<img src="${CENTRAL_ASSET_URL}st_sp_guard.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const dmgRedIcon = `<img src="${CENTRAL_ASSET_URL}st_resist_damage_up.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const evasionIcon = `<img src="${CENTRAL_ASSET_URL}st_evasion.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
     const rainbowKiIcon = `<img src="${CENTRAL_ASSET_URL}ki_change_rainbow.png" style="height:17px; vertical-align:middle; margin:0 2px; transform:translateY(-1.5px);">`;
@@ -90,7 +90,7 @@ function formatOfficialText(text, highlightQuotes = true) {
         .replace(/:reversible:/gi, reversibleIcon);
 }
 
-function parsePassiveSections(rawPass) {
+function parsePassiveSections(rawPass, presentation = 'abs') {
     if (!rawPass) return "";
     
     let parts = rawPass.split(/\*([^*]+)\*/g);
@@ -127,6 +127,14 @@ function parsePassiveSections(rawPass) {
         if (sec.items.length === 0) return;
         
         const formattedHeader = formatOfficialText(sec.header, true);
+        if (presentation === 'dokkaninfo') {
+            html += `<section class="info-passive-section"><strong class="info-passive-heading">${formattedHeader}</strong><ul class="info-passive-list">`;
+            sec.items.forEach(item => {
+                html += `<li>${formatOfficialText(item, false)}</li>`;
+            });
+            html += '</ul></section>';
+            return;
+        }
         const mt = (idx === 0 || html === "") ? "margin-top: 0;" : "margin-top: 14px;";
         html += `<strong style="display:block; ${mt} margin-bottom: 4px; color:var(--theme-text, #38bdf8); font-size: 13.5px; text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.6));">${formattedHeader}</strong>`;
 
@@ -145,20 +153,63 @@ function parsePassiveSections(rawPass) {
 function autoDetectSAStats(text, saName = "", specObj = null) {
     if (!text) return [];
     let stats = [];
+    const normalizeSAStatIcon = icon => /pot_skill_02_on\.png/i.test(String(icon || ''))
+        ? `${CENTRAL_ASSET_URL}st_critical_up.png`
+        : icon;
+    const damageReductionStats = [...String(text).matchAll(/\b(?:raise|raises|boost|boosts|increase|increases)\b[^.;,]*\bdamage\s+reduction(?:\s+rate)?[^.;,]*/gi)]
+        .map(match => {
+            const clause = match[0];
+            const detailStart = clause.search(/\bdamage\s+reduction\b/i);
+            const detail = detailStart >= 0 ? clause.slice(detailStart) : clause;
+            const value = detail.match(/(\d+)\s*%/i)?.[1] || "20";
+            const duration = detail.match(/\bfor\s+(\d+)\s+turns?\b/i);
+            const target = /\ballies\b/i.test(clause) ? 'ally' : 'self';
+            const turns = duration
+                ? `${duration[1]} turn${Number(duration[1]) === 1 ? '' : 's'}`
+                : (target === 'ally' ? '1 turn' : '99 turns');
+            return {
+                icon: `${CENTRAL_ASSET_URL}st_resist_damage_up.png`,
+                value,
+                turns,
+                target
+            };
+        });
 
     // 1. Direct JSON Database Extraction if special rows exist
     if (specObj && Array.isArray(specObj.special_effects) && specObj.special_effects.length > 0) {
         specObj.special_effects.forEach(eff => {
             if (eff.icon && eff.value) {
                 stats.push({
-                    icon: eff.icon,
+                    icon: normalizeSAStatIcon(eff.icon),
                     value: String(eff.value),
                     turns: eff.turn ? (eff.turn >= 99 || eff.turn === 0 ? "99 turns" : `${eff.turn} turn${eff.turn > 1 ? 's' : ''}`) : "1 turn",
                     target: eff.target_type === 3 ? 'enemy' : (eff.target_type === 2 ? 'ally' : 'self')
                 });
             }
         });
-        if (stats.length > 0) return stats;
+        if (stats.length > 0) {
+            damageReductionStats.forEach(reduction => {
+                const misclassifiedDefenseDownIndex = stats.findIndex(effect =>
+                    effect.target === reduction.target &&
+                    String(effect.value) === reduction.value &&
+                    effect.turns === reduction.turns &&
+                    /(?:^|\/)st_0012(?:\.png)?(?:[?#]|$)/i.test(String(effect.icon))
+                );
+                if (misclassifiedDefenseDownIndex >= 0) {
+                    stats[misclassifiedDefenseDownIndex] = reduction;
+                    return;
+                }
+
+                const alreadyPresent = stats.some(effect =>
+                    effect.icon === reduction.icon &&
+                    String(effect.value) === reduction.value &&
+                    effect.turns === reduction.turns &&
+                    effect.target === reduction.target
+                );
+                if (!alreadyPresent) stats.push(reduction);
+            });
+            return stats;
+        }
     }
 
     const t = text.toLowerCase();
@@ -191,11 +242,25 @@ function autoDetectSAStats(text, saName = "", specObj = null) {
 
     // Split into individual comma or 'and' clauses
     const clauses = t.split(/,|\band\s+(?=(?:massively|greatly|raises|causes|all\s+attacks|lowers|seals|stuns|disables|recovers|chance))/i).map(c => c.trim()).filter(Boolean);
+    const getCoordinatedStatTurns = (clause, clauseIndex, defaultTurns) => {
+        const explicitTurn = /\bfor\s+(?:\d+|a)\s+turns?\b|\b(?:in battle|rest of battle|duration of battle)\b/i.test(clause);
+        if (explicitTurn || !/(?:raises?|boosts?|increases?)\s+(?:(?:own|the)\s+)?(?:atk|def)\b/i.test(clause)) {
+            return getTurnForClause(clause, defaultTurns);
+        }
+
+        const nextClause = clauses[clauseIndex + 1] || '';
+        const nextHasStatRaise = /^\s*(?:and\s+)?(?:(?:massively|greatly)\s+)?(?:raises?|boosts?|increases?)\s+(?:(?:own|the)\s+)?(?:atk|def)\b/i.test(nextClause);
+        const nextHasDuration = /\bfor\s+(?:\d+|a)\s+turns?\b|\b(?:in battle|rest of battle|duration of battle)\b/i.test(nextClause);
+        return nextHasStatRaise && nextHasDuration
+            ? getTurnForClause(nextClause, defaultTurns)
+            : getTurnForClause(clause, defaultTurns);
+    };
+    const indexedClauses = clauses.map((text, index) => ({ text, index }));
 
     // 1. ALLIES BUFFS
-    const allyClauses = clauses.filter(c => /allies|all\s+allies/i.test(c));
-    allyClauses.forEach(c => {
-        const turn = getTurnForClause(c, "1 turn");
+    const allyClauses = indexedClauses.filter(({ text }) => /allies|all\s+allies/i.test(text));
+    allyClauses.forEach(({ text: c, index }) => {
+        const turn = getCoordinatedStatTurns(c, index, "1 turn");
         const isStacking = (turn === "99 turns");
         const val = getVal(c, isStacking);
         if (/atk\s*(?:&|and)\s*def|def\s*(?:&|and)\s*atk/i.test(c)) {
@@ -209,10 +274,10 @@ function autoDetectSAStats(text, saName = "", specObj = null) {
     });
 
     // 2. SELF BUFFS (ATK & DEF)
-    const selfClauses = clauses.filter(c => !/allies|all\s+allies/i.test(c));
-    selfClauses.forEach(c => {
+    const selfClauses = indexedClauses.filter(({ text }) => !/allies|all\s+allies/i.test(text));
+    selfClauses.forEach(({ text: c, index }) => {
         if (!/raise|boost|\+/i.test(c)) return;
-        const turn = getTurnForClause(c, "99 turns");
+        const turn = getCoordinatedStatTurns(c, index, "99 turns");
         const isStacking = (turn === "99 turns");
 
         if (/atk\s*(?:&|and)\s*def|def\s*(?:&|and)\s*atk/i.test(c)) {
@@ -307,6 +372,16 @@ function autoDetectSAStats(text, saName = "", specObj = null) {
     if (t.includes("disables") || t.includes("action") || t.includes("break")) {
         stats.push({ icon: `${CENTRAL_ASSET_URL}st_1009.png`, value: "100", turns: "1 turn", target: 'enemy' });
     }
+
+    damageReductionStats.forEach(reduction => {
+        const alreadyPresent = stats.some(effect =>
+            effect.icon === reduction.icon &&
+            String(effect.value) === reduction.value &&
+            effect.turns === reduction.turns &&
+            effect.target === reduction.target
+        );
+        if (!alreadyPresent) stats.push(reduction);
+    });
 
     return stats;
 }

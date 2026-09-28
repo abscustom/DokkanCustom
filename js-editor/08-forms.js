@@ -3,6 +3,7 @@
    ============================================================ */
 
 window.addFormsSection = function() {
+    if (window.isPublishedEditorLocked?.()) return;
     try {
         window.addFormBlock();
         if (typeof window.openContextGUI === 'function') window.openContextGUI(0, 0, 'forms');
@@ -10,14 +11,6 @@ window.addFormsSection = function() {
         console.error('Could not add transformation form:', error);
     }
 };
-
-document.addEventListener('DOMContentLoaded', () => {
-    const addButton = document.getElementById('add-forms-sidebar-btn');
-    if (addButton && addButton.dataset.formHandlerBound !== 'true') {
-        addButton.dataset.formHandlerBound = 'true';
-        addButton.addEventListener('click', window.addFormsSection);
-    }
-});
 
 /* --- ULTIMATE FORM MANAGEMENT SYSTEM --- */
 window.addFormBlock = function(name = "New Form", blobUrl = "", exportName = "", absThumbSrc = "") {
@@ -81,8 +74,10 @@ window.refreshFormList = function() {
 
     const formsWrapper = document.getElementById("forms-card-wrapper");
     if (formsWrapper) formsWrapper.style.display = (allForms.length > 0) ? 'block' : 'none';
-    const transBox = document.getElementById('abs-transformations-box');
-    if (transBox) transBox.classList.toggle('d-none', allForms.length === 0);
+    const transBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-transformations-box') : document.getElementById('abs-transformations-box'));
+    const activeLayout = window.getCardLayoutRoot?.()?.dataset?.cardLayout;
+    const usesNativeInfoForms = activeLayout === 'dokkaninfo';
+    if (transBox) transBox.classList.toggle('d-none', usesNativeInfoForms || allForms.length === 0);
 
     // Show/Hide the editor panel depending on if forms exist
     if (allForms.length === 0) {

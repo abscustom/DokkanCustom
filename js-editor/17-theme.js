@@ -2,6 +2,21 @@
    THEME MANAGER & ABS LAYOUT SYNCHRONIZER
    ============================================================ */
 
+function layoutElement(id, root = null) {
+    return window.getCardLayoutElement
+        ? window.getCardLayoutElement(id, root)
+        : document.getElementById(id);
+}
+
+function layoutQuery(selector, root = window.getCardLayoutRoot?.()) {
+    if (root && String(selector).startsWith('#layout-abs-style')) {
+        const suffix = String(selector).slice('#layout-abs-style'.length).trim();
+        if (!suffix) return root;
+        return root.querySelector(suffix) || document.querySelector(selector);
+    }
+    return root?.querySelector(selector) || document.querySelector(selector);
+}
+
 function ensureAbsCleanCategoryCountDatabase() {
     const database = window.DB;
     const databaseReady = Array.isArray(database?.cards) && database.cards.length > 0 &&
@@ -27,85 +42,7 @@ function ensureAbsCleanCategoryCountDatabase() {
 }
 
 window.toggleCardTheme = function(isDbTheme) {
-    const appEl = document.getElementById('app');
-    const layoutInfo = document.getElementById('layout-dokkaninfo');
-    const layoutDb = document.getElementById('layout-abs-style');
-    
-    const btnInfo = document.getElementById('theme-btn-info');
-    const btnDb = document.getElementById('theme-btn-abs');
-    const btnSba = document.getElementById('theme-btn-sba');
-    
-    window.currentCardThemeStyle = isDbTheme ? 'abs-style' : 'dokkaninfo';
-    window.currentCardThemeVariant = isDbTheme ? 'abs-style' : 'dokkaninfo';
-    localStorage.setItem('dokkan_selected_theme', window.currentCardThemeStyle); 
-    // Published custom cards share this preference across linked pages. Keep it
-    // separate from the editor's own saved layout so opening the editor does
-    // not unexpectedly change the public card view.
-    if (window.IS_PUBLISHED) {
-        localStorage.setItem('dokkan_published_card_theme', window.currentCardThemeStyle);
-    }
-    window.updateSiteFavicon?.(window.currentCardThemeStyle);
-
-    // Apply class updates BEFORE running syncToAbsLayout so theme checks (e.g. isAbsCleanTheme) are accurate
-    if (isDbTheme) {
-        if (appEl) {
-            appEl.classList.add('theme-abs-style');
-            appEl.classList.remove('theme-dokkaninfo', 'theme-sba', 'theme-abs-clean');
-        }
-        document.body.classList.add('theme-abs-style');
-        document.body.classList.remove('theme-dokkaninfo', 'theme-sba', 'theme-abs-clean');
-        delete document.body.dataset.absCleanType;
-        document.body.style.removeProperty('--theme-main');
-        document.body.style.removeProperty('--theme-border');
-        document.body.style.removeProperty('--theme-header');
-        document.body.style.removeProperty('--theme-text');
-
-        if (btnInfo) btnInfo.classList.remove('active');
-        if (btnDb) btnDb.classList.add('active');
-        if (btnSba) btnSba.classList.remove('active');
-    } else {
-        if (appEl) {
-            appEl.classList.remove('theme-abs-style', 'theme-sba', 'theme-abs-clean');
-            appEl.classList.add('theme-dokkaninfo');
-        }
-        document.body.classList.remove('theme-abs-style', 'theme-sba', 'theme-abs-clean');
-        document.body.classList.add('theme-dokkaninfo');
-        delete document.body.dataset.absCleanType;
-        document.body.style.removeProperty('--theme-main');
-        document.body.style.removeProperty('--theme-border');
-        document.body.style.removeProperty('--theme-header');
-        document.body.style.removeProperty('--theme-text');
-
-        if (btnInfo) btnInfo.classList.add('active');
-        if (btnDb) btnDb.classList.remove('active');
-        if (btnSba) btnSba.classList.remove('active');
-    }
-
-    if (layoutInfo && layoutDb) {
-        if (isDbTheme) {
-            layoutInfo.style.display = 'none';
-            layoutDb.style.display = 'block';
-        } else {
-            layoutDb.style.display = 'none';
-            layoutInfo.style.display = 'block';
-        }
-    }
-
-    if (isDbTheme && window.syncToAbsLayout) {
-        window.syncToAbsLayout();
-    }
-
-    window.syncAbsCleanLinkSkillsPlacement?.();
-    window.syncAbsCleanLeaderPlacement?.();
-    window.syncAbsCleanRightRail?.();
-    window.syncAbsCleanSuperAttackPlacement?.();
-    window.syncAbsCleanAwakeningFormsPlacement?.();
-    window.syncAbsCleanHeaderComposition?.();
-    window.syncAbsCleanPassiveSummary?.();
-    window.syncAbsCleanLinkPartnersPlacement?.();
-    if (isDbTheme) {
-        window.refreshEditorLinkingPartners?.();
-    }
+    window.switchCardTheme(isDbTheme ? 'abs-style' : 'dokkaninfo');
 };
 
 
@@ -130,8 +67,8 @@ window.setAbsCleanBackgroundMode = function(mode) {
         t.dataset.absCleanMode = finalMode;
     });
 
-    const lightBtn = document.getElementById('abs-clean-mode-light');
-    const darkBtn = document.getElementById('abs-clean-mode-dark');
+    const lightBtn = layoutElement('abs-clean-mode-light');
+    const darkBtn = layoutElement('abs-clean-mode-dark');
     if (lightBtn && darkBtn) {
         if (isDark) {
             darkBtn.classList.add('active');
@@ -148,84 +85,105 @@ window.initAbsCleanBackgroundMode = function() {
 };
 
 window.switchCardTheme = function(themeName) {
-    if (themeName === 'sba' || themeName === 'abs.clean' || themeName === 'abs-clean') {
-        const appEl = document.getElementById('app');
-        const layoutInfo = document.getElementById('layout-dokkaninfo');
-        const layoutDb = document.getElementById('layout-abs-style');
+    const theme = window.normalizeCardPresentationTheme?.(themeName) || (
+        ['sba', 'abs.clean', 'abs-clean'].includes(String(themeName || '').toLowerCase())
+            ? 'abs-clean'
+            : (themeName === 'abs-style' ? 'abs-style' : 'dokkaninfo')
+    );
+    const appEl = layoutElement('app');
+    const isClean = theme === 'abs-clean';
 
-        window.currentCardThemeStyle = 'abs-style';
-        window.currentCardThemeVariant = 'sba';
-        localStorage.setItem('dokkan_selected_theme', 'sba');
-        localStorage.setItem('hub_selected_style', 'sba');
-        if (window.IS_PUBLISHED) localStorage.setItem('dokkan_published_card_theme', 'sba');
-        window.updateSiteFavicon?.('abs-style');
+    window.currentCardThemeStyle = theme;
+    window.currentCardThemeVariant = theme;
+    try {
+        localStorage.setItem('dokkan_selected_theme', theme);
+        localStorage.setItem('hub_selected_style', theme);
+        if (window.IS_PUBLISHED) localStorage.setItem('dokkan_published_card_theme', theme);
+    } catch (error) {}
+    window.updateSiteFavicon?.(isClean ? 'abs-style' : theme);
 
-        if (layoutInfo && layoutDb) {
-            layoutInfo.style.display = 'none';
-            layoutDb.style.display = 'block';
-        }
+    const themeClasses = ['theme-abs-style', 'theme-dokkaninfo', 'theme-sba', 'theme-abs-clean'];
+    [document.body, appEl].forEach((element) => {
+        if (!element) return;
+        element.classList.remove(...themeClasses);
+        if (isClean) element.classList.add('theme-sba', 'theme-abs-clean');
+        else element.classList.add(theme === 'abs-style' ? 'theme-abs-style' : 'theme-dokkaninfo');
+    });
 
-        appEl?.classList.remove('theme-abs-style', 'theme-dokkaninfo');
-        appEl?.classList.add('theme-sba', 'theme-abs-clean');
-        document.body.classList.remove('theme-abs-style', 'theme-dokkaninfo');
-        document.body.classList.add('theme-sba', 'theme-abs-clean');
+    if (!isClean) {
+        [document.documentElement, document.body].forEach((element) => {
+            if (!element) return;
+            element.classList.remove('theme-abs-clean-dark');
+            delete element.dataset.absCleanMode;
+        });
+        document.documentElement.style.colorScheme = '';
+        delete document.body.dataset.absCleanType;
+        document.body.style.removeProperty('--theme-main');
+        document.body.style.removeProperty('--theme-border');
+        document.body.style.removeProperty('--theme-header');
+        document.body.style.removeProperty('--theme-text');
+    }
 
-        document.getElementById('theme-btn-info')?.classList.remove('active');
-        document.getElementById('theme-btn-abs')?.classList.remove('active');
-        document.getElementById('theme-btn-sba')?.classList.add('active');
+    window.setActiveCardLayout?.(theme);
+    const buttonTheme = { 'theme-btn-info': 'dokkaninfo', 'theme-btn-abs': 'abs-style', 'theme-btn-sba': 'abs-clean' };
+    Object.entries(buttonTheme).forEach(([id, value]) => {
+        const button = layoutElement(id);
+        if (button) button.classList.toggle('active', value === theme);
+    });
 
-        window.syncToAbsLayout?.();
+    if (theme !== 'dokkaninfo') window.syncToAbsLayout?.();
+    else window.renderEditorSkillsInDokkanInfo?.();
+    if (isClean) {
         window.syncAbsCleanLinkSkillsPlacement?.();
         window.syncAbsCleanLeaderPlacement?.();
         window.syncAbsCleanRightRail?.();
         window.syncAbsCleanSuperAttackPlacement?.();
         window.syncAbsCleanAwakeningFormsPlacement?.();
         window.syncAbsCleanHeaderComposition?.();
+        window.syncAbsCleanPassiveSummary?.();
         window.syncAbsCleanLinkPartnersPlacement?.();
-        window.refreshEditorLinkingPartners?.();
         requestAnimationFrame(() => window.refreshAbsCleanAsciiBg?.());
         window.dispatchEvent(new Event('abs-clean-theme-visible'));
         window.startAbsCleanGridCircuit?.();
         window.initAbsCleanBackgroundMode?.();
-        return;
+    } else {
+        window.stopAbsCleanGridCircuit?.();
     }
-    const isDbTheme = (themeName === 'abs-style');
-    window.toggleCardTheme(isDbTheme);
+    window.refreshEditorLinkingPartners?.();
 };
 
 // abs.clean keeps Categories as a narrow sibling beside Passive while Link
 // Skills retain their separate presentation. Other themes keep every box in
 // its original slot.
 window.syncAbsCleanLinkSkillsPlacement = function() {
-    const linkSkillsBox = document.getElementById('abs-link-skills-box');
-    const legacySlot = document.getElementById('abs-link-skills-legacy-slot');
-    const catContainer = document.getElementById('abs-category-container');
+    const linkSkillsBox = layoutElement('abs-link-skills-box');
+    const legacySlot = layoutElement('abs-link-skills-legacy-slot');
+    const catContainer = layoutElement('abs-category-container');
     const catBox = catContainer?.closest('.abs-box') || null;
-    const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
+    const categoryLinksColumn = layoutElement('abs-clean-category-links-column');
     if (!linkSkillsBox || !legacySlot || !catBox) return;
 
-    // Remember the categories box home once, so non-clean themes restore exactly.
-    if (!window.__absCleanCatHome) {
-        window.__absCleanCatHome = {
-            parent: catBox.parentElement,
-            next: catBox.nextElementSibling
-        };
-    }
-
     const isClean = document.body.classList.contains('theme-abs-clean');
+    if (!isClean) return;
+    const cleanPresentation = window.getCardLayoutRoot?.('abs-clean') || document.getElementById('layout-abs-clean');
+    if (cleanPresentation?.classList.contains('abs-clean-presentation-active') && window.syncAbsCleanPresentationLayout) {
+        window.syncAbsCleanPresentationLayout();
+        window.syncAbsCleanRightRail?.();
+        window.syncAbsCleanAwakeningFormsPlacement?.();
+        window.syncAbsCleanLinkPartnersPlacement?.();
+        return;
+    }
     if (!isClean) {
         linkSkillsBox.style.order = '';
         catBox.style.order = '';
         catBox.classList.remove('abs-clean-below-l');
         linkSkillsBox.classList.remove('abs-clean-below-l');
         if (linkSkillsBox.parentElement !== legacySlot) legacySlot.appendChild(linkSkillsBox);
+        // The category-column helper owns the original non-clean home. Do not
+        // restore from a second cached parent here: that reference can point
+        // at a clean-only column removed by an earlier theme switch.
         window.restoreAbsCleanCategoryLinksColumn?.();
-        const home = window.__absCleanCatHome;
-        if (home && home.parent && catBox.parentElement !== home.parent) {
-            if (home.next && home.next.parentElement === home.parent) home.parent.insertBefore(catBox, home.next);
-            else home.parent.appendChild(catBox);
-        }
-        document.getElementById('abs-clean-side-duo-slot')?.remove?.();
+        layoutElement('abs-clean-side-duo-slot')?.remove?.();
         window.restoreAbsCleanCategoryArt?.();
         window.syncAbsCleanRightRail?.();
         window.syncAbsCleanAwakeningFormsPlacement?.();
@@ -233,18 +191,18 @@ window.syncAbsCleanLinkSkillsPlacement = function() {
         return;
     }
 
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
+    const mainCol = layoutQuery('#layout-abs-style .abs-main-col');
     if (!mainCol) return;
 
-    document.getElementById('abs-clean-side-duo-slot')?.remove?.();
+    layoutElement('abs-clean-side-duo-slot')?.remove?.();
     catBox.classList.remove('abs-clean-below-l');
     linkSkillsBox.classList.remove('abs-clean-below-l');
     catBox.classList.remove('abs-clean-under-header');
     linkSkillsBox.classList.remove('abs-clean-under-header');
     catBox.style.order = '';
     linkSkillsBox.style.order = '';
-    const passiveBox = document.getElementById('abs-passive-skill-box');
-    const categoryAwakeningsRow = document.getElementById('abs-clean-category-awakenings-row');
+    const passiveBox = layoutElement('abs-passive-skill-box');
+    const categoryAwakeningsRow = layoutElement('abs-clean-category-awakenings-row');
     const categoryIsInCleanSplit = catBox.parentElement === categoryAwakeningsRow;
     const categoryIsInUtilityColumn = catBox.parentElement === categoryLinksColumn;
     if (passiveBox && !categoryIsInCleanSplit && !categoryIsInUtilityColumn &&
@@ -264,30 +222,29 @@ window.syncAbsCleanLinkSkillsPlacement = function() {
 // abs.clean alone promotes Leader Skill to the full-width site banner. The
 // display-contents legacy slot preserves the original grid position elsewhere.
 window.syncAbsCleanLeaderPlacement = function() {
-    const leaderBox = document.getElementById('abs-leader-skill-box');
-    const cleanSlot = document.getElementById('abs-clean-leader-banner-slot');
-    const legacySlot = document.getElementById('abs-leader-skill-legacy-slot');
+    const leaderBox = layoutElement('abs-leader-skill-box');
+    const cleanSlot = layoutElement('abs-clean-leader-banner-slot');
+    const legacySlot = layoutElement('abs-leader-skill-legacy-slot');
     if (!leaderBox || !cleanSlot || !legacySlot) return;
+    if (!document.body.classList.contains('theme-abs-clean')) return;
 
     const target = document.body.classList.contains('theme-abs-clean') ? cleanSlot : legacySlot;
     if (leaderBox.parentElement !== target) target.appendChild(leaderBox);
 };
 
-// abs.clean header composition: identity badges stay in the header, the live
-// HP/ATK/DEF rail stays outside the art dock, and passive ability badges plus
-// percentage totals live inside the actual Passive Skill header. Forms have
-// their own dedicated surface and are never copied into the header.
+// abs.clean header composition: the portrait and linked form icons share
+// the left edge, identity and passive badges stay together, awakening stages
+// precede totals, and live HP/ATK/DEF controls remain independently editable.
 window.syncAbsCleanHeaderComposition = function() {
-    const header = document.querySelector('#layout-abs-style .abs-top-header');
-    const headerLeft = document.querySelector('#layout-abs-style .abs-header-left');
-    const identity = document.getElementById('abs-clean-identity-icons');
-    const statsBox = document.getElementById('abs-stats-box');
+    const header = layoutQuery('#layout-abs-style .abs-top-header');
+    const headerLeft = layoutQuery('#layout-abs-style .abs-header-left');
+    const identity = layoutElement('abs-clean-identity-icons');
+    const statsBox = layoutElement('abs-stats-box');
     const statsRow = statsBox?.querySelector('.abs-stat-cards-row');
-    const abilityDocks = document.getElementById('abs-clean-ability-docks');
-    const passiveSummary = document.getElementById('abs-passive-summary');
-    if (!header || !headerLeft) return;
-
+    const abilityDocks = layoutElement('abs-clean-ability-docks');
+    const passiveSummary = layoutElement('abs-passive-summary');
     const isClean = document.body.classList.contains('theme-abs-clean');
+    if (!isClean || !header || !headerLeft) return;
     if (identity && !window.__absCleanIdentityHome) {
         window.__absCleanIdentityHome = {
             parent: identity.parentElement,
@@ -312,16 +269,16 @@ window.syncAbsCleanHeaderComposition = function() {
         // A hot reload can leave the live node in the clean Passive box. Do
         // not record that temporary clean location as the native home used
         // when another theme is restored.
-        const passiveBox = document.getElementById('abs-passive-skill-box');
+        const passiveBox = layoutElement('abs-passive-skill-box');
         const passiveName = passiveBox?.querySelector(':scope > #abs-passive-name') ||
-            document.getElementById('abs-passive-name');
-        const legacyRail = document.getElementById('abs-clean-header-badges-rail');
+            layoutElement('abs-passive-name');
+        const legacyRail = layoutElement('abs-clean-header-badges-rail');
         const currentParent = abilityDocks.parentElement;
         const wasCleanMoved = currentParent === passiveBox ||
             currentParent === passiveName ||
             currentParent === legacyRail;
         const nativeParent = wasCleanMoved
-            ? (headerLeft || document.querySelector('#layout-abs-style .abs-side-col'))
+            ? (headerLeft || layoutQuery('#layout-abs-style .abs-side-col'))
             : currentParent;
         if (nativeParent && nativeParent !== passiveBox && !abilityDocks.contains(nativeParent)) {
             const nativeNext = wasCleanMoved
@@ -337,10 +294,10 @@ window.syncAbsCleanHeaderComposition = function() {
     }
 
     if (!isClean) {
-        document.getElementById('abs-clean-header-form-portraits')?.remove();
-        const timeline = document.getElementById('abs-clean-bottom-timeline');
+        layoutElement('abs-clean-header-form-portraits')?.remove();
+        const timeline = layoutElement('abs-clean-bottom-timeline');
         if (timeline) timeline.hidden = true;
-        const passiveSummary = document.getElementById('abs-passive-summary');
+        const passiveSummary = layoutElement('abs-passive-summary');
         if (passiveSummary) {
             passiveSummary.innerHTML = '';
             passiveSummary.hidden = true;
@@ -383,13 +340,13 @@ window.syncAbsCleanHeaderComposition = function() {
             }
         }
         window.syncAbsCleanAbilityDockPlacement?.();
-        document.getElementById('abs-clean-header-badges-rail')?.remove();
-        document.getElementById('abs-clean-header-stats')?.remove();
-        document.getElementById('layout-abs-style')?.style.removeProperty('--abs-clean-art-frame-height');
+        layoutElement('abs-clean-header-badges-rail')?.remove();
+        layoutElement('abs-clean-header-stats')?.remove();
+        layoutElement('layout-abs-style')?.style.removeProperty('--abs-clean-art-frame-height');
         return;
     }
 
-    const timeline = document.getElementById('abs-clean-bottom-timeline');
+    const timeline = layoutElement('abs-clean-bottom-timeline');
     if (timeline) timeline.hidden = false;
 
     // Identity badges sit top-left of the header, above the portrait/name row.
@@ -405,7 +362,7 @@ window.syncAbsCleanHeaderComposition = function() {
     // Older sessions can still have the legacy duplicate rail in the DOM.
     // Remove it instead of allowing a second copy of the Forms portraits to
     // reappear whenever the clean layout is synchronized.
-    document.getElementById('abs-clean-header-form-portraits')?.remove();
+    layoutElement('abs-clean-header-form-portraits')?.remove();
     window.syncAbsCleanRailHeight?.();
 
     // Keep the stat shell outside the card-art dock, not in the header. The
@@ -426,21 +383,21 @@ window.syncAbsCleanHeaderComposition = function() {
     window.syncAbsCleanLinkPartnersPlacement?.();
     window.syncAbsCleanAbilityDockPlacement?.();
     // Remove a stale node left by an older clean-mode session.
-    document.getElementById('abs-clean-header-stats')?.remove();
+    layoutElement('abs-clean-header-stats')?.remove();
 };
 
 // The L-rail ends exactly at the art's visual bottom plus the rail lip, so
 // boxes below it (Categories, Link Skills) never overlap the rail end.
 // Falls back to the CSS default until layout settles.
 window.syncAbsCleanRailHeight = function() {
-    document.getElementById('abs-clean-portrait-stage')?.style.removeProperty('margin-bottom');
+    layoutElement('abs-clean-portrait-stage')?.style.removeProperty('margin-bottom');
 };
 
 window.restoreThemeOnLoad = function() {
     if (window.IS_PUBLISHED) {
         const rememberedTheme = localStorage.getItem('dokkan_published_card_theme');
-        const themeToRestore = rememberedTheme === 'abs-style' || rememberedTheme === 'dokkaninfo' || rememberedTheme === 'sba' || rememberedTheme === 'abs.clean' || rememberedTheme === 'abs-clean'
-            ? rememberedTheme
+        const themeToRestore = rememberedTheme
+            ? window.normalizeCardPresentationTheme?.(rememberedTheme)
             : window.currentCardThemeStyle;
         if (themeToRestore) {
             window.switchCardTheme(themeToRestore);
@@ -706,10 +663,10 @@ window.ALL_PASSIVE_HEADER_ICONS = [
 ];
 
 window.togglePassiveBadgesCollapse = function(targetId, btnOrIcon) {
-    const strip = typeof targetId === 'string' ? document.getElementById(targetId) : targetId;
-    let btnEl = typeof btnOrIcon === 'string' ? document.getElementById(btnOrIcon) : btnOrIcon;
+    const strip = typeof targetId === 'string' ? layoutElement(targetId) : targetId;
+    let btnEl = typeof btnOrIcon === 'string' ? layoutElement(btnOrIcon) : btnOrIcon;
     if (!strip) return;
-    
+
     const isHidden = strip.classList.contains('d-none') || strip.style.display === 'none';
     if (isHidden) {
         strip.classList.remove('d-none');
@@ -743,9 +700,9 @@ window.getActivePassiveHeaderIcons = function(passiveText) {
 };
 
 window.togglePassiveHeaderIcon = function(filename, tooltip) {
-    const mainPassiveCont = document.getElementById('card-passive-container');
+    const mainPassiveCont = layoutElement('card-passive-container');
     const rawPassiveText = mainPassiveCont ? mainPassiveCont.innerText : "";
-    
+
     if (!Array.isArray(window.passiveHeaderIconsOverride)) {
         const auto = detectPassiveIconsFromText(rawPassiveText);
         window.passiveHeaderIconsOverride = auto.map(a => a.src.split('/').pop());
@@ -769,7 +726,7 @@ window.resetPassiveHeaderIconsToAuto = function() {
 };
 
 window.renderPassiveHeaderBadgeToggles = function() {
-    const mainPassiveCont = document.getElementById('card-passive-container');
+    const mainPassiveCont = layoutElement('card-passive-container');
     const rawPassiveText = mainPassiveCont ? mainPassiveCont.innerText : "";
     const activeList = window.getActivePassiveHeaderIcons(rawPassiveText);
     const activeFiles = new Set(activeList.map(a => a.src.split('/').pop().split('?')[0]));
@@ -786,10 +743,10 @@ window.renderPassiveHeaderBadgeToggles = function() {
         `;
     }).join('');
 
-    const sidebarStrip = document.getElementById('sidebar-passive-badges-toggle-strip');
+    const sidebarStrip = layoutElement('sidebar-passive-badges-toggle-strip');
     if (sidebarStrip) sidebarStrip.innerHTML = html;
 
-    const guiStrip = document.getElementById('gui-passive-badges-toggle-strip');
+    const guiStrip = layoutElement('gui-passive-badges-toggle-strip');
     if (guiStrip) guiStrip.innerHTML = html;
 };
 
@@ -834,15 +791,15 @@ window.normalizeAbsCleanUnitTag = function(unitTag) {
 
 window.syncAbsCleanUnitTag = function(unitTag = window.absUnitTag) {
     const displayTag = window.normalizeAbsCleanUnitTag(unitTag);
-    const badge = document.getElementById('abs-clean-badge-tag');
-    const value = document.getElementById('abs-clean-val-tag');
+    const badge = layoutElement('abs-clean-badge-tag');
+    const value = layoutElement('abs-clean-val-tag');
     if (value) value.textContent = displayTag;
     if (badge) badge.hidden = !displayTag;
     return displayTag;
 };
 
 window.syncAbsCleanSummonLogo = function(unitTag = window.absUnitTag) {
-    const oldLogo = document.getElementById('abs-clean-summon-logo');
+    const oldLogo = layoutElement('abs-clean-summon-logo');
     if (oldLogo) {
         oldLogo.hidden = true;
         oldLogo.removeAttribute('src');
@@ -852,7 +809,7 @@ window.syncAbsCleanSummonLogo = function(unitTag = window.absUnitTag) {
 };
 
 window.syncAbsCleanAwakeningPortraits = function() {
-    const container = document.getElementById('abs-clean-awakening-portraits');
+    const container = layoutElement('abs-clean-awakening-portraits');
     const activeRarity = String(
         window.getDisplayedCardRarity?.()
         || window.currentRarity
@@ -872,8 +829,10 @@ window.syncAbsCleanAwakeningPortraits = function() {
     };
 
     const syncPortrait = ({ sourceId, portraitId, rarity, enabled }) => {
+        // Editor image fields are canonical inputs in the native card DOM,
+        // not presentation nodes inside the active theme root.
         const source = document.getElementById(sourceId);
-        const portrait = document.getElementById(portraitId);
+        const portrait = layoutElement(portraitId);
         const wrapper = portrait?.closest('.abs-clean-awakening-portrait');
         if (!portrait || !wrapper) return false;
 
@@ -957,10 +916,87 @@ window.syncAbsCleanAwakeningPortraits = function() {
     container.hidden = visiblePortraits.length === 0;
 };
 
-window.syncToAbsLayout = function() {
+// Passive edits must not rebuild artwork, attacks, categories, or link partners.
+window.syncEditorPassivePreview = function(updateSummary = true) {
+    const root = window.getCardLayoutRoot?.();
+    if (root?.dataset?.cardLayout === 'dokkaninfo') return;
+    const infoRoot = window.getCardLayoutRoot?.('dokkaninfo');
+    const mainPassiveCont = window.getCardLayoutElement?.('card-passive-container', infoRoot) || document.getElementById('card-passive-container');
     const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-    const abilityDocks = document.getElementById('abs-clean-ability-docks');
-    const passiveSummary = document.getElementById('abs-passive-summary');
+    const passiveName = document.getElementById('input-passive-name-sidebar')?.value || '';
+    const safePassiveName = String(passiveName).replace(/[&<>"']/g, c => ({'&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;'}[c]));
+        const dbPassiveCont = layoutElement('abs-passive-container');
+        if (dbPassiveCont && mainPassiveCont) {
+            let passiveHtml = mainPassiveCont.innerHTML || "";
+            if (window.normalizeAssetUrl) passiveHtml = window.normalizeAssetUrl(passiveHtml);
+
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = passiveHtml;
+
+            let formattedHtml = "";
+            const sections = tempDiv.querySelectorAll('strong');
+            if (sections.length > 0) {
+                sections.forEach((st, idx) => {
+                    const titleText = st.textContent.trim();
+                    const mt = (idx === 0 || formattedHtml === "") ? "margin-top: 0;" : "margin-top: 14px;";
+                    formattedHtml += `<strong class="abs-passive-section-title" style="display:block; ${mt} margin-bottom: 4px; color:var(--theme-text, #38bdf8); font-size: 13.5px; text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.6)); font-weight: 700;">${window.formatCategoryQuotes ? window.formatCategoryQuotes(titleText) : titleText}</strong>`;
+
+                    let sib = st.nextElementSibling;
+                    while (sib && sib.tagName !== 'STRONG') {
+                        if (sib.tagName === 'UL') {
+                            formattedHtml += '<ul class="abs-passive-list">';
+                            sib.querySelectorAll('li').forEach(li => {
+                                let liContent = li.innerHTML;
+                                // Preserve quoted category highlighting while
+                                // keeping existing inline icon markup intact.
+                                if (window.formatOfficialText) liContent = window.formatOfficialText(liContent, false);
+                                if (window.formatCategoryQuotes) liContent = window.formatCategoryQuotes(liContent);
+                                formattedHtml += `<li>${liContent}</li>`;
+                            });
+                            formattedHtml += '</ul>';
+                        }
+                        sib = sib.nextElementSibling;
+                    }
+                });
+            } else {
+                formattedHtml = tempDiv.innerHTML;
+                if (window.formatOfficialText) formattedHtml = window.formatOfficialText(formattedHtml, false);
+                if (window.formatCategoryQuotes) formattedHtml = window.formatCategoryQuotes(formattedHtml);
+            }
+
+            const nextHtml = isAbsCleanTheme
+                ? `<div class="abs-passive-name-inside">${safePassiveName}</div>${formattedHtml}`
+                : formattedHtml;
+            if (dbPassiveCont.innerHTML !== nextHtml) dbPassiveCont.innerHTML = nextHtml;
+        }
+    if (!updateSummary) return;
+    window.syncAbsCleanPassiveSummary?.(window.getAbsCleanPassiveSource?.() || mainPassiveCont?.textContent || '');
+    const strip = layoutElement('abs-clean-passive-icons');
+    if (strip) {
+        const html = renderPassiveIconsStrip(mainPassiveCont?.textContent || '');
+        if (strip.innerHTML !== html) strip.innerHTML = html;
+        strip.hidden = !html;
+        const docks = layoutElement('abs-clean-ability-docks');
+        if (docks) docks.hidden = !html;
+    }
+};
+
+window.syncToAbsLayout = function() {
+    const activeRoot = window.getCardLayoutRoot?.();
+    // Dokkan Info owns its native DOM. This synchronizer only projects the
+    // editor's canonical fields into ABS.Style / ABS.Clean, so running it
+    // while Info is active can clear the source containers it reads from.
+    if (activeRoot?.dataset?.cardLayout === 'dokkaninfo') {
+        return window.renderEditorSkillsInDokkanInfo?.(activeRoot) || false;
+    }
+
+    const infoRoot = window.getCardLayoutRoot?.('dokkaninfo');
+    const infoElement = id => window.getCardLayoutElement
+        ? window.getCardLayoutElement(id, infoRoot)
+        : infoRoot?.querySelector(`#${CSS.escape(id)}`);
+    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
+    const abilityDocks = layoutElement('abs-clean-ability-docks');
+    const passiveSummary = layoutElement('abs-passive-summary');
     const isClean = isAbsCleanTheme;
     try {
         const themeColors = { 
@@ -976,7 +1012,7 @@ window.syncToAbsLayout = function() {
         // palette keys and silently sticks the whole theme on the fallback.
         const typeKey = String(rawTypeKey).toLowerCase();
         const colors = themeColors[typeKey] || themeColors.none;
-        const dbLayout = document.getElementById('layout-abs-style');
+        const dbLayout = layoutElement('layout-abs-style');
         if (dbLayout) {
             dbLayout.style.setProperty('--theme-main', colors.main);
             dbLayout.style.setProperty('--theme-border', colors.border);
@@ -998,13 +1034,13 @@ window.syncToAbsLayout = function() {
             document.body.style.setProperty('--theme-text', colors.text);
         }
 
-        document.querySelectorAll('.lightning-overlay').forEach(lightning => {
+        window.getCardLayoutRoot?.()?.querySelectorAll('.lightning-overlay').forEach(lightning => {
             lightning.style.setProperty('--lightning-color', lightningColors[window.currentType || currentType] || 'rgb(0, 150, 255)');
         });
     } catch(e) {}
 
     try {
-        const artHeader = document.getElementById('abs-art-header-text');
+        const artHeader = layoutElement('abs-art-header-text');
         if (artHeader) {
             if (window.absUnitTag === undefined) {
                 window.setAbsUnitTag?.(artHeader.dataset.unitTag || '');
@@ -1017,11 +1053,11 @@ window.syncToAbsLayout = function() {
     } catch(e) {}
 
     try {
-        const rawTitle = document.getElementById('descInput')?.value || document.getElementById('char-description')?.innerText || "Character Title";
-        const rawName = document.getElementById('nameInput')?.value || document.getElementById('char-name')?.innerText || "Character Name";
-        const dbTitle = document.getElementById('abs-char-title');
-        const dbName = document.getElementById('abs-char-name');
-        
+        const rawTitle = layoutElement('descInput')?.value || infoElement('char-description')?.innerText || "Character Title";
+        const rawName = layoutElement('nameInput')?.value || infoElement('char-name')?.innerText || "Character Name";
+        const dbTitle = layoutElement('abs-char-title');
+        const dbName = layoutElement('abs-char-name');
+
         if (dbTitle) dbTitle.innerText = rawTitle.replace(/[\[\]]/g, '').trim();
         if (dbName) dbName.innerText = rawName;
     } catch(e) {}
@@ -1029,8 +1065,8 @@ window.syncToAbsLayout = function() {
     window.syncAbsCleanHeaderComposition?.();
 
     try {
-        const leaderText = document.getElementById('leaderInput')?.value || document.getElementById('leader-skill')?.innerText || "";
-        const dbLeaderEl = document.getElementById('abs-leader-skill');
+        const leaderText = layoutElement('leaderInput')?.value || infoElement('leader-skill')?.innerText || "";
+        const dbLeaderEl = layoutElement('abs-leader-skill');
         if (dbLeaderEl) {
             const cleanLeader = leaderText.replace(/[\r\n]+/g, ' ').trim();
             dbLeaderEl.innerHTML = window.formatOfficialText ? window.formatOfficialText(cleanLeader, true) : (window.formatCategoryQuotes ? window.formatCategoryQuotes(cleanLeader) : cleanLeader);
@@ -1044,13 +1080,13 @@ window.syncToAbsLayout = function() {
             ? currentAwakeningMode
             : ((window.currentAwakeningMode && window.currentAwakeningMode !== 'none') ? window.currentAwakeningMode : 'none');
         const useAbsClean = document.body.classList.contains('theme-abs-clean');
-        
+
         const isLR = activeRarity === 'LR';
         const isSEZA = activeAwakening === 'seza';
-        
-        const lrThumb = document.getElementById('img-lr');
-        const turThumb = document.getElementById('img-tur');
-        const ssrThumb = document.getElementById('img-ssr');
+
+        const lrThumb = infoElement('img-lr');
+        const turThumb = infoElement('img-tur');
+        const ssrThumb = infoElement('img-ssr');
         // Imported exchange forms retain their exact portrait here; the
         // progression thumbnails below intentionally still represent the base route.
         let thumbImg = window.currentCardThumbnail || '';
@@ -1059,8 +1095,8 @@ window.syncToAbsLayout = function() {
         else if (!thumbImg && activeRarity === 'SSR') thumbImg = ssrThumb ? ssrThumb.src : '';
         else if (!thumbImg) thumbImg = (turThumb ? turThumb.src : '') || (ssrThumb ? ssrThumb.src : '') || (lrThumb ? lrThumb.src : '');
         window.syncAbsCleanAwakeningPortraits?.();
-        
-        const dbThumbImg = document.getElementById('abs-thumb-img');
+
+        const dbThumbImg = layoutElement('abs-thumb-img');
         if (dbThumbImg && thumbImg) {
             // The SBA card grid uses the game's dedicated circle artwork. Use
             // that same official asset for the abs.clean header; custom cards
@@ -1093,8 +1129,8 @@ window.syncToAbsLayout = function() {
             }
         }
 
-        const frameImg = document.querySelector('.card-frame');
-        const dbFrameImg = document.getElementById('abs-frame-img');
+        const frameImg = layoutQuery('.card-frame');
+        const dbFrameImg = layoutElement('abs-frame-img');
         if (frameImg && dbFrameImg) dbFrameImg.src = frameImg.src;
 
         let absRarityImgSrc = 'https://abscustom.github.io/assets/images/rarity_none.png';
@@ -1102,16 +1138,16 @@ window.syncToAbsLayout = function() {
         else if (activeRarity === 'TUR') absRarityImgSrc = 'https://abscustom.github.io/assets/images/rarity_TUR_abs.png';
         else if (activeRarity !== 'none') absRarityImgSrc = 'https://abscustom.github.io/assets/images/rarity_ssr_abs.png';
 
-        const dbTopRarity = document.getElementById('abs-top-rarity-icon');
+        const dbTopRarity = layoutElement('abs-top-rarity-icon');
         if (dbTopRarity) dbTopRarity.src = absRarityImgSrc;
-        const cleanNameRarity = document.getElementById('abs-clean-name-rarity');
+        const cleanNameRarity = layoutElement('abs-clean-name-rarity');
         if (cleanNameRarity) cleanNameRarity.src = absRarityImgSrc;
-        
-        const typeIcon = document.querySelector('.typing-icon');
-        const dbTopType = document.getElementById('abs-top-type-icon');
+
+        const typeIcon = layoutQuery('.typing-icon');
+        const dbTopType = layoutElement('abs-top-type-icon');
         if (typeIcon && dbTopType) {
             dbTopType.src = typeIcon.src;
-            const cleanNameType = document.getElementById('abs-clean-name-type');
+            const cleanNameType = layoutElement('abs-clean-name-type');
             if (cleanNameType) cleanNameType.src = typeIcon.src;
             const parentComposed = dbTopType.closest('#abs-composed-icon') || dbTopType.parentElement;
             const useAbsCleanTypeGlow = useAbsClean;
@@ -1136,14 +1172,14 @@ window.syncToAbsLayout = function() {
         const sbaColors = { agl: '#00a2ff', teq: '#22c55e', int: '#a855f7', str: '#ef4444', phy: '#eab308' };
         const cardType = (window.currentType || (typeof currentType !== 'undefined' ? currentType : 'agl')).toLowerCase();
 
-        const topLightning = document.getElementById('abs-lightning');
-        const cleanLrAura = document.getElementById('abs-clean-lr-aura');
-        const cleanLrLightning = document.getElementById('abs-clean-lr-lightning');
-        const cleanRingEffect = document.getElementById('abs-clean-ring-effect');
-        const topComposedIcon = document.getElementById('abs-composed-icon');
+        const topLightning = layoutElement('abs-lightning');
+        const cleanLrAura = layoutElement('abs-clean-lr-aura');
+        const cleanLrLightning = layoutElement('abs-clean-lr-lightning');
+        const cleanRingEffect = layoutElement('abs-clean-ring-effect');
+        const topComposedIcon = layoutElement('abs-composed-icon');
 
         if (useAbsClean) {
-            const layoutContainer = document.getElementById('layout-abs-style');
+            const layoutContainer = layoutElement('layout-abs-style');
             if (layoutContainer) {
                 layoutContainer.style.setProperty('--abs-clean-ring-color', sbaColors[cardType] || '#38bdf8');
                 layoutContainer.style.setProperty('--sba-lr-fx-hue', sbaHues[cardType] || '0deg');
@@ -1166,7 +1202,7 @@ window.syncToAbsLayout = function() {
 
             // In ABS Clean, hide legacy video lightning and dial
             if (topLightning) topLightning.style.setProperty('display', 'none', 'important');
-            const spinDial = document.getElementById('abs-spin-dial');
+            const spinDial = layoutElement('abs-spin-dial');
             if (spinDial) spinDial.style.setProperty('display', 'none', 'important');
 
             // LR LWF aura & lightning
@@ -1214,7 +1250,7 @@ window.syncToAbsLayout = function() {
                 topLightning.style.setProperty('--lightning-color', isSEZA && !isLR ? 'rgb(255, 30, 80)' : (lightningColors[window.currentType || (typeof currentType !== 'undefined' ? currentType : 'agl')] || 'rgb(0, 150, 255)'));
             }
 
-            const spinDial = document.getElementById('abs-spin-dial');
+            const spinDial = layoutElement('abs-spin-dial');
             if (spinDial) spinDial.style.setProperty('display', isLR ? 'block' : 'none', 'important');
 
             if (topComposedIcon) {
@@ -1237,10 +1273,10 @@ window.syncToAbsLayout = function() {
         if (activeAwakening === 'eza') absAwakeningSrc = 'https://abscustom.github.io/assets/images/eza_abs.png';
         if (activeAwakening === 'seza') absAwakeningSrc = 'https://abscustom.github.io/assets/images/superza_abs.png';
 
-        const ezaContainer = document.getElementById('awakening-container');
-        const dbEzaImg = document.getElementById('abs-awakening-img');
-        const dbTopEzaImg = document.getElementById('abs-top-awakening-img');
-        
+        const ezaContainer = layoutElement('awakening-container');
+        const dbEzaImg = layoutElement('abs-awakening-img');
+        const dbTopEzaImg = layoutElement('abs-top-awakening-img');
+
         if (ezaContainer && ezaContainer.style.display !== 'none' && absAwakeningSrc) {
             if (dbEzaImg) { dbEzaImg.src = absAwakeningSrc; dbEzaImg.style.display = 'block'; }
             if (dbTopEzaImg) { dbTopEzaImg.src = absAwakeningSrc; dbTopEzaImg.style.display = 'block'; }
@@ -1249,16 +1285,16 @@ window.syncToAbsLayout = function() {
             if (dbTopEzaImg) dbTopEzaImg.style.display = 'none';
         }
 
-        const dbRarityIconRight = document.getElementById('abs-rarity-icon');
+        const dbRarityIconRight = layoutElement('abs-rarity-icon');
         if (dbRarityIconRight) dbRarityIconRight.src = absRarityImgSrc;
-        
-        const dbTypeIconRight = document.getElementById('abs-type-icon');
+
+        const dbTypeIconRight = layoutElement('abs-type-icon');
         if (typeIcon && dbTypeIconRight) dbTypeIconRight.src = typeIcon.src;
-        
-        const myOverlay = document.getElementById('myOverlayImage');
-        const myOverlayVid = document.getElementById('myOverlayVideo');
-        const dbArtImg = document.getElementById('abs-art-img');
-        const dbArtVid = document.getElementById('abs-art-video');
+
+        const myOverlay = infoElement('myOverlayImage');
+        const myOverlayVid = infoElement('myOverlayVideo');
+        const dbArtImg = layoutElement('abs-art-img');
+        const dbArtVid = layoutElement('abs-art-video');
 
         if (myOverlayVid && myOverlayVid.style.display !== 'none' && myOverlayVid.querySelector('source')?.src) {
             if (dbArtVid) {
@@ -1275,7 +1311,7 @@ window.syncToAbsLayout = function() {
                 // Don't override display here since switchEditorArtMode will manage visibility between animated layers and flat image
             }
         }
-        
+
         if (window.switchEditorArtMode) {
             const artMode = window.getAbsCleanArtMode?.(window.currentEditorArtMode || 'animated') || window.currentEditorArtMode || 'animated';
             window.switchEditorArtMode(artMode);
@@ -1283,36 +1319,37 @@ window.syncToAbsLayout = function() {
     } catch(e) {}
 
     try {
-        const passiveNameInput = document.getElementById('input-passive-name-sidebar');
-        const passiveDisplay = document.querySelector('.passive-name-display');
+        const passiveNameInput = layoutElement('input-passive-name-sidebar');
+        const passiveDisplay = infoRoot?.querySelector('.passive-name-display');
         const passiveName = passiveNameInput?.value || passiveDisplay?.innerText || "Passive Skill";
         const safePassiveName = String(passiveName).replace(/[&<>"']/g, char => ({
             '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
         }[char]));
-        
-        const mainPassiveCont = document.getElementById('card-passive-container');
+
+        const mainPassiveCont = infoElement('card-passive-container');
         const rawPassiveText = mainPassiveCont ? mainPassiveCont.innerText : "";
         // The editor textareas are the single source of truth for the summary.
         // Do not parse the rendered card markup, which can contain stale or
         // duplicated fragments while a theme/layout pass is in progress.
         window.syncAbsCleanPassiveSummary?.(window.getAbsCleanPassiveSource?.() || rawPassiveText);
         const iconsStripHtml = renderPassiveIconsStrip(rawPassiveText);
-        const cleanPassiveIcons = document.getElementById('abs-clean-passive-icons');
+        const showPassiveBadges = isAbsCleanTheme || activeRoot?.dataset?.cardLayout === 'abs-style';
+        const cleanPassiveIcons = layoutElement('abs-clean-passive-icons');
         if (cleanPassiveIcons) {
-            cleanPassiveIcons.innerHTML = isAbsCleanTheme ? iconsStripHtml : '';
-            cleanPassiveIcons.hidden = !isAbsCleanTheme || !iconsStripHtml;
+            cleanPassiveIcons.innerHTML = showPassiveBadges ? iconsStripHtml : '';
+            cleanPassiveIcons.hidden = !showPassiveBadges || !iconsStripHtml;
         }
-        const cleanAbilityDocks = document.getElementById('abs-clean-ability-docks');
+        const cleanAbilityDocks = layoutElement('abs-clean-ability-docks');
         if (cleanAbilityDocks) {
-            cleanAbilityDocks.hidden = !isAbsCleanTheme || !iconsStripHtml;
+            cleanAbilityDocks.hidden = !showPassiveBadges || !iconsStripHtml;
         }
 
-        const matchupStrip = document.getElementById('abs-clean-type-matchups');
+        const matchupStrip = layoutElement('abs-clean-type-matchups');
         if (matchupStrip) {
             // Do not leave this strip inside the width-limited identity header.
             // As a direct child of the full ABS Clean layout, its absolute
             // viewport-based position can genuinely reach the far-right edge.
-            const absLayout = document.getElementById('layout-abs-style');
+            const absLayout = layoutElement('layout-abs-style');
             if (absLayout && matchupStrip.parentElement !== absLayout) {
                 absLayout.appendChild(matchupStrip);
             }
@@ -1384,9 +1421,9 @@ window.syncToAbsLayout = function() {
         window.syncAbsCleanIdentityIcons?.();
         window.syncAbsCleanInfoBar?.();
 
-        const dbPassiveName = document.getElementById('abs-passive-name');
+        const dbPassiveName = layoutElement('abs-passive-name');
         if (dbPassiveName) {
-            const cleanPassiveBox = document.getElementById('abs-passive-skill-box');
+            const cleanPassiveBox = layoutElement('abs-passive-skill-box');
             // Both live panels are direct children of this header in clean
             // mode. Park them in the surrounding box before rebuilding its
             // title so innerHTML cannot discard their render state.
@@ -1406,65 +1443,31 @@ window.syncToAbsLayout = function() {
                 </div>`;
             window.syncAbsCleanAbilityDockPlacement?.();
         }
-        
-        const dbPassiveCont = document.getElementById('abs-passive-container');
-        if (dbPassiveCont && mainPassiveCont) {
-            let passiveHtml = mainPassiveCont.innerHTML || "";
-            if (window.normalizeAssetUrl) passiveHtml = window.normalizeAssetUrl(passiveHtml);
 
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = passiveHtml;
+        window.syncEditorPassivePreview(false);
+    } catch(e) {}
 
-            let formattedHtml = "";
-            const sections = tempDiv.querySelectorAll('strong');
-            if (sections.length > 0) {
-                sections.forEach((st, idx) => {
-                    const titleText = st.innerText.trim();
-                    const mt = (idx === 0 || formattedHtml === "") ? "margin-top: 0;" : "margin-top: 14px;";
-                    formattedHtml += `<strong class="abs-passive-section-title" style="display:block; ${mt} margin-bottom: 4px; color:var(--theme-text, #38bdf8); font-size: 13.5px; text-shadow: 0 0 8px var(--theme-glow, rgba(56, 189, 248, 0.6)); font-weight: 700;">${window.formatCategoryQuotes ? window.formatCategoryQuotes(titleText) : titleText}</strong>`;
-                    
-                    let sib = st.nextElementSibling;
-                    while (sib && sib.tagName !== 'STRONG') {
-                        if (sib.tagName === 'UL') {
-                            formattedHtml += '<ul class="abs-passive-list">';
-                            sib.querySelectorAll('li').forEach(li => {
-                                let liContent = li.innerHTML;
-                                // Preserve quoted category highlighting while
-                                // keeping existing inline icon markup intact.
-                                if (window.formatOfficialText) liContent = window.formatOfficialText(liContent, false);
-                                if (window.formatCategoryQuotes) liContent = window.formatCategoryQuotes(liContent);
-                                formattedHtml += `<li>${liContent}</li>`;
-                            });
-                            formattedHtml += '</ul>';
-                        }
-                        sib = sib.nextElementSibling;
-                    }
-                });
-            } else {
-                formattedHtml = tempDiv.innerHTML;
-                if (window.formatOfficialText) formattedHtml = window.formatOfficialText(formattedHtml, false);
-                if (window.formatCategoryQuotes) formattedHtml = window.formatCategoryQuotes(formattedHtml);
-            }
-
-            dbPassiveCont.innerHTML = isAbsCleanTheme
-                ? `<div class="abs-passive-name-inside">${safePassiveName}</div>${formattedHtml}`
-                : formattedHtml;
+    let activeSkillsRenderedWithSuperAttacks = false;
+    try {
+        if (window.updateAbsStyleSuperAttacks) {
+            window.updateAbsStyleSuperAttacks();
+            // The attack renderer also refreshes Active Skills. Keep that as
+            // the single render owner when the active layout has an attack host.
+            activeSkillsRenderedWithSuperAttacks = Boolean(layoutElement('abs-sa-container'));
         }
     } catch(e) {}
 
-    try {
-        if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
-    } catch(e) {}
+    if (!activeSkillsRenderedWithSuperAttacks) {
+        try {
+            if (window.updateAbsStyleActiveSkills) window.updateAbsStyleActiveSkills();
+        } catch(e) {}
+    }
 
     try {
-        if (window.updateAbsStyleActiveSkills) window.updateAbsStyleActiveSkills();
-    } catch(e) {}
-
-    try {
-        const dbLinkCont = document.getElementById('abs-link-container');
+        const dbLinkCont = layoutElement('abs-link-container');
         if (dbLinkCont) {
             dbLinkCont.innerHTML = "";
-            const linkEntries = Array.from(document.querySelectorAll('#card-link-container a'))
+            const linkEntries = Array.from(infoRoot?.querySelectorAll('#card-link-container a') || [])
                 .map((a, sourceIndex) => ({
                     anchor: a,
                     linkName: a.innerText.trim(),
@@ -1500,13 +1503,13 @@ window.syncToAbsLayout = function() {
     } catch(e) {}
 
     try {
-        const dbCatCont = document.getElementById('abs-category-container');
+        const dbCatCont = layoutElement('abs-category-container');
         if (dbCatCont) {
             ensureAbsCleanCategoryCountDatabase();
             // Clear every previous render first. This removes the static
             // placeholder rows before imported categories are bound.
             dbCatCont.replaceChildren();
-            const sourceContainer = document.getElementById('card-category-container');
+            const sourceContainer = infoElement('card-category-container');
             window.normalizeEditorCategoryItems?.(sourceContainer);
             const itemsToRender = window.getEditorCategoryItems
                 ? window.getEditorCategoryItems(sourceContainer)
@@ -1561,20 +1564,20 @@ window.syncToAbsLayout = function() {
     } catch(e) {}
 
     try {
-        const baseDate = (document.getElementById('dateInput')?.value?.trim() || "") || "TBD";
-        const ezaDate = (document.getElementById('ezaDateInput')?.value?.trim() || "") || "TBD";
-        const sezaDate = (document.getElementById('sezaDateInput')?.value?.trim() || "") || "TBD";
-        
+        const baseDate = (layoutElement('dateInput')?.value?.trim() || "") || "TBD";
+        const ezaDate = (layoutElement('ezaDateInput')?.value?.trim() || "") || "TBD";
+        const sezaDate = (layoutElement('sezaDateInput')?.value?.trim() || "") || "TBD";
+
         const activeType = window.currentType || currentType;
         const activeClass = window.currentClass || currentClass;
         const activeRarity = window.getDisplayedCardRarity?.() || window.currentRarity || currentRarity;
         const activeAwakening = (typeof currentAwakeningMode !== 'undefined' && currentAwakeningMode && currentAwakeningMode !== 'none')
             ? currentAwakeningMode
             : ((window.currentAwakeningMode && window.currentAwakeningMode !== 'none') ? window.currentAwakeningMode : 'none');
-        
+
         const baseTypeSrc = typeImageUrls[activeType] || "https://abscustom.github.io/assets/images/type_none.png";
         const classTypeSrc = typeImageMap[activeClass]?.[activeType] || baseTypeSrc;
-        const frameSrc = document.getElementById('abs-frame-img')?.src || "https://abscustom.github.io/assets/images/frame_none.png";
+        const frameSrc = layoutElement('abs-frame-img')?.src || "https://abscustom.github.io/assets/images/frame_none.png";
 
         const buildDbCardIcon = (thumbSrc, raritySrc, usePlainType = false, ezaIconSrc = null, isSEZA = false, extraClass = '') => {
             const tSrc = usePlainType ? baseTypeSrc : classTypeSrc;
@@ -1609,7 +1612,7 @@ window.syncToAbsLayout = function() {
             `;
         };
 
-        const awakenCont = document.getElementById('abs-awakenings-container');
+        const awakenCont = layoutElement('abs-awakenings-container');
         if (awakenCont) {
             let awHTML = '';
             const buildStepDivider = (imgSrc, fallbackText) => {
@@ -1623,10 +1626,10 @@ window.syncToAbsLayout = function() {
                 `;
             };
 
-            const ssrSrc = document.getElementById('img-ssr')?.getAttribute('src') || document.getElementById('img-ssr')?.src || "";
-            const turSrc = document.getElementById('img-tur')?.getAttribute('src') || document.getElementById('img-tur')?.src || "";
-            const lrSrc = document.getElementById('img-lr')?.getAttribute('src') || document.getElementById('img-lr')?.src || "";
-            const mainThumbSrc = document.getElementById('abs-thumb-img')?.getAttribute('src') || document.getElementById('abs-thumb-img')?.src || lrSrc || turSrc || ssrSrc || "https://abscustom.github.io/assets/images/default.png";
+            const ssrSrc = infoElement('img-ssr')?.getAttribute('src') || infoElement('img-ssr')?.src || "";
+            const turSrc = infoElement('img-tur')?.getAttribute('src') || infoElement('img-tur')?.src || "";
+            const lrSrc = infoElement('img-lr')?.getAttribute('src') || infoElement('img-lr')?.src || "";
+            const mainThumbSrc = layoutElement('abs-thumb-img')?.getAttribute('src') || layoutElement('abs-thumb-img')?.src || lrSrc || turSrc || ssrSrc || "https://abscustom.github.io/assets/images/default.png";
             const ssrRaritySrc = "https://abscustom.github.io/assets/images/rarity_ssr_abs.png";
             const turRaritySrc = "https://abscustom.github.io/assets/images/rarity_TUR_abs.png";
             const lrRaritySrc = "https://abscustom.github.io/assets/images/rarity_lr_abs.png";
@@ -1683,7 +1686,7 @@ window.syncToAbsLayout = function() {
                         ${dateMarkup('Release Date:', baseDate)}
                     </div>
                 `;
-                
+
                 if (activeRarity === 'TUR' || activeRarity === 'LR') {
                     const safeTurSrc = turSrc || "https://abscustom.github.io/assets/images/TUR_Icon.png";
                     awHTML += `
@@ -1753,7 +1756,7 @@ window.syncToAbsLayout = function() {
                     divider.remove();
                 }
             });
-            const awakeningsBox = document.getElementById('abs-awakenings-box');
+            const awakeningsBox = layoutElement('abs-awakenings-box');
             if (!isClean) {
                 // In abs.style, the awakenings box is always displayed with the character's release date
                 if (awakeningsBox) {
@@ -1773,14 +1776,14 @@ window.syncToAbsLayout = function() {
             }
         }
 
-        const transBox = document.getElementById('abs-transformations-box');
-        const transCont = document.getElementById('abs-transformations-container');
-        const forms = document.querySelectorAll('#forms-container .dokkan-card');
+        const transBox = layoutElement('abs-transformations-box');
+        const transCont = layoutElement('abs-transformations-container');
+        const forms = infoRoot?.querySelectorAll('#forms-container .dokkan-card') || [];
 
         if (transBox && transCont) {
             const activeForm = window.selectedForm || (typeof selectedForm !== 'undefined' ? selectedForm : null);
             const activeFormIsInList = Boolean(activeForm && Array.from(forms).includes(activeForm));
-            const currentThumbElement = document.getElementById('abs-thumb-img');
+            const currentThumbElement = layoutElement('abs-thumb-img');
             const currentRaritySrc = activeRarity === 'LR'
                 ? 'https://abscustom.github.io/assets/images/rarity_lr_abs.png'
                 : (activeRarity === 'TUR'
@@ -1806,10 +1809,10 @@ window.syncToAbsLayout = function() {
             };
             const currentFormSourceCandidates = [
                 readImageSource(currentThumbElement),
-                readImageSource(document.getElementById(currentStageId)),
-                readImageSource(document.getElementById('img-lr')),
-                readImageSource(document.getElementById('img-tur')),
-                readImageSource(document.getElementById('img-ssr'))
+                readImageSource(layoutElement(currentStageId)),
+                readImageSource(infoElement('img-lr')),
+                readImageSource(infoElement('img-tur')),
+                readImageSource(infoElement('img-ssr'))
             ];
             const currentFormImg = currentFormSourceCandidates.find(source => !isNonPortraitFormSource(source))
                 || currentFormSourceCandidates.find(Boolean)
@@ -1845,8 +1848,8 @@ window.syncToAbsLayout = function() {
                 }
                 return currentFormImg;
             };
-            const currentFormName = document.getElementById('nameInput')?.value?.trim()
-                || document.getElementById('abs-char-name')?.textContent?.trim()
+            const currentFormName = layoutElement('nameInput')?.value?.trim()
+                || layoutElement('abs-char-name')?.textContent?.trim()
                 || 'Current Form';
             const renderCurrentForm = isAbsCleanTheme;
 
@@ -1855,8 +1858,8 @@ window.syncToAbsLayout = function() {
                 let trHTML = '';
 
                 if (renderCurrentForm) {
-                    const rawCurrentTitle = document.getElementById('descInput')?.value?.trim()
-                        || document.getElementById('abs-char-title')?.textContent?.trim()
+                    const rawCurrentTitle = layoutElement('descInput')?.value?.trim()
+                        || layoutElement('abs-char-title')?.textContent?.trim()
                         || '';
                     const cleanCurrentTitle = rawCurrentTitle.replace(/[\[\]]/g, '').trim();
                     const currentFormDisplayName = (cleanCurrentTitle && !currentFormName.startsWith('['))
@@ -1977,7 +1980,7 @@ function getStatsFromBlock(block) {
             else if (isSelfExcluded && /ally|allies|team|party/i.test(effectsText)) target = 'ally';
             else target = 'self';
         }
-        
+
         assignedTargets.add(`${iconSrc}-${target}`);
 
         let turns = row.dataset.turns;
@@ -2196,10 +2199,13 @@ window.renderAbsDamageMultiplier = function(text, typeLabel = '', isActive = fal
 };
 
 window.updateAbsStyleSuperAttacks = function() {
-    const container = document.getElementById('abs-sa-container');
+    if (window.getCardLayoutRoot?.()?.dataset?.cardLayout === 'dokkaninfo') {
+        return window.renderEditorSkillsInDokkanInfo?.() || false;
+    }
+    const container = layoutElement('abs-sa-container');
     if (!container) return;
 
-    const blocks = document.querySelectorAll('.sa-block');
+    const blocks = window.getSuperAttackSourceBlocks?.() || document.querySelectorAll('.sa-block');
     if (blocks.length === 0) {
         container.innerHTML = '';
         window.updateAbsStyleActiveSkills();
@@ -2234,7 +2240,9 @@ window.updateAbsStyleSuperAttacks = function() {
         return 12;
     };
 
-    const sortedBlocks = Array.from(blocks).sort((a, b) => {
+    const sourceBlocks = Array.from(blocks);
+    const hasManualAttackOrder = sourceBlocks.some(block => block.hasAttribute('data-editor-sa-order'));
+    const sortedBlocks = hasManualAttackOrder ? sourceBlocks : sourceBlocks.sort((a, b) => {
         const aEx = checkIsExSuperBlock(a);
         const bEx = checkIsExSuperBlock(b);
         if (aEx !== bEx) return aEx ? 1 : -1;
@@ -2265,6 +2273,8 @@ window.updateAbsStyleSuperAttacks = function() {
         let effectsFormatted = lines.join('<br>');
 
         let kiText = block.getAttribute('data-ki') || '';
+        const numericKi = kiText.trim().match(/^(\d+(?:\.\d+)?)$/);
+        if (numericKi) kiText = `${numericKi[1]} Ki`;
         if (!kiText) {
             const lowLabel = typeLabel.toLowerCase().trim();
             if (lowLabel.includes('ultra')) kiText = '18 Ki';
@@ -2296,7 +2306,7 @@ window.updateAbsStyleSuperAttacks = function() {
         const formattedCond = cleanCond
             ? (typeof window.formatPassiveText === 'function' ? window.formatPassiveText(cleanCond) : cleanCond)
             : '';
-        const isAbsCleanTheme = document.body?.classList.contains('theme-abs-clean') || document.getElementById('app')?.classList.contains('theme-abs-clean');
+        const isAbsCleanTheme = document.body?.classList.contains('theme-abs-clean') || layoutElement('app')?.classList.contains('theme-abs-clean');
         let cleanTypePills;
         if (isAbsCleanTheme && isExSuperAttack) {
             cleanTypePills = `<span class="abs-sa-ex-pill">EX</span><span class="abs-sa-type-pill">${typeLabel.replace(/^ex\s*/i, '') || 'Super Attack'}</span>`;
@@ -2319,8 +2329,11 @@ window.updateAbsStyleSuperAttacks = function() {
         const cleanSaHeader = isAbsCleanTheme
             ? `<div class="abs-sa-header-title"><span class="abs-sa-title-center"><span class="abs-sa-name-group"><img src="${saIcon}" class="abs-sa-icon-name" alt="SA Category"><em class="abs-sa-name-glow">${saName}</em></span></span><span class="abs-sa-effect-inline"><i>◆</i>${effectsFormatted}</span></div>`
             : `<div class="abs-sa-header-title"><img src="${saIcon}" class="abs-sa-icon-left" alt="SA Icon"><span class="abs-sa-title-text">${formattedTypeLabel} | <em class="abs-sa-name-glow">${saName}</em></span></div>`;
+        const cleanExConditionDividerHtml = isAbsCleanTheme && isExSuperAttack && formattedCond
+            ? '<div class="abs-clean-ex-condition-divider" aria-hidden="true"><hr class="divider"></div>'
+            : '';
         const cleanSaContent = isAbsCleanTheme
-            ? `<div class="abs-sa-clean-layout"><div class="abs-sa-clean-copy">${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}</div></div>`
+            ? `<div class="abs-sa-clean-layout"><div class="abs-sa-clean-copy">${cleanExConditionDividerHtml}${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}</div></div>`
             : `${formattedCond ? `<div class="abs-skill-label text-warning mb-1">Condition:</div><div class="mb-3">${formattedCond}</div>` : ''}<div class="abs-skill-label text-warning mb-1">Effect:</div><div>${effectsFormatted}</div>${specialEffectsHtml}${damageMultiplierHtml}`;
 
         htmlBuffer += `
@@ -2343,17 +2356,20 @@ window.updateAbsStyleSuperAttacks = function() {
 };
 
 window.updateAbsStyleActiveSkills = function() {
-    const container = document.getElementById('abs-active-container') || document.getElementById('abs-sa-container');
-    const fieldContainer = document.getElementById('abs-field-container');
+    if (window.getCardLayoutRoot?.()?.dataset?.cardLayout === 'dokkaninfo') {
+        return window.renderEditorSkillsInDokkanInfo?.() || false;
+    }
+    const container = layoutElement('abs-active-container') || layoutElement('abs-sa-container');
+    const fieldContainer = layoutElement('abs-field-container');
     if (!container) return;
 
-    const activeBlocks = Array.from(document.querySelectorAll('.active-block'));
+    const activeBlocks = window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
     window.normalizeActiveSkillBlocks?.(activeBlocks);
     if (activeBlocks.length === 0) {
-        const activeBox = document.getElementById('abs-active-container');
+        const activeBox = layoutElement('abs-active-container');
         if (activeBox) activeBox.innerHTML = '';
         if (fieldContainer) fieldContainer.innerHTML = '';
-        const standbyBox = document.getElementById('abs-standby-container');
+        const standbyBox = layoutElement('abs-standby-container');
         if (standbyBox) standbyBox.innerHTML = '';
         window.syncAbsCleanRightRail?.();
         return;
@@ -2445,8 +2461,8 @@ window.updateAbsStyleActiveSkills = function() {
         else activeHtml += skillHtml;
     });
 
-    const activeContainer = document.getElementById('abs-active-container');
-    const standbyContainer = document.getElementById('abs-standby-container');
+    const activeContainer = layoutElement('abs-active-container');
+    const standbyContainer = layoutElement('abs-standby-container');
     if (activeContainer) activeContainer.innerHTML = activeHtml;
     if (fieldContainer) fieldContainer.innerHTML = domainHtml;
     if (standbyContainer) standbyContainer.innerHTML = standbyHtml;
@@ -2459,7 +2475,7 @@ window.updateAbsStyleActiveSkills = function() {
 
     function getOrCreateTooltip() {
         if (!tooltipEl) {
-            tooltipEl = document.getElementById('abs-global-floating-tooltip');
+            tooltipEl = layoutElement('abs-global-floating-tooltip');
             if (!tooltipEl) {
                 tooltipEl = document.createElement('div');
                 tooltipEl.id = 'abs-global-floating-tooltip';
@@ -2519,17 +2535,17 @@ window.switchEditorArtMode = function(mode) {
     window.syncAbsCleanCategoryArtModeButtons?.(mode);
     if (isAbsCleanTheme) window.syncAbsCleanArtMediaMode?.(mode);
 
-    const artBox = document.getElementById('abs-art-layers-container');
-    const staticBtn = document.getElementById('art-toggle-static');
-    const animatedBtn = document.getElementById('art-toggle-animated');
-    const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
-    const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
-    const bgImgEl = document.getElementById('abs-art-bg');
-    const charImgEl = document.getElementById('abs-art-char');
-    const effectImgEl = document.getElementById('abs-art-effect');
-    const singleArtImg = document.getElementById('abs-art-img');
-    const singleVidEl = document.getElementById('abs-art-video');
-    const mainVid = document.getElementById('myOverlayVideo');
+    const artBox = layoutElement('abs-art-layers-container');
+    const staticBtn = layoutElement('art-toggle-static');
+    const animatedBtn = layoutElement('art-toggle-animated');
+    const lwfCanvas = layoutElement('abs-card-bg-lwf-canvas');
+    const stickerCanvas = layoutElement('abs-tur-sticker-canvas');
+    const bgImgEl = layoutElement('abs-art-bg');
+    const charImgEl = layoutElement('abs-art-char');
+    const effectImgEl = layoutElement('abs-art-effect');
+    const singleArtImg = layoutElement('abs-art-img');
+    const singleVidEl = layoutElement('abs-art-video');
+    const mainVid = layoutElement('myOverlayVideo');
 
     if (staticBtn) staticBtn.classList.toggle('active', !isAnim);
     if (animatedBtn) animatedBtn.classList.toggle('active', isAnim);
@@ -2636,7 +2652,7 @@ window.switchEditorArtMode = function(mode) {
 };
 
 window.syncAbsCleanIdentityIcons = function() {
-    const dock = document.getElementById('abs-clean-identity-icons');
+    const dock = layoutElement('abs-clean-identity-icons');
     if (!dock) return;
     const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
     if (!isAbsCleanTheme) {
@@ -2656,8 +2672,8 @@ window.syncAbsCleanIdentityIcons = function() {
     const fullTypeStr = curType;
 
     // 1. Rarity (label + value wired explicitly)
-    const badgeRarity = document.getElementById('abs-clean-badge-rarity');
-    const valRarity = document.getElementById('abs-clean-val-rarity');
+    const badgeRarity = layoutElement('abs-clean-badge-rarity');
+    const valRarity = layoutElement('abs-clean-val-rarity');
     if (valRarity) valRarity.textContent = activeRarity;
     badgeRarity?.querySelector('.abs-clean-badge-label') && (badgeRarity.querySelector('.abs-clean-badge-label').textContent = 'RARITY');
     if (badgeRarity) {
@@ -2665,8 +2681,8 @@ window.syncAbsCleanIdentityIcons = function() {
     }
 
     // 2. Class (Super / Extreme) sits between rarity and type.
-    const badgeClass = document.getElementById('abs-clean-badge-class');
-    const valClass = document.getElementById('abs-clean-val-class');
+    const badgeClass = layoutElement('abs-clean-badge-class');
+    const valClass = layoutElement('abs-clean-val-class');
     const activeClass = String(window.currentClass || (typeof currentClass !== 'undefined' ? currentClass : 'super')).toLowerCase();
     if (valClass) valClass.textContent = activeClass.toUpperCase();
     badgeClass?.querySelector('.abs-clean-badge-label') && (badgeClass.querySelector('.abs-clean-badge-label').textContent = 'CLASS');
@@ -2675,8 +2691,8 @@ window.syncAbsCleanIdentityIcons = function() {
     }
 
     // 3. Type (label + value wired explicitly)
-    const badgeType = document.getElementById('abs-clean-badge-type');
-    const valType = document.getElementById('abs-clean-val-type');
+    const badgeType = layoutElement('abs-clean-badge-type');
+    const valType = layoutElement('abs-clean-val-type');
     if (valType) valType.textContent = fullTypeStr;
     badgeType?.querySelector('.abs-clean-badge-label') && (badgeType.querySelector('.abs-clean-badge-label').textContent = 'TYPE');
     if (badgeType) {
@@ -2684,8 +2700,8 @@ window.syncAbsCleanIdentityIcons = function() {
     }
 
     // 4. Unit tag — hidden entirely when the source has no tag.
-    const badgeTag = document.getElementById('abs-clean-badge-tag');
-    const valTag = document.getElementById('abs-clean-val-tag');
+    const badgeTag = layoutElement('abs-clean-badge-tag');
+    const valTag = layoutElement('abs-clean-val-tag');
     const unitTag = window.normalizeAbsCleanUnitTag?.(window.absUnitTag) || '';
     if (valTag) valTag.textContent = unitTag;
     if (badgeTag) {
@@ -2701,8 +2717,8 @@ window.syncAbsCleanIdentityIcons = function() {
 
     // 5. Awakening — hidden entirely on BASE; visible order is rarity, class,
     // type, tag, then awakening.
-    const badgeAwakening = document.getElementById('abs-clean-badge-awakening');
-    const valAwakening = document.getElementById('abs-clean-val-awakening');
+    const badgeAwakening = layoutElement('abs-clean-badge-awakening');
+    const valAwakening = layoutElement('abs-clean-val-awakening');
     if (badgeAwakening && valAwakening) {
         const labelEl = badgeAwakening.querySelector('.abs-clean-badge-label');
         if (activeAwakening === 'eza') {
@@ -2743,21 +2759,21 @@ window.syncAbsCleanIdentityIcons = function() {
     }
 
     // 4. Release Date
-    const valRelease = document.getElementById('abs-clean-val-release');
+    const valRelease = layoutElement('abs-clean-val-release');
     if (valRelease) {
-        const rawDate = document.getElementById('dateInput')?.value?.trim() || 'TBD';
+        const rawDate = layoutElement('dateInput')?.value?.trim() || 'TBD';
         valRelease.textContent = rawDate;
     }
 
     // 5. Timeline Rarity
-    const timelineRarity = document.getElementById('abs-clean-timeline-rarity');
+    const timelineRarity = layoutElement('abs-clean-timeline-rarity');
     if (timelineRarity) timelineRarity.textContent = activeRarity;
 
     dock.hidden = false;
 };
 
 window.syncAbsCleanInfoBar = function() {
-    const infoBar = document.getElementById('abs-clean-info-bar');
+    const infoBar = layoutElement('abs-clean-info-bar');
     if (!infoBar) return;
     const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
     if (!isAbsCleanTheme) {
@@ -2828,12 +2844,12 @@ window.syncAbsCleanInfoBar = function() {
 };
 
 window.syncAbsCleanReleaseDate = function() {
-    const el = document.getElementById('abs-clean-release-date');
+    const el = layoutElement('abs-clean-release-date');
     if (!el) return;
 
-    const dateEl = document.getElementById('dateInput');
-    const ezaDateEl = document.getElementById('ezaDateInput');
-    const sezaDateEl = document.getElementById('sezaDateInput');
+    const dateEl = layoutElement('dateInput');
+    const ezaDateEl = layoutElement('ezaDateInput');
+    const sezaDateEl = layoutElement('sezaDateInput');
 
     const baseDate = (dateEl ? dateEl.value.trim() : "") || (el.dataset.baseDate || "") || "";
     const ezaDate = (ezaDateEl ? ezaDateEl.value.trim() : "") || "";
@@ -2864,7 +2880,7 @@ window.syncAbsCleanReleaseDate = function() {
 };
 
 window.syncAbsCleanLeaderBar = function() {
-    const leaderBar = document.getElementById('abs-clean-leader-bar');
+    const leaderBar = layoutElement('abs-clean-leader-bar');
     if (!leaderBar) return;
     const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
     if (!isAbsCleanTheme) {
@@ -2872,11 +2888,11 @@ window.syncAbsCleanLeaderBar = function() {
         return;
     }
 
-    const leaderText = document.getElementById('leaderInput')?.value ||
-                       document.getElementById('leader-skill')?.innerText ||
-                       document.getElementById('abs-leader-skill')?.innerText || "";
+    const leaderText = layoutElement('leaderInput')?.value ||
+                       layoutElement('leader-skill')?.innerText ||
+                       layoutElement('abs-leader-skill')?.innerText || "";
     const cleanLeader = leaderText.replace(/[\r\n]+/g, ' ').trim();
-    const leaderTextEl = document.getElementById('abs-clean-leader-text');
+    const leaderTextEl = layoutElement('abs-clean-leader-text');
     if (leaderTextEl) {
         const formatted = cleanLeader
             ? (window.formatOfficialText ? window.formatOfficialText(cleanLeader, true) : (window.formatCategoryQuotes ? window.formatCategoryQuotes(cleanLeader) : cleanLeader))
@@ -3139,7 +3155,7 @@ window.syncAbsCleanLeaderBar = function() {
         }
 
         if (!canvas) {
-            canvas = document.getElementById('abs-clean-grid-circuit');
+            canvas = layoutElement('abs-clean-grid-circuit');
             if (!canvas) {
                 animId = requestAnimationFrame(step);
                 return;

@@ -1,0 +1,4 @@
+/* Compatibility shim for older published cards that still request the former
+   presentation stylesheet path. New project entry points use the permanent
+   ABS.Clean module directly. */
+@import url("./abs-clean-presentation.css?v=20260926-clean-presentation-v38");

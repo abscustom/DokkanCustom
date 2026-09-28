@@ -3,7 +3,7 @@
    Categories are separate panels now. This module only cleans up leftover
    category picker nodes and guarantees the art layers live in their own dock. */
 (function() {
-    const getCategoryBox = () => document.getElementById('abs-category-container')?.closest('.abs-box') || null;
+    const getCategoryBox = () => (window.getCardLayoutElement ? window.getCardLayoutElement('abs-category-container') : document.getElementById('abs-category-container'))?.closest('.abs-box') || null;
 
     window.syncAbsCleanCategoryArtModeButtons = function(mode) {
         if (!document.body.classList.contains('theme-abs-clean')) return;
@@ -28,7 +28,7 @@
         window.__absCleanArtMediaMode = mode;
 
         const videos = [
-            document.getElementById('abs-art-video'),
+            (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-video') : document.getElementById('abs-art-video')),
             document.getElementById('myOverlayVideo')
         ].filter(Boolean);
         videos.forEach(video => {
@@ -38,7 +38,7 @@
             } catch (e) {}
         });
 
-        const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
+        const lwfCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-card-bg-lwf-canvas') : document.getElementById('abs-card-bg-lwf-canvas'));
         if (!lwfCanvas) return;
         if (mode === 'animated') {
             window.DokkanLWF?.restart?.(lwfCanvas.id || 'abs-card-bg-lwf-canvas', { play: true });
@@ -63,17 +63,18 @@
     };
 
     window.restoreAbsCleanCategoryArt = function() {
-        const caption = document.getElementById('abs-art-caption');
+        if (!document.body?.classList.contains('theme-abs-clean')) return;
+        const caption = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-caption') : document.getElementById('abs-art-caption'));
         if (caption) {
             const isClean = document.body?.classList.contains('theme-abs-clean') === true;
             caption.hidden = !isClean;
             caption.setAttribute('aria-hidden', String(!isClean));
         }
 
-        const artBox = document.getElementById('abs-art-layers-container');
-        const dock = document.getElementById('abs-art-dock-wrapper');
+        const artBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-layers-container') : document.getElementById('abs-art-layers-container'));
+        const dock = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-dock-wrapper') : document.getElementById('abs-art-dock-wrapper'));
         if (artBox && dock && artBox.parentElement !== dock) {
-            const toggleBar = document.getElementById('abs-art-toggle-bar');
+            const toggleBar = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-toggle-bar') : document.getElementById('abs-art-toggle-bar'));
             if (toggleBar && toggleBar.parentElement === dock) toggleBar.insertAdjacentElement('beforebegin', artBox);
             else dock.appendChild(artBox);
         }
@@ -102,7 +103,11 @@
 
     const observeTheme = () => {
         if (!document.body || window.__absCleanCategoryArtThemeObserver) return;
+        let wasClean = document.body.classList.contains('theme-abs-clean');
         window.__absCleanCategoryArtThemeObserver = new MutationObserver(() => {
+            const isClean = document.body.classList.contains('theme-abs-clean');
+            if (isClean === wasClean) return;
+            wasClean = isClean;
             if (window.__absCleanCategoryArtRefreshPending) return;
             window.__absCleanCategoryArtRefreshPending = true;
             requestAnimationFrame(() => {

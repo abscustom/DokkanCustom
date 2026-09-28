@@ -217,16 +217,34 @@
         throw lastError || new Error('No animation bridge is available.');
     }
 
+    function getMotionLayoutRoot() {
+        const activeRoot = window.getCardLayoutRoot?.();
+        if (activeRoot?.dataset?.cardLayout === 'abs-clean' || activeRoot?.dataset?.cardLayout === 'abs-style') {
+            return activeRoot;
+        }
+        const theme = document.body?.classList.contains('theme-abs-clean') ? 'abs-clean' : 'abs-style';
+        const id = theme === 'abs-clean' ? 'layout-abs-clean' : 'layout-abs-style';
+        return window.getCardLayoutRoot?.(theme) || document.getElementById(id);
+    }
+
+    function getMotionElement(id) {
+        const root = getMotionLayoutRoot();
+        return window.getCardLayoutElement?.(id, root)
+            || root?.querySelector(`[data-card-element="${id}"]`)
+            || root?.querySelector(`#${id}`)
+            || document.getElementById(id);
+    }
+
     function setStatus(text, state = '') {
-        const status = document.getElementById('abs-motion-status');
+        const status = getMotionElement('abs-motion-status');
         if (!status) return;
         status.textContent = text;
         status.dataset.state = state;
     }
 
     function setMotionAvailability(available, state = '') {
-        const box = document.getElementById('abs-motion-box');
-        const layout = document.getElementById('layout-abs-style');
+        const box = getMotionElement('abs-motion-box');
+        const layout = getMotionLayoutRoot();
         const visible = Boolean(available);
         const isLoading = state === 'loading';
         if (box) {
@@ -251,8 +269,10 @@
     }
 
     function syncViewerHeaderAxis(state = '') {
-        const motionBox = document.getElementById('abs-motion-box');
-        const sideCol = document.querySelector('#layout-abs-style .abs-side-col');
+        const motionBox = getMotionElement('abs-motion-box');
+        const isCleanLayout = document.body?.classList.contains('theme-abs-clean');
+        const layout = getMotionLayoutRoot();
+        const sideCol = layout?.querySelector('.abs-side-col');
         const isMotionReady = Boolean(motionBox && motionBox.dataset.motionAvailable === 'true');
         const isMotionLoading = Boolean(state === 'loading' || (motionBox && motionBox.dataset.motionAvailable === 'loading'));
         const motionVisible = (isMotionReady || isMotionLoading) && Boolean(
@@ -281,13 +301,13 @@
             }
         }
 
-        if (!document.body?.classList.contains('theme-abs-clean')) return;
-        const header = document.querySelector('#layout-abs-style > .abs-top-header');
-        const passive = document.getElementById('abs-passive-skill-box');
-        const anchor = document.getElementById('abs-composed-icon')
-            || document.getElementById('abs-art-dock-wrapper')
-            || document.getElementById('abs-clean-portrait-stage');
-        const identity = document.getElementById('abs-clean-identity-icons');
+        if (!isCleanLayout) return;
+        const header = layout?.querySelector(':scope > .abs-top-header');
+        const passive = getMotionElement('abs-passive-skill-box');
+        const anchor = getMotionElement('abs-composed-icon')
+            || getMotionElement('abs-art-dock-wrapper')
+            || getMotionElement('abs-clean-portrait-stage');
+        const identity = getMotionElement('abs-clean-identity-icons');
         if (!header) return;
 
         const headerRect = header.getBoundingClientRect();
@@ -337,14 +357,14 @@
         if (typeof ResizeObserver === 'function') {
             headerAxisObserver = new ResizeObserver(scheduleViewerHeaderAxisSync);
             [
-                document.querySelector('#layout-abs-style > .abs-top-header'),
+                getMotionLayoutRoot()?.querySelector(':scope > .abs-top-header'),
                 // The rail itself: badge population changes its height after
                 // the first sync, which previously left it stranded forever.
-                document.getElementById('abs-clean-identity-icons'),
-                document.getElementById('abs-passive-skill-box'),
-                document.getElementById('abs-composed-icon'),
-                document.getElementById('abs-art-dock-wrapper'),
-                document.getElementById('abs-clean-portrait-stage')
+                getMotionElement('abs-clean-identity-icons'),
+                getMotionElement('abs-passive-skill-box'),
+                getMotionElement('abs-composed-icon'),
+                getMotionElement('abs-art-dock-wrapper'),
+                getMotionElement('abs-clean-portrait-stage')
             ].filter(Boolean).forEach((element) => headerAxisObserver.observe(element));
         } else {
             window.setTimeout(scheduleViewerHeaderAxisSync, 250);
@@ -359,7 +379,7 @@
 
     function updateMotionClipDisplay(name) {
         const value = String(name || '');
-        const canvas = document.getElementById('abs-motion-canvas');
+        const canvas = getMotionElement('abs-motion-canvas');
         if (canvas && value) canvas.dataset.motionClip = value;
     }
 
@@ -456,7 +476,7 @@
 
     function exposeMotionDebug(player) {
         if (!motionDebugEnabled || !player) return;
-        const canvas = document.getElementById('abs-motion-canvas');
+        const canvas = getMotionElement('abs-motion-canvas');
         if (!canvas) return;
         const rendererFactory = player.lwf?.rendererFactory;
         canvas.dataset.motionBlendStats = JSON.stringify(rendererFactory?.__absBlendStats || null);
@@ -543,7 +563,7 @@
 
     function renderMotionFrame(player) {
         if (!player) return false;
-        const displayCanvas = document.getElementById('abs-motion-canvas');
+        const displayCanvas = getMotionElement('abs-motion-canvas');
         const layerPlayers = Array.isArray(player.__absMotionLayerPlayers)
             ? player.__absMotionLayerPlayers.filter(Boolean)
             : null;
@@ -625,7 +645,7 @@
     }
 
     function scheduleMotionVisibilityGuard(player, clip, onInvisible) {
-        const canvas = document.getElementById('abs-motion-canvas');
+        const canvas = getMotionElement('abs-motion-canvas');
         const token = ++motionVisibilityToken;
         let attempts = 0;
         const check = () => {
@@ -707,7 +727,7 @@
         }
         motionClockLastTs = 0;
         motionClockAccumulator = 0;
-        const displayCanvas = document.getElementById('abs-motion-canvas');
+        const displayCanvas = getMotionElement('abs-motion-canvas');
         if (displayCanvas) {
             try {
                 displayCanvas.getContext('2d')?.clearRect(
@@ -946,7 +966,7 @@
         player.onEnded = null;
 
         updateMotionClipDisplay(layers.entry);
-        const canvas = document.getElementById('abs-motion-canvas');
+        const canvas = getMotionElement('abs-motion-canvas');
         if (canvas) {
             canvas.dataset.motionLayers = JSON.stringify({
                 entry: layers.entry,
@@ -1296,8 +1316,8 @@
     }
 
     async function updateViewerMotion(card) {
-        const canvas = document.getElementById('abs-motion-canvas');
-        const box = document.getElementById('abs-motion-box');
+        const canvas = getMotionElement('abs-motion-canvas');
+        const box = getMotionElement('abs-motion-box');
         if (!canvas || !box) return;
         initViewerHeaderAxisSync();
 
@@ -1429,6 +1449,12 @@
         if (card) updateViewerMotion(card);
     };
     window.addEventListener('abs-card-content-ready', bootViewerMotion);
+    window.addEventListener('card-layout-root-change', () => {
+        if (!activePlayer) return;
+        setMotionAvailability(true, 'ready');
+        renderMotionFrame(activePlayer);
+        scheduleViewerHeaderAxisSync();
+    });
     if (window.__absViewerCard) window.queueMicrotask?.(bootViewerMotion);
     window.stopViewerMotion = () => {
         ++loadToken;

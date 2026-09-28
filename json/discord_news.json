@@ -1,5 +1,22 @@
 [
   {
+    "id": "1552543614410694767",
+    "title": "https://www.youtube.com/watch?v=ZuAMXUalXvc",
+    "desc": "",
+    "date": "Sep 24, 2026",
+    "timestamp": "2026-09-24T04:54:02.541000+00:00",
+    "media": [
+      {
+        "url": "assets/news/discord/embed_vid_1552543614410694767_0.mp4",
+        "type": "video"
+      }
+    ],
+    "images": [
+      "assets/news/discord/embed_vid_1552543614410694767_0.mp4"
+    ],
+    "banner": "assets/news/discord/embed_vid_1552543614410694767_0.mp4"
+  },
+  {
     "id": "1549329112370384957",
     "title": "",
     "desc": "",
@@ -8099,22 +8116,5 @@
       "assets/news/discord/msg_1432737888726155437_0.png"
     ],
     "banner": "assets/news/discord/msg_1432737888726155437_0.png"
-  },
-  {
-    "id": "1432737732777742548",
-    "title": "",
-    "desc": "",
-    "date": "Oct 28, 2025",
-    "timestamp": "2025-10-28T14:28:14.474000+00:00",
-    "media": [
-      {
-        "url": "assets/news/discord/msg_1432737732777742548_0.png",
-        "type": "image"
-      }
-    ],
-    "images": [
-      "assets/news/discord/msg_1432737732777742548_0.png"
-    ],
-    "banner": "assets/news/discord/msg_1432737732777742548_0.png"
   }
 ]
