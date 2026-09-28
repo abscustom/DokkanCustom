@@ -8,11 +8,10 @@
 
     // Resolve card-owned data before <base> redirects shared application assets.
     const cardFolderUrl = new URL('./', window.location.href).href;
-    const runtimeVersion = '20260926-clean-motion-runtime-v1';
+    const runtimeVersion = '20260928-custom-no-motion-v1';
     const cleanPresentationVersion = '20260927-clean-presentation-v53';
     const cleanLayoutRuntimeVersion = '20260927-clean-layout-runtime-v3';
     const viewerSettingsVersion = '20260927-clean-floating-motion-v11';
-    const viewerMotionVersion = '20260926-clean-motion-availability-v10';
 
     // Older published cards were generated before the shared loader stylesheet
     // was emitted in their <head>.  Apply the small, first-paint contract before
@@ -198,7 +197,7 @@
     window.absUnitTag = cardData.absUnitTag || '';
 
     // 7. Script Loader Helper
-    function loadScript(src, isModule = false) {
+    function loadScript(src, isModule = false, options = {}) {
         return new Promise((resolve, reject) => {
             const script = document.createElement('script');
             if (isModule) script.type = 'module';
@@ -206,7 +205,11 @@
             script.onload = () => resolve();
             script.onerror = (err) => {
                 console.warn(`[Custom Bootstrapper] Failed to load ${src}:`, err);
-                resolve(); // resolve anyway to avoid blocking execution
+                if (options.optional) {
+                    resolve(false);
+                    return;
+                }
+                reject(new Error(`A required card script failed to load: ${src}`));
             };
             document.body.appendChild(script);
         });
@@ -214,11 +217,12 @@
 
     // 8. Load Vendor Dependencies
     if (!window.JSZip) {
-        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js');
+        await loadScript('https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js', false, { optional: true });
     }
 
     // 9. Load DokkanCustom JavaScript Modules in Order
     const scripts = [
+        'js/published-card-guards.js',
         'js-card-details/card-image-interceptor.js',
         'js-card-details/card-layout-roots.js',
         'js-card-details/card-helpers.js',
@@ -257,22 +261,19 @@
     ];
 
     for (const s of scripts) {
-        const scriptVersion = s === 'js-card-details/card-helpers.js'
-            ? cleanLayoutRuntimeVersion
-            : runtimeVersion;
+        const scriptVersion = s === 'js/published-card-guards.js'
+            ? '20260928-loader-guard-v1'
+            : s === 'js-card-details/card-helpers.js'
+                ? cleanLayoutRuntimeVersion
+                : runtimeVersion;
         await loadScript(`${repoRoot}${s}?v=${scriptVersion}`);
     }
 
     await loadScript(`${repoRoot}js-card-details/abs-clean-presentation.js?v=${cleanPresentationVersion}`);
 
-    // Load LWF before the viewer motion module so published custom cards can
-    // attach the idle renderer after their active presentation root exists.
-    await loadScript(`${repoRoot}js-graphics/lwf-loader.js`, true);
-
     // 10. Configure Published Card Runtime and Viewport
     document.body.classList.add('is-published', 'card-viewer-page');
     window.ensurePublishedCustomCardRuntime?.();
-    await loadScript(`${repoRoot}js-card-details/viewer-motion.js?v=${viewerMotionVersion}`, true);
 
     const sidebar = document.getElementById('editor');
     const toggleBtn = document.getElementById('toggleBtn');
@@ -327,4 +328,9 @@
     }, 150);
 
     console.log('[Custom Bootstrapper] Dynamic card loaded successfully! Press Ctrl+Shift+A to unlock Admin Mode.');
-})();
+})().catch((error) => {
+    console.error('[Custom Bootstrapper] Card startup failed:', error);
+    window.dispatchEvent(new CustomEvent('abs-card-bootstrap-error', {
+        detail: { message: String(error?.message || error) }
+    }));
+});

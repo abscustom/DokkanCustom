@@ -5,6 +5,17 @@
 async function uploadBatchToGitHub(token, owner, repo, files, commitMessage) {
     if (!files || files.length === 0) return true;
 
+    const htmlFiles = files.filter(file => /\.html?$/i.test(String(file.path || '')));
+    if (htmlFiles.length) {
+        if (typeof window.assertGeneratedInlineScripts !== 'function') {
+            throw new Error('HTML upload stopped because inline-script validation is unavailable. Reload the editor and retry.');
+        }
+        for (const file of htmlFiles) {
+            const html = typeof file.blob?.text === 'function' ? await file.blob.text() : String(file.text || '');
+            window.assertGeneratedInlineScripts(html, file.path);
+        }
+    }
+
     const headers = {
         'Authorization': `token ${token}`,
         'Accept': 'application/vnd.github.v3+json',

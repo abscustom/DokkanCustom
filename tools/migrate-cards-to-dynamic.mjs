@@ -1,9 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import '../js/published-card-guards.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
+const bootstrapperVersion = '20260928-custom-no-motion-v1';
 
 const customCardsDir = 'C:\\Users\\Ruffy\\Documents\\GitHub\\abscustom\\Custom Cards';
 
@@ -87,26 +89,29 @@ for (const folder of cardFolders) {
     <script id="card-data" type="application/json">
 ${JSON.stringify(cardData, null, 2)}
     </script>
+    <script id="abs-published-loader-watchdog">
+${globalThis.buildPublishedLoaderWatchdogScript()}
+    </script>
     <script>
         (function() {
             const isLocal = location.hostname === 'localhost' || location.hostname === '127.0.0.1';
-            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17';
+            let src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
             if (isLocal) {
                 const p = decodeURIComponent(location.pathname);
                 const idx = p.indexOf('/abscustom/');
                 if (idx !== -1) {
-                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17';
+                    src = p.substring(0, idx) + '/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                 } else {
                     const isGrouped = p.includes('/Custom Cards/') || p.includes('/Custom%20Cards/');
-                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17';
+                    src = isGrouped ? '../../../DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}' : '../../DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                 }
             }
             const s = document.createElement('script');
             s.src = src;
             s.onerror = function() {
-                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17') {
+                if (s.src !== 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}') {
                     const fallback = document.createElement('script');
-                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=20260927-clean-motion-update-v17';
+                    fallback.src = 'https://abscustom.github.io/DokkanCustom/js/custom-card-bootstrapper.js?v=${bootstrapperVersion}';
                     document.head.appendChild(fallback);
                 }
             };
@@ -130,6 +135,7 @@ ${JSON.stringify(cardData, null, 2)}
 </body>
 </html>`;
 
+    globalThis.assertGeneratedInlineScripts(dynamicHtml, `${folder.name}/index.html`);
     fs.writeFileSync(htmlPath, dynamicHtml, 'utf8');
     const oldSize = existingHtml.length;
     const newSize = dynamicHtml.length;

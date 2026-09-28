@@ -857,6 +857,14 @@
     }
 
     async function commitRepositoryChanges(token, changes, deletePrefix, message) {
+        const htmlChanges = changes.filter(change => /\.html?$/i.test(String(change.path || '')));
+        if (htmlChanges.length) {
+            if (typeof window.assertGeneratedInlineScripts !== 'function') {
+                throw new Error('HTML update stopped because inline-script validation is unavailable. Reload the editor and retry.');
+            }
+            htmlChanges.forEach(change => window.assertGeneratedInlineScripts(change.text, change.path));
+        }
+
         const ref = await githubRequest(`${API_ROOT}/git/ref/heads/${BRANCH}`, token);
         const parentSha = ref.object.sha;
         const parentCommit = await githubRequest(`${API_ROOT}/git/commits/${parentSha}`, token);
