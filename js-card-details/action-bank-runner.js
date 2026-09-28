@@ -124,6 +124,18 @@ function getCardTextureForSlot(textures, slot, animationContext = 'sa1') {
     return textures.get(slot) || null;
 }
 
+export function resolveAnimationAssetCardId(selectedCardId, cardRecords) {
+    const selectedId = Number(selectedCardId) || 1000010;
+    const records = Array.isArray(cardRecords)
+        ? cardRecords
+        : (cardRecords && typeof cardRecords === 'object' ? Object.values(cardRecords) : []);
+    const selectedRecord = records.find(card => Number(card?.id) === selectedId);
+    const parentId = Number(selectedRecord?.parent_id) || 0;
+    const isAwakened = [true, 1, '1', 'true'].includes(selectedRecord?.is_eza)
+        || [true, 1, '1', 'true'].includes(selectedRecord?.is_seza);
+    return isAwakened && parentId > 0 && parentId !== selectedId ? parentId : selectedId;
+}
+
 function replacementRuleAllowsSlot(rules, slot, hidePhraseTextures = false) {
     const list = Array.isArray(rules) ? rules : [];
     const isName = slot === 'sp_name' || slot === 'sp02_name';
@@ -966,11 +978,22 @@ export class ActionBankRunner {
 
     async preload() {
         if (this._cancelled) return;
+
+        // EZA/SEZA IDs in cards.json are synthetic viewer records. The
+        // animation library only has the real base card ID, so resolve those
+        // forms before requesting the character rig and cut-in/text textures.
+        const cardRecords = typeof window !== 'undefined' ? window.DB?.cards : null;
+        const selectedCardId = Number(this.attackerCardId) || 1000010;
+        const animationAssetCardId = resolveAnimationAssetCardId(selectedCardId, cardRecords);
+        if (animationAssetCardId !== selectedCardId) {
+            this.log(`Using base card ${animationAssetCardId} for EZA/SEZA animation assets.`);
+        }
+
         this.onStatus?.('preloading', this);
 
         // 1. Preload Character Models
         const characterResults = await Promise.allSettled([
-            this.charaLayer.preloadCharacter(0, this.attackerCardId),
+            this.charaLayer.preloadCharacter(0, animationAssetCardId),
             this.charaLayer.preloadCharacter(1, this.enemyCardId),
         ]);
         if (this._cancelled) return;
@@ -986,7 +1009,7 @@ export class ActionBankRunner {
         try {
             const headers = this._getHeaders();
             const ext = this._isStatic() ? '.json' : '';
-            const cardRes = await fetch(`${this.serverUrl}/api/card/${Number(this.attackerCardId) || 0}${ext}`, {
+            const cardRes = await fetch(`${this.serverUrl}/api/card/${animationAssetCardId}${ext}`, {
                 ...(Object.keys(headers).length ? { headers } : {})
             });
             if (this._cancelled) return;

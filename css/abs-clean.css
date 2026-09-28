@@ -23899,6 +23899,7 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     margin-bottom: 44px !important;
 }
 
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header,
 body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-sa-container, #clean-abs-active-container, #clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header {
     display: flex !important;
     flex-direction: column !important;
@@ -23966,6 +23967,7 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     padding: 0 !important;
 }
 
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title,
 body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-sa-container, #clean-abs-active-container, #clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title {
     position: static !important;
     display: flex !important;
@@ -23984,6 +23986,7 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     text-align: center !important;
 }
 
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title .abs-sa-title-center,
 body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-sa-container, #clean-abs-active-container, #clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title .abs-sa-title-center {
     display: flex !important;
     align-items: center !important;
@@ -23996,7 +23999,8 @@ body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-
     text-align: center !important;
 }
 
-body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-sa-container, #clean-abs-active-container, #clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title .abs-sa-effect-inline {
+body.card-viewer-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title .abs-sa-effect-inline,
+body.editor-tool-page.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean #layout-abs-clean :is(#clean-abs-sa-container, #clean-abs-active-container, #clean-abs-field-container, #clean-abs-standby-container) > .abs-box > .abs-header > .abs-sa-header-title .abs-sa-effect-inline {
     display: block !important;
     width: 100% !important;
     max-width: 100% !important;

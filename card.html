@@ -16,20 +16,21 @@
     <link rel="stylesheet" href="css/editor-ui.css?v=20260926-sa-reorder-controls-v1">
     <link rel="stylesheet" href="css/card-inspector.css?v=20260924-info-grid-align-v1">
     <link rel="stylesheet" href="css/lwf.css?v=20260906-abs-clean-art-hover-exact-v6">
-<link rel="stylesheet" href="css/abs-clean.css?v=20260927-field-standby-shared-headers-v28">
+<link rel="stylesheet" href="css/abs-clean.css?v=20260928-field-standby-editor-parity-v29">
     <link rel="stylesheet" href="css/dokkan-sticker.css">
     <link rel="stylesheet" href="css/card-animation-player.css?v=20260918-ko-white-v1">
     <link rel="stylesheet" href="css/sba-side-dock.css?v=20260902-search-filter-placement-v7">
     <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260914-stars-bg-v4">
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
     <link rel="stylesheet" href="css/sba-mobile-layout.css?v=20260905-showcase-anchor-v10">
-    <link rel="stylesheet" href="css/card-viewer-settings.css?v=20260927-clean-field-container-v12">
+    <link rel="stylesheet" href="css/card-viewer-settings.css?v=20260928-page-top-motion-v4">
     <link rel="stylesheet" href="css/viewer-card-picker.css?v=20260914-viewer-picker-v7">
     <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
     <link rel="stylesheet" href="css/abs-clean-presentation.css?v=20260927-clean-presentation-v53">
 
     <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
     <script src="js-card-details/card-image-interceptor.js?v=20260924-empty-image-guard-v1"></script>
+    <script src="js/release-time.js?v=20260928-eastern-release-time-v1"></script>
 </head>
 <body class="theme-sba theme-abs-clean is-published card-viewer-page">
     <svg style="display: none;" aria-hidden="true">
@@ -559,6 +560,7 @@
                             </div>
 
                             <div class="abs-art-box" id="abs-art-layers-container">
+                                <span id="abs-art-loading-status" class="abs-art-loading-status" role="status" aria-live="polite" hidden>Loading card artwork…</span>
                                 <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="Background" onerror="this.style.display='none';">
                                 <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="Character">
                                 <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="Effect" onerror="this.style.display='none';">
@@ -719,23 +721,24 @@
 })();
 </script>
 <script src="vendor/fengari-web.min.js"></script>
-    <script src="js-card-details/card-animation-player.js?v=20260918-v8"></script>
+    <script src="js-card-details/card-animation-player.js?v=20260928-eza-animation-assets-v1"></script>
 <script src="js-card-details/card-viewer-bootstrap.js?v=20260924-independent-presentation-roots-v1"></script>
 <script src="js-card-details/json-card-loader.js?v=20260918-v7"></script>
 <script src="js-card-details/card-layout-roots.js?v=20260924-info-transformations-v2"></script>
-<script src="js-card-details/card-helpers.js?v=20260927-clean-layout-runtime-v3"></script>
+<script src="js-card-details/card-helpers.js?v=20260928-eastern-release-time-v1"></script>
 <script src="js-card-details/abs-category-art-toggle.js?v=20260910-abs-clean-art-toggle-v93"></script>
 <script src="js-card-details/card-formatters.js?v=20260924-theme-render-isolation-v1"></script>
     <script src="js-card-details/card-partners.js?v=20260925-clean-layout-runtime-v2"></script>
   <script src="js-card-details/card-renderers.js?v=20260927-clean-field-standby-parity-v3"></script>
 <script src="js/sba-ring-effects.js?v=20260912-card-viewer-ring-v1"></script>
 <script src="js-card-details/card-viewer-clean-grid.js?v=20260914-abs-clean-filters-settings-v1"></script>
-<script src="js-card-details/card-inspector-core.js?v=20260925-style-passive-badges-v1"></script>
-<script src="js-card-details/viewer-card-picker.js?v=20260914-viewer-picker-v6"></script>
+<script src="js-card-details/viewer-card-art-loader.js?v=20260928-card-art-race-v1"></script>
+<script src="js-card-details/card-inspector-core.js?v=20260928-card-art-race-v1"></script>
+<script src="js-card-details/viewer-card-picker.js?v=20260928-eastern-release-time-v1"></script>
 
 <script src="js-graphics/dokkan-sticker-shader.js"></script>
 <script src="js-graphics/lwf.js"></script>
-  <script type="module" src="js-card-details/viewer-motion.js?v=20260926-clean-motion-availability-v10"></script>
+  <script type="module" src="js-card-details/viewer-motion.js?v=20260928-header-motion-v12"></script>
 <script type="module" src="js-graphics/lwf-loader.js?v=20260916-cdn-v1"></script>
 <script src="js/ui-toast.js?v=2"></script>
 <script src="js/favicon.js?v=20260916-favicon-v2"></script>
