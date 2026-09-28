@@ -27,7 +27,7 @@ window.handleStatSliderChange = function(stepIndex) {
 };
 
 window.setStatSliderIndex = function(idx) {
-    const slider = document.getElementById('abs-stat-range-slider');
+    const slider = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stat-range-slider') : document.getElementById('abs-stat-range-slider'));
     if (slider) {
         slider.value = idx;
         window.handleStatSliderChange(idx);
@@ -43,8 +43,8 @@ window.updateAbsStatDisplay = function(pct) {
     if (pct) window.currentAbsStatPct = pct.trim();
     const activePct = window.currentAbsStatPct || '100%';
 
-    const slider = document.getElementById('abs-stat-range-slider');
-    const displayLabel = document.getElementById('abs-slider-percent-display');
+    const slider = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stat-range-slider') : document.getElementById('abs-stat-range-slider'));
+    const displayLabel = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-slider-percent-display') : document.getElementById('abs-slider-percent-display'));
     const idx = window.STAT_MILESTONES.indexOf(activePct);
 
     if (slider && idx !== -1) {
@@ -60,9 +60,9 @@ window.updateAbsStatDisplay = function(pct) {
     const atkVal = window.calculatedStats.atk[activePct] || 0;
     const defVal = window.calculatedStats.def[activePct] || 0;
 
-    const hpEl = document.getElementById('abs-stat-hp-val');
-    const atkEl = document.getElementById('abs-stat-atk-val');
-    const defEl = document.getElementById('abs-stat-def-val');
+    const hpEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stat-hp-val') : document.getElementById('abs-stat-hp-val'));
+    const atkEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stat-atk-val') : document.getElementById('abs-stat-atk-val'));
+    const defEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-stat-def-val') : document.getElementById('abs-stat-def-val'));
 
     if (hpEl) hpEl.innerText = hpVal.toLocaleString();
     if (atkEl) atkEl.innerText = atkVal.toLocaleString();

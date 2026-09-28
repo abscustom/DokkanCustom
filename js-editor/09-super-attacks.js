@@ -6,11 +6,11 @@
 
 window.addSuperAttackSection = function() {
     const template = document.getElementById('sa-template');
-    const spot = document.getElementById('sa-insert-spot');
-    if (!template || !spot) return;
+    const sourceHost = window.ensureEditorSkillSourceHost?.();
+    if (!template || !sourceHost) return;
     
     const clone = document.importNode(template.content, true);
-    spot.parentNode.insertBefore(clone, spot);
+    sourceHost.appendChild(clone);
     if (window.applyCardTheme) window.applyCardTheme(currentType);
     window.refreshSADropdown();
 
@@ -21,7 +21,7 @@ window.addSuperAttackSection = function() {
 };
 
 window.removeSuperAttackSection = function() {
-    const blocks = document.querySelectorAll('.sa-block');
+    const blocks = window.getSuperAttackSourceBlocks?.() || document.querySelectorAll('.sa-block');
     if (blocks.length > 0) {
         blocks[blocks.length - 1].remove();
         window.refreshSADropdown();
@@ -54,7 +54,7 @@ window.moveSection = function(id, direction) {
 
 window.refreshSADropdown = function() {
     const sel = document.getElementById('sa-selector');
-    const all = document.querySelectorAll('.sa-block');
+    const all = window.getSuperAttackSourceBlocks?.() || document.querySelectorAll('.sa-block');
     const detailsContainer = document.getElementById('sa-editor-details'); 
     
     if (all.length === 0) {
@@ -88,6 +88,59 @@ window.refreshSADropdown = function() {
     if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
 };
 
+window.syncSAAttackReorderControls = function() {
+    const controls = document.querySelector('#context-gui[data-context-type="sa"] .sa-editor-reorder-controls');
+    if (!controls) return;
+    const blocks = window.getSuperAttackSourceBlocks?.() || Array.from(document.querySelectorAll('.sa-block'));
+    const index = blocks.indexOf(window.currentSuperAttack);
+    const position = controls.querySelector('[data-sa-reorder-position]');
+    const upButton = controls.querySelector('[data-sa-reorder-direction="-1"]');
+    const downButton = controls.querySelector('[data-sa-reorder-direction="1"]');
+    if (position) position.textContent = index >= 0 ? `Attack ${index + 1} of ${blocks.length}` : 'Attack unavailable';
+    if (upButton) upButton.disabled = index <= 0;
+    if (downButton) downButton.disabled = index < 0 || index >= blocks.length - 1;
+};
+
+window.guiMoveSuperAttack = function(direction) {
+    const blocks = window.getSuperAttackSourceBlocks?.() || Array.from(document.querySelectorAll('.sa-block'));
+    const source = window.currentSuperAttack;
+    const sourceIndex = blocks.indexOf(source);
+    const step = Math.sign(Number(direction));
+    const targetIndex = sourceIndex + step;
+    if (!source || sourceIndex < 0 || !step || targetIndex < 0 || targetIndex >= blocks.length) return false;
+
+    const sourceHost = source.parentNode;
+    if (!sourceHost) return false;
+    if (targetIndex < sourceIndex) sourceHost.insertBefore(source, blocks[targetIndex]);
+    else sourceHost.insertBefore(source, blocks[targetIndex].nextSibling);
+
+    // The source node order is the saved order. This marker lets the preview
+    // keep a deliberate order while older cards retain their Ki/EX sorting.
+    const reorderedBlocks = window.getSuperAttackSourceBlocks?.() || Array.from(document.querySelectorAll('.sa-block'));
+    reorderedBlocks.forEach((block, index) => block.setAttribute('data-editor-sa-order', String(index)));
+    window.ensureEditorSkillSourceIds?.();
+    window.refreshSADropdown?.();
+
+    const nextIndex = reorderedBlocks.indexOf(source);
+    const infoRoot = window.getCardLayoutRoot?.();
+    const sourceId = source.getAttribute('data-editor-skill-id');
+    let visibleTarget = null;
+    if (infoRoot?.dataset?.cardLayout === 'dokkaninfo' && sourceId) {
+        visibleTarget = Array.from(infoRoot.querySelectorAll('[data-info-source-kind="super-attack"][data-info-source-skill-id]'))
+            .find(element => element.dataset.infoSourceSkillId === sourceId) || null;
+    }
+    if (!visibleTarget) {
+        const saContainer = window.getCardLayoutElement?.('abs-sa-container') || document;
+        visibleTarget = saContainer.querySelector?.(`[data-sa-source-index="${nextIndex}"]`) || null;
+    }
+    if (visibleTarget) {
+        window.activeContextGUITarget = visibleTarget;
+        window.highlightCardElement?.(visibleTarget);
+    }
+    window.syncSAAttackReorderControls?.();
+    return true;
+};
+
 window.handleSATypeChange = function(val) {
     const customContainer = document.getElementById('custom-sa-label-container');
     const customInput = document.getElementById('input-sa-type-label');
@@ -105,7 +158,7 @@ window.handleSASelection = function() {
     if (!sel) return;
     
     const idx = sel.value;
-    const blocks = document.querySelectorAll('.sa-block');
+    const blocks = window.getSuperAttackSourceBlocks?.() || document.querySelectorAll('.sa-block');
     currentSuperAttack = blocks[idx];
     if(!currentSuperAttack) return;
     
@@ -212,7 +265,8 @@ window.syncSuperAttack = function() {
         sel.options[sel.selectedIndex].text = `${parseInt(sel.value) + 1}: ${name}`;
     }
 
-    if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
+    if (window.scheduleEditorSkillPreview) window.scheduleEditorSkillPreview('sa');
+    else window.updateAbsStyleSuperAttacks?.();
 };
 
 /* ----- SA STATS EDITOR ----- */
@@ -273,8 +327,8 @@ if (saActInput) {
                 actTextDisp.innerHTML = `<strong>Activation Condition</strong><br>${cleanVal.replace(/\n/g, '<br>')}`;
             }
         }
-        if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
-        if (window.syncToAbsLayout) window.syncToAbsLayout();
+        if (window.scheduleEditorSkillPreview) window.scheduleEditorSkillPreview('sa');
+        else window.updateAbsStyleSuperAttacks?.();
     };
 }
 

@@ -1,19 +1,297 @@
 [
   {
+    "id": 107259,
+    "title": "Information on Upcoming Content!",
+    "date_added": "2026-09-24 17:03:33",
+    "details": {
+      "announcement": {
+        "id": 107259,
+        "title": "Information on Upcoming Content!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_notice_small.png?Expires=1790312073&Signature=bK5vQnLt5fp9MH15eZHtTsqK4Zd~Ib2WA1uL4~m9T3F1c4Ymk06Xisq4fvUmBpIs4s5zITb0nhX46off3J10g~PJAlyVNDtNkZOLX3xGW9lNKTLt8S5XATcT0HZt-hJ6dIgpCaetUV2TbGQHrw3G18BQDmtYjPnsJcIjP4J4-wywAUdeT9c1EWPvv~-kx3Umc2cVXB3clkWdBYwOYfRakpz~J6xYg2r-IqdWoeXDXx8aTyOKgz06B0SvQYYHI2smtDwSGFN~ntcTg2fWO-ZGzanf4nJeJe6mh1~8vGbZq8ZhiK5hT8mAYkhT38EyGNm~AwKDwdz4VrCfN488nrIGLA__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_notice_small.png",
+            "description": "\r\nHere is a sneak peek at the upcoming content!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= New Event ={size}{outline}{color}\r\n\r\nOne of the stages can only be attempted by\r\n\"{color:#FFFF00}Majin Buu Saga{color}\" Category characters!\r\nLevel up your characters' Link Skills!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_notice_small.png?Expires=1790312073&Signature=bK5vQnLt5fp9MH15eZHtTsqK4Zd~Ib2WA1uL4~m9T3F1c4Ymk06Xisq4fvUmBpIs4s5zITb0nhX46off3J10g~PJAlyVNDtNkZOLX3xGW9lNKTLt8S5XATcT0HZt-hJ6dIgpCaetUV2TbGQHrw3G18BQDmtYjPnsJcIjP4J4-wywAUdeT9c1EWPvv~-kx3Umc2cVXB3clkWdBYwOYfRakpz~J6xYg2r-IqdWoeXDXx8aTyOKgz06B0SvQYYHI2smtDwSGFN~ntcTg2fWO-ZGzanf4nJeJe6mh1~8vGbZq8ZhiK5hT8mAYkhT38EyGNm~AwKDwdz4VrCfN488nrIGLA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_1224_small.png",
+            "description": "\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= New Nodes ={size}{outline}{color}\r\n\r\nNew nodes will be added to \"{color:#FFFF00}Androids/Cell Saga{color}\"!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1224_small.png?Expires=1790312529&Signature=lOk9S6t5UbXgxJGRLQ-59SKwulqO-ZVHH~jvcdEHo-G3D93GkioMJvZCcCVi7WN6F-BNCMS51BRpyxf538VCxxbwLtyMsgR1fedFnI1PB8h7s4JlO17s4zY7VadqsggxsfRcli4InABrLS23BHJetAcowPTz7Tkgj6YFmOTx~ONNnHTGr8VWgEuHnuGEoZ0yFrowB3JZJszynXv2Dkq5xFBF0XvPV8JxJMkEftB4fV9b3IxFuwG~GEgLLhsNm551J-unwfPZURP~MVs3vRvQVJS6Xgx1sz4OQdylXYGg30THETQw~II1VSXfc3YjHxqvQ9Qw6olTWjhvcac0ykyHvQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_dokkan-frontier_2002_small.png",
+            "description": "\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Renewal ={size}{outline}{color}\r\n\r\nCollect the Treasure Item \"{color:#FFFF00}Kiri{color}\" and exchange them\r\nfor items such as {color:#FFFF00}Dragon Stones{color} and \"{color:#FFFF00}Link Skill Orb (L){color}\"!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkan-frontier_2002_small.png?Expires=1790312073&Signature=F0WzLgYbGX9qR6eAUcO1pfAfYzoQf-Of5X3D1k3TAv12aezvT77MtGX07pVTeiAJMbB8pSDo2PkhfSLSchu2YmTssoM-ME2oPTwh~n0ntDn4tEn67kSxiHdRguCOZzqU2~Lu3KeRgDQ2Tr9Cq-imNq-3yQRGcAyIAiit~8v06BG1UbfbmhmQwK4-XwEWIvKYG83lHNfNj8HY2VVepZT58vCOFwArwUzaalQkjNcWqut8clCtwaEjzseGllkFCB0aOaS6Idwduz6FGwcI64R8oHpX9Sc-CLENJv9H~HzlpHZWRCitF77GrkfPD1b07PbNQ-EnUavesHUow6XDtvkFRw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_1225_small.png",
+            "description": "\r\nStay tuned for the upcoming content!\r\n\r\n* Please note that the event content and dates\r\nare subject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1225_small.png?Expires=1790312529&Signature=DBVT4cTRetrUxMlmb-sAYYsVlIYdCNWKyDSaUd26MLfr3VsXOvh7ZUPmQrKP8~UD-EU6UOef4OJzGeWnxqWp94slqit76hLijCksWIx5XE04ugHSDDUP~JqQIOZdksmeT4QDqvtUJXAgz84AxDDjDD94nx-bk1bjKyVJyW40tgnAuRaw3hYMoHGwKY-Gd3y7gcPKpq0p0AbiQKE17p0RrI-b4zSN4kTMPfoLvAkUJVcillQW2LGF73Qe~OQYhSXxc3favkFHgnwZY8~kpwNoNfx5u~vzPEACeGPaRT8xVl62ZjHI8qWXPuzGu6FvV1jCCXUssaRAYj~6z2pzesfx5A__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          }
+        ],
+        "is_new": false,
+        "link_to": null,
+        "summary": "",
+        "category": 0,
+        "start_at": 1790235000,
+        "layout_type": 3,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 1
+      }
+    }
+  },
+  {
+    "id": 107257,
+    "title": "Virtual Dokkan Ultimate Clash \"Androids/Cell Saga\"!",
+    "date_added": "2026-09-24 17:03:44",
+    "details": {
+      "announcement": {
+        "id": 107257,
+        "title": "Virtual Dokkan Ultimate Clash\r\n\"Androids/Cell Saga\"!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_dairansen_108_small.png?Expires=1790311797&Signature=jEDEJ~amD39zXH8fy7bR3OSfvOHzmRy12Z9omtb1prqnE5YybEbrmyYVUBq51H1uIQf~uiOhHa6LHi3v4zd1LZOBiwfuXsU6aSvQ4OoZqtujsxNTr-1oYHVbNvcZ~TvUvCHI-E3DAKxuTqGsGrm3QMmch2WdmKLpkqlKqGnx9tsy~rJCW2I3HApajLMWlp~ehxQTQA52sb9bw-7A4gjOUgMS468x3CA7bTS625jfYHB-UFF6k1AjV0~~Ejz0EMSkn8UHgrjAyqDVeeRR48ufdwL7Ro7JyvRHMAOMvLWSLdaf5ENEXuhV0QzAIGBosGIpopJGPQhw9eVwBOFVXR-wng__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_dairansen_108_small.png",
+            "description": "\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Event Period ={size}{color}{outline}\r\n\r\n{duration:1789707600,1792483140,DT,U}\r\n\r\n\"{color:#FFFF00}Androids/Cell Saga{color}\" is now available!\r\nForm teams you can take pride in and reign victorious\r\nin fierce battles against formidable foes!\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Event Details ={size}{color}{outline}\r\n\r\nAll characters are eligible to participate in \r\nVirtual Dokkan Ultimate Clash Ver. 3.0!\r\n\r\nTake on the challenge with your fully trained allies!\r\n\r\n* \"Ultimate Clash\" will become available for attempt after \r\ncompleting Board 1 of the Intermediate Panel Missions.\r\n\r\n* Please note that you cannot attempt multiple \r\nUltimate Clashes at the same time.\r\n\r\n* For more details and the instructions on how to play,\r\nplease navigate the following path: \"Ultimate Clash\"\r\n--> \"?\" button --> \"Ultimate Clash Help\".\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Rewards ={size}{color}{outline}\r\n\r\nComplete the missions of Ultimate Clash to get\r\nrewards including {color:#FFFF00}Dragon Stones{color}, \"{color:#FFFF00}Special Sticker{color}\"\r\nand the Treasure Item \"{color:#FFFF00}Battlefield Memory{color}\"!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_dairansen_108_small.png?Expires=1790311797&Signature=jEDEJ~amD39zXH8fy7bR3OSfvOHzmRy12Z9omtb1prqnE5YybEbrmyYVUBq51H1uIQf~uiOhHa6LHi3v4zd1LZOBiwfuXsU6aSvQ4OoZqtujsxNTr-1oYHVbNvcZ~TvUvCHI-E3DAKxuTqGsGrm3QMmch2WdmKLpkqlKqGnx9tsy~rJCW2I3HApajLMWlp~ehxQTQA52sb9bw-7A4gjOUgMS468x3CA7bTS625jfYHB-UFF6k1AjV0~~Ejz0EMSkn8UHgrjAyqDVeeRR48ufdwL7Ro7JyvRHMAOMvLWSLdaf5ENEXuhV0QzAIGBosGIpopJGPQhw9eVwBOFVXR-wng__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/thumb_trade_jewel_02000.png",
+            "description": "\r\n* Please check the main page of Ultimate Clash or tap \r\nthe \"Mission\" button located on the stage-selection\r\nscreen for more details on the missions.\r\n\r\n* An exclamation mark will be shown on the \r\n\"Ultimate Clash\" icon if there are any missions\r\nthat have not yet been checked.\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Baba's Shop ={size}{color}{outline}\r\n\r\nCollect the Treasure Item \"{color:#FFFF00}Battlefield Memory{color}\" and\r\nuse them to recruit characters or obtain awesome\r\nrewards including the Awakening Medals required\r\nfor Dokkan Awakening or Extreme Z-Awakening!\r\n\r\n{color:#FFFF00}Special item packs{color} that contain various items are\r\nalso available!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/thumb_trade_jewel_02000.png?Expires=1790312133&Signature=HFRgswWor7KTlNhpW0pJSg0m30UmwslrGo7Zv5RuT03Xf3hI8rugOBmB3LrRxZ3JLeykGQxGlxyYNpqspolZxW04lW1UhFDtBDwfzhMLum4QVWCd3CC9KuvDBPTH3lYVLaXTKYU7zfBHKMLzzDKPRD8kMFN7TxLodoB1QrtzFYUVbWkcc0h3oWIpIZhthll6WCb8UDLD7YmPY3Z3PnoHG8gME3kPsC3F1Ls4KPAsoghJacUIfEwv34GmDu1wTLT8Rs7QkJurD1Vv~4FRDBzMDK5kC4Bqe1xdbn9BCUxqfjxsni8neEBbsmbCqKwBLCpjWqiz0yXDsePg2XjQ4zXUnQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_dairansen_106_large_A.png",
+            "description": "",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_dairansen_106_large_A.png?Expires=1790312133&Signature=nJk-O1QIcFGgu8wfMV-wfBrTxk5WcbWG9Po2VokQV4u8NnJJZQtN5wR5MBPb4RIic8eLnvm3IS2DAHZwwZbCLTBmNRgG9QaJbMs~yD12ZOMmo0VXwPfu0Bxn0owHWkdYcYMRMow-qvqu8LLqtPC9fkCCnpv1OqObO2xL9xUj4jo8cLegQPfgyuHIAfoNn7JrwJB-yGYkXyqnVfYjBwauQsU~GpaQTPKYah2UOLuNIQ7JtlEKLHTyiky7bjslbnay~ATMPovW60w6uQpIR9ZOwVfPH2WTSnm3tqAP0Q9Ka6ApGt9kSg0JyUFw5KH-z-XC6Pa6bbia90ldy1Ijzhju6g__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_dairansen_106_large_B.png",
+            "description": "\r\n* Please go to the {underline:begin}{linkToTrade: 2000}\"Treasure\" section of Baba's Shop{linkToTrade}{underline}\r\nfor more details on the available characters.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing \r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_dairansen_106_large_B.png?Expires=1790312133&Signature=pswnsjTqwFLsw2zErqZ9vTlQIPhThL3wd3yCxEZSSnU2SzHVgm6s4kNFI6iWtyG5Nr8llx7tIV5rJRo5x1NrMU8gVGQuXQ~vhVo442YDlc83a7NLlvA~6HQyFmA4aLn3YFvOcKK1EaZP~Ru6UT-LPI8gSSVl3cPg2n6Q76ffKZdV2zdsCNZN2VkRoIZ4BUc54Q5UbY~SOnkB5sTDgJXpwNbQ7aZ-J5gLminYsPzE9grGSpIJKAHi-KqsNipeiWUiupUl1srEQZcTh79cLnLsJiiu-LJJlOpxSUaLmbAyz3N-JEKapHJLv1TMBqh4ykOkEebMd0yQClS4DD2zhIolXw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          }
+        ],
+        "is_new": false,
+        "link_to": "internal:RMBattleTopScene:108",
+        "summary": "",
+        "category": 1,
+        "start_at": 1789707600,
+        "layout_type": 3,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 2
+      }
+    }
+  },
+  {
+    "id": 107256,
+    "title": "Extreme Z-Battle Is On!",
+    "date_added": "2026-09-24 17:04:31",
+    "details": {
+      "announcement": {
+        "id": 107256,
+        "title": "Extreme Z-Battle Is On!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_zbattle_212_small_A.png?Expires=1790312307&Signature=mmBxRZX-PmispON11iGEj9uIvHycXjFP-umFflq8FhZSmqq~Wfk7QXUYwwssXZ2GesJ43~wDrGZmBwvji-2r3I-Xg9lRn24UyiZY8QXyGSAi-2OTjz-SHqKVBy7MvJft~VaOcfYi81K3FjpOJ28c9UkPGQQIend0jzsxVhv1BhFQm~SjDo0ge9w2xA9cKEeyfqw0WlP40ifTL~jBp5WnnOVLKq9ikPEd7i2M~~WFYdXqA0kNiT7XPvLycZgBGTBjzd8w5wkOxCOLqAI0OFpyQfLuU0t093WU6W0JGBlsBkUMzhnQ9pmDgmQw7IgyW9R-pIr2Cb8I1J~k3~lRQcV93Q__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_zbattle_212_small_A.png",
+            "description": "\r\n{center:begin}{size:24}{outline:#170500,3}{shadow:#F77757, 2,3,4}Another character can be\r\n{color:#FFFF00}Extreme Z-Awakened{color}!{center}{size}{outline}{shadow}\r\n\r\nAttempt the relevant Extreme Z-Battle\r\nto collect Awakening Medals!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Extreme Z-Awakening ={size}{outline}{color}\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_zbattle_212_small_A.png?Expires=1790312307&Signature=mmBxRZX-PmispON11iGEj9uIvHycXjFP-umFflq8FhZSmqq~Wfk7QXUYwwssXZ2GesJ43~wDrGZmBwvji-2r3I-Xg9lRn24UyiZY8QXyGSAi-2OTjz-SHqKVBy7MvJft~VaOcfYi81K3FjpOJ28c9UkPGQQIend0jzsxVhv1BhFQm~SjDo0ge9w2xA9cKEeyfqw0WlP40ifTL~jBp5WnnOVLKq9ikPEd7i2M~~WFYdXqA0kNiT7XPvLycZgBGTBjzd8w5wkOxCOLqAI0OFpyQfLuU0t093WU6W0JGBlsBkUMzhnQ9pmDgmQw7IgyW9R-pIr2Cb8I1J~k3~lRQcV93Q__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": null,
+            "description": "[card_id:1024351]\r\n[styled_text : {size: 20}{outline: #000000, 2}{shadow: #00CC00, 1, 1, 1}Universe-Shaking Strike{shadow}{outline}{size}\r\n{color:#00CC00}{outline: #000000, 2}{shadow: #FFFFFF, 1, 1, 3}Super Saiyan Goku &\r\nSuper Saiyan Gohan (Youth){outline}{color}{shadow}]\r\n[show_card_image][image_offset: 0 -25]\r\n\r\n[leader_skill_set_id: 1024351]\r\n[passive_skill_set_id: 5069]\r\n[special_id:20542]\r\n[special_id:20544]",
+            "layout_type": 1
+          },
+          {
+            "image": null,
+            "description": "\r\n* Please tap the \"Battle Info\" button on the event's\r\nmain page for more information on an Extreme Z-Battle.\r\n\r\n* Please check the relevant campaign announcement\r\nfor more information on the event period.\r\n\r\n* The character images displayed in announcements may be \r\ndifferent from the images shown on \"Character Details\" pages.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 2
+          }
+        ],
+        "is_new": false,
+        "link_to": "internal:ZBattleScene:212",
+        "summary": "",
+        "category": 1,
+        "start_at": 1789707600,
+        "layout_type": 3,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 2
+      }
+    }
+  },
+  {
+    "id": 107255,
+    "title": "Supreme Magnificent Battle: RE [The Cell Games]!",
+    "date_added": "2026-09-24 17:03:48",
+    "details": {
+      "announcement": {
+        "id": 107255,
+        "title": "Supreme Magnificent Battle: RE\r\n[The Cell Games]!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1775_small.png?Expires=1790311659&Signature=dK4lxUaQ3lg4rhXjrQYbTpdEOj1ryla0GGfwl3q42qYmBLpz56dSFVPAgumAHJ1gEyowyCD7DqjdfrqIXl4iSVxFoytyBj-kqlyr3rlTKjrNDUAKdAMxUdd7wqUfbfSyn9iLpV3QL3wvqcUEhLYJgBfCNWFV6xrHqXW83qHYSjOR9AbKsjUrJy6U2wLtM0Ji92I8IkqQjnKF1N0pPmUw6zq-z6nuXvt0pGR2~yVumSxfQSKki5ZUbMO86ubNuldZ3j47tjvoakoIj9J4n7ZNlL6oNxwZb4y9IIanv9zfkQDNZ2E1SGxml0wFN-9A2d5s8vIVkvTzMfDrd8WkgOUZ0A__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_1775_small.png",
+            "description": "\r\n{center:begin}{size:24}{outline:#000000,2}{shadow:#2C33F2,2,3,4}An event of the highest difficulty!\r\n\"{color:#FFFF00}Supreme {color:#A8ABF0}Magnificent Battle: {color:#7279ED}RE{color}\r\n[The Cell Games]\" is on!\r\n{center}{size}{outline}{shadow}\r\nReign victorious in the fierce battles\r\nagainst the participants of the Cell Games!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Details ={size}{outline}{color}\r\n\r\nThis is an event of the highest difficulty\r\nin Dragon Ball Z Dokkan Battle!\r\n\r\nThe enemies have immense attack and defense as well as\r\nskills that demand effective countermeasures!\r\n\r\nUse Support Memories and Support Items\r\nto gain the upper hand in battle!\r\n\r\n* For more information on the restrictions and the enemies\r\nin the phases, please tap the \"Stage Details\" button located\r\non the screen before you attempt the stage. \r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Rewards ={size}{outline}{color}\r\n\r\nUp to {color:#FFFF00}30 Dragon Stones{color} can be obtained\r\nas mission rewards!\r\n\r\n* Please navigate the following path for more details:\r\n\"Mission --> Event\".\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Period ={size}{outline}{color}\r\n\r\nPermanently available.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1775_small.png?Expires=1790311659&Signature=dK4lxUaQ3lg4rhXjrQYbTpdEOj1ryla0GGfwl3q42qYmBLpz56dSFVPAgumAHJ1gEyowyCD7DqjdfrqIXl4iSVxFoytyBj-kqlyr3rlTKjrNDUAKdAMxUdd7wqUfbfSyn9iLpV3QL3wvqcUEhLYJgBfCNWFV6xrHqXW83qHYSjOR9AbKsjUrJy6U2wLtM0Ji92I8IkqQjnKF1N0pPmUw6zq-z6nuXvt0pGR2~yVumSxfQSKki5ZUbMO86ubNuldZ3j47tjvoakoIj9J4n7ZNlL6oNxwZb4y9IIanv9zfkQDNZ2E1SGxml0wFN-9A2d5s8vIVkvTzMfDrd8WkgOUZ0A__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          }
+        ],
+        "is_new": false,
+        "link_to": "internal:EventDetailScene:1775",
+        "summary": "",
+        "category": 1,
+        "start_at": 1789707600,
+        "layout_type": 3,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 2
+      }
+    }
+  },
+  {
+    "id": 107254,
+    "title": "Burst Mode Is On!",
+    "date_added": "2026-09-24 17:04:36",
+    "details": {
+      "announcement": {
+        "id": 107254,
+        "title": "Burst Mode Is On!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_burst_01_small.png?Expires=1790312342&Signature=B5tTQxAq3CC1TSyTJd2cS8B7KkLuJZ71LbZ6mktfYDe-cPPGekRi6xdJnvaV00oo6OXdPx6BlO07cULMa8TjcOpTb9TfruXm6LBQDVT3IRcQog462YggvNOz~g-lAcpcYbmj~Wy~Y42z5lNXNgAuEaOoQE5ZSLRqJMBGTdVseO0tRPHP8lTH7odKrAJVsg3IRv74uv3Rluwp8-W2zPDUH5PTnP~80g~3YK5Ourt-8zP3jrORpv5fWi9q2TMcwlcc5xba~MP2SlflNhpb20WivI~Z8zRvSnmscYgbpsielPjWr2Q6w22GLd9Pl7Ry1U5Wwmq3bxmvzxhF~BAeXhxf3A__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_burst_01_small.png",
+            "description": "\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Period ={size}{color}{outline}\r\n\r\n{color:#FF9900}- Burst Mode{color}\r\n{color:#FFBB66}Part 1{color}\r\n{duration:1788411600,1792483140,DT,U}\r\n\r\n{color:#FFBB66}Part 2{color}\r\n{duration:1789707600,1792483140,DT,U}\r\n\r\n{color:#FF9900}- Reward Claim Period{color}\r\nDistributed sequentially starting from {date:1792483200,D,L}\r\nand can be claimed until {date:1793113140,DT,L} \r\n\r\n{color:#FFFF00}Burst Mode{color} can be attempted in the following event\r\nstarting from {date:1789707600,D,L}!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_burst_01_small.png?Expires=1790312342&Signature=B5tTQxAq3CC1TSyTJd2cS8B7KkLuJZ71LbZ6mktfYDe-cPPGekRi6xdJnvaV00oo6OXdPx6BlO07cULMa8TjcOpTb9TfruXm6LBQDVT3IRcQog462YggvNOz~g-lAcpcYbmj~Wy~Y42z5lNXNgAuEaOoQE5ZSLRqJMBGTdVseO0tRPHP8lTH7odKrAJVsg3IRv74uv3Rluwp8-W2zPDUH5PTnP~80g~3YK5Ourt-8zP3jrORpv5fWi9q2TMcwlcc5xba~MP2SlflNhpb20WivI~Z8zRvSnmscYgbpsielPjWr2Q6w22GLd9Pl7Ry1U5Wwmq3bxmvzxhF~BAeXhxf3A__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_576_2_small.png",
+            "description": "\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= What Is Burst Mode? ={size}{color}{outline}\r\n\r\n{color:#FFFF00}Burst Mode{color} is a battle mode where you aim to\r\nreach new high scores by defeating enemies\r\nunder the {color:#FFFF00}Burst Mode conditions{color} you select, \r\nsuch as conditions that strengthen the enemies\r\nand restrictions to the challenging team!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Rewards ={size}{outline}{color}\r\n\r\nAfter the event period of Burst Mode ends, you can acquire \r\na certain number of {color:#FFFF00}Burst Coins{color} depending on your highest \r\nscore!\r\n\r\nYou can exchange Burst Coins for tracks at the \"{color:#FFFF00}Music \r\nCollection{color}\" after you meet the unlocking conditions of \r\nthe tracks!\r\n\r\nYou can exchange for the following tracks in this event!\r\n\r\n{color:#FF9900}- 1000 Burst Coins{color}\r\n- {color:#FFFF00}Summon_Worldwide Celebration Campaign 2024_Part 2 Ver.{color}\r\n\r\n{color:#FF9900}- 3000 Burst Coins{color}\r\n- {color:#FFFF00}Super Saiyan Gohan (Youth)_Entrance Theme{color}\r\n- {color:#FFFF00}Perfect Cell_Entrance Theme{color}\r\n\r\nThe tracks can be set to \"{color:#FFFF00}My Profile{color}\" and {color:#FFFF00}teams{color}!\r\nSet a track of your preference to make battles\r\neven more enjoyable!\r\n\r\n* Rewards will be distributed directly upon login during\r\nthe claim period instead of being sent to your Gift Box.\r\n\r\n* For more details on how to play and rewards,\r\nplease check \"{underline:begin}{linkToNews:100811}Help{linkToNews}{underline}\".\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Other ={size}{outline}{color}\r\n\r\nPlease check the relevant announcement for more details\r\non the Burst Mode available in the following event!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_576_2_small.png?Expires=1790312548&Signature=oqMKk3cKsJPcKcalp~Wz7ky~u~CLhHT4~6A39aSCMtbPqu54Z~Qmm43P0psBhtrHZRr0ef0q-PKXyuxcz5SnGjeI69C~Hry16tbsiHGr9uAtS0lw~0Fxq~jjHLJg8v9sJb3W20ttVhXyOCPWBnU~1tXUw9orXPc7HC1fFr-Huaart8V7sC1LeIbOP3f1HdIzxwWNkZ69KtG-YyBKVD~9nWxBWfF5KP8v~6vFy4z~MedKE6HwqhmkBSTvw10LxHI-iMkm5gK9qR2LuDDQAcM7bNpQU376wdsjBE3yveG9u1Xzlzil5uqzOMP7FjSA-DQZvt2bcPSn-7yQgckZpBeyww__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_507_4_small.png",
+            "description": "{color:#FFFF00}{linkToNews:107218}[To Part 1 Announcement]{linkToNews}{color}\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Notes ={size}{outline}{color}\r\n\r\n* Please note that when there is more than one enemy in\r\na phase, some of the selected Burst Mode conditions will not\r\nbe activated within the phase after defeating a certain enemy. \r\n\r\n* Please note that the accounts of any users found conducting\r\nimproper behavior may be suspended without prior notice due to\r\nhaving violated the Terms of Service. Once an account has been\r\nsuspended, the user will no longer be able to log in and play.\r\nPlease check the Terms of Service and enjoy the game while\r\nfollowing the rules. \r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\n* You can attempt the event under normal mode\r\nby not selecting any Burst Mode conditions.\r\n\r\nWe hope you continue to enjoy playing \r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_507_4_small.png?Expires=1790312548&Signature=kcekMRekSXeSEQVAmjT8e1ubtI1BQkkepNTv~Qi5mFjt-7dNDRo7mNbwNuNaW7yNJLqXTC69X63PSOu3XKvmOW3WA7zHmQflKkToOLwA5BbxI3Zd8bx3g2JvsaGZmGL-gbrsW0Id9XE1AD3AGYkv2t46zbOBaS9POSbujgdhnqo4O-itEj20tp7Px56kueXmP7nNdcx4mFhuv1aLqFr1HxVyfCoDuvZ6sn1q5wDSWwDIiVbgvAO1RqIHocdecDfRS1jo3TVEiyGoeTNIYTgJoedGZ~ryahd4cWnr54QngerwKndZaV-8AF9ZSTG7rDQUMVmGnfBhFprMleCYP5Mslw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          }
+        ],
+        "is_new": false,
+        "link_to": "internal:EventDetailScene:576",
+        "summary": "Burst Mode is available in another event!",
+        "category": 1,
+        "start_at": 1789707600,
+        "layout_type": 0,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 2
+      }
+    }
+  },
+  {
+    "id": 107253,
+    "title": "Global Dokkan Campaign 2026!",
+    "date_added": "2026-09-24 17:03:19",
+    "details": {
+      "announcement": {
+        "id": 107253,
+        "title": "Global Dokkan Campaign 2026!",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_small.png?Expires=1790311652&Signature=OLJWFjU~7pvni3jXAAAer3mry8RLkOJShRjyAev4H~wk8m~BPzKu3Q7kUDtjIfuMQrnRJhZ75JsrbBDEqf-sOp1YCLSwMtCO4uJDpGQ7J4Yy0vxrso~AoZGBHvXcsef0ikDSmUtGsmhZN7gv3HuUrOQ0iVs0r1dW8wlDkTNHJx-jE3NNJVOpcpr-To6l0vcBJSs9S3hUPw7uMX5JpusRLcaWDYG7ry2niFjj0I~rpkQHDZrAmzdGhPs4FI3tLFfJ2w6K-UGYqPGA54OJDHQBizWZ1VQcc4XsI1AfahZn3CtwYC-eyCNPT~iPG7MRNLUPBNpo-6e~Qevb6jWPD0F7Mw__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "bodies": [
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20260913_large.png",
+            "description": "\r\n{center:begin}{size:24}{outline:#000000,2}{shadow:#B575FF,2,3,4}Enjoy the events from this wonderful\r\nworldwide campaign to the fullest!{center}{size}{outline}{shadow}",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_large.png?Expires=1790312528&Signature=Q~IBzT6VHhN4495rOl9hSXItAW4mi7ZSJzwM5OoDbQfnVSK6QkGwlRjZduTRxtTLtjlvB~1-90lNmKNQuSc3EggNfljup~40rGI8kdnH3KOAB1TCN4z3v21huiwrWj8kyEv6Ah0DjL0JEMKxPOLSB~INkZbXiCUOWs5ZhDQTGdfyT6V7N4xECWEW6WV47tkYL0-f~KfxuPMW59jlOnEz2LTM5aVPzH9nL2Qm8yOt~8BCY1nF7PrxOVF8gEoyqaTctEW93-2Na8FipO3HQLsVyBFySYPgIELxUBPNzmHGC7nv7xXiFVNioKlIZNsX0YtxdZBnmmatLwGyu-tzouDkpQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": null,
+            "description": "{color:#FF9900}- Title screen and home screen background music{color}\r\n{color:#FFBB66}Duration:{color} Available from {date:1790053200,DT,L} and will remain available\r\nuntil a later date during the campaign period\r\n{color:#FFBB66}Title:{color} Detekoi Tobikiri ZENKAI Power",
+            "layout_type": 2
+          },
+          {
+            "image": null,
+            "description": "{color:#FF9900}- Premium Movie{color}\r\n{IshinMovie: packaged_movies/DKB_GDCP2026Movie_02.cpk}\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Details (Updated on {date:1789707600,D,L}) ={size}{outline}{color}\r\n\r\n{color:#FF9900}Missions{color}\r\n",
+            "layout_type": 2
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20260829_34_mission_small.png",
+            "description": "{color:#FFFF00}{linkToNews: 107208}[To Announcement]{linkToNews}{color}\r\n{duration:1789707600,1792483140,DT,U}\r\n\r\n{color:#FF9900}New Events{color}\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260829_34_mission_small.png?Expires=1790311652&Signature=ajIxaznsnlTUyuxfwRtjMNE1uNul3uByRA5peyEtuCe9rsXtR33h6QQ6PB-A2Ymgpv42~d4AZbpdG~SabwCBaeCclQfs2UYE3MMmWB7rm~~NTl7J3l7qfmhAZDLKPqUPkN9gP0iN2aP8I-7fiWAX6910moQJL95-1x5cGCYGfzPBulLWkh4KfBNCjkF0IRf9tOpIiaH05rEZ9mlooLBWLtdXy7gEfhYiWQfVpqlTaqQzuC9aXiYFwHAD65FkauRjrxC-oNUSnDIXoNWV8ZFT13pzkRul7zTJoXcyYI0WT2pgC5ITHsfwlOGb8EDLH9AHzldrtTz4sCCi0Zp4Y3OwFQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_zbattle_212_small.png",
+            "description": "{color:#FFFF00}{linkToZBattle: 212}[To Event]{linkToZBattle} {linkToNews: 107256}[To Announcement]{linkToNews}{color}\r\n{duration:1789707600,1792483140,DT,U}\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_zbattle_212_small.png?Expires=1790312528&Signature=YJkSpz6rictpQ7GtDGAYdwun53FYmzeBvmpuHRii9OzDwpOdDbiegPyhs9wBxgvr0t0WXD2ox7BF6XcoesklV7cBy4mpq6VICVsxDn459i1OtrIMDbRAnyMe3n3wf~~LNlRervsuX5vPsDNYhV5ya5rmw9hKhdizq9pm32aAyG87l~xATmCoaFhuUoM9d6EXLw5El6hEnwgyhrr4CiSmv-PsP7voEe-mROUBvTh8PFFSS~CLsMaRXQRpvc17zrVWoN~uIij6S2OsyJlBayL37IumXtSsOIkhi6jKZkIqrBE3P1CMRt5~wBNBkjr~HKpQx62jfNBDrBPxLupD3jbTOA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_1775_small.png",
+            "description": "{color:#FFFF00}{linkToEvent: 1775}[To Event]{linkToEvent} {linkToNews: 107255}[To Announcement]{linkToNews}{color}\r\nPermanently available starting from {date:1789707600,DT,L}.\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1775_small.png?Expires=1790311652&Signature=GgQyDOKdj7199peXm6MH2fjRuRqYRKkA3tB0-avcvsKZLPFrIMcUo~BkNgPAeUGRGUTN5kgPSrhxu0GiAJV4jId0JiWOJQ7nph28zR~BuHWeSJJTcziSUbKqOsEulROCHjTIFHiTH08h7EQUHQapixvTlHnfoXsO6mBKGX3hdVmiGp3Mr2-7SPo9Mv75L9f0D75qHWPhRxODoY2w90pmQH0x1ZjwGWQkc5tq75kBmwCd08AiRRohx6A6cRTPIhVQAQzFLFKdpp7s3zG8sRBEqXy2udhQx~Qug66It8lyU0BQ4M-vtD3duQ-YYeo16N5dv2khkeviQHDwCHai3TFUIA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_dairansen_108_small.png",
+            "description": "{color:#FFFF00}{linkToRMBattle: 108}[To Event]{linkToRMBattle} {linkToNews: 107257}[To Announcement]{linkToNews}{color}\r\n{duration:1789707600,1792483140,DT,U}\r\n\r\n{color:#FF9900}New Stage{color}\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_dairansen_108_small.png?Expires=1790311652&Signature=BPOKasqBL4GCS8Ek-Yy943VS~c~seVyVLGVk9Q4lqHh7U~xTNy-Y9U5aD0j3CNcuhMjEfhDLxjsV0gfyeodb2LF0u6riVor586Se3b~piiFhOQF~2CwCdgphWiDRIqwdn3oI7PeK9CkQlqnbPp06JNrXMz4B4DQsRxBxJ2j8V6viv7kB8Yl3kTD0Pk7Vy27t7OBnVqcuFw6ww1R5tXOvCt2l1OapcoHosj6J3b4L9Xcg762w-IiqrSwwCfUF8fcFsECB6IyYkNzKUR9OoKqI4NgitrnPkpACKhU8sa73dMBCbe6IQHBB8VQ1MWqFGO7yW3Z~iQIT5g5XvmhCf-igrA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_1723_B_small.png",
+            "description": "{color:#FFFF00}{linkToEvent: 1723}[To Event]{linkToEvent} {linkToNews: 106017}[To Announcement]{linkToNews}{color}\r\nPermanently available starting from {date:1789707600,DT,L}.\r\n\r\n{color:#FF9900}Burst Mode{color}\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_1723_B_small.png?Expires=1790312528&Signature=S3nJSb8q3VT-lUBGu8N1hemH9nR30tt4Y5wsNNNqGQ-no05GKguMLHaBsrNfhJvBLvPxYEla5El~HWcpxkRCvyPGvdmic~O8eSDHXSxaLzzXuO86H276rCBMwHzVZPYO6CPew9fmK-wZGAG-E1F1fdcECspWQbWyjMQFZujVfxHtiIauR4WioaUGJzgVa4ByxTQjyIRUjnZRSWJ6ruUQVqyl0p6TOaSFjwXbZG8mH1pHnsnx~KO-UI-atKAY6Hteh4Et7VHedb3i0reAWl0oaabmrXMHhB73jmtCmxL~TzBBpT2XYn4aoCscA0WUFosa6L3LtxlhBcGfqo-Nn3WeVg__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          },
+          {
+            "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_576_2_small.png",
+            "description": "{color:#FFFF00}{linkToEvent: 576}[To Event]{linkToEvent} {linkToNews: 107254}[To Announcement]{linkToNews}{color}\r\n{duration:1789707600,1792483140,DT,U}\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Previously Announced Information ={size}{outline}{color}\r\n\r\n{color:#FFFF00}- {linkToNews: 107154}Event details released on {date:1787374800,D,L}{linkToNews}\r\n- {linkToNews: 107195}Event details released on {date:1787994000,D,L}{linkToNews}\r\n- {linkToNews: 107216}Event details released on {date:1788411600,D,L}{linkToNews}\r\n- {linkToNews: 107231}Event details released on {date:1789273800,D,L}{linkToNews}{color}\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing \r\nDragon Ball Z Dokkan Battle!\r\n",
+            "layout_type": 0,
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_576_2_small.png?Expires=1790312528&Signature=Dfkcn3ngWM57o0~VvuW4Fe0kTr5Vr0zu2JGbcC3AgXpQrvYVdWLJ-xSqcm3dCnXBHt89S6hlGowQderLiV3VXbeGlD7MmtoNVcJsuaJdIz8tjqlePVvZfEC358F4h5wxXGwTleSnt8gVdJsmjqsJdFisUCwQ6xJAToCFGyTsmpz5QEDYLQP-dDOms8VLQB1ZsA-nH4evFYL3Bd2GwnXHqq9HB1dKqwaK3Bl7MroJwwxR-gzCSpCNNJjNJX0NdxItakeinSbjI5y3MDP5t6PiQ8NmnE6fafyj15NWJB8rO-5trRePbl2Fey~PV-4pnvILwJXnnNK5N2W~vUQW~Zu7wA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+          }
+        ],
+        "is_new": false,
+        "link_to": null,
+        "summary": "* Updated event information.",
+        "category": 0,
+        "start_at": 1789707600,
+        "layout_type": 0,
+        "new_appear_at": 0,
+        "announcement_status": "available",
+        "announcement_tab_id": 1
+      }
+    }
+  },
+  {
     "id": 107327,
     "title": "1st Place Achieved!",
-    "date_added": "2026-09-17 04:15:04",
+    "date_added": "2026-09-24 17:03:38",
     "details": {
       "announcement": {
         "id": 107327,
         "title": "1st Place Achieved!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_store_1_20260916_small_1.png?Expires=1789659413&Signature=p4tRsYJnsYmDlMGRvnHVCf3KLUJtRXOjOF7LxIKGsnmK~t3Tq3vvm97GEWHHh5RHsM-nApjf9PaXpqnnbvVlb63cFrjhyKdkRR9f-TL2IpjJBMWNXLP0BnqsAmDPl~HnWJPaD7FUYub7M9cQw0MTFRiapinpW0WEZkZd3fcMLs7Zee5BZyhpxTTJ36dDAgG9uozHjYLCiDJyyuyte1haxqThZy3UgOhZsYqPKuK-4rjbdnTSHUUauBtdpOiO2L3n-fCnzrgDJ4IGQNvveEHuIkyAWOT49C8mLjCgX~azyz5vaNDW2osi01ldZ~xkI6gp4VZncSYOedxsFaL3Gs8iOw__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_store_1_20260916_small_1.png?Expires=1790311290&Signature=erHLiGJuc8OVIcirPyBbWWFwtslOoZ3JnYRmJS-aAlXq8YfYAIWjftWxulNawFScMRRsVKQrm9bwvQiG5ZahkXlruLQwxQWmdCNWvdqvf6EQT9mGN6gtGTV-xgWkdCXtdFmUJBluCY7DIY-Qr7p5ehDrSqmA5HADt7J6L5Fpt6g8X-YyngjXFqMtl4h5tv6PriIaAFbwKpQoZcyZ~OYE8~~11um5I~V-UQEaQuFD2wrx5Edc~FXHQbTKHA4MCQKALXn0EcNpdEivbOk2RyJaat70LulWN5R5XTFkr~x2RZTjUkiJTC1KphKdwMwu~3e-MGuqbqN0BZ394Yw96LVEww__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_store_1_20260916_large_1.png",
             "description": "\r\n{center: begin}{size: 24}{outline: #FFFFFF, 3}{color: #FFE600}T{color: #FFAC00}h{color: #FF7300}an{color: #FF3900}k {color: #FF0000}yo{color: #FF0039}u {color: #FF0073}f{color: #FF00AC}o{color: #FF00E6}r {color: #E900FF}y{color: #B900FF}o{color: #8900FF}u{color: #5900FF}r\r\n{color: #FFE600}p{color: #FFAC00}a{color: #FF7300}s{color: #FF3900}s{color: #FF0000}io{color: #FF0039}n{color: #FF0073}a{color: #FF00AC}t{color: #FF00E6}e {color: #E900FF}s{color: #B900FF}up{color: #8900FF}p{color: #5900FF}o{color: #2900FF}r{color: #0006FF}t{color: #0036FF}!{color}{outline}{center}{size}\r\n\r\nDragon Ball Z Dokkan Battle has achieved {color:#FFFF00}1st place{color}\r\non top grossing games on the Apple App Store \r\nin {color:#FFFF00}3 regions{color} worldwide!\r\n\r\nThe operation team hereby expresses\r\nour sincerest gratitude for your support!\r\n\r\nTo celebrate achieving 1st place in the following regions, \r\nwe are giving out rewards to all players!\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Regions that achieved 1st place on\r\ntop grossing games on the App Store ={size}{outline}{color}\r\n- France\r\n- Hong Kong\r\n- Macao\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Rewards ={size}{outline}{color}\r\n- Dragon Stone x50\r\n- STR Potential Orbs\r\nPotential Orb (S): 1500\r\nPotential Orb (M): 900\r\nPotential Orb (L): 100\r\n2500 Potential Orbs in total\r\n- TEQ Potential Orbs\r\nPotential Orb (S): 1500\r\nPotential Orb (M): 900\r\nPotential Orb (L): 100\r\n2500 Potential Orbs in total\r\n- [Mysterious Ritual] Elder Kai x10\r\n- Bonus Key x50\r\n- Global Coin 2026 x50\r\n- Hercule Statue (Diamond) x10\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Distribution Period ={size}{color}{outline}\r\n\r\n{duration:1789538400,1790639940,DT,U}\r\n\r\n* The above regions are listed in alphabetical order.\r\n\r\n* All players will receive the rewards stated above.\r\n\r\n* The rewards will be sent directly to your Gift Box.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_store_1_20260916_large_1.png?Expires=1789659843&Signature=KvzbkO6u0azp6wy4xLpt-wgYFUbBETkPnmbm5YG0L2AoxMbu32BpE18V3L77ZdEvc~uYebqvKnv3Uq1rrLOgFXX~K4LPoCbQ8Kc~ZM5x6EfkdSWuX0ONw~pxMdFsKi3lK-3PYJm7fQoue35vafI4p-R0QSFgnQ6djfUFe2Rf2qY3LhT8Pe5eYanBSl38lcWOcUMtIHiSaAuUE0HK-swfbhdXR8V0x6kPXPbSU6TE-1O2gUN1Q2N4zsVyf-Xvk0HWbaWlODEw-hVooNAB5p5l~jNGsa2bjXx8WH-b28A8lrGKtu8xNqMd9OCXRTnr2x2~7xUehz-1dbwIwTIiaTbHSQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_store_1_20260916_large_1.png?Expires=1790312529&Signature=FRW7sXNeJ7odt4DthO9Lxe2AV5uINAQdioigHEIAz3dRiJ3pS3GAq7Uhx3oCfkK4-LWp5oaYz8Lmh9ZCgLsHoLdyTa-DcQFkqm8rdhQ7Tasa~OIsCdyJAj1PrTl2T3b955WpExF8kmSnsvjbsQvoUijhslbDO~XTMyyh0PFGrJxWg9k8T08D6g-qf2Ktv7gZ5gVVvZq1cIqlqikrEpp0~0XMMWevICb0S-dGOxSOrpUXN-D00XsTb64kpranYRCBn1HwyT53A~og3HqqcFU3kXfvtmHVCV6O~om8AqtZAznTZMG7KdTrqsLxWBSnjM~hmF7ya--yV-1JmKssDZ00wQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -119,24 +397,24 @@
   {
     "id": 107213,
     "title": "Special Offer for \"Daily Capsule  (30 Days)\" Coming Soon!",
-    "date_added": "2026-09-17 04:14:53",
+    "date_added": "2026-09-24 17:03:24",
     "details": {
       "announcement": {
         "id": 107213,
         "title": "Special Offer for \"Daily Capsule \r\n(30 Days)\" Coming Soon!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230304_subscription.png?Expires=1789660707&Signature=UjxDEowp9IJkZrqVEJYZstenRtl0CmPfOwDbQ1FAUSfGvlqNhuGXcyBU1A5byaHo9-3PvE0snlaypdrQy~Yt9dq9JpOYiQOM3gg3knv8u-jeNQfRWLrgXBD4-qMAhhWrXu4AcveV~XwWDfZZNed-bIIDuYEQUFAFTkFUcF4jEvwPltHlA7l0nLur22HWge~rBfE6bHB23ojYxZxBaiLbbn3wcoyKut0wQPB1e~wFDZCu5OLyxorZRJQ4V0cEstqtN~U7Dupxd~7pl0oFojXvYVJZ3tKy8TSwG5x1rA11pw671hRbFDjr7sLSqoGnZEwJaIUYjp8hDGj5X2vuR~uDkQ__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230304_subscription.png?Expires=1790312170&Signature=BSzWGjhtilNS8L3JQWYoPNzvlD47hG15enrBSOpUtxuKR2-MJP1s0QqqKAKsoaICr~hfG8Fgl4~mBfkfmUT1vsJCuTuaQ5s-x7F58TEpUqUrWsZRmW2OCfnwX4wku4-BXpOQhoPV7F3oSRgWzGDKO~xtXUcnHGwSR9jpiMUlF~Jl~cBrMcJc0PZFXf79hgQMlse6-SszipTYo0EOEwARJbY2Cy3AVCJQhg4vij0SywUEEq3kc0oJQf73RSd523EssxqqwNe8HPchb-wj3NZ57MeJ1WVLsLDHB5hnc0uJfZR6KZGlpH1bV9vFKfhwjzijN5TjMaLoNmAd~evkkUf8Uw__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20230304_subscription.png",
             "description": "\r\n{center:begin}{size:24}{outline:#000000,2}{shadow:#2B3DFF,2,3,4}The subscription plan\r\n\"{color:#FFFF00}Daily Capsule (30 Days){color}\"\r\nwill be available {color:#2BD8FF}at a special price{color}\r\nstarting from {date:1790733600,D,L}!{center}{size}{outline}{shadow}\r\n\r\nDuring the event period, each player can purchase\r\n\"{color: #FFFF00}Daily Capsule (30 Days){color}\" {color: #FFFF00}once at a special price{color}!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230304_subscription.png?Expires=1789660707&Signature=UjxDEowp9IJkZrqVEJYZstenRtl0CmPfOwDbQ1FAUSfGvlqNhuGXcyBU1A5byaHo9-3PvE0snlaypdrQy~Yt9dq9JpOYiQOM3gg3knv8u-jeNQfRWLrgXBD4-qMAhhWrXu4AcveV~XwWDfZZNed-bIIDuYEQUFAFTkFUcF4jEvwPltHlA7l0nLur22HWge~rBfE6bHB23ojYxZxBaiLbbn3wcoyKut0wQPB1e~wFDZCu5OLyxorZRJQ4V0cEstqtN~U7Dupxd~7pl0oFojXvYVJZ3tKy8TSwG5x1rA11pw671hRbFDjr7sLSqoGnZEwJaIUYjp8hDGj5X2vuR~uDkQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230304_subscription.png?Expires=1790312170&Signature=BSzWGjhtilNS8L3JQWYoPNzvlD47hG15enrBSOpUtxuKR2-MJP1s0QqqKAKsoaICr~hfG8Fgl4~mBfkfmUT1vsJCuTuaQ5s-x7F58TEpUqUrWsZRmW2OCfnwX4wku4-BXpOQhoPV7F3oSRgWzGDKO~xtXUcnHGwSR9jpiMUlF~Jl~cBrMcJc0PZFXf79hgQMlse6-SszipTYo0EOEwARJbY2Cy3AVCJQhg4vij0SywUEEq3kc0oJQf73RSd523EssxqqwNe8HPchb-wj3NZ57MeJ1WVLsLDHB5hnc0uJfZR6KZGlpH1bV9vFKfhwjzijN5TjMaLoNmAd~evkkUf8Uw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20230318_subscription_A.png",
             "description": "\r\nBy purchasing \"{color: #FFFF00}Daily Capsule (30 Days){color}\",\r\nyou can get {color: #FFFF00}5 Dragon Stones upon purchase{color}\r\nand get {color: #FFFF00}3 Dragon Stones daily{color} for 30 days.\r\nThat's a total of {color: #FFFF00}95 Dragon Stones{color} that can be obtained!\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Notes ={size}{color}{outline}\r\n\r\n* You must log in to the game to obtain the Dragon Stones \r\nof the day.\r\n\r\n* Daily Capsule subscription plans cannot be purchased \r\nrepeatedly. You can extend the subscription or purchase \r\na new one after the subscription period of your current \r\nsubscription ends.\r\n\r\n* \"Daily Capsule (30 Days)\" that can be purchased at a \r\nspecial price is different than the regular \"Daily Capsule \r\n(30 Days)\". You can only purchase one of them during \r\nthe sale period.\r\n\r\n* You can purchase \"Daily Capsule (30 Days)\" at a special \r\nprice once during the event period. You can purchase \r\nanother subscription plan after the subscription period ends.\r\n\r\n* Dragon Stones can be obtained once per day.\r\n\r\n* The delivery of \"Daily Capsule\" will reset daily at {date:1790726400,T,L}.\r\n\r\n* Please note that your \"Daily Capsule\" subscription\r\ncannot be transferred between different operating systems.\r\n\r\n* The Dragon Stones obtainable upon purchase\r\nwill be sent to you directly.\r\n\r\n* The Dragon Stones obtainable upon daily logins\r\nwill be sent to your Gift Box.\r\n\r\n* For more information on Daily Capsules, please check\r\nthe announcement \"{underline:begin}{linkToNews:300000}About 'Daily Capsule'{linkToNews}{underline}\".\r\n\r\n* Please note that the available merchandise, price and\r\nproduct details are subject to change without prior notice.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230318_subscription_A.png?Expires=1789660924&Signature=hTDDlS2UO946m-lyBbYEL0Qyofk--XemU1iQdnp0pLWAW3aLx7phsCggV7GzzUGpbeWgsyl7w5y7Tag36DCSiYPdvihtRYM-IVykwsjQvVeQw25UwVHflo9sf9CSOeBnGfgkZhzePlGEasm0vMb1qPJlwZtt03kSVWjrUVuBAgmLHfB0VKs6SNB6EvhPtjOxoNNfHu6wRwd2~UvDJbd421WJc~PDRNCjXSe-D9BH~zVeVEjuk1rYyYeM9tJhJSd3rlDqoIBlKyOIlVCuRVkut0TaBKv9-VX9qb~PlORV8p6yL9CcqcGmNELPZsilH2BW~Y6uBkudWWG4xuaB9gDH7Q__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20230318_subscription_A.png?Expires=1790312529&Signature=ZQ7aPeSnJ45HKZc982-jymYaqaPkOyyoC3HyEfrSUGFmekH6imiCN6c4xkkkxHEJ7R4PpUwzxcGvDGwgjBVpmCfSH7hWqjgyRmx4ke5BOyn8WmDwQn84wOHGvueGmUk4epGuLgBafQnzA97wxpvEskBxJMAQqUll1jabdgmnPHpBmfkgeI794AcS2mkzPG6FLWCWpDRUiug~dtTq9MFn-kDqijm5kLBQAM-ELomGaK32xkQfpIB~P0bs40ptdO2~LZeJlWMHZD~D9g1wcA6hrn0lf68FraTVeroweDiFSr~Rr1FcXHWMaxIinhwoGe7gAzt4nxHgeF3pmOv0YNx0Iw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -467,18 +745,18 @@
   {
     "id": 107232,
     "title": "Global Campaign! Limited-Time Character Boost Campaign!",
-    "date_added": "2026-09-17 04:15:34",
+    "date_added": "2026-09-24 17:03:54",
     "details": {
       "announcement": {
         "id": 107232,
         "title": "Global Campaign! Limited-Time\r\nCharacter Boost Campaign!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_strengthen_small_2.png?Expires=1789642260&Signature=SXiwJlbkK2pg3Hy4DJ-F07M6rZN0dBJ0Qscte-fm5mdpa1g5TdR6j5e-iiM0QRyJMArRPrnCDqSnXY5ZArKl2LXmQ2VHNnWYNKlx6ijUFrycVlS6PRqH1itghF40emztGpRFxn20Di2i36~lTwaPwxtOcdhgPgvEs-BQvg2LnwnGY5UcTmsC5zoWEp1yIDVGyWI6FifU8XYfRWPxAdIWWoCCin3uToKoPftqgfct2NzN~qQ0K3aeqJ7GTLm5Kn7rUtWG6jL3C6CJgYKWv1cTUKQOALPcaQLm3uZ487tZ6gP9F4sLJY3ZuQ9VIEyT7t-j6bPlmyZROf7tiquijNyLww__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_strengthen_small_2.png?Expires=1790311619&Signature=EF9P1WvkrG~ONfA-YWBmQgVsUOb-BQWipJvxPepSl0C~cWPTh0sDpl1qhJSkNTLvh-oBEH8G4Xw1TLFyRogZE3tiAIl2nKXqNnivKW-1fppMnqaISbxvDD2oMaAm6vD8n~MQHAtYlIeMyIYhPE3iR4eG7r0dXMJqPLERlXKhZf442teLQbaacjrulk8a~wBAshNuM8hLUoGsM0XmlhceZ6W3Y~bG~EOI1yNx4UgPptxf3FR~qK2fYl13ALqe2UFkG5XpPW22AA~7BoYYfJpLlzIMP29MeyBiJkG5UaJ56J1UfHWtHK-SpR8dNze1l1Lxfh0IBVcINcbdfULOiwZ~kQ__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20260913_strengthen_large_2.png",
             "description": "\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Period ={size}{outline}{color}\r\n\r\n{duration:1787994000,1792483140,DT,U}\r\n\r\nTwo more characters are strengthened for\r\na limited time starting from {date:1789273800,D,L}!\r\n\r\nGrab the chance to include them on your team\r\nand attempt various events!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Strengthened Characters ={size}{outline}{color}\r\n\r\n{color:#4B76F2}- [Awakened True Power] Super Saiyan Gohan (Youth){color}\r\nAdditional effects of the Passive Skill after Extreme Z-Awakening:\r\n- {color:#FFFF00}Ki +10{color}\r\n- {color:#FFFF00}ATK +1700%{color}\r\n- {color:#FFFF00}DEF +4000%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\nAfter Awakening\r\n- {color:#FFFF00}Ki +10{color}\r\n- {color:#FFFF00}ATK +1200%{color}\r\n- {color:#FFFF00}DEF +5000%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\n\r\n{color:#CC66FF}- [The True Value of Perfect Form] Cell (Perfect Form){color}\r\nAdditional effects of the Passive Skill after Extreme Z-Awakening:\r\n- {color:#FFFF00}Ki +10{color}\r\n- {color:#FFFF00}ATK +1000%{color}\r\n- {color:#FFFF00}DEF +4000%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\nAfter Evolution\r\n- {color:#FFFF00}Ki +6{color}\r\n- {color:#FFFF00}ATK +800%{color}\r\n- {color:#FFFF00}DEF +2000%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\n\r\n* Please check the {underline:begin}{linkToNews:107212}relevant announcement{linkToNews}{underline} for more details\r\non the characters who received a boost starting from Part 1.\r\n\r\nThe above characters can be recruited with the\r\nTreasure Item \"{color:#FFFF00}Select Character Dragon Stone 11{color}\" in\r\nthe \"{color:#FFFF00}Global Campaign! Select Characters Dokkan Festival{color}\"!\r\n\r\n* Please check the {underline:begin}{linkToNews: 107165}relevant announcement{linkToNews}{underline} for more details\r\non the \"Global Campaign! Select Characters Dokkan Festival\".\r\n\r\nWhile a character is strengthened for a limited time,\r\na clock icon and orange effect will be displayed.\r\nBe sure to check them out if you have these characters!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Notes ={size}{outline}{color}\r\n\r\n* The text \"[Limited-Time Skill]\" will be added to the\r\nPassive Skill description of the strengthened characters.\r\nPlease note that the boosted content varies between\r\ncharacters.\r\n\r\n* If you resume a suspended game after the characters are\r\nstrengthened, the strengthened content may not be applied.\r\nShould you encounter the above situation, the characters\r\nwill only be strengthened after you clear the stage or\r\nabandon the stage.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_strengthen_large_2.png?Expires=1789650283&Signature=io0NtXK9C5BGP1852kF9wk-k9rdAH3yv~GC65Yrj2bNVkPnf38HEbrJie~kRqvjSQfoVbSBHlunkVG0OmpE1MHzbpUwUtKVlbIyFaQ~5VBpXwSrmDXMucBA897Qy2ZUXs5ILTxF1gir1LlBi4I0dIY-NxigP6J6A4aln7OK~TvRodMqnjBlGJ3S3zp1nhKos1BB6d2XXd868Nq~pMaYMpek3hKgb~yTpnCLj592J~HR5ppmKoEfpk93tSkRSzRipVu7M4tl0lmJkr9v9E5SKl9yCOta8NEnl-qzvYTU7xb9un7QybTFfqoviWUTz8h~Mu0V9czLbd1b8jfbpPtpQXw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260913_strengthen_large_2.png?Expires=1790312530&Signature=fD0cLHl6WDZ9ltSyl13siUBB6nT1uYU31yKTz2EIyEWV-fQZR0PiFHEKe2se2rBGk3rFksYyOlNjtfJEgCHn710QdVICFEe7u8B86uUhpDtmKbBfczC6TBFWFEOKL0FJEvYYSzBPAQfIKcjfXmwAJq079g1dp9ARX8gdzI8iqLPqRnwDiLfWCMir4qKX1w2lp2g236lD5~ovObevZG629IPkgqoa8SXHMqm5xzYoXWx2rCPwEyYS6A0b~E2cSUAIDv6fzTOaT~QfIK0EdsdqqVauYlOk1moR9Mhu0NzfkFgKG988nKhEboLOxTui2VRKbsJvMzHJbFdIReAX6wI5zg__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -663,54 +941,54 @@
   {
     "id": 107230,
     "title": "Deathmatch at the Cell Games Packs Up for Sale!",
-    "date_added": "2026-09-17 04:15:38",
+    "date_added": "2026-09-24 17:03:58",
     "details": {
       "announcement": {
         "id": 107230,
         "title": "Deathmatch at the Cell Games\r\nPacks Up for Sale!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1789660877&Signature=UjnNF4Y24GxODMwBT6-ecdXkD9q7qvPtgzXlRn45W2sTk-J5WYmF49Rj0ts6u5oQSPJGTRDQFrz2N-BpyKecCOIC1cxmFtXV05GAZKwhVMA93eGT7Bp5u5g7UIOnlUuk71f5zXEfqiUWqkmkxfXwRoRAF2MSLL2Ctofs~FO9sSNqpvanEieNNmuzfDnY29EqFrMYdgo-qt25b-jJcYk01zORvCGOKoUbiKCS6eYg6JiuQoBgOLZZW1xe77-Mipa2dVQwly79kNpJBQzrPmKG3C0C5mYGIkbAve0sYStNE4lnyg3AUlzDB-~5B87nPyAon0qfqfTN8gQmUo-OEyl3lA__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1790311957&Signature=M1alZm9d0DyMB7NUkFxIOMpqShRlG8CWdu76BNebYaGaI62tvCyAGXtTZCDWhcnm64agulJaDkxS8QiHgHlwyvPUGs1ACXG0YexhcX60HDLK6LKPMJh9qIA4zhMlfulHSU3468JbbnNeuqrIoYhdaEXCCmy3GL1NyL9R0Ef6JtixiiL7e1qSXPQS8DwT6CAUqAuxpJony5pVXZuQQPv5sEzya8QuXd4x0DTVNg4j5dfktASdE1CejmPGwk9o86yU23MNhYt2L7sEDW57Qtrzkgo3gHbBXk1gvyDRTk~9Ix6txfYgrE8qnA82WPCyT7eYNyg5-dPTEnJEguAJPGVt3A__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_small_A.png",
             "description": "\r\n{center:begin}{size:24}{outline:#000000,2}{shadow:#2BFFFB,2,3,4}Step-up\r\n{color:#FF4C2B}Deathmatch{color:#FFEA2B} at the {color:#CF98FA}Cell Games{color:#EFE1FA} Packs{color}\r\nare now up for sale!{center}{size}{outline}{shadow}\r\n\r\nThere are 2 types of {color:#FFFF00}Deathmatch at the Cell Games Packs{color}, \r\n{color:#FFFF00}Pack (Gohan){color} and {color:#FFFF00}Pack (Perfect Cell){color}, and each type\r\ncomes in {color:#FFFF00}3 steps{color}. The contents of the packs will \r\nbecome more luxurious as you continue to unlock them!\r\n\r\nRecruit powerful characters with the Summon Tickets \r\nobtained from the {color:#FFFF00}Deathmatch at the Cell Games Packs{color}!\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Pack Details ={size}{color}{outline}\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Gohan 1){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1789660877&Signature=UjnNF4Y24GxODMwBT6-ecdXkD9q7qvPtgzXlRn45W2sTk-J5WYmF49Rj0ts6u5oQSPJGTRDQFrz2N-BpyKecCOIC1cxmFtXV05GAZKwhVMA93eGT7Bp5u5g7UIOnlUuk71f5zXEfqiUWqkmkxfXwRoRAF2MSLL2Ctofs~FO9sSNqpvanEieNNmuzfDnY29EqFrMYdgo-qt25b-jJcYk01zORvCGOKoUbiKCS6eYg6JiuQoBgOLZZW1xe77-Mipa2dVQwly79kNpJBQzrPmKG3C0C5mYGIkbAve0sYStNE4lnyg3AUlzDB-~5B87nPyAon0qfqfTN8gQmUo-OEyl3lA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1790311957&Signature=M1alZm9d0DyMB7NUkFxIOMpqShRlG8CWdu76BNebYaGaI62tvCyAGXtTZCDWhcnm64agulJaDkxS8QiHgHlwyvPUGs1ACXG0YexhcX60HDLK6LKPMJh9qIA4zhMlfulHSU3468JbbnNeuqrIoYhdaEXCCmy3GL1NyL9R0Ef6JtixiiL7e1qSXPQS8DwT6CAUqAuxpJony5pVXZuQQPv5sEzya8QuXd4x0DTVNg4j5dfktASdE1CejmPGwk9o86yU23MNhYt2L7sEDW57Qtrzkgo3gHbBXk1gvyDRTk~9Ix6txfYgrE8qnA82WPCyT7eYNyg5-dPTEnJEguAJPGVt3A__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_A1.png",
             "description": "\r\nContains {color:#FFFF00}5{color} \"{color:#FFFF00}Dokkan Festival Ticket 2{color}\", \r\n\"{color:#FF3333}Skill Orb (STR) DEF + Lv. 4{color}\", \r\n\"{color:#FFFF00}Hercule Statue (Platinum){color}\" and more!\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Gohan 2){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A1.png?Expires=1789660927&Signature=AkGPAl5KFBwttaSBNiWMn0wsZvc~PB3oHN~hZ1U3YnCnJR6kTTixDEPIgnbM1BVjRylpxuMjCjrNDS9o0JP6zO5RvdK~2ySnt1X9bkVcUJKoQbAGTKbQw72Do09i83g4GVjnb7fEU81OubJK1Uk0tT8yA887S0o6wyTHthAdXAGskTNjd-lkD3cClrXMooWMQvrc13gVszreo3nXR-ijHl-kvy51PgZS4FVWxawkhpy5DhMhArS03TS9V0zNFRsqzVYa457ZghGHP0Fxs7Wm5Q~-HKLviiKuDH6ucjh6sMeswogJdkEjc9h4dIgRtAQGfOiFBUj3RfJ9D0PVUAsc6A__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A1.png?Expires=1790312530&Signature=WgsXs0atDTXq2q8PPWtzFykWS~moKRjLzu3VxqMTCNIRoivVGChdtRESPcUTTjVdpl6e-t9dlh-~28IdchRAl84ADQ86LyWQTrckk3tg73VukWbUr7uK4I3zPl5gEbRkOFqeEQR61p4fmvG4zZeR2lNExW1v~l~5k-f-E36sGNQ8QbBsApyjI8w3yv5XP7czonluc5abIO2Cw3QQUcdH0FjPXvGyquBN9XkabLntWPA7WsSaWjB8es6JHye2F1aO-5jwfaPeA~WTVJfQJ182wLJQ~pdVz4ee7LgPrLkS2ssjPCrScZxetwfZmH4HkzLYeLhPlK5kk2hLNFko4wWxRQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_A2.png",
             "description": "\r\nContains {color:#FFFF00}15{color} \"{color:#FFFF00}Dokkan Festival Ticket 2{color}\", \r\n\"{color:#FFFF00}Skill Orb Combo Attack + Lv. 4{color}\", \r\n{color:#FFFF00}Aged Meat (M){color} and more!\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Gohan 3){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A2.png?Expires=1789660927&Signature=K~0uULK3wdubINaNH4sYiYTGFAHrXQUW5ba1XhVeoDUC5hAFCs4YOBGuOcU529Nru~yt7yT~RgnQ6QFv4LbYlham14DfzNoPLk8ncUFFKEYnH2d6MmcYORLVjj-3mCVLfuqKCu-J~v-xS4aYqiaPT242VwSyBQQTk3Fji2Y082XlLChaFHDYjbVFOHrfWJY8mZkUwqYUMnCZzwyhJPNKcVYxe9Oq7KlijVRjpgEzLQsB1NoHxauLXOLUPwrlWgyTGCTY0IvOONC~qQguIszbbCZtai9b-qntfPA4VrqyTF~tScFz6pHvgR~iUcoCmQZaL5zlAH7CJcmVBB60bDV3bA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A2.png?Expires=1790312530&Signature=odr51nfLllmT2SOfu9s62vWM9cKh1UxU5x2S44NNtYZqal27KcVm4YBi3aEwg4Zzc1VSYVvwyCx~urnsHghzyTPTc34rhF4bA4G3vt4HdhjgOG-Bn3GTrnYYZAPcZiYw8oYwRGKMSdRozytI1xnyd2Wqjz~GIh20GjD8G5oPaWw0ccK0VcvUfAO9RrTSQCf5cfMOmXLV41Y~abn~eO0HEeU~eaB6~e1r7lHHyp0ghfyjWd-3nsDaw00ojKfXq6n787r5KtwcFALKHHinQzg5YwEv~MQr0m0A8H-N1vdDpY84wW7a61oLdv59jJCo5FXRPERu9Ww~GqIXX~OP5i7W6g__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_A3.png",
             "description": "\r\nContains {color:#FFFF00}20{color} \"{color:#FFFF00}Premium Dokkan Festival Ticket 2{color}\",\r\n\"{color:#FFFF00}Skill Orb Combo Attack + Lv. 4, Critical Hit + Lv. 3{color}\", \r\n{color:#FFFF00}Character Slots{color} and more!\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Perfect Cell 1){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A3.png?Expires=1789660927&Signature=ECMqWFbap1Cm13G~4RXKq8qp5mIk6J6ryWmnGXdzjO6guNTcWcMsOAJ~D3g~wxgmWhZAiX3F0-zYVNugREoGF8xear0Bq5HbHIJGwUDhEakflnOO-Tc3nZXjNH23NE2Wg0GScQinhPrZDWEHRUm3DLRO5PYIlPPUXif3KBYF0eZQ8i-BbjsXdyu3bZ2T1nGNhxePsvTo329qJTQWfNGbAreQJOgYcFrzi7h6CKum0XU6LhsvVwWXXOXPl0bs5XRQxy7RVWl0KBtRp4jOTZFqBjGIHl6pktLrwjyPpGZzMyZpJ7J9U~CySnoQpLQk~VRgdvkiV6Lg6C8fuZKf7uIZwQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_A3.png?Expires=1790312530&Signature=oX4WI4VCPl0triEyWeQxrQdtlse4dtIE799QmvbX44-pJ6V48kwZ8abseun3OJYMbX7KIhraFrwr90ZCmsJOatsL3LkuLkgNK5Qgu4D-REmXEv6RfFjjuRaPgEBb5zmqZfr-rPs52eBAwegwO9ZEPGEw6EBWCOF9EqmiQQsX3GgFRTe0hpR1kXpZ4GWSZXLiAns6c5nmKb8kLinLNOnPcy0gDgso3H~pGhZtnxGOEY-53uNt2y5~XMPZ5IvdoXLImgYgy81ThshDRrL5hY8L7tWwKhQ-NAvvZ3TtKdIUVABnB0z~whgENGxFs6-2RSWWWVwG0Ckahfg2abEi0sr~TA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_B1.png",
             "description": "\r\nContains {color:#FFFF00}5{color} \"{color:#FFFF00}Legendary Summon Carnival Ticket 2{color}\", \r\n\"{color:#00CC00}Skill Orb (TEQ) DEF + Lv. 4{color}\", {color:#FFFF00}Aged Meat (S){color} and more!\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Perfect Cell 2){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B1.png?Expires=1789660927&Signature=hEAjO1t-PuLMgNXaI-XmiAXzD~GiNt9MMfa6I4x-DH1pSeEQNpZbI1dEciPG7Asvg4ENI4NqV0BQdGvZBrCt~HjCUEUn6jNKicV9iY99QYxUI0Zs50En74nFEBN0s-c0w0IAEJTlmFmX8Sisf1k7Ns-qY9xHelhjCKW5sUhnK-jo1A6CLaJZkmNxX1X0r0jhcOgUsl19bqw5iAd8OpuFaC5LExLUyt8RetvgmJXJ7u4aGeC3T5lPnNhLQPvHL03~uskrObzKQj7SSMRlXE6qRsN2z-qmn0VTK6~xLZgy3C7IQz82XmZEJcajcpV7RdWBWejiHThC2odoJFhSUU-IVQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B1.png?Expires=1790312530&Signature=Dq3Alyp4eMwgQpGeaa9B5lQhVUtNe0exaEgewgIIg5fLqrt8~NzSoHFyOAcw0W0KeMSPAuu0njmCD1ghmnXQJ5CigQsEsb-c~1oO6bHPn~18C6OIaJcLWxjNoOznxW0eGsU8ij~CGaR-HagdHfNI9z5r402u2Jpi7chL1FvS7LQrSqfTKiQSskE17TD5KkQVs8Nw4lrhopKkWn3C9aOR65pJoD30U0QelbqCQ-idbe~Ze6ivhNoht5lfIQg7l8Ee03FRy~mKRkXsRHKx1o0-Tj5HkAIInjlS98dlogEjbtGx~8ktTF5WKkQIXGziq0Xxi0SunZwVtom7xEVnM-880w__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_B2.png",
             "description": "\r\nContains {color:#FFFF00}15{color} \"{color:#FFFF00}Legendary Summon Carnival Ticket 2{color}\", \r\n\"{color:#FFFF00}Skill Orb Combo Attack + Lv. 4{color}\",\r\n{color:#00CC00}Grand Kai [TEQ]{color} and more!\r\n\r\n{color:#FF9900}Deathmatch at the Cell Games Pack (Perfect Cell 3){color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B2.png?Expires=1789660927&Signature=Yc5Jb7NDOjKFkc~AYYPbTuROPCN0FTH9rNjLaxeEkc0UZBD-JMQJWMcW2sPW8xa7S1KomhMOY7K6yiKL4BO79UFyaSZhPrSXEkWNk7qIN5dX5rGBz6gRJCegEBcdKouw0LYNTAUPqMkxcPCluSgPshAIQSA74GfK~rlowjUig4VYP-o0KWq4Kzcu2Ss9MBYg5Fyttv80-V9iy5mY4yskBcbQKE71EvXPlJQeezaf5ywnvtEwxjZS5hiJsiaL1tqciSsldnEEfwak91hUTvtGYxkEUkOmW-Ne5betLT-5NpRUhoIaq8OALaMzXJ6FaSZjZkdOIlGCiV6Mw4NIj-XPUw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B2.png?Expires=1790312530&Signature=qUK7fv85YbicVXfCAAaQTsEaThx5voEPdTvSfR-Nj~iqPcgp~serx6imW7Vp0ER3pBy54nTP9xszsZn7Am60M0NB5nJ-os3cm9FYh09nUs-WIUFxJP1-tbmqcQs8-0-ozbJW~doLvDmgVJCQ6J6HOWgM1vzrd-RJfW83stjU50A~NrUwkpbdL-ptAsWGXlEH1whSPpdleyKVRfqKaVbIzO990eqYZoMGikLalTeCZSKR9KPd8a6QNXxrURqyrFWK1NW8YyDMkvAz7atrPfCdLuAbwmox~mIBVgPoKGGoqzfIRa2cib5t78ZTdolPka-r~h8fbOv5wyOko8cELko6Bw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_large_B3.png",
             "description": "\r\nContains {color:#FFFF00}20{color} \"{color:#FFFF00}Premium Legendary Summon Carnival Ticket 2{color}\", \r\n\"{color:#FFFF00}Skill Orb Combo Attack + Lv. 4, Critical Hit + Lv. 3{color}\", \r\n\"{color:#FFFF00}Hercule Statue (Diamond){color}\" and more!\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Notes ={size}{outline}{color}\r\n\r\n* Please note for both types of Deathmatch at the Cell Games\r\nPacks, each player can only purchase Pack 1, Pack 2 and\r\nPack 3 once.\r\n\r\n* Using 5 \"Dokkan Festival Ticket 2\" to perform a\r\nMulti-Summon in \"Dokkan Festival Ticket Summon\r\n[Super Saiyan Gohan (Youth)]\" allows you to recruit \r\n5 characters, with one of them guaranteed to be an \r\nSSR character. Plus, 1 \"Dokkan Festival Coin (Global) 2\" \r\ncan be obtained.\r\n\r\n* Using 20 \"Premium Dokkan Festival Ticket 2\" to perform\r\na Multi-Summon in \"Dokkan Festival Ticket Summon\r\n[Super Saiyan Gohan (Youth)] [Premium]\" allows you to \r\nrecruit 20 characters, with one of them guaranteed to be\r\nan SSR character and one of them guaranteed to be a \r\nfeatured SSR character.\r\n\r\n* Using 5 \"Legendary Summon Carnival Ticket 2\" to perform\r\na Multi-Summon in \"Legendary Summon Carnival Ticket\r\nSummon [Perfect Cell]\" allows you to recruit 5 characters,\r\nwith one of them guaranteed to be an SSR character. Plus,\r\n1 \"Carnival Coin (Global) 2\" can be obtained.\r\n\r\n* Using 20 \"Premium Legendary Summon Carnival Ticket 2\"\r\nto perform a Multi-Summon in \"Legendary Summon Carnival\r\nTicket Summon [Perfect Cell] [Premium]\" allows you to\r\nrecruit 20 characters, with one of them guaranteed to be\r\nan SSR character and one of them guaranteed to be a \r\nfeatured SSR character.\r\n\r\n* If a \"Dokkan Festival Ticket 2\", \"Premium Dokkan Festival\r\nTicket 2\", \"Legendary Summon Carnival Ticket 2\" or\r\n\"Premium Legendary Summon Carnival Ticket 2\" is not\r\nused during the event period of the Ticket Summons,\r\nit will be rendered obsolete after the events end.\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= New SSR Characters \r\nof the Ticket Summons ={size}{outline}{color}\r\n\r\n{color:#FF9900}- Dokkan Festival Ticket Summon [Super Saiyan Gohan (Youth)]\r\n- Dokkan Festival Ticket Summon [Super Saiyan Gohan (Youth)] \r\n   [Premium]{color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B3.png?Expires=1789660927&Signature=r-h9WsSvyxS42e4HnX8RLSmPCByNTt0FGN7fTLggZphGDMuSdb4zUcGEhfwzYYgbErHfb1yZHKx-VwZj09JKX6ersPrm0LA1z5miTO6AaQh~LlduPV-6o-pJRFz~pMPfxW4Z5VuKJpK9xGChKgP9LQLJKRLkpqLKKcQhFNC0FRfdc6h-cy~6opUADLgWGOr7tIB12JOu9eztEYqPD2o1LtTLM5rqFczEOntRwgkp4LSusK~Qg1dpRb23dwKFeUXgIDmdOERA7~ccYiuqEhvypZ3As~0NSNBHOzAnASz9gw5DOrQKLnV5P3eyPYk2vtS6ZMOP1v6SL2E4oKNhHEZdqg__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_large_B3.png?Expires=1790312530&Signature=jiyXhbBzdFuuER5Dw7yRthX-GZ5cmLc4KW3ttOnfoGsyQUvjapvEhd0gAS35AQONRtEnIDgPugR1m0Cun~3FKaacaspyLYd1rbVaHYoRTL25zq-CCQnLBjtXcEWLJkJHO~pj7KT6n0d6guHeJsTH9AWG-WZIsGFiQ78jjFOlZp37s8sXuuTCfXS5lUjBW2XWaB4EJRNoPBPQTHtIbPilTKNB2CeNRyaBScN5KFqnhPxv4LMjNtZTUYh8D7QNhZ9QhB7cR5GIBFi08nZetJt0kn8WKOwg4Ojz8iMPYu-bMr-JfwoF8PKWOVHffXLtn3~TNAlDKAxF6SRATLN2MtV2Hw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -753,24 +1031,24 @@
   {
     "id": 107229,
     "title": "Dokkan Festival x  Legendary Summon Carnival!",
-    "date_added": "2026-09-17 04:15:44",
+    "date_added": "2026-09-24 17:04:03",
     "details": {
       "announcement": {
         "id": 107229,
         "title": "Dokkan Festival x \r\nLegendary Summon Carnival!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_12482_small_B.png?Expires=1789659596&Signature=LLFQDwbmUuUYRcLNTmG7nHsFQDDZoHCCRv7Sfq0LoyNplDdZrArsK~cG0kIeFO39IhI-MkIdS3PtH-QTuQlR8BNzxNYv~wzZC5yM0FP5qFFMjK5VQdszNrjeZ6M7G7XDvY6PqTRlKOn4VVIX8mmw6qrJOHp763fuZ1qki7L88hlFI6RnR4QDtWSdpoDb7Wd2jGtUCdDjH3AClDxrKsYdxgbloHjx93wD7PVZJDkP6VsLYxDgEY0S6jdSJWbsZQOeaEi9OJ749Zs65QoK~DkxFee6vzXw0u5fMuwEaAUh7OeHsxKkn~hWFvZpNMjnqmvQBeVoaJRd01xTsnTQ5sCJvg__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_12482_small_B.png?Expires=1790311585&Signature=TiED7yhPivCvmpphJdqjE9YtT68x0-Lm1IRAFDSTAz06VRrcqqNloq51wpMxMdqWyLjQUB9W9AFrGGFyH-OVsIu72Il2N-3joadd8H995Ow6Astq58RiC4G-f56ByBD0nyt0jxPWreWkQWfiUnFfjtZe72CpbRoGO9wQStfu7be1oL1~IdsdJ9NerRtI6tmvVzMevp5vkQlM1sT5VuP-73YYCMlHi9apbiXMIf2IosNBFv6Wv3Rkfnold2lEoyUX9K5kwIZogYcLZ5e6RQhM8b4N9GN5j5wShIjaBIFynAgP8hovKmYkFrseMeC5Gt-Ngd~ikadtRsx6KXMNiRJglQ__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_12482_large_B.png",
             "description": "\r\n{center:begin}{size:24}{outline:#000000, 3}{shadow:#FD44CD,3,3,4}New SSR\r\n{color:#FF3333}Super Saiyan Gohan (Youth){color} will\r\nshow up in the {color:#08FE0C}Dokkan Festival{color}, \r\nwhile new SSR\r\n{color:#00CC00}Perfect Cell{color} will show up\r\nin the {color:#FA9F40}Legendary Summon Carnival{color}!{shadow}{outline}{size}{center}\r\n\r\n{color:#FFFF00}Limited-time special summon animations{color}\r\nrelated to the Cell Saga are available in\r\nthe two Summon Events! Don't miss out!\r\n\r\nIn addition, {color:#FFFF00}two types of Ticket Summons{color} where you \r\ncan perform summons with {color:#FFFF00}Global Tickets{color} will be\r\navailable at a later date!\r\n\r\nOne of them will be a special Summon Event that requires\r\n{color:#FFFF00}50 tickets{color} to perform a summon. Only a new character \r\nfrom either the Dokkan Festivals or the Legendary\r\nSummon Carnivals will be the featured character,\r\nand the character's summon rate will be increased!\r\n\r\nStay tuned for the upcoming Ticket Summons!\r\n\r\nMoreover, two types of {color:#FFFF00}Deathmatch at the Cell Games Packs{color}\r\nthat contain Summon Tickets are now up for sale!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_12482_large_B.png?Expires=1789660928&Signature=DXWigep-KU67t7RJ0bM1LBkHtSPnjBLu3Qfu9c1iqbkYyQypRzrqMmgWYyESS6rvlsOiob9JiQ7zJIj4nmc2OpGtnXxljtg-cpt1br7xPRORiJy9JZOn-DBDdd~LdrVyJwJ4hAceMUuzkznTONUkYqgV-ka7Td1au7xDqwaw1HLVcprR79qQpc9Ag6~6OLQR4XacyfqRMI26klm3YLlR4n5DyxPXlz2gYZ9ClNFmDBATinTJ~3~PnWpJDym11TEqO~Ll0bM5dtzrYR2sB5uSdIBrdaqtacYU4wS7evghjUMMEQ0U1FhDO9v3g~UDy8MuJf9FfIEsYsnylkK4jMQGpA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_12482_large_B.png?Expires=1790312531&Signature=CdsWb15kmjtAChzGEKj04oljb0Y7ULOyUo3k7fEE5iznN3bAnQ0tYthOO98LaItM9xw-rhLX7ndzTofFSC9EyqpBli3AwbljjXL24fbZJkEPkc-2DNkv0aMzDcABQbjNroVX-6mXkAq37zV27Y8f5nL37zAQQYyUn6xFEhbbOVpM7XSKhgj2TCLDbUX8zKSJQkQ5S1Dk8aUeoFzZ7iBh52JcwjSIZjMlsVz9~c574XO1vZtSsy4k7cXmWzGGhPk80R6OwAQoa2DhUUpM8~zDSwFcxLubi-5jFYG2~BxfLu16sChA87Kw-MlUCLRhr9gzg1FMFKioh5E9cTVytLHkIQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_spshop_20260913_small_A.png",
             "description": "\r\nBoth types come in {color:#FFFF00}3 steps{color}, and the contents of the packs \r\nwill become more luxurious as you continue to unlock them!\r\n\r\n* Please note for both types of Deathmatch at the Cell Games\r\nPacks, each player can only purchase Pack 1, Pack 2 and \r\nPack 3 once.\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= New Characters ={size}{outline}{color}\r\n\r\n{color:#FF9900}- Dokkan Festival{color}\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1789659596&Signature=NHP8s4yj5cPHYNGQoZtIAGMd4q0AghcOONdLVoxZrvAwkPGboS-TQnRazfzwaQh5G~wHII2J1CmS42QQg0qXgg0T~SE7~CRn5DjxeNc4xtHWTel5KNq5~hO1tk5KoIp9KWFiabDfAGQGfx0KsTwBXYMrcyy8nL4FPz51e0Y9hlZ76QRjHC-xe-6K4GsJSCX-Xw4f0Sc1JjqIdcfanS~HJDXSpmRum5jYb8xN1JM76cxK3DdibHGuBbNonpCF3b46xc~dB37GDfJXQ2sNJKbov~FfDkFefTL6CWrIP-phUZ7Sx1XQLORphfE65OLiSo09vP47V87VvjOXlI2P9qK1dA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_spshop_20260913_small_A.png?Expires=1790311585&Signature=Xz-GhC2ncIankI2nb7dZcxUq94x8sbCIgAnSID6c-Td3aeKQeJNT2RL6g2EVfXgvkKRJ~Ux1sHii0GnrDyhDjFdlP6WkccdLfUTaELHDHrNm2DS4QZfIVmKUh8EgMnTmR-IuIuUmjwAVzHB3f8DLgnZBkehZDf69vbpihzO-XLFrrr0c6aWQ0uL4yMrxKxYjTxy4E~yWiUJFOeR2jj341BrQ0gwLMo3Dbq27dta-7hB0jz-cUd7Xj31G4YyRODEQMcPYXAQMyEoHLGPEiBxvDq30lRY5D5UfnGFzyHXVYZKhnbiVdOrTUdVJehsAEvCxrWK7d4-1QnWokDTVN1LogA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -801,7 +1079,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_awakening_02209_A.png",
             "description": "",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_A.png?Expires=1789660928&Signature=cSL3gL8nRdljsPxWKmRukItaOU1KiNKHRedAtkIfbcFDx~VqlhUbDyssklbXoVq2YNjOWbGytmtMB5esqwxnelm~~Dx2rq6UeHXwfkLPmuKqRspqUxN9Z-f2G0S~b361VgCLannwEJTnwjpoRIqO8xj5u9t7f1xCbsGoZ6laRfRrIKr4CNPPSbUxdtPVgr~zCwhb-g0XlKzvmbtS~UcrDkpRSFk5ZvxgNB0thHwOtOEhFXLLBcopANMVSeIzpQWLVFdUsZw9HL1HtUvFxAAF9~j~vgFpnyHf~1Nkj3XRItMRxzUPt-InvksvUqj4ZR-~jAYMTrtvHbZzvFznt7vGlQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_A.png?Expires=1790312531&Signature=oo0rxWrZRxPIglZBjLam5E4Yoo67vlcbITbQpP3MmuN~3O6iDisV4Dcwphv1j2NrPTq4T~6T~ElxNB-tesGWOU3mbAOd29IUk-L9DfmpdwH8w3tJDpTAzcvF77~kLHvEhECNstkeE4B6XY0JW8-6hPPu6rV7L08jPqTOx9MsTT-h0PhGJnqzdFVmNHlEJVFVet83Cwru~D7eymn~hI5-kWh438V0uGnL5rK6OECh4BsYQARGOt5FMCPi91r~e6CWMb~HJgFnJrUASU19iEE7L3g4kYEUZ9RV6jX96Ap09W25P6y857WaKnG3WkuOgobfxIFUZNm18gNdTEIlyBhJug__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -812,7 +1090,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_awakening_02209_B.png",
             "description": "",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_B.png?Expires=1789660928&Signature=o8C5wOqHf4vrjjzY0AeRvdPG5rh6AorHFAmwD5-3JWXJzjWeNw5SmOoM30zuBrQ7yqcWz8CaEjZrdvcopq2M8IGVYZr8ywwM97e4bMPUze6971ncHS5GZmvjtcs26fpLzgASaoXvJcs2DwNF5NNttH11j8MQhLlm7zK~8J8Lfc6JIy0o7mFZuqx54gmET-x7yrgo0WmVHHgjqklSaPD8vyeXWeBRrJpvEAQq-69cd6RgdojJtzB9UQctxXyFQ9rj2G6LhEdBDuvWcSohBlm2ZLvZ6Ems1pKldLMmzc46L8WSJdJoerU872hx7o8EP71fDx4-UMt6BkE~p9hKdy1GGw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_B.png?Expires=1790312531&Signature=kVNvW0htv17Ra91ZLgC3MCUhq9Zo6yKBbcccWDUopftUr47IxCb0quuU0klcd9e0YuKYfB7XxW34yj3kNoFkFXtK7lc7oBlLi41b9zuhnmjFiX3e-UenyyoTvDxA6RHqe3bV3FLN3HtcwBKUmH6a1MsUKodeSxzLjIQuaO2zniX21gh3I7hC8HDH1vFBS8d7P77tqIxYNLTmHShSM5GgSFccEqIvzYDpR3rm6fa0kOibOqclSjIlQi9ZmMyYMiSaETLy0DaB1K2PsvvJMIvElZnyYYlC8WppTd9ZQdtb-n9cCl-yOcidbjkc~MipBdvygCDxBn~PWsJ1DK4IbDfYSQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -828,7 +1106,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_awakening_02209_C.png",
             "description": "",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_C.png?Expires=1789660928&Signature=buxd842mwKQgjlJ2-iX8BvfUFcsMtCJreb35-zc-3ZSeZKjIVixmhi0vGeutBC~kU7ct5rMqtozVTZnN8GKSkOafzGkfh9B4Ft2Ra3M5S-b0uh8B1z2-pZL~AKIQs1xGDAiuYtIgDyrN9dyM-YrHcESSU0pvURKJ1PIKUE8IdJAUCHolMv9sCYqnvI1oO3HQEexhKVGaHeqfP1-T2199QLaqvD8gzNJo0hyz8WGt4jz8MAF14d4h1C4vQMtMrfRR5n5KqFh-OTCnnAkKIiAQq6AEzf9FPiYVYVuql67hfhT0of3wxkdk~zUaEUrm~MGrQ2iVJT~4A3jMoXb8hr5cSg__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02209_C.png?Expires=1790312531&Signature=C5Kdc7hdJbLNRVUMyqd3lBDncjxIpw1SxtWZn9T5T60wRSS0SGJF-sh-nBucfcYt0FcZ8KOfbdSvli29lDfaAE4EGLOHreOPsadV5z8mnw1etxMro-0735i4qo~tT0vcszwghhKY89YirgD8-xUVsWS3Icp0rCT7a~-I9oPQx8MS5BpqHnNHF45j1AOkj1UL1ZvJQ9xJ2dYbxBPH~7zYx2PBBBmUlWGYCm6rNL1uCOL0Ag80~7UeLdfLKIBjldauirrsk2aCE-HHZIFLZRXaCQ4g8xEIkRaOa0dcui9ftVbuC7XRU4Y5tLDTkZNBq2hcPjG~mUgCzk8vk8uffcZlpA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -844,7 +1122,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_awakening_02215_A.png",
             "description": "",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02215_A.png?Expires=1789660928&Signature=IEsPv4tiLFS~QVSeN9jbCRMLWnQrGtDfxKkPW-WbOL2fwRndB6LsSKOrLGYZJqTINl3bht69JhIwgq4nQ7kIei9pEuCS-N3s~JHr1U~8kNpjXm6e6WwCIQSEhrWWzIXLY1oAQd3pHVwnVZy1w7qG0R9vpmEw5gR~5DjctlypmOSYV0fPyJUSkcozAqtkgRMlvPaSmFN-wPRq4Efgo9uk3jS8FEa3H9gGPAodL8Bffi0QcBSJzk6qaRyoWW39Ckh~thGfe2j7NXOOprQ4xEwVdHy9n5PoXlFKtlN2wJf1nmyctf9Nu52f51pOemKWuEFf4fuIHiD3~Sm9WYXvLEzXMQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02215_A.png?Expires=1790312531&Signature=h9qaiDk8zE5p5IsR9nh1b3OjfRGfNFLMwm2o~XVmQZSXV3vXKO6MYOhflDubAWAMsWqJgCyFZ0VB6JaucAz9yZjMJ8D8kl7bUoLirwX3b1aAgtwoAiRsp8ixnOUMI9ZRZUxBWSUAmUVYpsUWlDiGKFHlZF5IqXvpYDBgNbdArijF6RJ8sI~uVBlwVlM-gUvfqnFBpNmseVJAxBtz6MPw97fsTr732F2eVSZJEDmQ1b7bzXbyTGdG2B1~oE2G0mipYNCtuBFo6OLXqYKVCUYFCaWv-tm7a5g9y5c9WF94~nE4Wvw1psv0i~Ugn~q0Qfp7LWE4Y7G-0CTiBlqEIdvOVA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -855,7 +1133,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_gasha_awakening_02215_B.png",
             "description": "",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02215_B.png?Expires=1789660928&Signature=fIvfjp~jcQQXQznbDcnpF~USfGYtzljjJORNbMAibWhJ7SbjR925a4zCF5qZFsu1PaZapxJviy1~yvq~gdxe0LmEjrzSRlD1UnDYbeVBr-kL-0LILJ0vNZLjgwHuCkQ0Hof9-FnBBTLBfZWbnlHhKtAldb6b78yjeRiMV9Pa3TBwXX7YUnTrPVu1-7AoO7D4siCBUfAOp43XRaPeFDvarxZ0huzn7ymC1D5jx0H4obBzl9IWqgMzeywyJzfgvn9PBNqQjU~BCdZApX5CsFLU08r4XDbn5YlWtkY1IdyzQtSsfNieOQCNmf3PeMEmSj1cYyiZvxOXGg4XjvYXKBbbJQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_gasha_awakening_02215_B.png?Expires=1790312531&Signature=fCzArERNAgBHQPPQPlo-0iD7A2n13jBqad2Qdtc~D1ZhCVoHsnLORICG8VYBQvG0-oIrXcLF3mZrwsmooKig6HnqvwmBo7JiDRhu00v8MZiJ81g7Fv1T7tZEdpxHuwq87tItQ5kIM6pbc4MSuKb-BdQ3IFceKYyRZtp~95qpyz6Jj8CtzaNuZC3gNFXQcl7Jezcv1jepvUiJnUnyq9igR6Ey2Q0HGrX8u1DDEv7Jetb3bMYdJy-LPCQRjE41AeLYI02xB4LP4G9RNL7nksgGKjyNrouGA0XFKWS10wbupkKeKVZPjAO4xeH6ADDmkTLYFvUfLvRw5ExHi3WPuSyVYA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": null,
@@ -912,18 +1190,18 @@
   {
     "id": 104390,
     "title": "\"Mysterious Ritual\" Summon  Is Now On!",
-    "date_added": "2026-09-17 04:15:49",
+    "date_added": "2026-09-24 17:04:09",
     "details": {
       "announcement": {
         "id": 104390,
         "title": "\"Mysterious Ritual\" Summon \r\nIs Now On!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/EN_news_banner_gasha_11128_small.png?Expires=1789660515&Signature=IYCSLBUgD0HEoyQz7ilIl~0-BBTyJl8CwTw1IMgz7wFGYAw6gc7n9i26BMeF~lKa~kr2VNWXdr1E5N8bKzFX0BKM~8UPDTQWHGyJACOoT0hpunM8pjyQ47kJJYz9QdL8tx0ZJqsaQ4-N5L7mYepxPE~FqCQnh7Z5wkFsz24C1BNCICY641X9Ehy5~swbSensfRgSDtdJIzTQe1oGS8PAgF5odPp-ZJB2Ou-gYR6hQlhMXxHqce7w8JNjtpIH~PzkuABFx5WFJrvZOpjZl4w0m~Dmt-FEcZc9TOCVxgfHok6-KhF5n48RWX1bo-3rpidiWh77xu~xToSFw3ZvzSs04g__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/EN_news_banner_gasha_11128_small.png?Expires=1790311362&Signature=k2425bgt4W0OXZn9n3mt8eSxNVdcu4-3kpNNCEqy79q2ZwCtukzB1nhnch2GkyPkQQ5Ae-ubcGwyF8cAr0Q92oFUQdCYrkSdnWXCqEGzdmUzug7Jy1PYlmA5H2EqQp4XWDzLRWCpdHiZuTkJ4LGKITbi7Ao45AU3E7v6VSUXKRQFWutnNpaYE4BeORJST2alRxTyqzl1rjhPEEfjLJl7U9bd6lHu5LTFrdSTQB5VJpoX5HyjqVmkx1XlwoxVLpMoSdbQPBmQ0q0xLHV3frmzWl42yYnLBoAFHMJHLVdTCHOz-WsD6VxBYbJ~gyY--p4wEW~a-Rmt83jwkeH9UWo94A__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/EN_news_banner_gasha_11128_large.png",
             "description": "{center: begin}{size: 22}{outline:#3366FF, 3}{shadow: #FFFF00, 2, 2, 5}{color : #FF9900}\r\n\"Mysterious Ritual\" Summon\r\nis now on!{size}{center}{color}{shadow}{outline}\r\n\r\nUse {color:#FFFF00}25 Dragon Stones{color} to perform a Multi-Summon and\r\nrecruit {color:#FFFF00}5 Elder Kai{color}! You can perform a summon {color:#FFFF00}4 times only{color}!\r\n\r\nSelecting {color:#CC66FF}[Mysterious Ritual] Elder Kai{color} as a Training Partner\r\nis guaranteed to {color:#FFFF00}level up the Super Attack by 1{color}!\r\n\r\nRaising Super Attack level is also crucial for Hidden Potential\r\nactivation! The slots on the \"{color:#FFFF00}High Growth{color}\" route, which is\r\nlocated at the bottom-right of the board, can be activated\r\ndepending on the character's Super Attack level!\r\n\r\n* You can only perform Multi-Summons in this Summon.\r\n\r\n* You can only perform a summon 4 times in this Summon.\r\nAfter you perform 4 summons, this Summon will no longer\r\nbe displayed on the \"Summon\" page.\r\n\r\n* The available character in this Summon is [Mysterious \r\nRitual] Elder Kai only.\r\n\r\n{size: 24}{color: #FFFF00}{outline: #FF0000, 2}= Regarding \"Summon Coin\" ={size}{color}{outline}  \r\n\r\nPerform a Multi-Summon in this Summon Event to get \r\n{color:#FFFF00}5{color} \"{color:#FFFF00}Summon Coin{color}\"! \r\n\r\nUse the collected \"{color:#FFFF00}Summon Coin{color}\" to recruit characters\r\nat Baba's Shop! Please go to Baba's Shop to check the \r\nrequired number of \"Summon Coin\" and the list of \r\ncharacters who can be recruited!\r\n\r\n* The Coins obtained will be sent to your Gift Box.\r\n\r\n* For more information on Coins, please check the\r\nannouncement \"Information on the Treasure Item 'Coin'\".\r\n\r\n* After the event period ends, the next \"Mysterious\r\nRitual\" Summon will become available once the\r\npreparations are done.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/EN_news_banner_gasha_11128_large.png?Expires=1789660929&Signature=rRPe8LNKnjOWG-5JCBUg1gbDUA-~IfxGtEqX3aFeWra5V2zTULeSgTOcMvhbN-0QEEtsyiSlFmo6RpNXj1V1XrOd1VItDGmqeVO7pNaPkl7DRbOTEaK6WVRLgrCkHDqsuVu~tqqWFuqaWNI6WGsX4AAk612vBijP8say~uWVU-rqrNK6p4GBIGGAOPosqfjo4rtYXuc3At2r2GC9a1fgqr5J16WqVu4kXSZOILmOvNWAg23flx2nLbnOzoG~UQJ8arx6U3JBvMIBJWwFi9p0yGAWb8nC~RU09gxsE8PGwbidegZit3mhhPcaNdNQHkhZWPOXry-LQ8hz9UTZPmH-mw__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/EN_news_banner_gasha_11128_large.png?Expires=1790312490&Signature=UjS-xUGqc2EN7385JOUcQtKlVR6JuzPjAm5AhRUkfTDhHEZJnrThGxmAlJFdahWuqXgxVFvL1kC7JTcBfKJ9XlrkBWgUqC6q7MZppIYDcbnUdYL1yOyQrJsgNzCF0NT-1OzB32rB2UslmhbTq5akC~nAAMIqh86l1sJFZq1JPQB7Rp5iHxxj8~be8r1ieP5HJrYUlUSxABBUGBsfqPnXDAJ03B7e18BwqPhNpHnP68i9~dC5DIhUeSVP~DgV1dTn0ZNe5vl9rwdr-gxFY8jqXgxgz9Jy10dSgZwW7ERqNREJYFDeUdvlziJQLnfhyR3zPQ2qEehKj6xeaZ3r28KQ2w__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -1573,24 +1851,24 @@
   {
     "id": 107214,
     "title": "Winning \"Chance Ticket\" Announcement!",
-    "date_added": "2026-09-17 04:16:00",
+    "date_added": "2026-09-24 17:04:16",
     "details": {
       "announcement": {
         "id": 107214,
         "title": "Winning \"Chance Ticket\"\r\nAnnouncement!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari_small.png?Expires=1789660639&Signature=bLuAule40LeBXyGR1JsbAz32aCErlO~w9yn2i3zBLGX0iay0Y4tYUKFa5NwUtqJhguI8KVxaCg3csN5-5nJV6FKQCsYQzktA~caZzGZ9fjOHT8NXidCbDMidRvaYE8~4qVCASVB0gQDu3958nAvdXEz3tD1FBUAZIDxDoF3M6MOjE9nKEpQE67DKjapGTr~lBpbPNOgDzRrOzhpg7FyCVb5gjOpaFaRUqWIKbLgx3yb3peHcW9KtKiqU1FDjq5~dYHXD7VGxhiKzO8pSX4-5JMXdd8pXyHnxkqrFNYm0HKHdtvWngBR2yfTUHNoHg4ZzG~113-cJNRd0uBtsHzLIDg__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari_small.png?Expires=1790310825&Signature=Vzjz8chdlqCcHMUsQP~kDOtRW0aqqrwJplQoe6A3TlO0lY0rSqBpNlwhw320VdvUNiKCOWSMXHL9eqY1BQY-88~CT5UPym4yFwu2E47ZSOsB1~NYiAlsIjsdeiubJGITWlZZNnLWEeIbjgKKhosi0X0yU5pe7uK-wCOMrCFT1Tg8Q8vzjvRFi9tShCBtksMDVKo6H0huvAf7bR~cxE~RHKcwq8vHoCXWGEAKF2CXhLDtA-iYHkCGC~T6wI7zIYE8FUnvgFtxKo9bbpLwYKra~misdnx-X8-1k~udQfZE6wBkALBTQUMZNuSE4mUskQxZ91ZcAZbi0qhFgtR4W~nx~w__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_dokkanroulette_atari.png",
             "description": "\r\nThe result for \"{color:#FFFF00}Dokkan Roulette{color}\" has been revealed!\r\n\r\nThe winning Chance Ticket determined\r\nduring the live stream is...\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari.png?Expires=1789660929&Signature=l-6f7Nn1zcIvpbdzeK4NpUPpx5LZKDom6Iz74d7u9luXec1Oxcg5aZkDDKOf4USm-BUmFmlYWdzOFLz-vuwgKpev-rkqxqlX2KGWYZDwIPdFKz4vYaI5jOeWBg1LSww2qXyE8AKshMo6zkf~uCKdvje9bZmLZXVM95OggKLsmkgQtJgNt7fsjXzYqHzDuVB88vW174hZhksQvuw1cQ1sHlvsvoRdJSHOwqW7S9qg69od5QOYLFiWWMktvMoU6bVH-rFbn09eLPd90zdLYGRPGfRquQ8vbbt-fOEXQvI2bBHBPMqyaF30mWbfIwt2t-DNuwTTW9ZpOXrVSvytRFmsAg__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari.png?Expires=1790312532&Signature=DRPmBof9NxWrtV4wRArv6zsG6TVG5EcVxft-Cep2IKDDNcExxDUkP9oAuhJIdWYoGsWo7brcZbHCmOV95g6BQxfusGdRJzQ38IMxvlVatZ~GNWZxRc0HZeBvHgp74LbCnkrBWNo~RxU6OdXNPqAqFv6yVy0RjgJte-WcGEA71g881WVolens~X84L13AL65Ter8QczWVQetnkFKqKIR5GBH1OTAgN0TfTUopc4QUaHc0b1jVsH74hU8le1o5mONsAc7jhPeKgUvY-~FtcwmSia6Locu70oEto~hUMwFtWqs7zPKRNr6LsG0a1oIkufL8xBZVoaBNFCs3vhf7Py5Oiw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_event_dokkanroulette_atari_2.png",
             "description": "\r\n\"{color:#FFFF00}Chance Ticket (Red){color}\"!\r\n\r\nStarting from {date:1787994000,DT,L}, a \"{color:#FFFF00}Chance Ticket (Red){color}\"\r\ncan be exchanged for {color:#FFFF00}4 Dragon Stones{color}\r\nat the \"Treasure\" section of Baba's Shop!\r\n\r\nDon't forget to make an exchange!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Exchange Period ={size}{outline}{color}\r\n\r\n{duration:1787994000,1792508340,DT,U}\r\n\r\n* If a winning Chance Ticket is not used during the\r\nexchange period, it will be rendered obsolete after\r\nthe period ends.\r\n\r\n* After the exchange period ends, the \"Chance Ticket\r\n(Blue)\" and \"Chance Ticket (Red)\" you still have will be\r\nconverted into the Treasure Item \"Incredible Gem (Green)\"\r\nupon your visit to Baba's Shop.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari_2.png?Expires=1789660929&Signature=BC5j~RlrdIz0kj2fzGq9bvnmWP9CDROgqxturq5xT3yJWxcxezEu-5G~5Extkxry5QRdsVpJqI2XmcZRyeKolwHIr8oUqs1zN2eMSVSy35ziXgSjV9jmtV6D2pPt~KdbIFdgg4BJ75jo0OzpeATjB7hAVRA6Qz9uQg~iORzPCV8d67t3IckkYJe600exZDhX1d-WRb2v12HakDoFmYXsVYGSkf2bKgDdxREVr10zSJv6zYumB7Hy2PZCDPiOOkjdBEBxPYcUbjn1MPzfxpld0VZKew7q1CdxaYsiF76Ex4597qqVDBrtCbQuKbktvv58qu1jyJx34-s9v~7vATpuuQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_event_dokkanroulette_atari_2.png?Expires=1790312532&Signature=jGy~2nzQIjDL-XBANGpkWwVRR5m0w~iT51lUYOtlFpKjfG0E8MTbu3RApx7WHt3nMeX8X-Zg-ZF3zjepMNn8O44J2JBLPALfIKBuaD5trKt8X6Gsl51RAsLB31tmwhEOEk4hxgdPXMzOj64oCTfX3TSiOfmssNqBorM3w1nSysFIQQhQQCJyZrv1yNXi8~Gu7wnZ9AvTI~J6amBAHHp3jR0vZ1qy0s6gnFhmC8b5WuDp1qJzdHr2rPc4BhJKov2xg0ZH1c60ESKGw3SHiwlumjD2pW0iSK8RN9jP3LQfKi0PSFjX9FhrQSn~QzRZAsHGkaoGwz-NsNGU52ymsQCZUg__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -1608,24 +1886,24 @@
   {
     "id": 107212,
     "title": "Global Campaign! Limited-Time Character Boost Campaign!",
-    "date_added": "2026-09-17 04:16:03",
+    "date_added": "2026-09-24 17:04:21",
     "details": {
       "announcement": {
         "id": 107212,
         "title": "Global Campaign! Limited-Time\r\nCharacter Boost Campaign!",
-        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260829_strengthen_small_1.png?Expires=1789660595&Signature=e7CpCu9VpyJXBnwHZUxMwrJ2x2hkwp9Acbxs1yezWe97obxOktgpxvH8UK7h0LKC-IBVm1VIQqW3HOQXwV8YS1B2srb89c~QDhnmkQrpBWBst2GOYff~YAHN04epPuXV3qIXBNoM9w2kTJ8Ipk-i7Xmhnuh-bpGhx1SqCRIBK~SBvV~IgSSHiyk7twdE4x2c4AdMZ8LzpxdWsaOpeO5pmf3qruiKfUn1S1RJs0WwdKfjb1e~BXw~IvdiXHMHyqucSznO8-cQwcmBTh3KDEO46EScSzsAYjrDFMWknp62Ks0-J4UFYcQdqnbEjc7jka9rDg8d~OfFwXrqoEed~EtzPw__&Key-Pair-Id=K1NMPEQJEGU0H7",
+        "banner": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260829_strengthen_small_1.png?Expires=1790312342&Signature=RjoAuW4ydmCyetyxgLnoDbLMtwGReungFvIU-b00cAkr27-rwP82-qebiT3nsOL0fyRIIWqNWJUHfgavXTnz8NGOeT5lZwcJuVjZOk4Knpr33QQ1wu-rKM649-GdqZ6utw-nebHrp1yOQe3vNXiEkeJ7ScjPe28O2dkdK7zvbeYNCB6nYE4vLkkYstSFXtpNCqehFoaAYwqRjuwYTKgprYcxpdZCzQ77AcS1o4XpwlaGUu5qtnuDS0h9w4C3PcAMo-0AkL1P4CmYeAx1lT4Smz4O2Hu3zBg67OJd36bP2p72xXQxNVNfXzXSwGB7LZIkEayOdYBU3DpNjZJGj0VM6w__&Key-Pair-Id=K1NMPEQJEGU0H7",
         "bodies": [
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_plain_camp_20260829_strengthen_large_1.png",
             "description": "\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Event Period ={size}{outline}{color}\r\n\r\n{duration:1787994000,1792483140,DT,U}\r\n\r\nTo celebrate the Global Dokkan Campaign,\r\n2 characters are strengthened for a limited time!\r\n\r\nGrab the chance to include them on your team\r\nand attempt various events!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Strengthened Characters ={size}{outline}{color}\r\n\r\n{color:#CC66FF}- [Strike of Full Anger] Super Saiyan Goku{color}\r\nAdditional effects of the Passive Skill after Extreme Z-Awakening:\r\n- {color:#FFFF00}Ki +5{color}\r\n- {color:#FFFF00}ATK +300% and DEF +600%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\n\r\n{color:#4B76F2}- [Roar of Resentment] Frieza (Full Power){color}\r\nAdditional effects of the Passive Skill after Extreme Z-Awakening:\r\n- {color:#FFFF00}Ki +5{color}\r\n- {color:#FFFF00}ATK +200% and DEF +500%{color}\r\n- {color:#FFFF00}Performs a critical hit{color}\r\n\r\nThe above characters can be recruited with the\r\nTreasure Item \"{color:#FFFF00}Select Character Dragon Stone 11{color}\" in\r\nthe \"{color:#FFFF00}Global Campaign! Select Characters Dokkan Festival{color}\"!\r\n\r\n* Please check the {underline:begin}{linkToNews: 107165}relevant announcement{linkToNews}{underline} for more details\r\non the \"Global Campaign! Select Characters Dokkan Festival\".\r\n\r\nIn addition, starting with this campaign, the icons of\r\ncharacters strengthened for a limited time have been\r\nupdated to make them easier to identify!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260829_strengthen_large_1.png?Expires=1789660929&Signature=pVvmTSR0Q9pZa9oyq0v-kd4R5-e48PhYCNmH6IxkFjL07xMHYheuQNTzntNGrLpztPhX717qoa0KC1dDtWOcTWJBHOEOI42Z6ICqscsNkSOl6kKWxYoZPlR18kpAfUeDJGrNa7uaJaarWWc1nek8ndLbO0JN~2a~obzBNIqW3Gb---DG0d5eng8~e7fkWxxev4xjyYNZPm3EqVfLawWgkCGJhFYByK86l3E7DOj~WOwDfJxr4TsnftuwvIc3s18D~uQ5Jxw5oJyQ3MQqqdTkJnk8KH4G3m5v5bYNeIeEXqVztlP4LRfbatL5IAwUoXhHCDzSX1kS35R27Og4Z7rjCA__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_plain_camp_20260829_strengthen_large_1.png?Expires=1790312532&Signature=SClBHWvfAztEr4x1OTS4aVLA6GbYPUiv1ATCJqnTWsG5YtnuI3~Q8P4gx8c~EwJZAUs6qVdLEnSqgBVEq7UGicslqFcHf1hH-imQfwKlZKsawoG4k4igTDjSCQuppcoGn365oH4ph7RleZ7ODp8C8k~MUuOthRSh0rYLNXfTqGhiDUe8P5e4hOtKnOadaZxclUcWaRba0mfxY1OQ-BA5ybeggqPSAR8mVeUVmAp1yHbVJLF80DuP4BA5~~iL6RkR41RwuE3gSoQc2YZmZDCYeg3Ct-KiCS7SV7wNbovf6ZcqbAVELwMhLMvvoJKfa~T1T6M0vvXWQvgDiPNoCM11iQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
           },
           {
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/6_4_0_genteikyoka.png",
             "description": "\r\nWhile a character is strengthened for a limited time,\r\na clock icon and orange effect will be displayed.\r\nBe sure to check them out if you have these characters!\r\n\r\n{size:24}{color:#FFFF00}{outline:#FF0000,2}= Notes ={size}{outline}{color}\r\n\r\n* The text \"[Limited-Time Skill]\" will be added to the\r\nPassive Skill description of the strengthened characters.\r\nPlease note that the boosted content varies between\r\ncharacters.\r\n\r\n* If you resume a suspended game after the characters are\r\nstrengthened, the strengthened content may not be applied.\r\nShould you encounter the above situation, the characters\r\nwill only be strengthened after you clear the stage or\r\nabandon the stage.\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!\r\n",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/6_4_0_genteikyoka.png?Expires=1789660929&Signature=GsdG7kcesR~EtWVrcnkabLQPVizg0YswExzi-YBZWR8N2KDInzU-iq046sG1PFteUdgFWcNbHWVZUfC8DcBGj7~-L9TZ8FkPKqnFayzO16I5Hz~zb2mECzO3xmUykVP7WDZ1T-IqkR9HtjlTAlcTT7TWyYcAaWI5oiK9KMOsavG1Imcs5hj9fsJkyFMlPMsOSGews4rIP-OF7JJ43MBtfEjvhlgENjzX8YagSrD4G6JDlTvXMHNzHjKXoDNVlPyZKk-wK1lPnjkTrgPrgvIA3AiczGPcsb3dYQV7aSlgTmBo0HDNXyeizW48JNzD1BgfhNJMVYq2RkGOmpRhyI3FcQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/6_4_0_genteikyoka.png?Expires=1790312532&Signature=fsS8NQJ~P1cDJjHw3ZsI9iSokLHczjisBKRdue1lRwf-tdEjJ48jBKxzIyQGPIWQLzaeDytanQB67agtnYOqtN8gdP-kOsr5b1JGZ0PWi1QY4lXgpBq85P48epp6k7~PUQq4t4RIr6X040O~JgvQhpdAtu7VPwKbLR2K9fCVBS0Nv3BogSjCfrP24WNocfYiQtuRZGv1nbO20uA9dDak0Dn4H9FM1W~CmpeGXEvsJ7u~gW9LHmHVkMA9XteKjPmYHrwbfx-y1zSzoYNSKAcyS5AI2CIuiQP1MaoW-WLBhPoj7BDcTUt8gBnlcyBD-kqoaW4K3lNr2X7zMDXyQgsYPw__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -1643,7 +1921,7 @@
   {
     "id": 107211,
     "title": "What Are Prime Battle Events?",
-    "date_added": "2026-08-29 14:20:40",
+    "date_added": "2026-09-24 17:04:26",
     "details": {
       "announcement": {
         "id": 107211,
@@ -3925,7 +4203,7 @@
   {
     "id": 107152,
     "title": "Number of Dragon Stones Required to Forget a Hidden Potential Skill Permanently Reduced to 1!",
-    "date_added": "2026-08-29 03:27:11",
+    "date_added": "2026-09-24 17:03:29",
     "details": {
       "announcement": {
         "id": 107152,
@@ -3936,7 +4214,7 @@
             "image": "https://enaskhebnjtktdfszdcb.supabase.co/storage/v1/object/public/assets/mirror/banners/en/news/news_banner_senzai_camp_20240812_large.png",
             "description": "\r\nStarting {date:1787295600,D,L}, the number of Dragon Stones\r\nrequired to forget a Hidden Potential Skill has been\r\npermanently reduced from 5 to 1!\r\n\r\n* Please note that the event content and dates are\r\nsubject to change without prior warning.\r\n\r\nWe hope you continue to enjoy playing\r\nDragon Ball Z Dokkan Battle!",
             "layout_type": 0,
-            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_senzai_camp_20240812_large.png?Expires=1788015620&Signature=dF5Bhb2obWGcd0rb802Htet7Sj8V7rSrLm0YdV~M-EcJ~5TsSlDlEKJbZO5NiOrKO6ckaBlqlUJ6lb~5hh58~Y94CzvXgdGN7WAxHzYFe1adET6JcBVK2QnrJpssLn~45kLVsW03~T0Kq7trPapqkH0zmlvbvnP6VbBTcWuvHuGPkysu33f2LZOqO9qeH-KgQ4tkml2lOAVA~t7nut~ywuSw7qYHbEDMlFNcEMW4nS2VaZqcE9wpY9EPhlnkJqYc8lGFEzaHry-BWPv3UseOMl9ikKal8B72SqnqqqBH3fyaqJBgdtNCp8~Wtt-6FKYun49l1bD3h8b23wzAqvmkiQ__&Key-Pair-Id=K1NMPEQJEGU0H7"
+            "image_original": "https://cf.ishin-global.aktsk.com/banners/en/news/news_banner_senzai_camp_20240812_large.png?Expires=1790312540&Signature=FKAhCbb-5kHo2UvPJ4q1KO-Nl68Y3haifi5wmTQIsmnjiGEkhBpQCK0GB4k81LHGJPQ4~mH4QHWCOkhzhi4d4YvadJBsV8EOg-7p4IozLKGleRBujl0iWCo6cu686ticsNAgt5I-zVeq-N1GMuop4msNJv4Nlh2YJxxN5Npb4mWs9zx-5nlr8CY4TP9OwYZfTmyMt1E-nzcvLPY1vEPoERCNnDpka45~uPHaeuZxwpZGXpaDo~D007xEKm7D4Gtg5gwYeyY-XZgs66G0YVCwXIgnjHVj7chDIb87UVv1zj8lsZFHtKPfY3bsr-ZjewFzoUfe5NBP26V2mzRo2OGnQA__&Key-Pair-Id=K1NMPEQJEGU0H7"
           }
         ],
         "is_new": false,
@@ -5392,7 +5670,7 @@
   {
     "id": 107147,
     "title": "OS Before \"Android 9.0\" Will  Soon No Longer Be Supported",
-    "date_added": "2026-09-17 04:15:55",
+    "date_added": "2026-09-24 17:04:13",
     "details": {
       "announcement": {
         "id": 107147,

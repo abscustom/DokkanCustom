@@ -438,28 +438,6 @@ function setFxAnimationMode(fxMode) {
 
 window.setFxAnimationMode = setFxAnimationMode;
 
-// Background-shader settings are deliberately separate from Card FX. Keep the
-// persisted choice as a body class so every page can restore its own original
-// background immediately when the shader is switched off.
-function setFlutedGlassEnabled(value) {
-    const enabled = value === true || value === 'on';
-    localStorage.setItem('fluted_glass_enabled', enabled ? 'on' : 'off');
-    document.body.classList.toggle('fluted-glass-disabled', !enabled);
-    document.querySelectorAll('[data-fluted-glass-mode]').forEach((button) => {
-        const isActive = (button.dataset.flutedGlassMode === 'on') === enabled;
-        button.classList.toggle('active', isActive);
-        button.setAttribute('aria-pressed', String(isActive));
-    });
-}
-
-window.setFlutedGlassEnabled = setFlutedGlassEnabled;
-document.addEventListener('click', (event) => {
-    const button = event.target.closest?.('[data-fluted-glass-mode]');
-    if (!button) return;
-    event.preventDefault();
-    setFlutedGlassEnabled(button.dataset.flutedGlassMode);
-});
-
 function handleSourceChange(source) {
     currentSourceFilter = source;
     filterCards(true);

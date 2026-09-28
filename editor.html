@@ -31,21 +31,22 @@
     <!-- STYLESHEETS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=20260914-abs-clean-filters-settings-v1">
-    <link rel="stylesheet" href="css/ui-toast.css?v=20260913-toast-fade-v1">
-    <link rel="stylesheet" href="css/dokkan-info.css?v=20260914-squared-orange-v1">
-    <link rel="stylesheet" href="css/abs-style-layout.css?v=20260921-sa-type-pill-v2">
-    <link rel="stylesheet" href="css/editor-ui.css?v=20260920-sa-hover-v1">
-    <link rel="stylesheet" href="css/card-inspector.css?v=20260830-abs-editor-outline">
+    <link rel="stylesheet" href="css/ui-toast.css?v=20260924-passive-undo-feedback-v1">
+    <link rel="stylesheet" href="css/dokkan-info.css?v=20260924-info-transformations-v2">
+    <link rel="stylesheet" href="css/abs-style-layout.css?v=20260925-passive-header-shadow-v1">
+    <link rel="stylesheet" href="css/editor-ui.css?v=20260926-sa-reorder-controls-v2">
+    <link rel="stylesheet" href="css/card-inspector.css?v=20260924-info-grid-align-v1">
     <link rel="stylesheet" href="css/lwf.css?v=20260906-abs-clean-art-hover-exact-v6">
-<link rel="stylesheet" href="css/abs-clean.css?v=20260921-stationary-stat-badges-v5">
+<link rel="stylesheet" href="css/abs-clean.css?v=20260926-clean-sa-pill-alignment-v27">
     <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v12">
     <link rel="stylesheet" href="css/card-admin.css?v=20260913-toast-fade-v1">
     <link rel="stylesheet" href="css/sba-side-dock.css?v=20260902-search-filter-placement-v7">
     <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260914-stars-bg-v4">
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-published-lock-v1">
+<link rel="stylesheet" href="css/abs-clean-presentation.css?v=20260927-clean-presentation-v53">
 
     <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
-    <script src="js-card-details/card-image-interceptor.js"></script>
+    <script src="js-card-details/card-image-interceptor.js?v=20260924-empty-image-guard-v1"></script>
 </head>
 <body class="theme-dokkaninfo editor-tool-page">
     <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-editor-content-ready" data-loader-ready-flag="absEditorContentReady">
@@ -386,7 +387,7 @@
             <span>+ Active</span>
         </button>
 
-        <button type="button" class="hud-nav-link top-hud-btn" id="add-forms-sidebar-btn" onclick="window.addFormsSection()" aria-label="Forms" title="Add Transformation Form">
+        <button type="button" class="hud-nav-link top-hud-btn" id="add-forms-sidebar-btn" onclick="window.addFormsSection()" aria-label="Add Transformation" title="Add Transformation">
             <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                 <circle cx="18" cy="5" r="3"/>
                 <circle cx="6" cy="12" r="3"/>
@@ -394,7 +395,7 @@
                 <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/>
                 <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/>
             </svg>
-            <span>+ Forms</span>
+            <span>+ Transformation</span>
         </button>
 
         <div class="top-hud-divider" role="separator" aria-orientation="vertical"></div>
@@ -435,6 +436,15 @@
                 <line x1="12" y1="15" x2="12" y2="3"/>
             </svg>
             <span>Export JSON</span>
+        </button>
+
+        <button type="button" class="hud-nav-link top-hud-btn" id="editor-history-button" onclick="window.openEditorHistory?.()" aria-label="History" title="View recent editor history">
+            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M3 12a9 9 0 1 0 2.64-6.36L3 8"/>
+                <path d="M3 3v5h5"/>
+                <path d="M12 7v5l3 2"/>
+            </svg>
+            <span>History</span>
         </button>
 
         <div class="top-hud-divider published-editor-actions-divider" role="separator" aria-orientation="vertical"></div>
@@ -661,7 +671,7 @@
         <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
             
             <!-- 1. DOKKAN INFO LAYOUT (100% UNTOUCHED & AUTHENTIC) -->
-            <div id="layout-dokkaninfo">
+            <div id="layout-dokkaninfo" data-card-layout="dokkaninfo">
                 <div class="row align-items-start">
                     <div class="col-xl-4">
                         <div class="row padding-left-right-1 margin-top-5">
@@ -862,16 +872,11 @@
             </div>
 
             <!-- 2. ABS.STYLE 3D LAYOUT (MATCHING CARD INSPECTOR VIEWER 1:1) -->
-            <div id="layout-abs-style" style="display: none;">
+            <div id="layout-abs-style" data-card-layout="abs-style" style="display: none;">
                 
                 <!-- HEADER -->
                 <div class="abs-top-header">
                     <div class="abs-header-left">
-                        <!-- ABS.CLEAN moves this live badge strip into the top
-                             utility lane above the Passive Skill title. -->
-                        <div id="abs-clean-ability-docks" class="abs-clean-ability-docks" hidden>
-                            <div id="abs-clean-passive-icons" aria-label="Detected passive abilities"></div>
-                        </div>
                         <div id="abs-clean-awakening-portraits" aria-label="Awakening portraits" hidden>
                             <div class="abs-clean-awakening-portrait abs-clean-awakening-portrait--ssr" title="Edit SSR thumbnail" hidden>
                                 <span class="abs-clean-awakening-portrait-label">SSR</span>
@@ -945,6 +950,11 @@
 
                         <!-- PASSIVE SKILL (WITH SMART IN-GAME ABILITY ICONS STRIP) -->
                         <div class="abs-box" id="abs-passive-skill-box" data-edit="passive">
+                            <!-- ABS.Style keeps badges with this section; ABS.CLEAN moves
+                                 the live strip into its character header. -->
+                            <div id="abs-clean-ability-docks" class="abs-clean-ability-docks" hidden>
+                                <div id="abs-clean-passive-icons" aria-label="Detected passive abilities"></div>
+                            </div>
                             <div id="abs-passive-summary" class="abs-passive-summary" hidden aria-label="Passive percentage totals"></div>
                             <div class="abs-header justify-content-center text-center" id="abs-passive-name">
                                 <div class="abs-passive-header-title justify-content-center text-center">
@@ -1296,38 +1306,42 @@
 </div>
 
 <!-- JAVASCRIPT MODULES -->
-    <script src="js-card-details/card-helpers.js?v=20260914-abs-clean-enhancements-v1"></script>
+<script src="js-card-details/card-layout-roots.js?v=20260924-info-transformations-v2"></script>
+<script src="js-card-details/card-helpers.js?v=20260927-clean-layout-runtime-v3"></script>
 <script src="js-card-details/abs-category-art-toggle.js?v=20260910-abs-clean-art-toggle-v93"></script>
-<script src="js-card-details/card-formatters.js?v=20260916-sa-pills-v1"></script>
-<script src="js-card-details/card-renderers.js?v=20260918-v13"></script>
-    <script src="js-card-details/card-partners.js?v=20260914-theme-switch-v1"></script>
+<script src="js-card-details/card-formatters.js?v=20260924-theme-render-isolation-v1"></script>
+<script src="js-card-details/card-renderers.js?v=20260927-clean-field-container-v1"></script>
+    <script src="js-card-details/card-partners.js?v=20260925-clean-layout-runtime-v2"></script>
 <script src="js-editor/01-state.js?v=20260830-progression-controls"></script>
 <script src="js-editor/02-icon-picker.js"></script>
-<script src="js-editor/03-core.js?v=20260914-dokkaninfo-rarity-v2"></script>
+<script src="js-editor/03-core.js?v=20260924-theme-art-reset-v1"></script>
 <script src="js-editor/04-stats.js"></script>
-<script src="js-editor/05-passive.js?v=20260830-editor-fixes"></script>
+<script src="js-editor/05-passive.js?v=20260923-guard-damage-reduction-v1"></script>
 <script src="js-editor/06-links-categories.js?v=20260910-abs-clean-links-partners-split-v1"></script>
 <script src="js-editor/07-ui-sync.js?v=20260914-dokkaninfo-rarity-v2"></script>
-<script src="js-editor/08-forms.js?v=20260910-abs-clean-forms-circles-v1"></script>
-<script src="js-editor/09-super-attacks.js"></script>
+<script src="js-editor/08-forms.js?v=20260924-info-forms-preview-v1"></script>
+<script src="js-editor/09-super-attacks.js?v=20260926-sa-reorder-v1"></script>
 <script src="js-editor/10-awakening.js"></script>
 <script src="js-editor/11-active-skills.js?v=20260912-active-standby-kind-v4"></script>
-<script src="js-editor/12-export.js?v=20260922-custom-runtime-v1"></script>
+<script src="js-editor/12-export.js?v=20260926-clean-motion-update-v1"></script>
 <script src="js-editor/13-github.js"></script>
 <script src="js-editor/14-assets.js?v=20260914-dokkaninfo-rarity-v2"></script>
 <script src="js-editor/15-parser.js?v=20260912-standby-kind-v4"></script>
-<script src="js-editor/16-cache.js?v=20260914-published-lock-v1"></script>
-<script src="js-editor/17-theme.js?v=20260920-category-glow-v2"></script>
-<script src="js-editor/18-init.js?v=20260914-published-lock-v1"></script>
-<script src="js-editor/19-click-to-edit.js?v=20260920-sa-selection-v1"></script>
-<script src="js-editor/20-card-importer.js?v=20260914-abs-clean-enhancements-v1"></script>
+<script src="js-editor/16-cache.js?v=20260924-theme-art-cache-v2"></script>
+    <script src="js-editor/17-theme.js?v=20260926-sa-order-v1"></script>
+<script src="js-editor/18-init.js?v=20260923-idb-autosave-v1"></script>
+<script src="js-editor/19-click-to-edit.js?v=20260926-sa-reorder-v2&amp;fix=20260924-sa-actions-visible-v1&amp;clean-passive-badges=v3"></script>
+<script src="js-editor/20-card-importer.js?v=20260925-style-passive-badges-v1"></script>
 <script src="js-editor/21-card-admin.js?v=20260922-custom-runtime-v1"></script>
 <script src="js-graphics/lwf.js"></script>
 <script type="module" src="js-graphics/lwf-loader.js?v=20260907-abs-clean-media-restart-v2"></script>
 <script src="js/ui-toast.js?v=2"></script>
+<script src="js-editor/22-editor-history.js?v=20260923-session-history-v1"></script>
 <script src="js/sba-ring-effects.js?v=20260906-abs-clean-fx"></script>
 <script src="js/tool-sba-nav.js?v=20260914-published-lock-v1"></script>
 <script src="js/loading-screen.js?v=20260916-zoom-blur-fade-v12"></script>
 <script src="js/stars-pingpong.js?v=20260914-seamless-v3"></script>
+<script src="js-card-details/abs-clean-presentation.js?v=20260927-clean-presentation-v53"></script>
+<script src="js-editor/23-info-skill-presentation.js?v=20260924-info-source-render-v2"></script>
 </body>
 </html>

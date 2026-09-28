@@ -1,16 +1,14 @@
 /* Shared markup defaults: abs.clean slots are present in the common card DOM,
    but must stay out of dokkan.info and abs.style until abs.clean enables them. */
-#abs-clean-release-date,
+[data-card-element="abs-clean-release-date"],
 #abs-clean-info-bar,
 #abs-clean-leader-bar,
-#abs-clean-identity-icons,
-#abs-clean-name-badges,
-#abs-clean-ability-docks,
-#abs-clean-passive-icons,
-#abs-clean-awakening-portraits,
+[data-card-element="abs-clean-identity-icons"],
+[data-card-element="abs-clean-name-badges"],
+[data-card-element="abs-clean-awakening-portraits"],
 #abs-clean-summon-logo,
-#abs-clean-type-matchups,
-#abs-clean-portrait-stage,
+[data-card-element="abs-clean-type-matchups"],
+[data-card-element="abs-clean-portrait-stage"],
 #abs-clean-ascii-bg {
     display: none !important;
 }
@@ -101,12 +99,12 @@ body.is-published:not(.admin-mode-active) [data-edit],
 body.is-published:not(.admin-mode-active) .sa-block,
 body.is-published:not(.admin-mode-active) .active-block,
 body.is-published:not(.admin-mode-active) #forms-container,
-body.is-published:not(.admin-mode-active) #abs-transformations-box,
+body.is-published:not(.admin-mode-active) [data-card-element="abs-transformations-box"],
 body.is-published:not(.admin-mode-active) .card-art-canvas,
 body.is-published:not(.admin-mode-active) #ssr-row,
 body.is-published:not(.admin-mode-active) #tur-row,
 body.is-published:not(.admin-mode-active) .row.d-flex.flex-wrap.border.dokkan-card,
-body.is-published:not(.admin-mode-active) #abs-awakenings-box {
+body.is-published:not(.admin-mode-active) [data-card-element="abs-awakenings-box"] {
     cursor: default !important;
     outline: none !important;
     box-shadow: none !important;
@@ -1263,6 +1261,63 @@ table th b { color: #ffffff !important; }
 .safe-centered-frame { padding: 12px !important; }
 .card-art-canvas { position: relative; width: 426px; height: 568px; border-radius: inherit; overflow: hidden; }
 #myOverlayVideo, #myOverlayImage { position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; }
+
+.gui-image-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 190px), 1fr));
+    gap: 8px;
+}
+
+.gui-image-upload-card {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    align-items: center;
+    gap: 10px;
+    min-width: 0;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .24);
+}
+
+.gui-image-upload-card > img {
+    display: block;
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+    border-radius: 50%;
+    background: rgba(0, 0, 0, .35);
+}
+
+.gui-image-upload-card-controls,
+.gui-form-image-control {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 6px;
+    min-width: 0;
+}
+
+.gui-form-image-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
+}
+
+.gui-form-image-control > img {
+    display: block;
+    width: 100%;
+    height: 82px;
+    object-fit: contain;
+    border-radius: 4px;
+    background: rgba(0, 0, 0, .35);
+}
+
+@media (max-width: 520px) {
+    .gui-form-image-grid {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
 
 .active-selected-glow {
     outline: 3px solid #ffffff !important;
@@ -2505,16 +2560,16 @@ body.admin-mode-active .abs-box,
 body:not(.is-published) .abs-box,
 body.admin-mode-active .abs-header-text,
 body:not(.is-published) .abs-header-text,
-body.admin-mode-active #abs-art-dock-wrapper,
-body:not(.is-published) #abs-art-dock-wrapper,
-body.admin-mode-active #abs-composed-icon,
-body:not(.is-published) #abs-composed-icon,
-body.admin-mode-active #abs-awakenings-box,
-body:not(.is-published) #abs-awakenings-box,
-body.admin-mode-active #abs-transformations-box,
-body:not(.is-published) #abs-transformations-box,
-body.admin-mode-active #abs-stats-box,
-body:not(.is-published) #abs-stats-box,
+body.admin-mode-active [data-card-element="abs-art-dock-wrapper"],
+body:not(.is-published) [data-card-element="abs-art-dock-wrapper"],
+body.admin-mode-active [data-card-element="abs-composed-icon"],
+body:not(.is-published) [data-card-element="abs-composed-icon"],
+body.admin-mode-active [data-card-element="abs-awakenings-box"],
+body:not(.is-published) [data-card-element="abs-awakenings-box"],
+body.admin-mode-active [data-card-element="abs-transformations-box"],
+body:not(.is-published) [data-card-element="abs-transformations-box"],
+body.admin-mode-active [data-card-element="abs-stats-box"],
+body:not(.is-published) [data-card-element="abs-stats-box"],
 body.admin-mode-active #forms-card-wrapper,
 body:not(.is-published) #forms-card-wrapper {
     cursor: pointer !important;
@@ -2529,16 +2584,14 @@ body.admin-mode-active .abs-box:hover,
 body:not(.is-published) .abs-box:hover,
 body.admin-mode-active .abs-header-text:hover,
 body:not(.is-published) .abs-header-text:hover,
-body.admin-mode-active #abs-art-dock-wrapper:hover,
-body:not(.is-published) #abs-art-dock-wrapper:hover,
-body.admin-mode-active #abs-composed-icon:hover,
-body:not(.is-published) #abs-composed-icon:hover,
-body.admin-mode-active #abs-awakenings-box:hover,
-body:not(.is-published) #abs-awakenings-box:hover,
-body.admin-mode-active #abs-transformations-box:hover,
-body:not(.is-published) #abs-transformations-box:hover,
-body.admin-mode-active #abs-stats-box:hover,
-body:not(.is-published) #abs-stats-box:hover,
+body.admin-mode-active [data-card-element="abs-art-dock-wrapper"]:hover,
+body:not(.is-published) [data-card-element="abs-art-dock-wrapper"]:hover,
+body.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body:not(.is-published) [data-card-element="abs-transformations-box"]:hover,
+body.admin-mode-active [data-card-element="abs-stats-box"]:hover,
+body:not(.is-published) [data-card-element="abs-stats-box"]:hover,
 body.admin-mode-active #forms-card-wrapper:hover,
 body:not(.is-published) #forms-card-wrapper:hover {
     outline: 2px solid rgba(56, 189, 248, 0.8) !important;
@@ -2549,14 +2602,14 @@ body:not(.is-published) #forms-card-wrapper:hover {
 
 body.admin-mode-active .abs-box:hover,
 body:not(.is-published) .abs-box:hover,
-body.admin-mode-active #abs-awakenings-box:hover,
-body:not(.is-published) #abs-awakenings-box:hover,
-body.admin-mode-active #abs-transformations-box:hover,
-body:not(.is-published) #abs-transformations-box:hover,
-body.admin-mode-active #abs-stats-box:hover,
-body:not(.is-published) #abs-stats-box:hover,
-body.admin-mode-active #abs-art-dock-wrapper:hover,
-body:not(.is-published) #abs-art-dock-wrapper:hover {
+body.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body:not(.is-published) [data-card-element="abs-transformations-box"]:hover,
+body.admin-mode-active [data-card-element="abs-stats-box"]:hover,
+body:not(.is-published) [data-card-element="abs-stats-box"]:hover,
+body.admin-mode-active [data-card-element="abs-art-dock-wrapper"]:hover,
+body:not(.is-published) [data-card-element="abs-art-dock-wrapper"]:hover {
     border-radius: 12px !important;
 }
 
@@ -2572,19 +2625,19 @@ body:not(.is-published) #abs-art-dock-wrapper:hover {
 }
 
 .abs-box.active-selected-glow,
-#abs-awakenings-box.active-selected-glow,
-#abs-transformations-box.active-selected-glow,
-#abs-stats-box.active-selected-glow,
-#abs-art-dock-wrapper.active-selected-glow {
+[data-card-element="abs-awakenings-box"].active-selected-glow,
+[data-card-element="abs-transformations-box"].active-selected-glow,
+[data-card-element="abs-stats-box"].active-selected-glow,
+[data-card-element="abs-art-dock-wrapper"].active-selected-glow {
     border-radius: 12px !important;
 }
 
 /* Keep the ABS panel outlines above neighbouring panels. Linking Partners is
    intentionally excluded from editor hover treatment. */
-body.admin-mode-active #abs-awakenings-box:hover,
-body:not(.is-published) #abs-awakenings-box:hover,
-body.admin-mode-active #abs-transformations-box:hover,
-body:not(.is-published) #abs-transformations-box:hover {
+body.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body:not(.is-published) [data-card-element="abs-transformations-box"]:hover {
     position: relative !important;
     z-index: 10 !important;
     outline: 2px solid rgba(56, 189, 248, 0.8) !important;
@@ -2592,8 +2645,8 @@ body:not(.is-published) #abs-transformations-box:hover {
     box-shadow: 0 0 16px rgba(56, 189, 248, 0.45), inset 0 0 10px rgba(56, 189, 248, 0.12) !important;
 }
 
-body.admin-mode-active #abs-partners-box:hover,
-body:not(.is-published) #abs-partners-box:hover {
+body.admin-mode-active [data-card-element="abs-partners-box"]:hover,
+body:not(.is-published) [data-card-element="abs-partners-box"]:hover {
     cursor: default !important;
     outline: none !important;
     box-shadow: none !important;
@@ -2682,16 +2735,16 @@ body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-
 body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style .abs-box:hover,
 body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style .abs-header-text:hover,
 body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style .abs-header-text:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-art-dock-wrapper:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-art-dock-wrapper:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-composed-icon:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-composed-icon:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-awakenings-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-awakenings-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-transformations-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-transformations-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-stats-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-stats-box:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-art-dock-wrapper"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-art-dock-wrapper"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-composed-icon"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-composed-icon"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-awakenings-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-awakenings-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-transformations-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-transformations-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-stats-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-stats-box"]:hover,
 body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #forms-card-wrapper:hover,
 body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #forms-card-wrapper:hover,
 body.theme-abs-style.admin-mode-active [data-edit]:hover,
@@ -2702,16 +2755,16 @@ body.theme-abs-style.admin-mode-active .abs-box:hover,
 body.theme-abs-style:not(.is-published) .abs-box:hover,
 body.theme-abs-style.admin-mode-active .abs-header-text:hover,
 body.theme-abs-style:not(.is-published) .abs-header-text:hover,
-body.theme-abs-style.admin-mode-active #abs-art-dock-wrapper:hover,
-body.theme-abs-style:not(.is-published) #abs-art-dock-wrapper:hover,
-body.theme-abs-style.admin-mode-active #abs-composed-icon:hover,
-body.theme-abs-style:not(.is-published) #abs-composed-icon:hover,
-body.theme-abs-style.admin-mode-active #abs-awakenings-box:hover,
-body.theme-abs-style:not(.is-published) #abs-awakenings-box:hover,
-body.theme-abs-style.admin-mode-active #abs-transformations-box:hover,
-body.theme-abs-style:not(.is-published) #abs-transformations-box:hover,
-body.theme-abs-style.admin-mode-active #abs-stats-box:hover,
-body.theme-abs-style:not(.is-published) #abs-stats-box:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-art-dock-wrapper"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-art-dock-wrapper"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-composed-icon"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-composed-icon"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-stats-box"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-stats-box"]:hover,
 body.theme-abs-style.admin-mode-active #forms-card-wrapper:hover,
 body.theme-abs-style:not(.is-published) #forms-card-wrapper:hover {
     outline: 2px solid #22c55e !important;
@@ -2719,14 +2772,14 @@ body.theme-abs-style:not(.is-published) #forms-card-wrapper:hover {
     box-shadow: 0 0 16px rgba(34, 197, 94, 0.55), inset 0 0 10px rgba(34, 197, 94, 0.18) !important;
 }
 
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-awakenings-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-awakenings-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style #abs-transformations-box:hover,
-body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style #abs-transformations-box:hover,
-body.theme-abs-style.admin-mode-active #abs-awakenings-box:hover,
-body.theme-abs-style:not(.is-published) #abs-awakenings-box:hover,
-body.theme-abs-style.admin-mode-active #abs-transformations-box:hover,
-body.theme-abs-style:not(.is-published) #abs-transformations-box:hover {
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-awakenings-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-awakenings-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo).admin-mode-active #layout-abs-style [data-card-element="abs-transformations-box"]:hover,
+body:not(.theme-abs-clean):not(.theme-dokkaninfo):not(.is-published) #layout-abs-style [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-style.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-style:not(.is-published) [data-card-element="abs-transformations-box"]:hover {
     position: relative !important;
     z-index: 10 !important;
     outline: 2px solid #22c55e !important;
@@ -2747,8 +2800,8 @@ body.theme-abs-style #layout-abs-style .abs-header-text.active-selected-glow {
     box-shadow: inset 0 0 10px rgba(34, 197, 94, 0.25), 0 0 20px rgba(34, 197, 94, 0.85) !important;
 }
 
-body:not(.theme-abs-clean):not(.theme-dokkaninfo) #abs-partners-box:hover,
-body.theme-abs-style #abs-partners-box:hover {
+body:not(.theme-abs-clean):not(.theme-dokkaninfo) [data-card-element="abs-partners-box"]:hover,
+body.theme-abs-style [data-card-element="abs-partners-box"]:hover {
     cursor: default !important;
     outline: none !important;
     box-shadow: none !important;
@@ -2763,62 +2816,62 @@ body.theme-abs-clean.admin-mode-active .abs-box:hover,
 body.theme-abs-clean:not(.is-published) .abs-box:hover,
 body.theme-abs-clean.admin-mode-active .sa-block:hover,
 body.theme-abs-clean:not(.is-published) .sa-block:hover,
-body.theme-abs-clean.admin-mode-active #abs-sa-container > div:hover,
-body.theme-abs-clean:not(.is-published) #abs-sa-container > div:hover,
-body.theme-abs-clean.admin-mode-active #abs-stats-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-stats-box:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-sa-container"] > div:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-sa-container"] > div:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-stats-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-stats-box"]:hover,
 body.theme-abs-clean.admin-mode-active #abs-clean-header-stats:hover,
 body.theme-abs-clean:not(.is-published) #abs-clean-header-stats:hover,
 body.theme-abs-clean.admin-mode-active .abs-stat-cards-row:hover,
 body.theme-abs-clean:not(.is-published) .abs-stat-cards-row:hover,
 body.theme-abs-clean.admin-mode-active .abs-stat-slider-wrapper:hover,
 body.theme-abs-clean:not(.is-published) .abs-stat-slider-wrapper:hover,
-body.theme-abs-clean.admin-mode-active #abs-category-container:hover,
-body.theme-abs-clean:not(.is-published) #abs-category-container:hover,
-body.theme-abs-clean.admin-mode-active #abs-categories-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-categories-box:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-category-container"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-category-container"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-categories-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-categories-box"]:hover,
 body.theme-abs-clean.admin-mode-active .abs-category-switcher-content:hover,
 body.theme-abs-clean:not(.is-published) .abs-category-switcher-content:hover,
-body.theme-abs-clean.admin-mode-active #abs-passive-skill-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-passive-skill-box:hover,
-body.theme-abs-clean.admin-mode-active #abs-passive-container:hover,
-body.theme-abs-clean:not(.is-published) #abs-passive-container:hover,
-body.theme-abs-clean.admin-mode-active #abs-leader-skill-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-leader-skill-box:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-passive-skill-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-skill-box"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-passive-container"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-container"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-leader-skill-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-leader-skill-box"]:hover,
 body.theme-abs-clean.admin-mode-active #abs-clean-leader-bar:hover,
 body.theme-abs-clean:not(.is-published) #abs-clean-leader-bar:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-leader-banner-slot:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-leader-banner-slot:hover,
-body.theme-abs-clean.admin-mode-active #abs-link-skills-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-link-skills-box:hover,
-body.theme-abs-clean.admin-mode-active #abs-link-container:hover,
-body.theme-abs-clean:not(.is-published) #abs-link-container:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-link-skills-slot:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-link-skills-slot:hover,
-body.theme-abs-clean.admin-mode-active #abs-active-container > div:hover,
-body.theme-abs-clean:not(.is-published) #abs-active-container > div:hover,
-body.theme-abs-clean.admin-mode-active #abs-field-container > div:hover,
-body.theme-abs-clean:not(.is-published) #abs-field-container > div:hover,
-body.theme-abs-clean.admin-mode-active #abs-standby-container > div:hover,
-body.theme-abs-clean:not(.is-published) #abs-standby-container > div:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-leader-banner-slot"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-leader-banner-slot"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-link-skills-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-link-skills-box"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-link-container"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-link-container"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-link-skills-slot"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-link-skills-slot"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-active-container"] > div:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-active-container"] > div:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-field-container"] > div:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-field-container"] > div:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-standby-container"] > div:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-standby-container"] > div:hover,
 body.theme-abs-clean.admin-mode-active .active-block:hover,
 body.theme-abs-clean:not(.is-published) .active-block:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-portrait-stage:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-portrait-stage:hover,
-body.theme-abs-clean.admin-mode-active #abs-art-dock-wrapper:hover,
-body.theme-abs-clean:not(.is-published) #abs-art-dock-wrapper:hover,
-body.theme-abs-clean.admin-mode-active #abs-awakenings-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-awakenings-box:hover,
-body.theme-abs-clean.admin-mode-active #abs-transformations-box:hover,
-body.theme-abs-clean:not(.is-published) #abs-transformations-box:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-awakening-portraits:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-awakening-portraits:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-bottom-timeline:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-bottom-timeline:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-identity-icons:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-identity-icons:hover,
-body.theme-abs-clean.admin-mode-active #abs-clean-name-badges:hover,
-body.theme-abs-clean:not(.is-published) #abs-clean-name-badges:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-portrait-stage"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-portrait-stage"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-art-dock-wrapper"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-art-dock-wrapper"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-awakenings-box"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-awakening-portraits"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-awakening-portraits"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-bottom-timeline"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-bottom-timeline"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-identity-icons"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-identity-icons"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-clean-name-badges"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-clean-name-badges"]:hover,
 body.theme-abs-clean.admin-mode-active #abs-clean-info-bar:hover,
 body.theme-abs-clean:not(.is-published) #abs-clean-info-bar:hover,
 body.theme-abs-clean.admin-mode-active .abs-header-text:hover,
@@ -2837,20 +2890,20 @@ body.theme-abs-clean .dokkan-card.active-selected-glow,
 body.theme-abs-clean .abs-box.active-selected-glow,
 body.theme-abs-clean .sa-block.active-selected-glow,
 body.theme-abs-clean .active-block.active-selected-glow,
-body.theme-abs-clean #abs-sa-container > div.active-selected-glow,
-body.theme-abs-clean #abs-sa-container.active-selected-glow,
-body.theme-abs-clean #abs-stats-box.active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-sa-container"] > div.active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-sa-container"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-stats-box"].active-selected-glow,
 body.theme-abs-clean #abs-clean-header-stats.active-selected-glow,
-body.theme-abs-clean #abs-categories-box.active-selected-glow,
-body.theme-abs-clean #abs-category-container.active-selected-glow,
-body.theme-abs-clean #abs-passive-skill-box.active-selected-glow,
-body.theme-abs-clean #abs-passive-container.active-selected-glow,
-body.theme-abs-clean #abs-leader-skill-box.active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-categories-box"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-category-container"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-passive-skill-box"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-passive-container"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-leader-skill-box"].active-selected-glow,
 body.theme-abs-clean #abs-clean-leader-bar.active-selected-glow,
-body.theme-abs-clean #abs-link-skills-box.active-selected-glow,
-body.theme-abs-clean #abs-link-container.active-selected-glow,
-body.theme-abs-clean #abs-clean-portrait-stage.active-selected-glow,
-body.theme-abs-clean #abs-art-dock-wrapper.active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-link-skills-box"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-link-container"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-clean-portrait-stage"].active-selected-glow,
+body.theme-abs-clean [data-card-element="abs-art-dock-wrapper"].active-selected-glow,
 body.theme-abs-clean .abs-header-text.active-selected-glow {
     outline: 2px solid #ffffff !important;
     outline-offset: -2px !important;
@@ -2858,7 +2911,7 @@ body.theme-abs-clean .abs-header-text.active-selected-glow {
     border-radius: 0px !important;
 }
 
-body.theme-abs-clean #abs-partners-box:hover {
+body.theme-abs-clean [data-card-element="abs-partners-box"]:hover {
     cursor: default !important;
     outline: none !important;
     box-shadow: none !important;
@@ -3691,30 +3744,30 @@ body.theme-abs-clean #abs-partners-box:hover {
 }
 
 /* ABS Clean High-Specificity SA, Active, and Forms Container Outlines */
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-sa-container > .abs-box:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-sa-container > .abs-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style [data-edit="sa"]:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style [data-edit="sa"]:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-active-container > .abs-box:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-active-container > .abs-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-active-container:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-active-container:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style [data-edit="active"]:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style [data-edit="active"]:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style .abs-clean-active-rendered:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style .abs-clean-active-rendered:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-field-container > .abs-box:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-field-container > .abs-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-standby-container > .abs-box:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-standby-container > .abs-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style [data-abs-clean-section="forms"]:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style [data-abs-clean-section="forms"]:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-clean-awakening-forms-forms-slot:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-clean-awakening-forms-forms-slot:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-transformations-box:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-transformations-box:hover,
-body.theme-abs-clean:not(.is-published) #layout-abs-style #abs-transformations-container:hover,
-body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-transformations-container:hover {
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-sa-container"] > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-sa-container"] > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-edit="sa"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-edit="sa"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-active-container"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-active-container"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-edit="active"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-edit="active"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean .abs-clean-active-rendered:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean .abs-clean-active-rendered:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-field-container"] > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-field-container"] > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-abs-clean-section="forms"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-abs-clean-section="forms"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean #abs-clean-awakening-forms-forms-slot:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean #abs-clean-awakening-forms-forms-slot:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-transformations-box"]:hover,
+body.theme-abs-clean:not(.is-published) #layout-abs-clean [data-card-element="abs-transformations-container"]:hover,
+body.theme-abs-clean.admin-mode-active #layout-abs-clean [data-card-element="abs-transformations-container"]:hover {
     outline: 2px solid #ffffff !important;
     outline-offset: -2px !important;
     box-shadow: 0 0 16px rgba(255, 255, 255, 0.75), inset 0 0 10px rgba(255, 255, 255, 0.25) !important;
@@ -3722,21 +3775,1803 @@ body.theme-abs-clean.admin-mode-active #layout-abs-style #abs-transformations-co
     cursor: pointer !important;
 }
 
-body.theme-abs-clean #layout-abs-style #abs-sa-container > .abs-box.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-sa-container.active-selected-glow,
-body.theme-abs-clean #layout-abs-style [data-edit="sa"].active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-active-container > .abs-box.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-active-container.active-selected-glow,
-body.theme-abs-clean #layout-abs-style [data-edit="active"].active-selected-glow,
-body.theme-abs-clean #layout-abs-style .abs-clean-active-rendered.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-field-container > .abs-box.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-standby-container > .abs-box.active-selected-glow,
-body.theme-abs-clean #layout-abs-style [data-abs-clean-section="forms"].active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-clean-awakening-forms-forms-slot.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-transformations-box.active-selected-glow,
-body.theme-abs-clean #layout-abs-style #abs-transformations-container.active-selected-glow {
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-sa-container"] > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-sa-container"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-edit="sa"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"] > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-active-container"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-edit="active"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean .abs-clean-active-rendered.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-field-container"] > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-standby-container"] > .abs-box.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-abs-clean-section="forms"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean #abs-clean-awakening-forms-forms-slot.active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-box"].active-selected-glow,
+body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"].active-selected-glow {
     outline: 2px solid #ffffff !important;
     outline-offset: -2px !important;
     border-radius: 0px !important;
     box-shadow: inset 0 0 14px rgba(255, 255, 255, 0.5), 0 0 24px rgba(255, 255, 255, 0.95) !important;
+}
+
+/* Passive editing targets one section at a time. Keep container hover faint. */
+body.admin-mode-active [data-edit="passive"]:hover,
+body:not(.is-published) [data-edit="passive"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-passive-skill-box"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-skill-box"]:hover,
+body.theme-abs-clean.admin-mode-active [data-card-element="abs-passive-container"]:hover,
+body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-container"]:hover {
+    outline: 1px solid rgba(56, 189, 248, 0.2) !important;
+    outline-offset: -1px !important;
+    box-shadow: none !important;
+}
+
+#card-passive-container [id^="card-sec-"] {
+    transition: background-color 180ms ease, box-shadow 180ms ease, outline-color 180ms ease;
+}
+
+#card-passive-container [id^="card-sec-"]:hover,
+[data-card-element="abs-passive-container"] .abs-passive-section-title:hover,
+[data-card-element="abs-passive-container"] .abs-passive-list:hover {
+    background-color: rgba(56, 189, 248, 0.045) !important;
+}
+
+#card-passive-container [id^="card-sec-"].passive-section-edit-selected {
+    position: relative;
+    z-index: 1;
+    border-radius: 5px !important;
+    outline: 1px solid rgba(56, 189, 248, 0.8) !important;
+    outline-offset: 2px !important;
+    background-color: rgba(56, 189, 248, 0.075) !important;
+    box-shadow: 0 0 13px rgba(56, 189, 248, 0.28), inset 0 0 9px rgba(56, 189, 248, 0.07) !important;
+    animation: passive-section-pulse 2.2s ease-in-out infinite alternate;
+}
+
+[data-card-element="abs-passive-container"] .abs-passive-section-title.passive-section-edit-selected {
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(56, 189, 248, 0.8) !important;
+    border-bottom: 0 !important;
+    border-radius: 6px 6px 0 0;
+    padding: 5px 8px 2px !important;
+    background-color: rgba(56, 189, 248, 0.075) !important;
+    box-shadow: 0 -2px 12px rgba(56, 189, 248, 0.26), inset 0 6px 10px rgba(56, 189, 248, 0.06) !important;
+    animation: passive-section-pulse 2.2s ease-in-out infinite alternate;
+}
+
+[data-card-element="abs-passive-container"] .abs-passive-list.passive-section-edit-selected {
+    position: relative;
+    z-index: 1;
+    border: 1px solid rgba(56, 189, 248, 0.8) !important;
+    border-top: 0 !important;
+    border-radius: 0 0 6px 6px;
+    padding-top: 2px;
+    background-color: rgba(56, 189, 248, 0.075) !important;
+    box-shadow: 0 4px 12px rgba(56, 189, 248, 0.26), inset 0 -6px 10px rgba(56, 189, 248, 0.06) !important;
+    animation: passive-section-pulse 2.2s ease-in-out infinite alternate;
+}
+
+@keyframes passive-section-pulse {
+    from { filter: brightness(1); }
+    to { filter: brightness(1.13); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #card-passive-container [id^="card-sec-"].passive-section-edit-selected,
+    [data-card-element="abs-passive-container"] .abs-passive-section-title.passive-section-edit-selected,
+    [data-card-element="abs-passive-container"] .abs-passive-list.passive-section-edit-selected,
+    .active-skill-edit-selected {
+        animation: none !important;
+    }
+}
+
+#card-passive-container.passive-header-edit-selected,
+[data-card-element="abs-passive-skill-box"].passive-header-edit-selected,
+[data-card-element="abs-passive-container"].passive-header-edit-selected,
+[data-edit="passive"].passive-header-edit-selected {
+    position: relative;
+    z-index: 1;
+    outline: 2px solid rgba(56, 189, 248, 0.82) !important;
+    outline-offset: 3px;
+    box-shadow: 0 0 15px rgba(56, 189, 248, 0.22) !important;
+}
+
+.active-skill-edit-selected {
+    position: relative;
+    z-index: 1;
+    outline: 1px solid rgba(56, 189, 248, 0.78) !important;
+    outline-offset: 2px;
+    background-color: rgba(56, 189, 248, 0.055) !important;
+    box-shadow: 0 0 13px rgba(56, 189, 248, 0.24), inset 0 0 8px rgba(56, 189, 248, 0.05) !important;
+    animation: passive-section-pulse 2.4s ease-in-out infinite alternate;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .active-skill-edit-selected { animation: none !important; }
+}
+
+.passive-overview-heading-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+}
+
+.passive-overview-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 7px;
+}
+
+.passive-overview-heading-row > div:first-child span,
+.passive-overview-preview,
+.passive-editor-shortcut-label {
+    color: #a1a1aa;
+    font-size: 11px;
+}
+
+.passive-overview-list {
+    display: grid;
+    gap: 7px;
+}
+
+.passive-overview-row {
+    display: flex;
+    align-items: stretch;
+    gap: 6px;
+    padding: 7px;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 7px;
+    background: rgba(24, 24, 27, 0.88);
+}
+
+.passive-overview-select {
+    display: flex;
+    flex: 1 1 auto;
+    min-width: 0;
+    flex-direction: column;
+    gap: 4px;
+    padding: 2px;
+    border: 0;
+    color: #f4f4f5;
+    text-align: left;
+    background: transparent;
+    border-radius: 5px;
+    transition: background-color 0.15s ease, outline-color 0.15s ease;
+}
+
+.passive-overview-select:hover,
+.passive-overview-select:focus-visible {
+    outline: 1px solid rgba(56, 189, 248, 0.55);
+    background: rgba(56, 189, 248, 0.1);
+}
+
+.passive-overview-heading {
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.passive-overview-preview {
+    overflow-wrap: anywhere;
+}
+
+.passive-overview-actions,
+.passive-editor-step-buttons,
+.passive-editor-detail-actions {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.passive-editor-current-title {
+    flex: 1 1 auto;
+    min-width: 0;
+    color: #e4e4e7;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.passive-editor-section-fields {
+    padding: 10px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 8px;
+    background: rgba(24, 24, 27, 0.78);
+}
+
+.passive-editor-detail-actions {
+    justify-content: space-between;
+    margin-top: 10px;
+}
+
+@media (max-width: 560px) {
+    .passive-overview-row,
+    .passive-editor-navigation {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .passive-overview-actions,
+    .passive-editor-step-buttons {
+        justify-content: flex-end;
+    }
+}
+
+@media (max-width: 680px) {
+    #context-gui[data-context-type="passive"] {
+        top: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        max-height: 78vh !important;
+        max-height: 78dvh !important;
+        resize: none !important;
+        zoom: 1 !important;
+        padding: 12px !important;
+        border-radius: 16px 16px 0 0 !important;
+    }
+
+    #context-gui[data-context-type="passive"] #gui-content {
+        max-height: calc(78vh - 66px) !important;
+        max-height: calc(78dvh - 66px) !important;
+    }
+
+    #context-gui[data-context-type="passive"][data-passive-view="detail"] {
+        max-height: 56vh !important;
+        max-height: 56dvh !important;
+    }
+
+    #context-gui[data-context-type="passive"][data-passive-view="detail"] #gui-content {
+        max-height: calc(56vh - 66px) !important;
+        max-height: calc(56dvh - 66px) !important;
+    }
+
+    .passive-editor-navigation {
+        align-items: stretch;
+    }
+}
+
+.passive-editor-preview-wrap {
+    margin: 8px 0 10px;
+    padding: 8px;
+    border: 1px solid rgba(148, 163, 184, 0.25);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, 0.25);
+}
+
+.passive-editor-preview {
+    min-height: 26px;
+    margin-top: 4px;
+    color: #e4e4e7;
+    font-size: 12px;
+    line-height: 1.7;
+    overflow-wrap: anywhere;
+}
+
+.passive-editor-preview img {
+    width: 20px;
+    height: 20px;
+    margin: 0 2px;
+    object-fit: contain;
+    vertical-align: middle;
+}
+
+.passive-icon-picker {
+    margin: 8px 0 10px;
+    padding: 9px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 7px;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.passive-icon-picker-heading {
+    margin: 6px 0;
+    color: #d4d4d8;
+    font-size: 10px;
+    font-weight: 800;
+    letter-spacing: 0.5px;
+    text-transform: uppercase;
+}
+
+.passive-icon-choice-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(62px, 1fr));
+    gap: 5px;
+}
+
+.passive-icon-choice {
+    display: flex;
+    min-width: 0;
+    min-height: 58px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 3px;
+    padding: 4px;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 6px;
+    color: #e4e4e7;
+    background: rgba(24, 24, 27, 0.88);
+    cursor: pointer;
+}
+
+.passive-icon-choice:hover,
+.passive-icon-choice:focus-visible {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.14);
+    outline: 2px solid rgba(56, 189, 248, 0.32);
+}
+
+.passive-icon-choice img {
+    width: 26px;
+    height: 26px;
+    object-fit: contain;
+}
+
+.passive-icon-choice span {
+    width: 100%;
+    overflow: hidden;
+    color: #cbd5e1;
+    font-size: 9px;
+    line-height: 1.2;
+    text-align: center;
+    text-overflow: ellipsis;
+}
+
+.passive-icon-picker-all {
+    margin-top: 8px;
+    padding-top: 7px;
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.passive-icon-picker-all > summary,
+.gui-advanced-editor > summary {
+    color: #e4e4e7;
+    font-size: 11px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.passive-icon-picker-all[open] > summary,
+.gui-advanced-editor[open] > summary {
+    margin-bottom: 8px;
+}
+
+.gui-advanced-editor {
+    margin: 10px 0 4px;
+    padding: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.2);
+}
+
+.sa-editor-primary-fields {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(110px, 0.62fr) minmax(145px, 0.83fr);
+    gap: 8px;
+    align-items: end;
+    margin-bottom: 9px;
+}
+
+.sa-editor-multiplier-field output {
+    display: block;
+    min-height: 36px;
+    padding: 8px 10px;
+    border: 1px solid rgba(56, 189, 248, 0.35);
+    border-radius: 6px;
+    color: #7dd3fc;
+    font-size: 14px;
+    font-weight: 900;
+    background: rgba(8, 47, 73, 0.38);
+}
+
+.sa-editor-help {
+    display: block;
+    margin-top: 4px;
+    color: #a1a1aa;
+    font-size: 10px;
+}
+
+.sa-editor-section-heading span {
+    color: #a1a1aa;
+    font-size: 10px;
+    font-weight: 700;
+}
+
+.sa-editor-ki-field .input-group-text {
+    min-width: 42px;
+    justify-content: center;
+    color: #e4e4e7;
+    background: rgba(24, 24, 27, 0.92);
+    border-color: rgba(148, 163, 184, 0.35);
+    font-weight: 800;
+}
+
+.sa-editor-name-icon {
+    display: grid;
+    grid-template-columns: minmax(0, 1.25fr) minmax(200px, 0.75fr);
+    gap: 10px;
+    align-items: center;
+}
+
+.sa-editor-category-icons {
+    display: flex;
+    flex-wrap: nowrap;
+    gap: 5px;
+}
+
+.sa-editor-stats .sa-gui-icon-grid {
+    display: grid !important;
+    width: max-content !important;
+    max-width: 100%;
+    grid-template-columns: repeat(6, 42px) !important;
+    gap: 5px !important;
+    padding: 6px;
+}
+
+.sa-editor-stats .sa-gui-icon-opt {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px !important;
+    height: 42px !important;
+    padding: 4px;
+    border: 1px solid transparent;
+}
+
+.sa-editor-stats .sa-gui-icon-opt img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sa-editor-category-icons .sa-type-icon-opt,
+.active-editor-media-controls .sa-type-icon-opt {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 40px;
+    width: 40px;
+    height: 40px;
+    padding: 4px;
+}
+
+.sa-editor-category-icons .sa-type-icon-opt img,
+.active-editor-media-controls .sa-type-icon-opt img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sa-editor-effects textarea,
+.active-editor-effect textarea {
+    resize: vertical;
+}
+
+.sa-editor-section-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 8px;
+    color: #e4e4e7;
+    font-size: 12px;
+}
+
+.active-editor-name-field {
+    margin-bottom: 8px !important;
+}
+
+@media (max-width: 560px) {
+    .sa-editor-primary-fields {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    }
+
+    .sa-editor-multiplier-field {
+        grid-column: 1 / -1;
+    }
+
+    .sa-editor-name-icon {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sa-editor-category-icons {
+        flex-wrap: wrap;
+    }
+
+    .sa-editor-stats .sa-gui-icon-grid {
+        grid-template-columns: repeat(4, 42px) !important;
+    }
+}
+
+.active-editor-heading {
+    display: inline-block;
+    min-width: 0;
+    max-width: min(48vw, 440px);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+#context-gui[data-context-type="active"] .gui-title {
+    min-width: 0;
+    overflow: hidden;
+}
+
+/* Shared Passive / Active click-to-edit workspace. */
+#context-gui[data-context-type="passive"],
+#context-gui[data-context-type="active"] {
+    width: 800px;
+    min-width: 0;
+    max-width: calc(94vw / var(--click-to-edit-zoom, 0.8));
+}
+
+#context-gui[data-context-type="sa"] {
+    width: 760px;
+    min-width: 0;
+    max-width: calc(94vw / var(--click-to-edit-zoom, 0.8));
+}
+
+#context-gui[data-context-type="passive"] #gui-content,
+#context-gui[data-context-type="active"] #gui-content {
+    display: flex !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: min(70vh, 700px) !important;
+    overflow: hidden !important;
+    padding: 4px !important;
+    scrollbar-gutter: stable;
+    box-sizing: border-box !important;
+}
+
+.click-editor-layout,
+.click-editor-layout * {
+    box-sizing: border-box;
+    min-width: 0;
+}
+
+.click-editor-layout {
+    display: grid;
+    grid-template-columns: 164px minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    height: min(70vh, 700px);
+    max-height: min(70vh, 700px);
+    min-height: 340px;
+    overflow: hidden;
+}
+
+.context-editor-symbol-rail {
+    display: flex;
+    min-height: 0;
+    flex-direction: column;
+    gap: 7px;
+    padding: 8px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    border-radius: 8px;
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.context-editor-symbol-heading {
+    color: #e4e4e7;
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.3px;
+}
+
+.context-editor-symbol-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+}
+
+.context-editor-symbol-button {
+    display: flex;
+    width: 100%;
+    height: 46px;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    padding: 5px;
+    overflow: hidden;
+    border: 1px solid rgba(148, 163, 184, 0.22);
+    border-radius: 6px;
+    color: #e4e4e7;
+    background: rgba(24, 24, 27, 0.88);
+    cursor: pointer;
+}
+
+.context-editor-symbol-button:hover,
+.context-editor-symbol-button:focus-visible {
+    border-color: #38bdf8;
+    background: rgba(56, 189, 248, 0.16);
+    outline: 2px solid rgba(56, 189, 248, 0.26);
+}
+
+.context-editor-symbol-button img {
+    width: 28px;
+    height: 28px;
+    object-fit: contain;
+}
+
+.context-editor-symbol-more {
+    min-height: 0;
+    padding-top: 7px;
+    overflow: hidden;
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.context-editor-symbol-more > summary {
+    color: #e4e4e7;
+    font-size: 10px;
+    font-weight: 800;
+    cursor: pointer;
+}
+
+.context-editor-symbol-more[open] > summary {
+    margin-bottom: 6px;
+}
+
+.context-editor-symbol-more-list {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-auto-rows: 46px;
+    gap: 5px;
+    padding: 1px 2px 4px 0;
+    max-height: 34vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: none;
+}
+
+.click-editor-fields {
+    display: flex;
+    min-height: 0;
+    min-width: 0;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.click-editor-fields-scroll {
+    flex: 1 1 auto;
+    min-height: 0;
+    min-width: 0;
+    padding: 8px 10px 8px 4px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    scrollbar-gutter: stable;
+    scrollbar-width: none;
+    box-sizing: border-box;
+}
+
+.click-editor-fields-scroll:focus-visible,
+.context-editor-symbol-more-list:focus-visible {
+    outline: 1px solid rgba(56, 189, 248, 0.62);
+    outline-offset: -1px;
+}
+
+.click-editor-fields-scroll::-webkit-scrollbar,
+.context-editor-symbol-more-list::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.click-editor-fields-scroll > *,
+.click-editor-fields-scroll .form-control,
+.click-editor-fields-scroll .gui-section-box,
+.click-editor-fields-scroll .gui-advanced-editor {
+    max-width: 100%;
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+.click-editor-fields-scroll textarea {
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    resize: vertical;
+}
+
+.click-editor-symbol-toggle {
+    display: none;
+    flex: 0 0 auto;
+    margin: 0 4px 6px;
+    padding: 6px 10px;
+    border: 1px solid rgba(148, 163, 184, 0.32);
+    border-radius: 6px;
+    color: #e4e4e7;
+    background: rgba(24, 24, 27, 0.92);
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.click-editor-action-bar {
+    flex: 0 0 auto;
+    padding: 7px 4px 2px;
+    border-top: 1px solid rgba(148, 163, 184, 0.22);
+    background: rgba(8, 10, 15, 0.34);
+}
+
+.click-editor-action-bar .passive-editor-detail-actions,
+.click-editor-action-bar .active-editor-action-buttons {
+    display: flex;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.passive-editor-navigation,
+.active-editor-navigation {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    flex: 0 0 auto;
+    min-width: 0;
+    margin: 0 4px 7px;
+    color: #e4e4e7;
+    font-size: 11px;
+    font-weight: 800;
+}
+
+.passive-editor-current-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    line-height: 1.35;
+}
+
+.passive-editor-nav-row {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+}
+
+.passive-editor-nav-row .gui-preset-btn {
+    flex: 0 0 auto;
+    white-space: nowrap;
+}
+
+.passive-editor-section-fields {
+    padding: 10px;
+}
+
+.passive-editor-preview-wrap {
+    width: 100%;
+    text-align: left;
+}
+
+.passive-editor-preview-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.passive-editor-preview {
+    width: 100%;
+    text-align: left;
+    overflow-wrap: anywhere;
+}
+
+.passive-editor-preview[hidden] {
+    display: none !important;
+}
+
+.passive-preview-toggle {
+    flex: 0 0 auto;
+    padding: 4px 7px;
+    font-size: 10px;
+}
+
+.active-editor-effect textarea {
+    min-height: 190px;
+}
+
+@media (max-width: 680px) {
+    #context-gui[data-context-type="passive"],
+    #context-gui[data-context-type="active"] {
+        position: fixed !important;
+        top: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        max-height: 78vh !important;
+        max-height: 78dvh !important;
+        resize: none !important;
+        zoom: 1 !important;
+        padding: 12px !important;
+        border-radius: 16px 16px 0 0 !important;
+        height: 78vh !important;
+        height: 78dvh !important;
+    }
+
+    #context-gui[data-context-type="passive"][data-passive-view="detail"] {
+        max-height: 78vh !important;
+        max-height: 78dvh !important;
+    }
+
+    #context-gui[data-context-type="passive"] #gui-content,
+    #context-gui[data-context-type="active"] #gui-content {
+        flex: 1 1 0 !important;
+        height: 0 !important;
+        max-height: none !important;
+        padding: 2px !important;
+        overflow: hidden !important;
+    }
+
+    .click-editor-layout {
+        display: flex;
+        flex: 1 1 0;
+        height: auto;
+        max-height: none;
+        min-height: 0;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .click-editor-fields {
+        flex: 1 1 0;
+    }
+
+    .context-editor-symbol-rail {
+        display: none;
+        flex: 0 0 auto;
+        max-height: 38dvh;
+        padding: 6px;
+    }
+
+    .click-editor-layout.symbols-open .context-editor-symbol-rail {
+        display: flex;
+    }
+
+    .context-editor-symbol-quick-picks {
+        grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+
+    .context-editor-symbol-button {
+        min-height: 44px;
+    }
+
+    .context-editor-symbol-more-list {
+        max-height: 14dvh;
+    }
+
+    .sa-editor-primary-fields {
+        grid-template-columns: minmax(0, 1fr) minmax(95px, 0.7fr);
+    }
+
+    .sa-editor-multiplier-field {
+        grid-column: 1 / -1;
+    }
+
+    .sa-editor-name-icon {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sa-editor-category-icons {
+        flex-wrap: wrap;
+    }
+
+    .click-editor-symbol-toggle {
+        display: block;
+    }
+
+    .click-editor-fields-scroll {
+        min-height: 0;
+        padding: 5px 8px 8px 4px;
+    }
+
+    .passive-editor-navigation {
+        flex-wrap: wrap;
+    }
+
+    .passive-editor-current-title {
+        order: -1;
+        flex-basis: 100%;
+    }
+
+    .passive-editor-navigation .gui-preset-btn {
+        min-height: 34px;
+    }
+
+    .click-editor-action-bar .passive-editor-detail-actions,
+    .click-editor-action-bar .active-editor-action-buttons {
+        justify-content: stretch;
+    }
+
+    .click-editor-action-bar .gui-preset-btn,
+    .click-editor-action-bar .btn-danger {
+        flex: 1 1 auto;
+        min-width: 0;
+        white-space: normal;
+    }
+
+}
+
+/* Passive click-to-edit navigation and preview refinements. */
+.click-editor-layout-passive-overview {
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.click-editor-layout-passive-overview .context-editor-symbol-rail,
+.click-editor-layout-passive-overview .click-editor-symbol-toggle {
+    display: none !important;
+}
+
+.passive-overview-heading-row {
+    display: block;
+    width: 100%;
+    margin: 0 0 10px;
+}
+
+.passive-overview-heading-row .passive-overview-top-actions {
+    display: grid;
+    width: 100%;
+    grid-template-columns: minmax(0, 1fr);
+}
+
+.passive-overview-heading-row .passive-overview-top-actions > button {
+    width: 100%;
+    min-width: 0;
+    white-space: normal;
+}
+
+.passive-overview-copy-btn {
+    display: inline-grid;
+    width: 30px;
+    min-width: 30px;
+    height: 30px;
+    padding: 5px;
+    place-items: center;
+}
+
+.passive-overview-copy-btn svg {
+    width: 16px;
+    height: 16px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.8;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+/* Resizable click editors keep their field rails inside the available height.
+   The fields own scrolling so fixed action rows remain reachable. */
+#context-gui[data-context-type="passive"],
+#context-gui[data-context-type="active"],
+#context-gui[data-context-type="sa"] {
+    min-width: 0 !important;
+    max-width: calc(96vw / var(--click-to-edit-zoom, 0.8)) !important;
+    max-height: calc(88vh / var(--click-to-edit-zoom, 0.8)) !important;
+    box-sizing: border-box !important;
+}
+
+#context-gui[data-context-type="passive"] #gui-content,
+#context-gui[data-context-type="active"] #gui-content,
+#context-gui[data-context-type="sa"] #gui-content {
+    display: flex !important;
+    flex: 1 1 auto !important;
+    height: auto !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: min(70vh, 700px) !important;
+    padding: 4px !important;
+    overflow: hidden !important;
+    scrollbar-gutter: stable;
+    box-sizing: border-box !important;
+}
+
+#context-gui[data-context-type="sa"] #gui-content {
+    flex-direction: column;
+}
+
+.click-editor-layout,
+.sa-editor-layout {
+    flex: 1 1 auto !important;
+    grid-template-rows: minmax(0, 1fr);
+    height: auto !important;
+    max-height: min(70vh, 700px) !important;
+    min-height: 0 !important;
+}
+
+.context-editor-symbol-rail {
+    min-height: 0;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+.context-editor-symbol-rail::-webkit-scrollbar,
+.sa-editor-stat-rail::-webkit-scrollbar,
+.sa-editor-fields-scroll::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
+}
+
+.context-editor-symbol-more {
+    flex: 0 0 auto;
+    min-width: 0;
+}
+
+.context-editor-symbol-more-list {
+    max-height: min(34vh, 280px);
+    overscroll-behavior: contain;
+}
+
+.click-editor-fields-scroll {
+    min-height: 0;
+    min-width: 0;
+    padding-bottom: 12px;
+    overscroll-behavior: contain;
+}
+
+.passive-overview-actions:not(.passive-overview-top-actions) {
+    flex: 0 0 auto;
+    flex-wrap: nowrap;
+    white-space: nowrap;
+}
+
+.passive-overview-actions:not(.passive-overview-top-actions) > button {
+    flex: 0 0 30px;
+}
+
+#context-gui[data-context-type="sa"] {
+    width: 960px !important;
+}
+
+.sa-editor-layout {
+    display: grid;
+    grid-template-columns: minmax(174px, 0.34fr) minmax(0, 1fr);
+    align-items: stretch;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+}
+
+.sa-editor-stat-rail,
+.sa-editor-fields-scroll {
+    min-width: 0;
+    min-height: 0;
+    box-sizing: border-box;
+}
+
+.sa-editor-stat-rail {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+    border: 1px solid rgba(148, 163, 184, 0.24);
+    background: rgba(0, 0, 0, 0.24);
+}
+
+.sa-editor-quick-picks {
+    display: grid !important;
+    width: 100% !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    grid-auto-rows: 40px;
+    gap: 5px !important;
+    padding: 4px !important;
+}
+
+.sa-editor-quick-picks .sa-gui-icon-opt {
+    display: grid !important;
+    width: 100% !important;
+    min-width: 0 !important;
+    height: 40px !important;
+    min-height: 40px !important;
+    padding: 4px !important;
+    place-items: center;
+}
+
+.sa-editor-quick-picks .sa-gui-icon-opt img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.sa-editor-persistent-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 5px;
+    margin: 0 !important;
+}
+
+.sa-editor-persistent-actions .gui-preset-btn {
+    width: 100%;
+    min-width: 0;
+    padding-inline: 4px !important;
+    white-space: nowrap;
+}
+
+.sa-editor-fields-scroll {
+    height: 100%;
+    padding: 8px 10px 12px 4px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: none;
+}
+
+.sa-editor-primary-fields {
+    grid-template-columns: minmax(220px, 1.45fr) minmax(120px, 0.58fr) minmax(150px, 0.85fr);
+}
+
+.sa-editor-ki-field .form-control,
+.sa-editor-ki-field .input-group-text,
+#gui-sa-multiplier-preview {
+    border-radius: 0 !important;
+}
+
+.sa-editor-name-icon {
+    grid-template-columns: minmax(0, 1.25fr) minmax(220px, 0.75fr);
+}
+
+.sa-editor-name-icon > div:last-child {
+    min-width: 0;
+    text-align: center;
+}
+
+.sa-editor-category-icons {
+    display: grid;
+    grid-template-columns: repeat(4, 42px);
+    justify-content: center;
+    gap: 6px;
+}
+
+.sa-editor-category-icons .sa-type-icon-opt {
+    flex: 0 0 42px;
+    width: 42px;
+    height: 42px;
+}
+
+@media (max-width: 680px) {
+    #context-gui[data-context-type="passive"],
+    #context-gui[data-context-type="active"],
+    #context-gui[data-context-type="sa"] {
+        position: fixed !important;
+        top: auto !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        width: 100vw !important;
+        min-width: 0 !important;
+        max-width: 100vw !important;
+        height: 84vh !important;
+        height: 84dvh !important;
+        max-height: 84vh !important;
+        max-height: 84dvh !important;
+        resize: none !important;
+        zoom: 1 !important;
+        padding: 12px !important;
+        border-radius: 16px 16px 0 0 !important;
+    }
+
+    #context-gui[data-context-type="passive"] #gui-content,
+    #context-gui[data-context-type="active"] #gui-content,
+    #context-gui[data-context-type="sa"] #gui-content {
+        flex: 1 1 0 !important;
+        height: 0 !important;
+        max-height: none !important;
+        padding: 2px !important;
+    }
+
+    .click-editor-layout {
+        display: flex !important;
+        flex: 1 1 0 !important;
+        height: auto !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        flex-direction: column;
+        gap: 5px;
+    }
+
+    .click-editor-fields {
+        flex: 1 1 0;
+    }
+
+    .context-editor-symbol-rail {
+        display: none;
+        flex: 0 1 auto;
+        max-height: 38dvh;
+        padding: 6px;
+    }
+
+    .click-editor-layout.symbols-open .context-editor-symbol-rail {
+        display: flex;
+    }
+
+    .context-editor-symbol-more-list {
+        max-height: 14dvh;
+    }
+
+    .passive-overview-actions:not(.passive-overview-top-actions) {
+        flex-wrap: nowrap;
+    }
+
+    .sa-editor-layout {
+        display: flex;
+        flex: 1 1 0 !important;
+        height: 100% !important;
+        max-height: none !important;
+        min-height: 0 !important;
+        flex-direction: column;
+        gap: 6px;
+    }
+
+    .sa-editor-stat-rail {
+        flex: 0 1 auto;
+        max-height: 30dvh;
+        padding: 6px;
+    }
+
+    .sa-editor-quick-picks {
+        grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+        grid-auto-rows: 36px;
+    }
+
+    .sa-editor-quick-picks .sa-gui-icon-opt {
+        height: 36px !important;
+        min-height: 36px !important;
+    }
+
+    .sa-editor-fields-scroll {
+        flex: 1 1 0;
+        height: 0;
+        padding: 5px 8px 12px 4px;
+    }
+
+    .sa-editor-primary-fields {
+        grid-template-columns: minmax(0, 1fr) minmax(100px, 0.7fr);
+    }
+
+    .sa-editor-primary-fields > div:first-child {
+        grid-column: 1 / -1;
+    }
+
+    .sa-editor-multiplier-field {
+        grid-column: auto;
+    }
+
+    .sa-editor-name-icon {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sa-editor-category-icons {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+    }
+}
+
+.passive-editor-navigation {
+    gap: 8px;
+}
+
+.passive-editor-nav-row {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: 100%;
+    align-items: stretch;
+}
+
+.passive-editor-nav-row .passive-editor-nav-button {
+    width: 100%;
+    min-width: 0;
+    min-height: 34px;
+    padding-inline: 5px;
+    overflow-wrap: anywhere;
+    white-space: normal;
+}
+
+.passive-editor-current-title {
+    display: grid;
+    gap: 5px;
+    padding: 2px 0 5px;
+    font-size: 11px;
+}
+
+.passive-editor-editing-label {
+    color: #a1a1aa;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: .02em;
+}
+
+.passive-editor-title-divider {
+    width: 100%;
+    border-top: 1px solid rgba(255, 255, 255, .24);
+}
+
+.passive-editor-current-title-name {
+    color: #fff;
+    font-size: 16px;
+    font-weight: 800;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.passive-editor-preview-section {
+    width: 100%;
+    margin-top: 10px;
+    padding: 10px;
+    border: 1px solid rgba(148, 163, 184, .25);
+    border-radius: 6px;
+    background: rgba(0, 0, 0, .25);
+}
+
+.passive-editor-preview-title {
+    color: #e4e4e7;
+    font-size: 12px;
+    font-weight: 800;
+}
+
+.passive-editor-preview {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, .2);
+}
+
+.passive-delete-toast {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin: 8px 0;
+    padding: 8px;
+    border: 1px solid rgba(255, 255, 255, .3);
+    border-radius: 6px;
+    color: #f4f4f5;
+    background: rgba(24, 24, 27, .96);
+}
+
+.passive-delete-toast span {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 11px;
+}
+
+.passive-delete-toast .gui-preset-btn {
+    flex: 0 0 auto;
+}
+
+@media (max-width: 680px) {
+    .passive-editor-nav-row {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+/* Visual category and link skill selection dialogs */
+#context-gui[data-context-type="links"],
+#context-gui[data-context-type="categories"] {
+    width: min(900px, 94vw) !important;
+    max-width: 94vw !important;
+    max-height: calc(100dvh - 28px) !important;
+    box-sizing: border-box !important;
+}
+
+#context-gui[data-context-type="links"] #gui-content,
+#context-gui[data-context-type="categories"] #gui-content {
+    display: flex !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    max-height: min(76dvh, 720px) !important;
+    overflow: hidden !important;
+    box-sizing: border-box !important;
+}
+
+.context-visual-picker {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 9px;
+    min-width: 0;
+    min-height: 0;
+    width: 100%;
+}
+
+.context-visual-search-label {
+    flex: 0 0 auto;
+    color: #e4e4e7;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.context-visual-search {
+    flex: 0 0 auto;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.context-visual-grid {
+    display: grid;
+    flex: 1 1 auto;
+    grid-template-columns: repeat(auto-fill, minmax(142px, 1fr));
+    align-content: start;
+    gap: 8px;
+    min-width: 0;
+    min-height: 0;
+    max-height: min(58dvh, 560px);
+    padding: 3px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
+}
+
+.context-visual-choice {
+    position: relative;
+    display: flex;
+    min-width: 0;
+    min-height: 54px;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 7px;
+    border: 1px solid rgba(148, 163, 184, .36);
+    border-radius: 6px;
+    color: #f4f4f5;
+    background: rgba(24, 24, 27, .86);
+    text-align: center;
+    overflow-wrap: anywhere;
+    transition: border-color .14s ease, background-color .14s ease, box-shadow .14s ease;
+}
+
+.context-visual-choice:hover,
+.context-visual-choice:focus-visible {
+    border-color: rgba(255, 255, 255, .8);
+    background: rgba(63, 63, 70, .9);
+}
+
+.context-visual-choice:focus-visible,
+.editor-history-dialog :focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+
+.context-visual-choice.selected {
+    border-color: #fff;
+    background: rgba(255, 255, 255, .14);
+    box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .55);
+}
+
+.context-visual-choice.selected::after {
+    content: "✓";
+    position: absolute;
+    top: 3px;
+    right: 5px;
+    color: #fff;
+    font-size: 13px;
+    font-weight: 900;
+}
+
+.context-visual-choice[hidden] {
+    display: none !important;
+}
+
+.context-category-choice {
+    flex-direction: column;
+    justify-content: center;
+    min-height: 72px;
+    padding: 5px;
+}
+
+.context-category-choice.selected {
+    order: 0;
+}
+
+.context-category-choice:not(.selected) {
+    order: 1;
+}
+
+.context-category-choice img {
+    display: block;
+    width: 100%;
+    height: 58px;
+    object-fit: contain;
+}
+
+.context-link-choice .abs-link-name {
+    min-width: 0;
+    font-size: 12px;
+    font-weight: 700;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+}
+
+.context-visual-picker-actions {
+    display: grid;
+    flex: 0 0 auto;
+    grid-template-columns: minmax(0, 1fr) minmax(86px, auto) minmax(86px, auto);
+    align-items: center;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, .25);
+}
+
+.context-visual-selection-count {
+    min-width: 0;
+    color: #d4d4d8;
+    font-size: 11px;
+}
+
+/* The Super Attack stat rail owns values, quick picks, then advanced actions. */
+.sa-editor-layout {
+    grid-template-columns: minmax(220px, .38fr) minmax(0, 1fr);
+}
+
+.sa-editor-stat-values {
+    width: 100%;
+    min-width: 0;
+    margin: 0;
+    padding: 7px;
+    box-sizing: border-box;
+}
+
+.sa-editor-stat-value-add {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(86px, auto);
+    gap: 6px;
+    min-width: 0;
+    margin-bottom: 7px;
+}
+
+.sa-editor-stat-value-add input,
+.sa-editor-stat-value-add button {
+    min-width: 0;
+    max-width: 100%;
+}
+
+.sa-editor-existing-stat-values {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    min-width: 0;
+}
+
+.sa-editor-existing-stat-values .gui-item-row {
+    min-width: 0;
+    margin-bottom: 0 !important;
+}
+
+.sa-editor-empty-stats {
+    color: #a1a1aa;
+    font-size: 11px;
+}
+
+/* Session history is memory-only; the panel says when it will be cleared. */
+.editor-history-dialog {
+    width: min(720px, calc(100vw - 24px));
+    max-width: calc(100vw - 24px);
+    max-height: min(82dvh, 760px);
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, .28);
+    color: #f4f4f5;
+    background: #18181b;
+    box-shadow: 0 24px 80px rgba(0, 0, 0, .6);
+}
+
+.editor-history-dialog::backdrop {
+    background: rgba(0, 0, 0, .65);
+    backdrop-filter: blur(3px);
+}
+
+.editor-history-panel {
+    display: flex;
+    max-height: inherit;
+    flex-direction: column;
+    min-width: 0;
+}
+
+.editor-history-header,
+.editor-history-footer {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    padding: 14px 16px;
+    border-bottom: 1px solid rgba(255, 255, 255, .16);
+}
+
+.editor-history-header h2 {
+    margin: 0;
+    font-size: 17px;
+}
+
+.editor-history-scope {
+    margin: 4px 0 0;
+    color: #a1a1aa;
+    font-size: 12px;
+}
+
+.editor-history-list {
+    display: flex;
+    flex: 1 1 auto;
+    flex-direction: column;
+    gap: 8px;
+    min-height: 80px;
+    padding: 12px 16px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    scrollbar-gutter: stable;
+}
+
+.editor-history-entry {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    padding: 10px;
+    border: 1px solid rgba(255, 255, 255, .16);
+    background: rgba(255, 255, 255, .04);
+}
+
+.editor-history-entry-title {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-size: 13px;
+    font-weight: 700;
+}
+
+.editor-history-entry time {
+    display: block;
+    margin-top: 4px;
+    color: #a1a1aa;
+    font-size: 11px;
+}
+
+.editor-history-empty {
+    padding: 20px 8px;
+    color: #a1a1aa;
+    text-align: center;
+}
+
+.editor-history-footer {
+    justify-content: flex-end;
+    border-top: 1px solid rgba(255, 255, 255, .16);
+    border-bottom: 0;
+}
+
+@media (max-width: 680px) {
+    #context-gui[data-context-type="links"],
+    #context-gui[data-context-type="categories"] {
+        width: calc(100vw - 24px) !important;
+        max-width: calc(100vw - 24px) !important;
+        max-height: 84dvh !important;
+    }
+
+    #context-gui[data-context-type="links"] #gui-content,
+    #context-gui[data-context-type="categories"] #gui-content {
+        max-height: 74dvh !important;
+    }
+
+    .context-visual-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: 56dvh;
+    }
+
+    .context-visual-picker-actions {
+        grid-template-columns: minmax(0, 1fr) repeat(2, minmax(72px, auto));
+    }
+
+    .sa-editor-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .sa-editor-stat-value-add {
+        grid-template-columns: minmax(0, 1fr) minmax(90px, auto);
+    }
+
+    .editor-history-header,
+    .editor-history-footer {
+        padding: 11px 12px;
+    }
+
+    .editor-history-list {
+        padding: 10px 12px;
+    }
+
+    .editor-history-entry {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
+
+/* Category tiles keep their source image colors; generic selection styling
+   supplies the outline and checkmark without inventing category accents. */
+.context-category-choice img {
+    filter: none !important;
+}
+
+#context-gui .sa-editor-reorder-controls {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: space-between;
+    gap: 4px;
+    width: 100%;
+    margin: 0 0 5px;
+    padding: 2px 5px;
+    border: 1px solid rgba(255, 255, 255, .14);
+    border-radius: 5px;
+    background: rgba(255, 255, 255, .035);
+    box-sizing: border-box;
+}
+
+#context-gui .sa-editor-reorder-position {
+    min-width: 0;
+    color: #e4e4e7;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1;
+    white-space: nowrap;
+}
+
+#context-gui .sa-editor-reorder-buttons {
+    display: inline-flex;
+    flex: 0 0 auto;
+    gap: 3px;
+}
+
+#context-gui .sa-editor-reorder-button {
+    display: inline-grid;
+    place-items: center;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    border: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, .07);
+    color: #f4f4f5;
+    cursor: pointer;
+}
+
+#context-gui .sa-editor-reorder-button:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, .48);
+    background: rgba(255, 255, 255, .14);
+}
+
+#context-gui .sa-editor-reorder-button:focus-visible {
+    outline: 2px solid var(--theme-border, #fff);
+    outline-offset: 1px;
+}
+
+#context-gui .sa-editor-reorder-button:disabled {
+    opacity: .35;
+    cursor: not-allowed;
+}
+
+#context-gui .sa-editor-reorder-button svg {
+    width: 13px;
+    height: 13px;
+    fill: currentColor;
+}
+
+#context-gui .sa-auto-generate-stat-effects {
+    display: block;
+    width: 100%;
+    margin-top: 6px;
+    white-space: normal;
 }

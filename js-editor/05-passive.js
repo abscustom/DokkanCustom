@@ -46,7 +46,7 @@ window.parsePassiveIcons = function(text) {
         ':add_atk:': '<img src="https://abscustom.github.io/assets/images/st_atk_combo.png" class="dokkan-icon dokkan-debuff-icon">',
         ':effective:': '<img src="https://abscustom.github.io/assets/images/st_atk_super.png" class="dokkan-icon dokkan-debuff-icon">',
         ':always_hit:': '<img src="https://abscustom.github.io/assets/images/st_always_hit.png" class="dokkan-icon dokkan-debuff-icon">',
-        ':guard:': '<img src="https://abscustom.github.io/assets/images/st_guard_all.png" class="dokkan-icon dokkan-debuff-icon">',
+        ':guard:': '<img src="https://abscustom.github.io/assets/images/st_sp_guard.png" class="dokkan-icon dokkan-debuff-icon">',
         ':dmg_red:': '<img src="https://abscustom.github.io/assets/images/st_resist_damage_up.png" class="dokkan-icon dokkan-debuff-icon">',
         ':evasion:': '<img src="https://abscustom.github.io/assets/images/st_evasion.png" class="dokkan-icon dokkan-debuff-icon">',
         ':disable_guard:': '<img src="https://abscustom.github.io/assets/images/st_disable_guard.png" class="dokkan-icon dokkan-debuff-icon">',
@@ -86,6 +86,8 @@ function passiveEditorTextFromNode(node) {
         'st_atk_combo.png': ':add_atk:',
         'st_atk_super.png': ':effective:',
         'st_always_hit.png': ':always_hit:',
+        'st_sp_guard.png': ':guard:',
+        // Continue recognizing cards saved with the older guard asset filename.
         'st_guard_all.png': ':guard:',
         'st_resist_damage_up.png': ':dmg_red:',
         'st_evasion.png': ':evasion:',
@@ -116,6 +118,33 @@ function syncPassiveSectionCounter() {
     return highestId;
 }
 
+// Imported passive markup can have headings/lists without editor IDs. Rebuild
+// those missing source targets from the canonical fields before editing them.
+function ensurePassiveSourceTargets() {
+    const source = document.getElementById('card-passive-container');
+    const sections = Array.from(document.querySelectorAll('#sidebar-sections-area [id^="side-sec-"]'));
+    if (!source || !sections.length) return;
+    if (sections.every(section => source.querySelector(`#card-ul-${section.id.slice(9)}`))) return;
+    const fragment = document.createDocumentFragment();
+    sections.forEach(section => {
+        const id = section.id.slice(9);
+        const wrapper = document.createElement('div');
+        wrapper.id = `card-sec-${id}`;
+        const heading = document.createElement('strong');
+        heading.id = `card-header-text-${id}`;
+        heading.style.display = 'block';
+        heading.innerHTML = window.parsePassiveIcons(section.querySelector('input[type="text"]')?.value || 'Basic effect(s)');
+        const list = document.createElement('ul');
+        list.id = `card-ul-${id}`;
+        list.innerHTML = window.parsePassiveIcons(section.querySelector('textarea')?.value || '')
+            .split('\n').map(line => line.trim().replace(/^-\s*/, '')).filter(Boolean)
+            .map(line => `<li>${line}</li>`).join('');
+        wrapper.append(heading, list);
+        fragment.appendChild(wrapper);
+    });
+    source.replaceChildren(fragment);
+}
+
 // Older published pages remove the hidden editor sidebar. Rebuild it from the
 // visible passive sections so imported cards remain fully editable.
 window.ensurePassiveEditorSections = function() {
@@ -130,10 +159,11 @@ window.ensurePassiveEditorSections = function() {
     });
     if (existingSections.length > 0 && existingHasContent) {
         syncPassiveSectionCounter();
+        ensurePassiveSourceTargets();
         return existingSections.length;
     }
 
-    const sources = [cardArea, document.getElementById('abs-passive-container')].filter(Boolean);
+    const sources = [cardArea, (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-container') : document.getElementById('abs-passive-container'))].filter(Boolean);
     const sectionData = [];
     for (const source of sources) {
         source.querySelectorAll('strong').forEach(header => {
@@ -179,8 +209,9 @@ window.ensurePassiveEditorSections = function() {
 };
 
 window.updatePassiveName = function(val) {
-    const passiveDisplay = document.querySelector('.passive-name-display');
-    if (passiveDisplay) passiveDisplay.innerText = val;
+    document.querySelectorAll('.passive-name-display, .abs-passive-name-inside, .abs-passive-header-title i').forEach(node => {
+        if (node.textContent !== val) node.textContent = val;
+    });
 
     const sidebarInput = document.getElementById('input-passive-name-sidebar');
     if (sidebarInput && sidebarInput.value !== val) sidebarInput.value = val;
@@ -188,7 +219,7 @@ window.updatePassiveName = function(val) {
     const guiInput = document.getElementById('gui-passive-name');
     if (guiInput && guiInput.value !== val) guiInput.value = val;
 
-    if (window.syncToAbsLayout) window.syncToAbsLayout();
+    window.markEditorDirty?.();
 };
 
 window.toggleSectionCollapse = function(id, btn) {
@@ -225,6 +256,18 @@ window.confirmDeleteSection = function(btn, id) {
     }
 };
 
+// Source fields update immediately; all passive edits in a frame share one
+// preview refresh. This applies to both independent visual themes.
+let passivePreviewFrame = 0;
+window.schedulePassivePreview = function() {
+    window.markEditorDirty?.();
+    if (passivePreviewFrame) return;
+    passivePreviewFrame = requestAnimationFrame(() => {
+        passivePreviewFrame = 0;
+        window.syncEditorPassivePreview?.();
+    });
+};
+
 window.reindexSections = function() {
     const sidebarArea = document.getElementById("sidebar-sections-area");
     if (!sidebarArea) return;
@@ -235,12 +278,11 @@ window.reindexSections = function() {
         if (label) label.innerText = `SECTION ${index + 1}`;
     });
 
-    if (window.currentCardThemeStyle === 'abs-style' && window.syncToAbsLayout) {
-        window.syncToAbsLayout();
-    }
+    window.schedulePassivePreview();
 };
 
 window.addNewSection = function() {
+    ensurePassiveSourceTargets();
     sIdx++;
     document.getElementById('card-passive-container').insertAdjacentHTML('beforeend', 
         `<div id="card-sec-${sIdx}"><strong id="card-header-text-${sIdx}" style="display:block; margin-top:0px;">Basic effect(s)</strong><ul id="card-ul-${sIdx}"></ul></div>`);
@@ -296,16 +338,15 @@ window.addNewSection = function() {
 };
 
 window.updateHeader = function(id, val) {
+    ensurePassiveSourceTargets();
     const el = document.getElementById("card-header-text-" + id);
     if (el) {
         el.innerHTML = window.parsePassiveIcons(val);
     }
     const input = document.querySelector(`#side-sec-${id} input[type="text"]`);
-    if (input) input.setAttribute('value', val);
+    if (input) { input.value = val; input.setAttribute('value', val); }
 
-    if (window.currentCardThemeStyle === 'abs-style' && window.syncToAbsLayout) {
-        window.syncToAbsLayout();
-    }
+    window.schedulePassivePreview();
 };
 
 window.insertShortcut = function(targetId, code) {
@@ -335,17 +376,17 @@ window.insertShortcut = function(targetId, code) {
         if (origTa) origTa.value = ta.value;
         window.updateSection(sectionId, ta.value);
     }
-    if (window.currentCardThemeStyle === 'abs-style' && window.syncToAbsLayout) {
-        window.syncToAbsLayout();
-    }
+    window.schedulePassivePreview();
 };
 
 window.updateSection = function(id, val) {
     const ta = document.getElementById(`input-sec-${id}`);
     if (ta) {
+        ta.value = val;
         ta.textContent = val;
         ta.setAttribute('value', val);
     }
+    ensurePassiveSourceTargets();
     let out = window.parsePassiveIcons(val);
     const lines = out.split('\n');
     let html = "";
@@ -357,9 +398,7 @@ window.updateSection = function(id, val) {
     const ul = document.getElementById("card-ul-" + id);
     if (ul) ul.innerHTML = html;
 
-    if (window.currentCardThemeStyle === 'abs-style' && window.syncToAbsLayout) {
-        window.syncToAbsLayout();
-    }
+    window.schedulePassivePreview();
 };
 
 window.removeThisSection = function(id) {

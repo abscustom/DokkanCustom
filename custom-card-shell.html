@@ -629,7 +629,7 @@
         <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
             
             <!-- 1. DOKKAN INFO LAYOUT (100% UNTOUCHED & AUTHENTIC) -->
-            <div id="layout-dokkaninfo">
+            <div id="layout-dokkaninfo" data-card-layout="dokkaninfo">
                 <div class="row align-items-start">
                     <div class="col-xl-4">
                         <div class="row padding-left-right-1 margin-top-5">
@@ -830,16 +830,11 @@
             </div>
 
             <!-- 2. ABS.STYLE 3D LAYOUT (MATCHING CARD INSPECTOR VIEWER 1:1) -->
-            <div id="layout-abs-style" style="display: none;">
+            <div id="layout-abs-style" data-card-layout="abs-style" style="display: none;">
                 
                 <!-- HEADER -->
                 <div class="abs-top-header">
                     <div class="abs-header-left">
-                        <!-- ABS.CLEAN moves this live badge strip into the top
-                             utility lane above the Passive Skill title. -->
-                        <div id="abs-clean-ability-docks" class="abs-clean-ability-docks" hidden>
-                            <div id="abs-clean-passive-icons" aria-label="Detected passive abilities"></div>
-                        </div>
                         <div id="abs-clean-awakening-portraits" aria-label="Awakening portraits" hidden>
                             <div class="abs-clean-awakening-portrait abs-clean-awakening-portrait--ssr" title="Edit SSR thumbnail" hidden>
                                 <span class="abs-clean-awakening-portrait-label">SSR</span>
@@ -913,6 +908,11 @@
 
                         <!-- PASSIVE SKILL (WITH SMART IN-GAME ABILITY ICONS STRIP) -->
                         <div class="abs-box" id="abs-passive-skill-box" data-edit="passive">
+                            <!-- ABS.Style keeps badges with this section; ABS.CLEAN moves
+                                 the live strip into its character header. -->
+                            <div id="abs-clean-ability-docks" class="abs-clean-ability-docks" hidden>
+                                <div id="abs-clean-passive-icons" aria-label="Detected passive abilities"></div>
+                            </div>
                             <div id="abs-passive-summary" class="abs-passive-summary" hidden aria-label="Passive percentage totals"></div>
                             <div class="abs-header justify-content-center text-center" id="abs-passive-name">
                                 <div class="abs-passive-header-title justify-content-center text-center">
@@ -1069,6 +1069,25 @@
                                 </div>
                             </div>
                         </div>
+
+                        <!-- Viewer-only character idle motion. ABS.Clean resolves
+                             this cloned element through its data-card-element ID. -->
+                        <section id="abs-motion-box" class="abs-box abs-motion-box" aria-label="Motion"
+                                 data-motion-kind="idle"
+                                 data-motion-stream="character-idle"
+                                 data-motion-source="ingame/battle/character/{character_id}/idle"
+                                 data-motion-file-pattern="idle_character_{character_id}.lwf">
+                            <div class="abs-header abs-motion-header">
+                                <span class="abs-motion-title">motion</span>
+                            </div>
+                            <div class="abs-content abs-motion-content">
+                                <div id="abs-motion-viewport" class="abs-motion-viewport" aria-label="Character idle motion preview">
+                                    <canvas id="abs-motion-canvas" aria-hidden="true"></canvas>
+                                    <span id="abs-motion-status" class="abs-motion-status"></span>
+                                </div>
+                                <span class="abs-motion-note">character idle</span>
+                            </div>
+                        </section>
 
                         <!-- abs.clean moves the live Link Skills box here. -->
                         <div id="abs-clean-link-skills-slot" aria-label="Link Skills"></div>

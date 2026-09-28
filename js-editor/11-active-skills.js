@@ -104,7 +104,7 @@ window.ensureActiveSkillKind = function(block) {
 };
 
 window.normalizeActiveSkillBlocks = function(blocks = null) {
-    const sourceBlocks = blocks || Array.from(document.querySelectorAll('.active-block'));
+    const sourceBlocks = blocks || window.getActiveSkillSourceBlocks?.() || Array.from(document.querySelectorAll('.active-block'));
     sourceBlocks.forEach(block => window.ensureActiveSkillKind(block));
     return sourceBlocks;
 };
@@ -122,7 +122,8 @@ window.getActiveSkillKindLabel = function(blockOrKind) {
     return 'Active Skill';
 };
 window.getActiveSkillSourceBlocks = function() {
-    return Array.from(document.querySelectorAll('.active-block'));
+    const host = window.ensureEditorSkillSourceHost?.();
+    return Array.from((host || document).querySelectorAll(':scope > .active-block'));
 };
 
 /* Resolve a rendered abs.clean card back to its editable source block. The
@@ -132,6 +133,12 @@ window.resolveActiveSkillBlock = function(candidate) {
     const blocks = window.getActiveSkillSourceBlocks();
     if (!blocks.length) return null;
     if (candidate && blocks.includes(candidate)) return candidate;
+
+    const infoSourceId = candidate?.closest?.('[data-info-source-skill-id]')?.dataset?.infoSourceSkillId;
+    if (infoSourceId) {
+        const infoSource = blocks.find(block => block.getAttribute('data-editor-skill-id') === infoSourceId);
+        if (infoSource) return infoSource;
+    }
 
     const rendered = candidate?.closest?.(
         '[data-abs-clean-source-index], .abs-clean-active-rendered, .abs-clean-domain-rendered, .abs-clean-standby-rendered, #abs-active-container > .abs-box, #abs-field-container > .abs-box, #abs-standby-container > .abs-box'
@@ -157,11 +164,11 @@ window.resolveActiveSkillBlock = function(candidate) {
 
 window.addActiveSkillSection = function(kind = ACTIVE_SKILL_KIND.ACTIVE) {
     const template = document.getElementById('active-template');
-    const spot = document.getElementById('active-skill-insert-spot');
-    if (!template || !spot) return;
+    const sourceHost = window.ensureEditorSkillSourceHost?.();
+    if (!template || !sourceHost) return;
     
     const clone = document.importNode(template.content, true);
-    spot.parentNode.insertBefore(clone, spot);
+    sourceHost.appendChild(clone);
     const blocks = window.getActiveSkillSourceBlocks();
     currentActiveSkill = blocks[blocks.length - 1] || null;
     window.setActiveSkillKind(currentActiveSkill, kind, { updateLabel: true, updateIcon: true });
@@ -347,6 +354,6 @@ window.syncActiveSkill = function() {
         sel.options[sel.selectedIndex].text = `${parseInt(sel.value) + 1}: ${nameStr}`;
     }
 
-    if (window.updateAbsStyleActiveSkills) window.updateAbsStyleActiveSkills();
-    if (window.syncToAbsLayout) window.syncToAbsLayout();
+    if (window.scheduleEditorSkillPreview) window.scheduleEditorSkillPreview('active');
+    else window.updateAbsStyleActiveSkills?.();
 };

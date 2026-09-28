@@ -8,7 +8,16 @@ document.addEventListener('error', function(e) {
     const img = e.target;
     if (img.dataset.failed === 'true') return;
 
-    const src = img.src || '';
+    // Reading img.src when the HTML has src="" resolves it to the document
+    // URL. The fallback below then mistakes unrelated page IDs/cache-busters
+    // for a Dokkan card ID and starts requesting nonexistent card art.
+    const rawSrc = img.getAttribute('src');
+    if (rawSrc == null || !rawSrc.trim()) return;
+
+    const src = rawSrc.trim();
+    // Embedded and object URLs are already complete asset references. Never
+    // treat digits inside their payloads as card or asset identifiers.
+    if (/^(?:data|blob):/i.test(src)) return;
 
     // Silence missing extra decorative effect overlays only
     if (img.id === 'abs-art-effect' || src.includes('_effect.png')) {

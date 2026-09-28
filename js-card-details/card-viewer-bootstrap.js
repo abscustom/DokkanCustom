@@ -11,12 +11,10 @@
 
     const VIEWER_THEME_KEY = 'card_viewer_theme';
     const BACKGROUND_MODE_KEY = 'abs_clean_bg_mode';
-    const CLEAN_THEME = 'sba';
+    const CLEAN_THEME = 'abs-clean';
     const LEGACY_PRESENTATION_CLASSES = ['theme-abs-style', 'theme-dokkaninfo', 'theme-placeholder', 'theme-abs-clean'];
     const ALL_VIEWER_THEME_CLASSES = ['theme-sba', ...LEGACY_PRESENTATION_CLASSES];
-    // Published cards expose only the two viewer presentations. Dokkan Info
-    // remains an editor concern and old stored values fall back to clean.
-    const SUPPORTED_THEMES = new Set(['abs-style', CLEAN_THEME]);
+    const SUPPORTED_THEMES = new Set(['abs-style', 'dokkaninfo', CLEAN_THEME]);
     let hideTimer = null;
     let settingsReturnFocus = null;
 
@@ -43,7 +41,7 @@
 
     function normalizeViewerTheme(themeName) {
         const value = String(themeName || '').trim().toLowerCase();
-        if (value === 'abs.clean' || value === 'abs-clean') return CLEAN_THEME;
+        if (value === 'sba' || value === 'abs.clean' || value === 'abs-clean') return CLEAN_THEME;
         return SUPPORTED_THEMES.has(value) ? value : CLEAN_THEME;
     }
 
@@ -72,6 +70,8 @@
             app.classList.remove(...ALL_VIEWER_THEME_CLASSES);
             if (theme === CLEAN_THEME) {
                 app.classList.add('theme-sba', 'theme-abs-clean');
+            } else if (theme === 'dokkaninfo') {
+                app.classList.add('theme-dokkaninfo');
             } else {
                 app.classList.add('theme-abs-style');
             }
@@ -79,9 +79,11 @@
 
         if (body) {
             if (theme === CLEAN_THEME) body.classList.add('theme-abs-clean');
+            else if (theme === 'dokkaninfo') body.classList.add('theme-dokkaninfo');
             else body.classList.add('theme-abs-style');
             body.dataset.cardViewerTheme = theme;
         }
+        window.setActiveCardLayout?.(theme);
         document.documentElement.dataset.cardViewerTheme = theme;
 
         // Keep clean-only mode state out of the legacy presentation. When a
@@ -124,7 +126,7 @@
             writeStoredValue(VIEWER_THEME_KEY, theme);
             // Keep the legacy published-card preference synchronized so the
             // editor, exported cards, and viewer all reopen on the same style.
-            writeStoredValue('dokkan_published_card_theme', theme === CLEAN_THEME ? 'sba' : theme);
+            writeStoredValue('dokkan_published_card_theme', theme);
         }
         updateViewerThemeButtons(theme);
         window.cardViewerTheme = theme;
@@ -140,6 +142,7 @@
 
     function enableAbsCleanViewer() {
         applyViewerThemeClasses(CLEAN_THEME);
+        window.setActiveCardLayout?.(CLEAN_THEME);
         updateViewerThemeButtons(CLEAN_THEME);
     }
 

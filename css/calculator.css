@@ -9,9 +9,8 @@
     font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Segoe UI", Roboto, sans-serif;
 }
 
-/* Body is transparent so the fluted-glass canvas (positioned below) shows through.
-   html gets its own dark background AFTER this rule so it wins the cascade and
-   prevents the browser's default white from flashing before the WebGL canvas paints. */
+/* Keep the calculator body transparent so its native wave/backdrop canvas can show through.
+   html gets its own dark background AFTER this rule to prevent a white flash before paint. */
 html, body, body.theme-abs-style, body.calc-liquid-body {
     background: transparent !important;
     background-color: transparent !important;

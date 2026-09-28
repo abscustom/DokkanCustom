@@ -514,6 +514,178 @@ hr, .divider, .divider.py.bg-secondary {
   min-height: 42px !important;
 }
 
+/* Native Dokkan Info render surfaces. These deliberately use Dokkan Info
+   components rather than the ABS.Style skill and portrait presentation. */
+#layout-dokkaninfo .info-rendered-skill {
+  display: block;
+  width: 100%;
+  box-sizing: border-box;
+  min-width: 0;
+  margin: 8px 0;
+  padding: 0;
+  overflow: hidden;
+  color: #fff;
+  background: #222;
+  border: 1px solid #555;
+}
+
+#layout-dokkaninfo .info-skill-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 38px;
+  padding: 6px 10px;
+  background: #333;
+  border-bottom: 1px solid #555;
+}
+
+#layout-dokkaninfo .info-skill-icon {
+  width: 22px;
+  height: 22px;
+  object-fit: contain;
+}
+
+#layout-dokkaninfo .info-skill-title {
+  display: flex;
+  flex: 1 1 auto;
+  align-items: baseline;
+  justify-content: center;
+  gap: 6px;
+  min-width: 0;
+  text-align: center;
+}
+
+#layout-dokkaninfo .info-skill-type {
+  display: inline !important;
+  width: auto !important;
+  max-width: none !important;
+  min-width: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #fff !important;
+  font: inherit;
+  font-weight: 700;
+  line-height: inherit;
+  text-transform: none !important;
+}
+
+#layout-dokkaninfo .info-skill-title strong { font-weight: 700; }
+
+#layout-dokkaninfo .info-skill-content { padding: 10px 12px; }
+#layout-dokkaninfo .info-skill-content section + section { margin-top: 10px; }
+#layout-dokkaninfo .info-skill-content section > b { display: block; margin-bottom: 4px; }
+#layout-dokkaninfo .info-skill-content img { vertical-align: middle; }
+
+/* Editor previews use display copies of Dokkan Info's original skill
+   templates. Their source-only classes are stripped so the hidden canonical
+   blocks cannot be moved back into the presentation root. */
+#layout-dokkaninfo .info-rendered-super-attack .sa-display-name,
+#layout-dokkaninfo .info-rendered-super-attack .sa-display-effects-list,
+#layout-dokkaninfo .info-rendered-super-attack .activation-text,
+#layout-dokkaninfo .info-rendered-super-attack .stats-container,
+#layout-dokkaninfo .info-rendered-super-attack .sa-lv-container,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-name,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-effect,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-condition,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-name,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-effect,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-condition,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-name,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-effect,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-condition {
+  color: #fff;
+  text-align: center;
+}
+
+#layout-dokkaninfo .info-rendered-super-attack .sa-display-name,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-name,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-effect,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-active-skill .active-display-condition,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-name,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-effect,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-standby-skill .active-display-condition,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-name,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-effect,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-condition-title,
+#layout-dokkaninfo .info-rendered-dokkan-field .active-display-condition {
+  margin-left: auto;
+  margin-right: auto;
+}
+
+#layout-dokkaninfo .info-rendered-active-skill .position-relative,
+#layout-dokkaninfo .info-rendered-standby-skill .position-relative,
+#layout-dokkaninfo .info-rendered-dokkan-field .position-relative {
+  position: relative !important;
+  display: flex !important;
+  align-items: center !important;
+}
+
+#layout-dokkaninfo .info-rendered-active-skill .position-absolute.start-0,
+#layout-dokkaninfo .info-rendered-standby-skill .position-absolute.start-0,
+#layout-dokkaninfo .info-rendered-dokkan-field .position-absolute.start-0 {
+  position: absolute !important;
+  left: 15px !important;
+  top: 50% !important;
+  transform: translateY(-50%) !important;
+  width: auto !important;
+  z-index: 2 !important;
+}
+
+#layout-dokkaninfo .info-passive-title {
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+  padding: 5px 0;
+  border-bottom: 1px solid #555;
+  font-weight: 700;
+}
+#layout-dokkaninfo .info-passive-title em { font-size: 0.95em; font-weight: 600; }
+#layout-dokkaninfo .info-passive-section { margin: 10px 0; }
+#layout-dokkaninfo .info-passive-heading { display: block; margin: 0 0 4px; font-size: 0.95em; font-weight: 700; }
+#layout-dokkaninfo .info-passive-list { margin: 0; padding-left: 22px; list-style: disc; }
+#layout-dokkaninfo .info-passive-list li { margin: 3px 0; }
+#layout-dokkaninfo .info-link-item { position: relative; flex-direction: column; gap: 4px; }
+#layout-dokkaninfo .info-link-effect { display: none; font-size: 0.76em; font-weight: 400; }
+#layout-dokkaninfo .info-link-item:hover .info-link-effect { display: block; }
+#layout-dokkaninfo .info-release-date-item { display: inline-flex; flex-direction: column; margin: 0 8px 6px 0; padding: 5px 8px; border: 1px solid #555; background: #222; }
+#layout-dokkaninfo .info-release-date-item span { color: #ddd; font-size: 0.85em; }
+#layout-dokkaninfo .info-awaken-divider { display: flex; align-items: center; gap: 8px; margin: 8px 0; color: #bbb; font-size: 0.75em; font-weight: 800; }
+#layout-dokkaninfo .info-awaken-divider::before,
+#layout-dokkaninfo .info-awaken-divider::after { content: ''; flex: 1 1 auto; border-top: 1px solid #555; }
+#layout-dokkaninfo .info-awaken-row,
+#layout-dokkaninfo .info-transform-row {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  width: 100%;
+  margin: 3px 0;
+  padding: 6px 8px;
+  color: #fff;
+  text-align: left;
+  background: #222;
+  border: 1px solid #555;
+  cursor: pointer;
+}
+#layout-dokkaninfo .info-awaken-row:hover,
+#layout-dokkaninfo .info-transform-row:hover { background: #333; }
+#layout-dokkaninfo .info-awaken-row img,
+#layout-dokkaninfo .info-transform-row img { width: 38px; height: 38px; object-fit: contain; }
+#layout-dokkaninfo .info-awaken-row span { display: flex; flex-direction: column; }
+#layout-dokkaninfo .info-awaken-row small { color: #bbb; }
+#layout-dokkaninfo .info-awaken-row.is-current { border-color: #aaa; }
+#layout-dokkaninfo .info-rendered-transformations { margin: 8px 0; padding: 0; border: 0; background: transparent; }
+#layout-dokkaninfo #info-transformations-container { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 4px; }
+#layout-dokkaninfo .info-transform-row { margin: 0; }
+#layout-dokkaninfo .info-field-animation-button { margin-left: auto; color: #fff; background: #222; border: 1px solid #777; }
+
 table {
   caption-side: bottom;
   border-collapse: collapse;

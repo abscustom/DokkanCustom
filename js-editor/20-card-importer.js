@@ -635,20 +635,31 @@ window.currentEditorArtMode = window.PUBLISHED_EDITOR_ART_MODE || window.current
  * Toggle between Static/Simple art and FX/Animated layered art
  */
 window.switchEditorArtMode = function(mode) {
-    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-    const btnStatic = document.getElementById('art-toggle-static');
-    const btnAnim = document.getElementById('art-toggle-animated');
-    const toggleBar = document.getElementById('abs-art-toggle-bar');
-    const artBox = document.getElementById('abs-art-layers-container');
-    const bgEl = document.getElementById('abs-art-bg');
-    const charEl = document.getElementById('abs-art-char');
-    const effEl = document.getElementById('abs-art-effect');
-    const singleArtEl = document.getElementById('abs-art-img');
-    const singleVidEl = document.getElementById('abs-art-video');
+    const activePresentationRoot = window.getCardLayoutRoot?.();
+    const isDokkanInfoLayout = activePresentationRoot?.dataset?.cardLayout === 'dokkaninfo';
+    const isAbsCleanTheme = activePresentationRoot
+        ? activePresentationRoot.dataset?.cardLayout === 'abs-clean'
+        : document.body.classList.contains('theme-abs-clean');
+    const btnStatic = (window.getCardLayoutElement ? window.getCardLayoutElement('art-toggle-static') : document.getElementById('art-toggle-static'));
+    const btnAnim = (window.getCardLayoutElement ? window.getCardLayoutElement('art-toggle-animated') : document.getElementById('art-toggle-animated'));
+    const toggleBar = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-toggle-bar') : document.getElementById('abs-art-toggle-bar'));
+    const artBox = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-layers-container') : document.getElementById('abs-art-layers-container'));
+    const bgEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-bg') : document.getElementById('abs-art-bg'));
+    const charEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-char') : document.getElementById('abs-art-char'));
+    const effEl = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-effect') : document.getElementById('abs-art-effect'));
     const mainImage = document.getElementById('myOverlayImage');
     const mainVid = document.getElementById('myOverlayVideo');
-    const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
-    const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
+    // Dokkan Info has a native artwork target and intentionally has no ABS
+    // single-art image. Route its mode changes to the Info image instead of
+    // dereferencing a missing ABS-only element.
+    const singleArtEl = isDokkanInfoLayout
+        ? mainImage
+        : (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
+    const singleVidEl = isDokkanInfoLayout
+        ? mainVid
+        : (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-video') : document.getElementById('abs-art-video'));
+    const lwfCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-card-bg-lwf-canvas') : document.getElementById('abs-card-bg-lwf-canvas'));
+    const stickerCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-tur-sticker-canvas') : document.getElementById('abs-tur-sticker-canvas'));
 
     const pinnedStaticSource = String(artBox?.dataset?.staticArtSrc || '').trim();
     if (pinnedStaticSource && singleArtEl && singleArtEl.getAttribute('src') !== pinnedStaticSource) {
@@ -1058,7 +1069,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
 
     const leaderDisplay = document.getElementById('leader-skill');
     if (leaderDisplay) leaderDisplay.innerHTML = formattedLeaderInfo;
-    const absLeader = document.getElementById('abs-leader-skill');
+    const absLeader = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-leader-skill') : document.getElementById('abs-leader-skill'));
     if (absLeader) absLeader.innerHTML = formattedLeaderAbs;
 
     // 4. PASSIVE SKILL (Card Viewer parsed sections & official ability strip)
@@ -1156,33 +1167,46 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
         addSectionToDom("Basic effect(s)", [rawPassiveText.trim()]);
     }
 
-    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
+    const activePresentationRoot = window.getCardLayoutRoot?.();
+    const activeThemeName = activePresentationRoot?.dataset?.cardLayout || '';
+    const infoPresentationRoot = window.getCardLayoutRoot?.('dokkaninfo');
+    const isDokkanInfoLayout = activeThemeName === 'dokkaninfo';
+    const isAbsCleanTheme = activePresentationRoot
+        ? activeThemeName === 'abs-clean'
+        : document.body.classList.contains('theme-abs-clean');
     const safePassiveName = String(passName).replace(/[&<>"']/g, char => ({
         '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
     }[char]));
 
     // Render passive skill on ABS side using Card Viewer's parsePassiveSections
-    const absPassCont = document.getElementById("abs-passive-container");
+    const absPassCont = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-passive-container") : document.getElementById("abs-passive-container"));
+    const infoPassCont = window.getCardLayoutElement?.('abs-passive-container', infoPresentationRoot);
+    if (infoPassCont && infoPassCont !== absPassCont && typeof parsePassiveSections === 'function') {
+        infoPassCont.innerHTML = parsePassiveSections(rawPassiveText, 'dokkaninfo');
+    }
     if (absPassCont) {
         if (typeof parsePassiveSections === 'function') {
-            const sectionsHtml = parsePassiveSections(rawPassiveText);
+            const sectionsHtml = parsePassiveSections(rawPassiveText, isDokkanInfoLayout ? 'dokkaninfo' : 'abs');
             absPassCont.innerHTML = isAbsCleanTheme
                 ? `<div class="abs-passive-name-inside">${safePassiveName}</div>${sectionsHtml}`
                 : sectionsHtml;
         }
     }
-    const absPassNameEl = document.getElementById("abs-passive-name");
-    const absPassBoxEl = document.getElementById("abs-passive-skill-box");
+    const absPassNameEl = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-passive-name") : document.getElementById("abs-passive-name"));
+    const infoPassNameEl = window.getCardLayoutElement?.('abs-passive-name', infoPresentationRoot);
+    if (infoPassNameEl && infoPassNameEl !== absPassNameEl) infoPassNameEl.textContent = passName || 'Passive Skill';
+    const absPassBoxEl = (window.getCardLayoutElement ? window.getCardLayoutElement("abs-passive-skill-box") : document.getElementById("abs-passive-skill-box"));
     if (absPassNameEl) {
         const stripHtml = (typeof renderPassiveIconsStrip === 'function') ? renderPassiveIconsStrip(rawPassiveText, raw) : "";
-        const cleanPassiveIcons = document.getElementById('abs-clean-passive-icons');
-        const cleanAbilityDocks = document.getElementById('abs-clean-ability-docks');
-        const passiveSummary = document.getElementById('abs-passive-summary');
+        const showPassiveBadges = isAbsCleanTheme || activeThemeName === 'abs-style';
+        const cleanPassiveIcons = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-passive-icons') : document.getElementById('abs-clean-passive-icons'));
+        const cleanAbilityDocks = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-clean-ability-docks') : document.getElementById('abs-clean-ability-docks'));
+        const passiveSummary = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-summary') : document.getElementById('abs-passive-summary'));
         if (cleanPassiveIcons) {
-            cleanPassiveIcons.innerHTML = isAbsCleanTheme ? stripHtml : '';
-            cleanPassiveIcons.hidden = !isAbsCleanTheme || !stripHtml;
+            cleanPassiveIcons.innerHTML = showPassiveBadges ? stripHtml : '';
+            cleanPassiveIcons.hidden = !showPassiveBadges || !stripHtml;
         }
-        if (cleanAbilityDocks) cleanAbilityDocks.hidden = !isAbsCleanTheme || !stripHtml;
+        if (cleanAbilityDocks) cleanAbilityDocks.hidden = !showPassiveBadges || !stripHtml;
         // The clean layout keeps both live utility panels in the Passive box,
         // outside the title header. Park them in the surrounding box before
         // rebuilding the title so innerHTML cannot detach their current render
@@ -1193,7 +1217,11 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
                 if (absPassBoxEl && !node.contains(absPassBoxEl)) absPassBoxEl.appendChild(node);
                 else node.remove();
             });
-        absPassNameEl.innerHTML = isAbsCleanTheme
+        if (isDokkanInfoLayout) {
+            // Dokkan Info already owns a static "Passive Skill" label. Its
+            // adjacent name slot contains only the imported skill name.
+            absPassNameEl.textContent = passName || 'Passive Skill';
+        } else absPassNameEl.innerHTML = isAbsCleanTheme
             ? `<div class="abs-passive-external-header"><span class="abs-passive-external-label">Passive Skill</span></div>`
             : `<div class="abs-passive-header-title">
                 <span>Passive Skill</span>
@@ -1213,7 +1241,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
 
     for (let s = 0; s < saCount; s++) {
         if (window.addSuperAttackSection) window.addSuperAttackSection();
-        const blocks = document.querySelectorAll('.sa-block');
+        const blocks = window.getSuperAttackSourceBlocks?.() || document.querySelectorAll('.sa-block');
         const currentSaBlock = blocks[blocks.length - 1];
         if (currentSaBlock) {
             const isUltra = (s === 1);
@@ -1303,7 +1331,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
 
     if (window.refreshSADropdown) window.refreshSADropdown();
     if (typeof renderSuperAttacks === 'function') {
-        renderSuperAttacks(raw, isEZA, awakeningMode);
+        renderSuperAttacks(raw, isEZA, awakeningMode, infoPresentationRoot);
     } else if (window.updateAbsStyleSuperAttacks) {
         window.updateAbsStyleSuperAttacks();
     }
@@ -1518,7 +1546,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
 
     if (window.refreshActiveDropdown) window.refreshActiveDropdown();
     if (typeof renderActiveSkills === 'function') {
-        renderActiveSkills(raw);
+        renderActiveSkills(raw, infoPresentationRoot);
     }
     if (window.updateAbsStyleActiveSkills) {
         window.updateAbsStyleActiveSkills();
@@ -1528,11 +1556,13 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const linkCont = document.getElementById('card-link-container');
     if (linkCont) {
         linkCont.innerHTML = "";
-        let rawLinks = raw.links || raw.link_skill_ids || [];
+        let rawLinks = window.getCardLinkValues?.(raw) || raw.links || raw.link_skill_ids || [];
         rawLinks.forEach(linkItem => {
-            let linkName = typeof linkItem === 'object' ? linkItem.name : (window.DB && window.DB.links && window.DB.links[linkItem] ? window.DB.links[linkItem].name : linkItem);
+            const linkId = typeof linkItem === 'object' ? (linkItem.id || linkItem.link_id || linkItem.link_skill_id || '') : linkItem;
+            let linkName = typeof linkItem === 'object' ? (linkItem.name || window.DB?.links?.[String(linkId)]?.name) : (window.DB && window.DB.links && window.DB.links[linkItem] ? window.DB.links[linkItem].name : linkItem);
             if (!linkName) return;
-            const html = `<a class="col-4 border border-1 border-${cardType} padding-top-bottom-10 text-center">${linkName}</a>`;
+            const safeLinkId = window.escapeLinkTooltipAttribute?.(linkId) || String(linkId || '');
+            const html = `<a class="col-4 border border-1 border-${cardType} padding-top-bottom-10 text-center" data-link-id="${safeLinkId}">${linkName}</a>`;
             linkCont.insertAdjacentHTML('beforeend', html);
         });
     }
@@ -1542,16 +1572,20 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const catCont = document.getElementById('card-category-container');
     if (catCont) {
         catCont.innerHTML = "";
-        let rawCats = raw.categories || raw.card_categories || raw.category_ids || [];
+        let rawCats = window.getCardCategoryValues?.(raw) || raw.categories || raw.card_categories || raw.category_ids || [];
         rawCats.forEach(catItem => {
-            let catId = typeof catItem === 'object' ? (catItem.id || catItem.category_id) : catItem;
+            const category = window.resolveEditorCategoryPickerRecord?.(catItem);
+            let catId = category?.id || (typeof catItem === 'object' ? (catItem.id || catItem.category_id) : catItem);
             if (!catId) return;
-            let padId = String(catId).padStart(4, '0');
+            catId = /^\d{1,4}$/.test(String(catId)) ? String(catId).padStart(4, '0') : String(catId);
+            let padId = encodeURIComponent(catId);
             const categoryObj = typeof catItem === 'object' ? catItem : (window.DB && window.DB.categories ? window.DB.categories[String(catId)] : null);
-            const categoryName = categoryObj?.name || `Category ${catId}`;
-            const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 editor-category-item" data-category-id="${catId}" data-category-name="${categoryName}"><img src="https://abscustom.github.io/assets/images/card_category_label_${padId}_b_on.png" style="width:210px;" alt="${categoryName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="category-name-fallback" style="display:none;">${categoryName}</span></div>`;
+            const categoryName = category?.name || categoryObj?.name || `Category ${catId}`;
+            const safeCategoryName = window.escapeLinkTooltipAttribute?.(categoryName) || categoryName;
+            const html = `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 editor-category-item" data-category-id="${catId}" data-category-name="${safeCategoryName}"><img src="https://abscustom.github.io/assets/images/card_category_label_${padId}_b_on.png" style="width:210px;" alt="${safeCategoryName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="category-name-fallback" style="display:none;">${safeCategoryName}</span></div>`;
             catCont.insertAdjacentHTML('beforeend', html);
         });
+        window.normalizeEditorCategoryItems?.(catCont);
     }
 
     // 9. MULTI-LAYER HIGH-RES CARD ART & BACKGROUND & EFFECT
@@ -1565,12 +1599,12 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     window.currentCardThumbnail = thumbUrl;
 
     const imgOverlay = document.getElementById('myOverlayImage');
-    const absArt = document.getElementById('abs-art-img');
+    const absArt = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
     const imageInput = document.getElementById('imageInput');
 
-    const absArtBg = document.getElementById('abs-art-bg');
-    const absArtChar = document.getElementById('abs-art-char');
-    const absArtEffect = document.getElementById('abs-art-effect');
+    const absArtBg = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-bg') : document.getElementById('abs-art-bg'));
+    const absArtChar = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-char') : document.getElementById('abs-art-char'));
+    const absArtEffect = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-effect') : document.getElementById('abs-art-effect'));
 
     if (absArtBg) {
         delete absArtBg.dataset.failed;
@@ -1605,7 +1639,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     const imgSsr = document.getElementById('img-ssr');
     const imgTur = document.getElementById('img-tur');
     const imgLr = document.getElementById('img-lr');
-    const absThumb = document.getElementById('abs-thumb-img');
+    const absThumb = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-thumb-img') : document.getElementById('abs-thumb-img'));
 
     // These are set only for verified official progression cards below. Clear
     // old values first so importing a different unit cannot reuse its circles.
@@ -1680,7 +1714,7 @@ window.executeOfficialCardImport = async function(cardItem, awakeningMode = 'non
     }
 
     // 11. LWF CARD BACKGROUND & SEZA ATTACHMENT
-    const bgCanvas = document.getElementById('abs-card-bg-lwf-canvas');
+    const bgCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-card-bg-lwf-canvas') : document.getElementById('abs-card-bg-lwf-canvas'));
     const infoCanvas = document.getElementById('info-card-bg-lwf-canvas');
 
     // Start official imports in static mode. Clean art remains static at rest;
@@ -1841,7 +1875,7 @@ window.restoreEditorLwfs = async function() {
         }
     };
 
-    const bgCanvas = document.getElementById('abs-card-bg-lwf-canvas');
+    const bgCanvas = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-card-bg-lwf-canvas') : document.getElementById('abs-card-bg-lwf-canvas'));
     const infoCanvas = document.getElementById('info-card-bg-lwf-canvas');
     const [hasBg, hasInfo] = await Promise.all([attach(bgCanvas), attach(infoCanvas)]);
 
@@ -1857,20 +1891,66 @@ window.restoreEditorLwfs = async function() {
 /**
  * Execute Custom Card Ingestion into Editor
  */
+// Compatibility alias for custom-card bootstrap code. The shared presenter
+// renders official and custom editor sources from the same canonical blocks.
+window.renderCustomEditorSkillsInDokkanInfo = function(infoRoot = null) {
+    return window.renderEditorSkillsInDokkanInfo?.(infoRoot) || false;
+};
+
 window.executeCustomCardImport = async function(cardItem) {
     if (!cardItem) return;
 
-    // A card imported from the community hub should never inherit the official-card export action.
-    window.currentCardSource = 'custom';
-    window.currentCardThumbnail = '';
-    window.currentOfficialCardId = '';
-    window.currentOfficialCardAwakeningMode = '';
-    window.setAbsUnitTag?.('');
-
-    // Reset editor to pristine clean slate
-    if (typeof window.clearEditorForCleanImport === 'function') {
-        window.clearEditorForCleanImport();
-    }
+    const previousState = {
+        project: window.getProjectDataObject?.() || null,
+        source: window.currentCardSource,
+        thumbnail: window.currentCardThumbnail,
+        assetBaseUrl: window.currentCustomCardAssetBaseUrl,
+        officialId: window.currentOfficialCardId,
+        officialMode: window.currentOfficialCardAwakeningMode,
+        partnerId: window.editorPartnerCardId,
+        theme: window.getCardLayoutRoot?.()?.dataset?.cardLayout || window.currentCardThemeStyle || 'dokkaninfo'
+    };
+    let importMutationStarted = false;
+    const beginCustomImportMutation = () => {
+        if (importMutationStarted) return;
+        window.clearEditorForCleanImport?.();
+        window.currentCardSource = 'custom';
+        window.currentCardThumbnail = '';
+        window.currentCustomCardAssetBaseUrl = cardItem.cardUrl || `https://abscustom.github.io/${encodedCardRepoPath}/`;
+        window.currentOfficialCardId = '';
+        window.currentOfficialCardAwakeningMode = '';
+        window.setAbsUnitTag?.('');
+        importMutationStarted = true;
+    };
+    const restorePreviousCard = () => {
+        if (!importMutationStarted) return true;
+        try {
+            if (previousState.project && window.loadProjectData) window.loadProjectData(previousState.project, '', true);
+            window.currentCardSource = previousState.source || 'custom';
+            window.currentCardThumbnail = previousState.thumbnail || '';
+            window.currentCustomCardAssetBaseUrl = previousState.assetBaseUrl || '';
+            window.currentOfficialCardId = previousState.officialId || '';
+            window.currentOfficialCardAwakeningMode = previousState.officialMode || '';
+            window.editorPartnerCardId = previousState.partnerId || '';
+            if (previousState.theme) window.switchCardTheme?.(previousState.theme);
+            window.syncToAbsLayout?.();
+            window.updateAbsStyleSuperAttacks?.();
+            window.updateAbsStyleActiveSkills?.();
+            importMutationStarted = false;
+            return true;
+        } catch (restoreError) {
+            console.error('Could not restore the previous card after import failed:', restoreError);
+            return false;
+        }
+    };
+    const applyProjectDataInCurrentTheme = projectData => {
+        const selectedTheme = previousState.theme || 'dokkaninfo';
+        return window.loadProjectData({
+            ...projectData,
+            themeVariant: selectedTheme,
+            themeStyle: selectedTheme
+        }, cardItem.cardUrl);
+    };
 
     // Suppress and close manual icon picker popup
     const iconModal = document.getElementById('icon-picker-modal');
@@ -1879,42 +1959,9 @@ window.executeCustomCardImport = async function(cardItem) {
     const cardRepoPath = cardItem.repoPath || cardItem.id;
     const encodedCardRepoPath = String(cardRepoPath).split('/').filter(Boolean).map(encodeURIComponent).join('/');
 
-    const resolveCustomAssetUrl = (src, baseUrl) => {
-        if (!src) return "";
-        const trimmed = String(src).trim();
-        if (trimmed.startsWith('data:') || trimmed.startsWith('blob:')) return trimmed;
-        const sourceFileName = trimmed.split(/[?#]/)[0].split('/').pop();
-        const sourceIsSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(sourceFileName);
-        if (sourceIsSharedIcon) return `https://abscustom.github.io/assets/images/${sourceFileName}`;
-        if (trimmed.startsWith('http://') || trimmed.startsWith('https://')) return trimmed;
-
-        const cleanBase = (baseUrl || `https://abscustom.github.io/${encodedCardRepoPath}/`).replace(/\/+$/, '') + '/';
-        const cleanSrc = trimmed.replace(/^\.\//, '').replace(/^\//, '');
-
-        const commonAssetNames = [
-            'frame_agl.png', 'frame_teq.png', 'frame_int.png', 'frame_str.png', 'frame_phy.png', 'frame_none.png',
-            'type_agl.png', 'type_teq.png', 'type_int.png', 'type_str.png', 'type_phy.png', 'type_none.png',
-            'super_type_agl.png', 'super_type_teq.png', 'super_type_int.png', 'super_type_str.png', 'super_type_phy.png',
-            'extreme_type_agl.png', 'extreme_type_teq.png', 'extreme_type_int.png', 'extreme_type_str.png', 'extreme_type_phy.png',
-            'rarity_ssr.png', 'rarity_TUR.png', 'rarity_LR.png', 'rarity_none.png',
-            'rarity_ssr_abs.png', 'rarity_TUR_abs.png', 'rarity_lr_abs.png',
-            'eza_abs.png', 'superza_abs.png', 'eza_img.png', 'supereza_img.png',
-            'z-awaken.png', 'dokkan-awaken.png', 'lr_spin_dial.png', 'lightningfx.webm',
-            'SSR_Icon.png', 'TUR_Icon.png', 'LR_Icon.png', 'default.png', 'abs.custom.png', 'abs.style.png',
-            'dokkan-info-logo.png'
-        ];
-
-        const fileName = cleanSrc.split('/').pop();
-        const isSharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(fileName);
-        if (commonAssetNames.includes(fileName) || isSharedIcon) {
-            return `https://abscustom.github.io/assets/images/${fileName}`;
-        }
-
-        if (cleanBase) {
-            return cleanBase + cleanSrc;
-        }
-        return trimmed;
-    };
+    const resolveCustomAssetUrl = (src, baseUrl) => window.resolveImportedAssetUrl
+        ? window.resolveImportedAssetUrl(src, baseUrl, `https://abscustom.github.io/${encodedCardRepoPath}/`)
+        : String(src || '');
 
     // Category IDs in older custom-card exports need the local category table
     // to become human-readable. Start this before either import path renders
@@ -1932,7 +1979,9 @@ window.executeCustomCardImport = async function(cardItem) {
         if (jRes.ok) {
             const projectData = await jRes.json();
             if (window.loadProjectData) {
-                window.loadProjectData(projectData, cardItem.cardUrl);
+                beginCustomImportMutation();
+                applyProjectDataInCurrentTheme(projectData);
+                window.renderCustomEditorSkillsInDokkanInfo?.();
                 window.currentCardSource = 'custom';
                 window.currentOfficialCardId = '';
                 window.currentOfficialCardAwakeningMode = '';
@@ -1944,7 +1993,9 @@ window.executeCustomCardImport = async function(cardItem) {
                 return;
             }
         }
-    } catch (e) {}
+    } catch (e) {
+        restorePreviousCard();
+    }
 
     // 2. Fallback: Parse complete HTML DOM from index.html (Live fetch first)
     let rawHtml = "";
@@ -1977,7 +2028,9 @@ window.executeCustomCardImport = async function(cardItem) {
         if (backupScript && window.loadProjectData) {
             try {
                 const projectData = JSON.parse(backupScript.textContent);
-                window.loadProjectData(projectData, cardItem.cardUrl);
+                beginCustomImportMutation();
+                applyProjectDataInCurrentTheme(projectData);
+                window.renderCustomEditorSkillsInDokkanInfo?.();
                 window.currentCardSource = 'custom';
                 window.currentOfficialCardId = '';
                 window.currentOfficialCardAwakeningMode = '';
@@ -1987,7 +2040,9 @@ window.executeCustomCardImport = async function(cardItem) {
                 if (window.refreshEditorLinkingPartners) window.refreshEditorLinkingPartners();
                 if (window.CardHubToast) { window.CardHubToast.success('Custom Card Imported!', { detail: `${cardItem.name}!`, duration: 4000 }); } else { alert('✅ Custom card imported!'); }
                 return;
-            } catch (e) {}
+            } catch (e) {
+                restorePreviousCard();
+            }
         }
 
         // 1. Identity & Inputs
@@ -2053,6 +2108,7 @@ window.executeCustomCardImport = async function(cardItem) {
             dateVal = checkValidDate(cardItem.releaseDate || cardItem.date || cardItem.release_date);
         }
 
+        beginCustomImportMutation();
         const descInput = document.getElementById('descInput');
         const nameInput = document.getElementById('nameInput');
         const dateInput = document.getElementById('dateInput');
@@ -2195,26 +2251,28 @@ window.executeCustomCardImport = async function(cardItem) {
         // 5. Super Attacks
         document.querySelectorAll('.sa-block').forEach(b => b.remove());
         const saBlocks = doc.querySelectorAll('.sa-block');
-        const saSpot = document.getElementById('sa-insert-spot');
+        const saSpot = window.ensureEditorSkillSourceHost?.();
         if (saBlocks.length > 0 && saSpot) {
             saBlocks.forEach(b => {
                 let blockHtml = b.outerHTML;
                 blockHtml = blockHtml.replace(/src="(images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
                 blockHtml = blockHtml.replace(/src="(\.\/images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
-                saSpot.insertAdjacentHTML('beforebegin', blockHtml);
+                if (window.rewriteImportedAssetUrls) blockHtml = window.rewriteImportedAssetUrls(blockHtml, cardItem.cardUrl, window.currentCustomCardAssetBaseUrl);
+                saSpot.insertAdjacentHTML('beforeend', blockHtml);
             });
         }
 
         // 6. Active Skills
         document.querySelectorAll('.active-block').forEach(b => b.remove());
         const actBlocks = doc.querySelectorAll('.active-block');
-        const actSpot = document.getElementById('active-skill-insert-spot');
+        const actSpot = window.ensureEditorSkillSourceHost?.();
         if (actBlocks.length > 0 && actSpot) {
             actBlocks.forEach(b => {
                 let blockHtml = b.outerHTML;
                 blockHtml = blockHtml.replace(/src="(images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
                 blockHtml = blockHtml.replace(/src="(\.\/images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
-                actSpot.insertAdjacentHTML('beforebegin', blockHtml);
+                if (window.rewriteImportedAssetUrls) blockHtml = window.rewriteImportedAssetUrls(blockHtml, cardItem.cardUrl, window.currentCustomCardAssetBaseUrl);
+                actSpot.insertAdjacentHTML('beforeend', blockHtml);
             });
             window.normalizeActiveSkillBlocks?.();
         }
@@ -2229,6 +2287,7 @@ window.executeCustomCardImport = async function(cardItem) {
             let catHtml = docCats.innerHTML;
             catHtml = catHtml.replace(/src="(images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
             catHtml = catHtml.replace(/src="(\.\/images\/[^"]+)"/g, (m, p) => `src="${resolveCustomAssetUrl(p, cardItem.cardUrl)}"`);
+            if (window.rewriteImportedAssetUrls) catHtml = window.rewriteImportedAssetUrls(catHtml, cardItem.cardUrl, window.currentCustomCardAssetBaseUrl);
             const categoryTarget = document.getElementById('card-category-container');
             categoryTarget.innerHTML = catHtml;
 
@@ -2303,7 +2362,7 @@ window.executeCustomCardImport = async function(cardItem) {
         }
         if (rawAbsThumb) {
             const cleanAbs = resolveCustomAssetUrl(rawAbsThumb, cardItem.cardUrl);
-            const elAbs = document.getElementById('abs-thumb-img');
+            const elAbs = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-thumb-img') : document.getElementById('abs-thumb-img'));
             if (elAbs) elAbs.src = cleanAbs;
             if (cardRarity === 'TUR' && !rawTurThumb) {
                 document.querySelectorAll('#img-tur').forEach(el => el.src = cleanAbs);
@@ -2327,7 +2386,7 @@ window.executeCustomCardImport = async function(cardItem) {
                 artImg.src = cleanArt;
                 artImg.style.display = 'block';
             }
-            const dbArtImg = document.getElementById('abs-art-img');
+            const dbArtImg = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
             if (dbArtImg) dbArtImg.src = cleanArt;
             const vidOverlay = document.getElementById('myOverlayVideo');
             if (vidOverlay) vidOverlay.style.display = 'none';
@@ -2344,7 +2403,7 @@ window.executeCustomCardImport = async function(cardItem) {
                 vidOverlay.load();
                 vidOverlay.play().catch(()=>{});
             }
-            const dbArtVideo = document.getElementById('abs-art-video');
+            const dbArtVideo = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-video') : document.getElementById('abs-art-video'));
             if (dbArtVideo) dbArtVideo.src = cleanVid;
             const artImg = document.getElementById('myOverlayImage');
             if (artImg) artImg.style.display = 'none';
@@ -2370,6 +2429,7 @@ window.executeCustomCardImport = async function(cardItem) {
         if (window.refreshSADropdown) window.refreshSADropdown();
         if (window.refreshActiveDropdown) window.refreshActiveDropdown();
         if (window.refreshFormList) window.refreshFormList();
+        window.renderCustomEditorSkillsInDokkanInfo?.();
         if (typeof window.updateCardDisplay === 'function') window.updateCardDisplay();
         if (window.updateRarityStats) window.updateRarityStats(window.currentRarity);
         if (window.syncAbsCleanAwakeningPortraits) window.syncAbsCleanAwakeningPortraits();
@@ -2382,6 +2442,7 @@ window.executeCustomCardImport = async function(cardItem) {
         if (window.CardHubToast) { window.CardHubToast.success('Custom Card Imported!', { detail: `[${titleVal}] ${nameVal}!`, duration: 4000 }); } else { alert('✅ Custom card imported!'); }
     } catch (e) {
         console.error("Custom card import failed:", e);
+        restorePreviousCard();
         if (window.CardHubToast) { window.CardHubToast.error('Import Failed', { detail: 'Check console for details.' }); } else { alert("Failed to import custom card."); }
     }
 };

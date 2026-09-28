@@ -19,6 +19,17 @@ html, body {
     background: #0b0f19 !important;
 }
 
+/* Info skill targets sit inside padded Bootstrap columns; cancel that gutter
+   so attacks align with the other full-width Dokkan Info sections. */
+#layout-dokkaninfo #sa-insert-spot,
+#layout-dokkaninfo #active-skill-insert-spot {
+    box-sizing: border-box;
+    width: calc(100% + 24px);
+    max-width: calc(100% + 24px);
+    min-width: 0;
+    margin-inline: -12px;
+}
+
 /* Container Alignment & Spacing */
 #app.theme-abs-style #top-content .container-1220,
 #layout-abs-style {
@@ -304,14 +315,14 @@ html, body {
    its own outline so these controls remain clearly editable. */
 /* ======================================================================= */
 
-body.is-published:not(.admin-mode-active) #abs-transformations-box,
-body.is-published:not(.admin-mode-active) #abs-transformations-box:hover,
-body.is-published:not(.admin-mode-active) #abs-awakenings-box,
-body.is-published:not(.admin-mode-active) #abs-awakenings-box:hover,
-body.is-published:not(.admin-mode-active) #abs-transformations-container,
-body.is-published:not(.admin-mode-active) #abs-transformations-container:hover,
-body.is-published:not(.admin-mode-active) #abs-awakenings-container,
-body.is-published:not(.admin-mode-active) #abs-awakenings-container:hover {
+body.is-published:not(.admin-mode-active) [data-card-element="abs-transformations-box"],
+body.is-published:not(.admin-mode-active) [data-card-element="abs-transformations-box"]:hover,
+body.is-published:not(.admin-mode-active) [data-card-element="abs-awakenings-box"],
+body.is-published:not(.admin-mode-active) [data-card-element="abs-awakenings-box"]:hover,
+body.is-published:not(.admin-mode-active) [data-card-element="abs-transformations-container"],
+body.is-published:not(.admin-mode-active) [data-card-element="abs-transformations-container"]:hover,
+body.is-published:not(.admin-mode-active) [data-card-element="abs-awakenings-container"],
+body.is-published:not(.admin-mode-active) [data-card-element="abs-awakenings-container"]:hover {
     outline: none !important;
     outline-offset: 0 !important;
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.15), inset 0 -2px 4px rgba(0, 0, 0, 0.5) !important;
@@ -342,12 +353,12 @@ body.is-published:not(.admin-mode-active) #abs-awakenings-container:hover {
 
 .abs-box,
 .abs-box:hover,
-#abs-transformations-box,
-#abs-transformations-box:hover,
-#abs-awakenings-box,
-#abs-awakenings-box:hover,
-#abs-stats-box,
-#abs-stats-box:hover {
+[data-card-element="abs-transformations-box"],
+[data-card-element="abs-transformations-box"]:hover,
+[data-card-element="abs-awakenings-box"],
+[data-card-element="abs-awakenings-box"]:hover,
+[data-card-element="abs-stats-box"],
+[data-card-element="abs-stats-box"]:hover {
     border-radius: 12px !important;
     overflow: hidden !important;
     transition: none !important; /* Prevents visual snapping */
@@ -397,8 +408,8 @@ body.is-published:not(.admin-mode-active) #abs-awakenings-container:hover {
 }
 
 /* 4. Ensure container boxes remain visible across all zoom levels */
-#abs-partners-box,
-#abs-stats-box,
+[data-card-element="abs-partners-box"],
+[data-card-element="abs-stats-box"],
 #layout-abs-style {
     transform: translateZ(0);
     will-change: contents;

@@ -12,6 +12,21 @@ let currentCardArtAnimToken = 0;
 let calculatedStats = { hp: {}, atk: {}, def: {} };
 let currentStatPercent = '100%';
 
+function cardLayoutElement(id, root = null) {
+    return window.getCardLayoutElement
+        ? window.getCardLayoutElement(id, root)
+        : document.getElementById(id);
+}
+
+function cardLayoutQuery(selector, root = window.getCardLayoutRoot?.()) {
+    if (root && String(selector).startsWith('#layout-abs-style')) {
+        const suffix = String(selector).slice('#layout-abs-style'.length).trim();
+        if (!suffix) return root;
+        return root.querySelector(suffix) || document.querySelector(selector);
+    }
+    return root?.querySelector(selector) || document.querySelector(selector);
+}
+
 
 /* ==========================================================================
    POWER RANK & EXACT RARITY CLASSIFIERS
@@ -61,7 +76,7 @@ function applyThemeColors(cardType) {
     };
     const c = themeColors[cardType] || themeColors.agl;
     
-    [document.documentElement, document.body, document.getElementById('layout-abs-style')].forEach(el => {
+    [document.documentElement, document.body, cardLayoutElement('layout-abs-style')].forEach(el => {
         if (el) {
             el.style.setProperty('--theme-main', c.main);
             el.style.setProperty('--theme-border', c.border);
@@ -140,7 +155,7 @@ function handleStatSliderChange(stepIndex) {
 }
 
 function setStatSliderIndex(idx) {
-    const slider = document.getElementById('abs-stat-range-slider');
+    const slider = cardLayoutElement('abs-stat-range-slider');
     if (slider) {
         slider.value = idx;
         handleStatSliderChange(idx);
@@ -150,8 +165,8 @@ function setStatSliderIndex(idx) {
 function updateAbsStatDisplay(pct) {
     if (pct) currentStatPercent = pct.trim();
 
-    const slider = document.getElementById('abs-stat-range-slider');
-    const displayLabel = document.getElementById('abs-slider-percent-display');
+    const slider = cardLayoutElement('abs-stat-range-slider');
+    const displayLabel = cardLayoutElement('abs-slider-percent-display');
     const idx = STAT_MILESTONES.indexOf(currentStatPercent);
 
     if (slider && idx !== -1) {
@@ -163,9 +178,9 @@ function updateAbsStatDisplay(pct) {
     });
     if (displayLabel) displayLabel.textContent = currentStatPercent;
 
-    const hpEl = document.getElementById('abs-stat-hp-val');
-    const atkEl = document.getElementById('abs-stat-atk-val');
-    const defEl = document.getElementById('abs-stat-def-val');
+    const hpEl = cardLayoutElement('abs-stat-hp-val');
+    const atkEl = cardLayoutElement('abs-stat-atk-val');
+    const defEl = cardLayoutElement('abs-stat-def-val');
 
     if (hpEl) hpEl.innerText = (calculatedStats.hp[currentStatPercent] || 0).toLocaleString();
     if (atkEl) atkEl.innerText = (calculatedStats.atk[currentStatPercent] || 0).toLocaleString();
@@ -173,9 +188,9 @@ function updateAbsStatDisplay(pct) {
 }
 
 function updateToggleBarActiveButtons(mode) {
-    const baseBtn = document.getElementById('eza-toggle-base');
-    const ezaBtn = document.getElementById('eza-toggle-eza');
-    const sezaBtn = document.getElementById('eza-toggle-seza');
+    const baseBtn = cardLayoutElement('eza-toggle-base');
+    const ezaBtn = cardLayoutElement('eza-toggle-eza');
+    const sezaBtn = cardLayoutElement('eza-toggle-seza');
 
     if (baseBtn) baseBtn.classList.toggle('active', mode === 'base');
     if (ezaBtn) ezaBtn.classList.toggle('active', mode === 'eza');
@@ -583,7 +598,7 @@ function selectCard(cardId, preserveExactId = false, forcedMode = null) {
 
     selectedCard = card;
 
-    const activeTip = document.getElementById('card-info-tooltip');
+    const activeTip = cardLayoutElement('card-info-tooltip');
     if (activeTip) {
         activeTip.style.opacity = '0';
         activeTip.style.display = 'none';
@@ -594,8 +609,8 @@ function selectCard(cardId, preserveExactId = false, forcedMode = null) {
     }
 
     // Toggle bar updates
-    const toggleBar = document.getElementById('abs-eza-toggle-bar');
-    const toggleCont = document.getElementById('abs-eza-toggle-container');
+    const toggleBar = cardLayoutElement('abs-eza-toggle-bar');
+    const toggleCont = cardLayoutElement('abs-eza-toggle-container');
 
     if (toggleBar && toggleCont && (siblings.hasEza || siblings.hasSeza)) {
         toggleBar.style.display = "block";
@@ -628,12 +643,32 @@ function selectCard(cardId, preserveExactId = false, forcedMode = null) {
 
 function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
     if (!selectedCard) return;
+    const renderRoot = window.getCardLayoutRoot?.();
+    const isDokkanInfoLayout = renderRoot?.dataset?.cardLayout === 'dokkaninfo';
     const siblings = getCardSiblings(selectedCard);
     const network = getFullUnitNetwork(selectedCard);
-    const awakenCont = document.getElementById('abs-awakenings-container');
+    const awakenCont = cardLayoutElement('abs-awakenings-container');
+    if (isDokkanInfoLayout) {
+        const releaseDate = renderRoot.querySelector('#release-dates-container');
+        if (releaseDate) {
+            const releaseItems = [
+                ['Release Date', siblings?.base || selectedCard, 'base'],
+                ...(siblings?.eza ? [['EZA', siblings.eza, 'eza']] : []),
+                ...(siblings?.seza ? [['SEZA', siblings.seza, 'seza']] : [])
+            ].map(([label, stageCard, stageMode]) => ({
+                label,
+                value: formatESTDateWithTime(getCardExactReleaseDate(stageCard, stageMode))
+            }));
+            releaseDate.innerHTML = releaseItems.map(item => `<span class="info-release-date-item"><b>${item.label}</b><span>${item.value}</span></span>`).join('');
+            releaseDate.hidden = releaseItems.length === 0;
+        }
+    }
     let awHTML = '';
 
     const buildStepDivider = (imgName, fallbackText) => {
+        if (isDokkanInfoLayout) {
+            return `<div class="info-awaken-divider"><span>${fallbackText}</span></div>`;
+        }
         if (document.body.classList.contains('theme-abs-clean')) {
             return '<div class="abs-awaken-divider"></div>';
         }
@@ -663,6 +698,11 @@ function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
             ? parseTitleAndName(c)
             : { title: '', name: c.name };
         const nodeDisplayLabel = nodeTitle ? `[${nodeTitle}] ${nodeName}` : (c.name || exactRar);
+        if (isDokkanInfoLayout) {
+            const thumbnail = window.resolveCardAssets?.(c)?.thumbUrl || `${CENTRAL_ASSET_URL}${exactRar === 'LR' ? 'LR_Icon.png' : exactRar === 'TUR' ? 'TUR_Icon.png' : 'SSR_Icon.png'}`;
+            const safeName = window.escapeLinkTooltipAttribute?.(nodeDisplayLabel) || nodeDisplayLabel;
+            return `<button type="button" class="info-awaken-row${isSelected ? ' is-current' : ''}" onclick="selectCard(${c.id}, false, '${nodeMode}')"><img src="${thumbnail}" alt=""><span><strong>${safeName}</strong><small>${customLabel} ${formattedDate}</small></span></button>`;
+        }
         const safeTooltip = window.escapeLinkTooltipAttribute?.(nodeDisplayLabel) || String(nodeDisplayLabel).replace(/"/g, '&quot;');
         const tooltipAttr = isClean ? ` data-tooltip="${safeTooltip}"` : '';
         
@@ -709,7 +749,7 @@ function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
 
     if (awakenCont) {
         awakenCont.innerHTML = awHTML;
-        if (typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachSezaFlameBorder) {
+        if (!isDokkanInfoLayout && typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachSezaFlameBorder) {
             awakenCont.querySelectorAll('.abs-composed-icon[data-seza="true"]').forEach(iconEl => {
                 const cardType = iconEl.getAttribute('data-type') || 'agl';
                 window.DokkanLWF.attachSezaFlameBorder(iconEl, cardType);
@@ -720,8 +760,8 @@ function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
     // =========================================================================
     // 2. TRANSFORMATIONS BOX (CONNECTED VIA CHARACTER_ID & LINEAGE)
     // =========================================================================
-    const transBox = document.getElementById('abs-transformations-box');
-    const transCont = document.getElementById('abs-transformations-container');
+    const transBox = cardLayoutElement('abs-transformations-box');
+    const transCont = cardLayoutElement('abs-transformations-container');
     
     const baseMaxForm = network.baseProgression.length > 0 ? network.baseProgression[network.baseProgression.length - 1] : siblings.base;
     
@@ -743,7 +783,7 @@ function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
         return normFId !== normCurrentId;
     });
 
-    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean') || document.getElementById('app')?.classList.contains('theme-abs-clean');
+    const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean') || cardLayoutElement('app')?.classList.contains('theme-abs-clean');
     const formsForRender = isAbsCleanTheme
         ? [selectedCard, ...otherFamilyForms].filter(Boolean)
         : otherFamilyForms;
@@ -752,6 +792,18 @@ function renderAwakeningAndTransformationTrees(mode = currentEzaMode) {
         if (transBox) transBox.classList.remove('d-none');
         let trHTML = '';
         formsForRender.forEach((tc, idx) => {
+            if (isDokkanInfoLayout) {
+                const tcId = parseInt(tc.id, 10);
+                let targetNavId = tcId;
+                if (mode === 'seza' && siblings.hasSeza) targetNavId = parseInt(String(tcId).substring(0, 7) + '9', 10);
+                else if ((mode === 'eza' || mode === 'seza') && siblings.hasEza) targetNavId = parseInt(String(tcId).substring(0, 7) + '8', 10);
+                const { title: tcTitle, name: tcName } = parseTitleAndName(tc);
+                const displayLabel = tcTitle ? `[${tcTitle}] ${tcName}` : tc.name;
+                const thumbnail = window.resolveCardAssets?.(tc)?.thumbUrl || `${CENTRAL_ASSET_URL}SSR_Icon.png`;
+                const safeName = window.escapeLinkTooltipAttribute?.(displayLabel) || displayLabel;
+                trHTML += `<button type="button" class="info-transform-row" onclick="selectCard(${targetNavId}, false, '${mode}')"><img src="${thumbnail}" alt=""><span>${safeName}</span></button>`;
+                return;
+            }
             if (idx > 0) trHTML += `<div class="abs-transform-divider"></div>`;
             const tcId = parseInt(tc.id, 10);
             let targetNavId = tcId;
@@ -1047,12 +1099,13 @@ function getViewerCircleAsset(card) {
 }
 
 function syncAbsCleanViewerLeaderPlacement() {
-    const leaderBox = document.getElementById('abs-leader-skill-box');
-    const cleanSlot = document.getElementById('abs-clean-leader-banner-slot');
-    const legacySlot = document.getElementById('abs-leader-skill-legacy-slot');
+    const leaderBox = cardLayoutElement('abs-leader-skill-box');
+    const cleanSlot = cardLayoutElement('abs-clean-leader-banner-slot');
+    const legacySlot = cardLayoutElement('abs-leader-skill-legacy-slot');
     if (!leaderBox || !cleanSlot || !legacySlot) return;
 
     const isClean = document.body?.classList.contains('theme-abs-clean');
+    if (!isClean) return;
     const destination = isClean ? cleanSlot : legacySlot;
     if (leaderBox.parentElement !== destination) destination.appendChild(leaderBox);
 
@@ -1067,10 +1120,11 @@ window.syncAbsCleanLeaderPlacement = syncAbsCleanViewerLeaderPlacement;
 // as the editor, but keeps the move reversible when the visitor selects
 // abs.style from the viewer settings drawer.
 function syncAbsCleanViewerIdentityPlacement() {
-    const identity = document.getElementById('abs-clean-identity-icons');
-    const portraitStage = document.getElementById('abs-clean-portrait-stage');
-    const header = document.querySelector('#layout-abs-style .abs-top-header');
+    const identity = cardLayoutElement('abs-clean-identity-icons');
+    const portraitStage = cardLayoutElement('abs-clean-portrait-stage');
+    const header = cardLayoutQuery('#layout-abs-style .abs-top-header');
     if (!identity || !portraitStage || !header) return;
+    if (!document.body?.classList.contains('theme-abs-clean')) return;
 
     if (!window.__absCleanViewerIdentityHome) {
         window.__absCleanViewerIdentityHome = {
@@ -1080,6 +1134,7 @@ function syncAbsCleanViewerIdentityPlacement() {
     }
 
     const isClean = document.body?.classList.contains('theme-abs-clean');
+    if (!isClean) return;
     if (isClean) {
         identity.hidden = false;
         identity.classList.add('abs-clean-header-identity');
@@ -1116,17 +1171,18 @@ function syncAbsCleanViewerEffects(nextState = null) {
 
     const state = window.__absCleanViewerEffectsState || {};
     const isClean = document.body?.classList.contains('theme-abs-clean');
+    if (!isClean) return;
     const isLR = Boolean(state.isLR);
     const isEZA = Boolean(state.isEZA);
     const isSEZA = Boolean(state.isSEZA);
     const cardType = String(state.cardType || 'none').toLowerCase();
-    const layout = document.getElementById('layout-abs-style');
-    const composed = document.getElementById('abs-composed-icon');
-    const aura = document.getElementById('abs-clean-lr-aura');
-    const lightning = document.getElementById('abs-clean-lr-lightning');
-    const ring = document.getElementById('abs-clean-ring-effect');
-    const legacyLightning = document.getElementById('abs-lightning');
-    const legacyDial = document.getElementById('abs-spin-dial');
+    const layout = cardLayoutElement('layout-abs-style');
+    const composed = cardLayoutElement('abs-composed-icon');
+    const aura = cardLayoutElement('abs-clean-lr-aura');
+    const lightning = cardLayoutElement('abs-clean-lr-lightning');
+    const ring = cardLayoutElement('abs-clean-ring-effect');
+    const legacyLightning = cardLayoutElement('abs-lightning');
+    const legacyDial = cardLayoutElement('abs-spin-dial');
     const hueByType = { agl: '165deg', teq: '75deg', int: '225deg', str: '312deg', phy: '0deg' };
 
     if (layout) layout.dataset.cardType = cardType;
@@ -1135,17 +1191,6 @@ function syncAbsCleanViewerEffects(nextState = null) {
         composed.style.setProperty('--sba-lr-fx-hue', hueByType[cardType] || '0deg');
         composed.style.setProperty('--sba-lr-aura-opacity', '0.92');
         composed.style.setProperty('--sba-lr-lightning-opacity', '1');
-    }
-
-    if (!isClean) {
-        setAbsCleanViewerEffectDisplay(aura, false);
-        setAbsCleanViewerEffectDisplay(lightning, false);
-        setAbsCleanViewerEffectDisplay(ring, false);
-        ring?.classList.remove('sba-eza-ring-effect', 'sba-seza-ring-effect');
-        ring?.removeAttribute('data-awakening-fx');
-        window.DokkanLWF?.pause?.(aura?.id || '');
-        window.DokkanLWF?.pause?.(lightning?.id || '');
-        return;
     }
 
     document.body.dataset.absCleanType = cardType;
@@ -1180,25 +1225,16 @@ window.addEventListener('dokkan-lwf-ready', () => {
 
 function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, unitTag) {
     const isClean = document.body?.classList.contains('theme-abs-clean');
-    const releaseDate = document.getElementById('abs-clean-release-date');
-    const nameBadges = document.getElementById('abs-clean-name-badges');
-    const nameRarity = document.getElementById('abs-clean-name-rarity');
-    const nameType = document.getElementById('abs-clean-name-type');
-    const portraitStage = document.getElementById('abs-clean-portrait-stage');
-    const identity = document.getElementById('abs-clean-identity-icons');
-    const portraits = document.getElementById('abs-clean-awakening-portraits');
-    const timeline = document.getElementById('abs-clean-bottom-timeline');
+    if (!isClean) return;
+    const releaseDate = cardLayoutElement('abs-clean-release-date');
+    const nameBadges = cardLayoutElement('abs-clean-name-badges');
+    const nameRarity = cardLayoutElement('abs-clean-name-rarity');
+    const nameType = cardLayoutElement('abs-clean-name-type');
+    const portraitStage = cardLayoutElement('abs-clean-portrait-stage');
+    const identity = cardLayoutElement('abs-clean-identity-icons');
+    const portraits = cardLayoutElement('abs-clean-awakening-portraits');
+    const timeline = cardLayoutElement('abs-clean-bottom-timeline');
     syncAbsCleanViewerIdentityPlacement();
-
-    if (!isClean) {
-        [releaseDate, nameBadges, portraitStage, identity, portraits, timeline]
-            .filter(Boolean)
-            .forEach(element => {
-                element.hidden = true;
-            });
-        if (releaseDate) releaseDate.innerHTML = '';
-        return;
-    }
 
     if (releaseDate) {
         const siblings = getCardSiblings(card);
@@ -1238,8 +1274,8 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
     if (identity) {
         identity.hidden = false;
         const setIdentityValue = (valueId, badgeId, value, hidden = false) => {
-            const valueEl = document.getElementById(valueId);
-            const badgeEl = document.getElementById(badgeId);
+            const valueEl = cardLayoutElement(valueId);
+            const badgeEl = cardLayoutElement(badgeId);
             if (valueEl) valueEl.textContent = value || '';
             if (badgeEl) badgeEl.hidden = Boolean(hidden || !value);
         };
@@ -1250,11 +1286,11 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
         const awakening = mode === 'seza' ? 'SEZA' : (mode === 'eza' ? 'EZA' : '');
         setIdentityValue('abs-clean-val-awakening', 'abs-clean-badge-awakening', awakening, !awakening);
 
-        const badgeRarity = document.getElementById('abs-clean-badge-rarity');
-        const badgeClass = document.getElementById('abs-clean-badge-class');
-        const badgeType = document.getElementById('abs-clean-badge-type');
-        const badgeTag = document.getElementById('abs-clean-badge-tag');
-        const badgeAwakening = document.getElementById('abs-clean-badge-awakening');
+        const badgeRarity = cardLayoutElement('abs-clean-badge-rarity');
+        const badgeClass = cardLayoutElement('abs-clean-badge-class');
+        const badgeType = cardLayoutElement('abs-clean-badge-type');
+        const badgeTag = cardLayoutElement('abs-clean-badge-tag');
+        const badgeAwakening = cardLayoutElement('abs-clean-badge-awakening');
         if (badgeRarity && badgeType) {
             identity.appendChild(badgeRarity);
             if (badgeClass) identity.appendChild(badgeClass);
@@ -1308,7 +1344,7 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
         let visiblePortraitCount = 0;
         portraitStages.forEach(([stageRarity, wrapperClass, imageId]) => {
             const wrapper = portraits.querySelector(`.${wrapperClass}`);
-            const image = document.getElementById(imageId);
+            const image = cardLayoutElement(imageId);
             const stageCard = progressionByRarity.get(stageRarity);
             if (!wrapper || !image || !stageCard) {
                 if (wrapper) {
@@ -1382,7 +1418,7 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
         ];
         const currentIndex = timelineStages.findIndex(([stage]) => stage === rarity);
         timelineStages.forEach(([stage, id], index) => {
-            const segment = document.getElementById(id);
+            const segment = cardLayoutElement(id);
             if (!segment) return;
             const available = progressionByRarity.has(stage);
             const stageCard = progressionByRarity.get(stage);
@@ -1402,7 +1438,7 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
                 segment.style.cursor = '';
             }
         });
-        const timelineRarity = document.getElementById('abs-clean-timeline-rarity');
+        const timelineRarity = cardLayoutElement('abs-clean-timeline-rarity');
         if (timelineRarity) timelineRarity.textContent = rarity;
         timeline.hidden = progressionByRarity.size === 0;
     }
@@ -1411,6 +1447,7 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
 
 function renderCardDetails(card, mode = currentEzaMode) {
     if (!card) return;
+    const layoutRoot = window.getCardLayoutRoot?.() || document;
 
     // Animation buttons are rendered in several independent sections. Keep the
     // currently viewed official card available to all of them without relying
@@ -1427,19 +1464,21 @@ function renderCardDetails(card, mode = currentEzaMode) {
         const isSEZA = mode === 'seza';
         const isEZA = mode === 'eza' || mode === 'seza';
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
+        const showPassiveBadges = isAbsCleanTheme || layoutRoot?.dataset?.cardLayout === 'abs-style';
+        const isDokkanInfoLayout = layoutRoot?.dataset?.cardLayout === 'dokkaninfo';
         window.__absCleanViewerEffectsState = { isLR, isEZA, isSEZA, cardType };
         if (document.body) document.body.dataset.absCleanType = cardType;
 
         applyThemeColors(cardType);
         calculateStats(card.hp || card.stat_hp_max, card.atk || card.stat_atk_max, card.def || card.stat_def_max, cardType, isEZA);
 
-        const artHeaderEl = document.getElementById("abs-art-header-text");
+        const artHeaderEl = cardLayoutElement("abs-art-header-text");
         const unitTag = getCardUnitTag(card);
         if (artHeaderEl) artHeaderEl.textContent = unitTag;
 
         const { title, name } = parseTitleAndName(card);
-        const titleEl = document.getElementById("abs-char-title");
-        const nameEl = document.getElementById("abs-char-name");
+        const titleEl = cardLayoutElement("abs-char-title");
+        const nameEl = cardLayoutElement("abs-char-name");
 
         if (titleEl) {
             titleEl.textContent = title || "";
@@ -1455,7 +1494,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
 
         // Carry this exact card and its currently selected awakening state into
         // the calculator instead of making the visitor pick it a second time.
-        const calculatorLink = document.getElementById('card-calculator-link');
+        const calculatorLink = cardLayoutElement('card-calculator-link');
         if (calculatorLink) {
             const calculatorParams = new URLSearchParams({ card: String(card.id) });
             if (mode === 'eza' || mode === 'seza') calculatorParams.set('mode', mode);
@@ -1473,7 +1512,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
         if (thumbUrl) favicon.href = thumbUrl;
 
         // Leader Skill Title with (Extreme) or (Super Extreme)
-        const leadTitleEl = document.getElementById("abs-leader-title");
+        const leadTitleEl = cardLayoutElement("abs-leader-title");
         if (leadTitleEl) {
             let leadTitle = "Leader Skill";
             if (isSEZA) leadTitle += " (Super Extreme)";
@@ -1484,7 +1523,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
         // Leader Skill Content
         const leaderObj = findLeaderObj(card, mode);
         const rawLeader = leaderObj ? (leaderObj.description || leaderObj.effect || leaderObj.details) : (card.leader_skill || "");
-        const leaderEl = document.getElementById("abs-leader-skill");
+        const leaderEl = cardLayoutElement("abs-leader-skill");
         if (leaderEl) leaderEl.innerHTML = formatOfficialText(rawLeader, true).replace(/\n/g, ' ').trim();
         syncAbsCleanViewerLeaderPlacement();
 
@@ -1498,19 +1537,19 @@ function renderCardDetails(card, mode = currentEzaMode) {
 
         const passText = passiveObj.itemized_description || passiveObj.description || "";
         const passiveIconsStripHtml = renderPassiveIconsStrip(passText, card);
-        const cleanPassiveIcons = document.getElementById('abs-clean-passive-icons');
-        const cleanAbilityDocks = document.getElementById('abs-clean-ability-docks');
+        const cleanPassiveIcons = cardLayoutElement('abs-clean-passive-icons');
+        const cleanAbilityDocks = cardLayoutElement('abs-clean-ability-docks');
         if (cleanPassiveIcons) {
-            cleanPassiveIcons.innerHTML = isAbsCleanTheme ? passiveIconsStripHtml : '';
-            cleanPassiveIcons.hidden = !isAbsCleanTheme || !passiveIconsStripHtml;
+            cleanPassiveIcons.innerHTML = showPassiveBadges ? passiveIconsStripHtml : '';
+            cleanPassiveIcons.hidden = !showPassiveBadges || !passiveIconsStripHtml;
         }
-        if (cleanAbilityDocks) cleanAbilityDocks.hidden = !isAbsCleanTheme || !passiveIconsStripHtml;
+        if (cleanAbilityDocks) cleanAbilityDocks.hidden = !showPassiveBadges || !passiveIconsStripHtml;
         const passiveAnimationScript = window.DokkanAnimation?.resolvePassive(card) || '';
         const passiveAnimationButton = window.DokkanAnimation?.buttonHtml(passiveAnimationScript, 'Play Intro Animation', 'passive') || '';
 
-        const absPassiveName = document.getElementById("abs-passive-name");
-        const absPassiveBox = document.getElementById("abs-passive-skill-box");
-        const passiveSummary = document.getElementById('abs-passive-summary');
+        const absPassiveName = cardLayoutElement("abs-passive-name");
+        const absPassiveBox = cardLayoutElement("abs-passive-skill-box");
+        const passiveSummary = cardLayoutElement('abs-passive-summary');
         // The clean layout keeps both live utility panels in the Passive box,
         // outside the title header. Save them in that surrounding box before
         // rebuilding the title so innerHTML cannot detach them from the document.
@@ -1524,7 +1563,9 @@ function renderCardDetails(card, mode = currentEzaMode) {
             // In abs.clean the label/actions are a small, plain heading above
             // the panel.  The actual passive name belongs to the panel body so
             // it never inherits the old typed/blue header treatment.
-            absPassiveName.innerHTML = isAbsCleanTheme
+            absPassiveName.innerHTML = isDokkanInfoLayout
+                ? `<div class="info-passive-title"><span>Passive Skill</span><em>${window.escapeLinkTooltipAttribute?.(pName) || pName}</em></div>`
+                : isAbsCleanTheme
                 ? `<div class="abs-passive-external-header">
                     <span class="abs-passive-external-label">Passive Skill</span>
                     <span class="abs-passive-header-actions">${passiveAnimationButton}</span>
@@ -1544,38 +1585,45 @@ function renderCardDetails(card, mode = currentEzaMode) {
             passiveObj,
             absPassiveName
         );
-        const passiveContainer = document.getElementById("abs-passive-container");
+        const passiveContainer = cardLayoutElement("abs-passive-container");
         if (passiveContainer) {
             passiveContainer.innerHTML = isAbsCleanTheme
                 ? `<div class="abs-passive-name-inside">${pName}</div>${parsePassiveSections(passText)}`
-                : parsePassiveSections(passText);
+                : parsePassiveSections(passText, isDokkanInfoLayout ? 'dokkaninfo' : 'abs');
         }
         window.syncAbsCleanPassiveSummary?.(passText);
 
-        renderSuperAttacks(card, isEZA, mode);
-        renderActiveSkills(card);
-        renderDokkanFields(card);
-        renderStandbySkills(card);
-        renderFinishSkills(card);
+        renderSuperAttacks(card, isEZA, mode, layoutRoot);
+        renderActiveSkills(card, layoutRoot);
+        renderDokkanFields(card, layoutRoot);
+        renderStandbySkills(card, layoutRoot);
+        renderFinishSkills(card, layoutRoot);
 
         // Links are displayed shortest-to-longest without changing the source
         // order used by the card data or any editor/export operation.
-        const linkEntries = (card.links || card.link_skill_ids || []).map((linkItem, sourceIndex) => {
-            let linkName = typeof linkItem === 'object' ? linkItem.name : (DB.links && DB.links[linkItem] ? DB.links[linkItem].name : "Link");
+        const linkValues = window.getCardLinkValues?.(card) || card.links || card.link_skill_ids || [];
+        const linkEntries = linkValues.map((linkItem, sourceIndex) => {
+            const linkId = typeof linkItem === 'object' ? (linkItem.id || linkItem.link_skill_id || linkItem.link_id || '') : linkItem;
+            let linkName = typeof linkItem === 'object' ? (linkItem.name || DB.links?.[linkId]?.name) : (DB.links && DB.links[linkItem] ? DB.links[linkItem].name : "Link");
             linkName = String(linkName || '').trim() || 'Link';
-            return { linkName, sourceIndex };
+            return { linkName, linkId: String(linkId || ''), sourceIndex };
         });
         linkEntries.sort((a, b) => {
             const lengthDiff = a.linkName.length - b.linkName.length;
             return lengthDiff !== 0 ? lengthDiff : a.sourceIndex - b.sourceIndex;
         });
-        const linksHtml = linkEntries.map(({ linkName }) => {
+        const linksHtml = linkEntries.map(({ linkName, linkId }) => {
             let linkObj = DB.links ? Object.values(DB.links).find(l => l.name === linkName) : null;
             let lv10Desc = window.getLinkSkillLevel10Description?.(linkName, linkObj) || '';
             let tooltip = window.escapeLinkTooltipAttribute?.(lv10Desc) || lv10Desc;
             let tooltipAttr = lv10Desc ? ` data-tooltip="${tooltip}"` : '';
             let effectHtml = lv10Desc ? `<div class="abs-link-effect">${tooltip}</div>` : '';
             let safeLinkName = window.escapeLinkTooltipAttribute?.(linkName) || linkName;
+            if (isDokkanInfoLayout) {
+                const safeId = window.escapeLinkTooltipAttribute?.(linkId) || linkId;
+                const infoEffect = lv10Desc ? `<span class="info-link-effect">${tooltip}</span>` : '';
+                return `<a class="col-4 border border-1 border-${cardType} padding-top-bottom-10 text-center info-link-item" data-link-id="${safeId}"${tooltipAttr}>${safeLinkName}${infoEffect}</a>`;
+            }
             return `
                 <div class="abs-link-badge"${tooltipAttr}>
                     <div class="abs-link-lv">
@@ -1587,10 +1635,12 @@ function renderCardDetails(card, mode = currentEzaMode) {
                 </div>
             `;
         }).join('');
-        document.getElementById("abs-link-container").innerHTML = linksHtml;
+        const linkContainer = cardLayoutElement("abs-link-container");
+        if (linkContainer) linkContainer.innerHTML = linksHtml;
 
         // Categories are displayed shortest-to-longest without changing the source order.
-        const catEntries = (card.categories || card.category_ids || []).map(categoryValue => {
+        const categoryValues = window.getCardCategoryValues?.(card) || card.categories || card.category_ids || [];
+        const catEntries = categoryValues.map(categoryValue => {
             const resolved = window.resolveDokkanCategoryDisplay?.(categoryValue) || {};
             const categoryId = resolved.id || String(
                 typeof categoryValue === 'object'
@@ -1604,7 +1654,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
             if (!catName) return null;
             const catColor = window.getDokkanCategoryColor?.(catName) || '#38bdf8';
             const categoryCount = window.getDokkanCategoryCharacterCount?.(categoryId, catName) ?? 0;
-            return { padId, catName, catColor, categoryCount };
+            return { padId, categoryId, catName, catColor, categoryCount };
         }).filter(Boolean);
         catEntries.sort((a, b) => {
             const lengthDiff = String(a.catName || '').trim().length - String(b.catName || '').trim().length;
@@ -1614,8 +1664,12 @@ function renderCardDetails(card, mode = currentEzaMode) {
             if (a.catColor > b.catColor) return 1;
             return String(a.catName).localeCompare(String(b.catName));
         });
-        const catsHtml = catEntries.map(({ padId, catName, catColor, categoryCount }) => {
+        const catsHtml = catEntries.map(({ padId, categoryId, catName, catColor, categoryCount }) => {
             const safeCatName = window.escapeLinkTooltipAttribute?.(catName) || catName;
+            if (isDokkanInfoLayout) {
+                const safeId = window.escapeLinkTooltipAttribute?.(categoryId) || categoryId;
+                return `<div class="col-4 d-flex justify-content-center padding-top-bottom-5 info-category-item" data-category-id="${safeId}" data-category-name="${safeCatName}"><img src="${CENTRAL_ASSET_URL}card_category_label_${padId}_b_on.png" alt="${safeCatName}" onerror="this.style.display='none'; this.nextElementSibling.style.display='inline-flex';"><span class="category-name-fallback" style="display:none;">${safeCatName}</span></div>`;
+            }
             return `
                 <span class="abs-category-entry">
                     <img src="${CENTRAL_ASSET_URL}card_category_label_${padId}_b_on.png" alt="${safeCatName}">
@@ -1631,7 +1685,8 @@ function renderCardDetails(card, mode = currentEzaMode) {
                 </span>
             `;
         }).join('');
-        document.getElementById("abs-category-container").innerHTML = catsHtml;
+        const categoryContainer = cardLayoutElement("abs-category-container");
+        if (categoryContainer) categoryContainer.innerHTML = catsHtml;
         window.syncAbsCleanCardLinkCategoryPlacement?.();
 
         // Invalidate any running card art animations immediately so switching characters doesn't leak or race
@@ -1640,7 +1695,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
             activeStickerRunner.destroy();
             activeStickerRunner = null;
         }
-        const stickerCanvasEl = document.getElementById('abs-tur-sticker-canvas');
+        const stickerCanvasEl = cardLayoutElement('abs-tur-sticker-canvas');
         if (stickerCanvasEl) {
             stickerCanvasEl.style.display = 'none';
             try {
@@ -1651,7 +1706,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
                 }
             } catch {}
         }
-        const lwfCanvasEl = document.getElementById('abs-card-bg-lwf-canvas');
+        const lwfCanvasEl = cardLayoutElement('abs-card-bg-lwf-canvas');
         if (lwfCanvasEl) {
             if (typeof window.DokkanLWF !== 'undefined') {
                 window.DokkanLWF.destroy(lwfCanvasEl.id || 'abs-card-bg-lwf-canvas');
@@ -1663,10 +1718,10 @@ function renderCardDetails(card, mode = currentEzaMode) {
             } catch {}
         }
 
-        const bgImgEl = document.getElementById("abs-art-bg");
-        const charImgEl = document.getElementById("abs-art-char");
-        const effectImgEl = document.getElementById("abs-art-effect");
-        const thumbImgEl = document.getElementById("abs-thumb-img");
+        const bgImgEl = cardLayoutElement("abs-art-bg");
+        const charImgEl = cardLayoutElement("abs-art-char");
+        const effectImgEl = cardLayoutElement("abs-art-effect");
+        const thumbImgEl = cardLayoutElement("abs-thumb-img");
 
         if (bgImgEl) {
             delete bgImgEl.dataset.failed; 
@@ -1699,10 +1754,10 @@ function renderCardDetails(card, mode = currentEzaMode) {
             }
         }
 
-        const frameEl = document.getElementById("abs-frame-img");
+        const frameEl = cardLayoutElement("abs-frame-img");
         if (frameEl) frameEl.src = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
 
-        const topTypeEl = document.getElementById("abs-top-type-icon");
+        const topTypeEl = cardLayoutElement("abs-top-type-icon");
         if (topTypeEl) {
             topTypeEl.src = `${CENTRAL_ASSET_URL}${cardClass}_type_${cardType}.png`;
             if (typeof window.DokkanLWF !== 'undefined' && window.DokkanLWF.attachTypeArrowEffect) {
@@ -1714,11 +1769,11 @@ function renderCardDetails(card, mode = currentEzaMode) {
         }
 
         const rarityImg = isLR ? `${CENTRAL_ASSET_URL}rarity_lr_abs.png` : (rarity === 'TUR' ? `${CENTRAL_ASSET_URL}rarity_TUR_abs.png` : `${CENTRAL_ASSET_URL}rarity_ssr_abs.png`);
-        const topRarityEl = document.getElementById("abs-top-rarity-icon");
+        const topRarityEl = cardLayoutElement("abs-top-rarity-icon");
         if (topRarityEl) topRarityEl.src = rarityImg;
 
         // SEZA Burning Flame Border
-        const topComposedIcon = document.getElementById('abs-composed-icon');
+        const topComposedIcon = cardLayoutElement('abs-composed-icon');
         if (topComposedIcon) {
             topComposedIcon.classList.toggle('seza-glow-card', isSEZA);
             if (isSEZA && typeof window.DokkanLWF !== 'undefined') {
@@ -1730,7 +1785,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
         }
 
         // Lightning FX
-        const topLightning = document.getElementById('abs-lightning');
+        const topLightning = cardLayoutElement('abs-lightning');
         if (topLightning) {
             if (isLR) {
                 topLightning.style.display = 'block';
@@ -1741,8 +1796,8 @@ function renderCardDetails(card, mode = currentEzaMode) {
         }
 
         const absAwakeningSrc = isSEZA ? `${CENTRAL_ASSET_URL}superza_abs.png` : (isEZA ? `${CENTRAL_ASSET_URL}eza_abs.png` : '');
-        const dbEzaImg = document.getElementById('abs-awakening-img');
-        const dbEzaBadge = document.getElementById('abs-awakening-badge');
+        const dbEzaImg = cardLayoutElement('abs-awakening-img');
+        const dbEzaBadge = cardLayoutElement('abs-awakening-badge');
 
         if (absAwakeningSrc && isEZA) {
             if (dbEzaImg) {
@@ -1760,7 +1815,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
             }
         }
 
-        const spinDial = document.getElementById('abs-spin-dial');
+        const spinDial = cardLayoutElement('abs-spin-dial');
         if (spinDial) spinDial.style.display = isLR ? 'block' : 'none';
         syncAbsCleanViewerEffects({ isLR, isEZA, isSEZA, cardType });
 
@@ -1808,14 +1863,14 @@ window.refreshAbsCardViewer = function() {
 window.switchCardArtMode = function(mode) {
     currentCardArtMode = mode;
     if (document.body.classList.contains('theme-abs-clean')) window.syncAbsCleanArtMediaMode?.(mode);
-    const artBox = document.getElementById('abs-art-layers-container');
-    const staticBtn = document.getElementById('art-toggle-static');
-    const animatedBtn = document.getElementById('art-toggle-animated');
-    const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
-    const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
-    const bgImgEl = document.getElementById('abs-art-bg');
-    const charImgEl = document.getElementById('abs-art-char');
-    const effectImgEl = document.getElementById('abs-art-effect');
+    const artBox = cardLayoutElement('abs-art-layers-container');
+    const staticBtn = cardLayoutElement('art-toggle-static');
+    const animatedBtn = cardLayoutElement('art-toggle-animated');
+    const lwfCanvas = cardLayoutElement('abs-card-bg-lwf-canvas');
+    const stickerCanvas = cardLayoutElement('abs-tur-sticker-canvas');
+    const bgImgEl = cardLayoutElement('abs-art-bg');
+    const charImgEl = cardLayoutElement('abs-art-char');
+    const effectImgEl = cardLayoutElement('abs-art-effect');
 
     if (staticBtn) staticBtn.classList.toggle('active', mode === 'static');
     if (animatedBtn) animatedBtn.classList.toggle('active', mode === 'animated');
@@ -1877,10 +1932,10 @@ window.switchCardArtMode = function(mode) {
 
 async function updateCardArtAnimation(card) {
     const animToken = ++currentCardArtAnimToken;
-    const lwfCanvas = document.getElementById('abs-card-bg-lwf-canvas');
-    const stickerCanvas = document.getElementById('abs-tur-sticker-canvas');
-    const toggleBar = document.getElementById('abs-art-toggle-bar');
-    const artBox = document.getElementById('abs-art-layers-container');
+    const lwfCanvas = cardLayoutElement('abs-card-bg-lwf-canvas');
+    const stickerCanvas = cardLayoutElement('abs-tur-sticker-canvas');
+    const toggleBar = cardLayoutElement('abs-art-toggle-bar');
+    const artBox = cardLayoutElement('abs-art-layers-container');
     if (!artBox) return;
 
     if (activeStickerRunner) {
@@ -2005,12 +2060,15 @@ async function startViewer() {
 // abs.clean places Categories in the left half of its lower progression row.
 // Other themes keep every box in its original location untouched.
 window.syncAbsCleanCardLinkCategoryPlacement = function() {
-    const linkContainer = document.getElementById('abs-link-container');
-    const catContainer = document.getElementById('abs-category-container');
+    const linkContainer = cardLayoutElement('abs-link-container');
+    const catContainer = cardLayoutElement('abs-category-container');
     const linkBox = linkContainer?.closest('.abs-box') || null;
     const catBox = catContainer?.closest('.abs-box') || null;
-    const categoryLinksColumn = document.getElementById('abs-clean-category-links-column');
+    const categoryLinksColumn = cardLayoutElement('abs-clean-category-links-column');
     if (!linkBox || !catBox) return;
+
+    const isClean = document.body.classList.contains('theme-abs-clean');
+    if (!isClean) return;
 
     if (!window.__absCleanCardHome) {
         window.__absCleanCardHome = {
@@ -2021,31 +2079,10 @@ window.syncAbsCleanCardLinkCategoryPlacement = function() {
         };
     }
 
-    const isClean = document.body.classList.contains('theme-abs-clean');
-    if (!isClean) {
-        linkBox.style.order = '';
-        catBox.style.order = '';
-        const home = window.__absCleanCardHome;
-        if (home.linkParent && linkBox.parentElement !== home.linkParent) {
-            if (home.linkNext && home.linkNext.parentElement === home.linkParent) home.linkParent.insertBefore(linkBox, home.linkNext);
-            else home.linkParent.appendChild(linkBox);
-        }
-        if (home.catParent && catBox.parentElement !== home.catParent) {
-            if (home.catNext && home.catNext.parentElement === home.catParent) home.catParent.insertBefore(catBox, home.catNext);
-            else home.catParent.appendChild(catBox);
-        }
-        document.getElementById('abs-clean-side-duo-slot')?.remove?.();
-        window.restoreAbsCleanCategoryArt?.();
-        window.syncAbsCleanRightRail?.();
-        window.syncAbsCleanAwakeningFormsPlacement?.();
-        window.syncAbsCleanLinkPartnersPlacement?.();
-        return;
-    }
-
-    const mainCol = document.querySelector('#layout-abs-style .abs-main-col');
-    const passiveBox = document.getElementById('abs-passive-skill-box');
+    const mainCol = cardLayoutQuery('#layout-abs-style .abs-main-col');
+    const passiveBox = cardLayoutElement('abs-passive-skill-box');
     if (!mainCol || !passiveBox) return;
-    const categoryAwakeningsRow = document.getElementById('abs-clean-category-awakenings-row');
+    const categoryAwakeningsRow = cardLayoutElement('abs-clean-category-awakenings-row');
     const categoryIsInCleanSplit = catBox.parentElement === categoryAwakeningsRow;
     const categoryIsInUtilityColumn = catBox.parentElement === categoryLinksColumn;
     if (!categoryIsInCleanSplit && !categoryIsInUtilityColumn &&
@@ -2058,7 +2095,7 @@ window.syncAbsCleanCardLinkCategoryPlacement = function() {
     catContainer.removeAttribute('hidden');
     catBox.style.order = '';
     linkBox.style.order = '';
-    document.getElementById('abs-clean-side-duo-slot')?.remove?.();
+    cardLayoutElement('abs-clean-side-duo-slot')?.remove?.();
     window.restoreAbsCleanCategoryArt?.();
     window.syncAbsCleanRightRail?.();
     window.syncAbsCleanAwakeningFormsPlacement?.();
@@ -2075,7 +2112,12 @@ document.addEventListener('DOMContentLoaded', () => {
         window.syncAbsCleanAbilityDockPlacement?.();
         window.syncAbsCleanViewerIdentityPlacement?.();
         window.syncAbsCleanViewerEffects?.();
+        const themeKey = () => Array.from(document.body.classList).filter(name => name.startsWith('theme-')).sort().join(' ');
+        let lastTheme = themeKey();
         const themeObserver = new MutationObserver(() => {
+            const nextTheme = themeKey();
+            if (nextTheme === lastTheme) return;
+            lastTheme = nextTheme;
             window.syncAbsCleanCardLinkCategoryPlacement?.();
             window.syncAbsCleanRightRail?.();
             window.syncAbsCleanSuperAttackPlacement?.();

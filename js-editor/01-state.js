@@ -19,6 +19,7 @@ window.currentAwakeningMode = window.currentAwakeningMode || 'none';
 window.currentCardSource = window.currentCardSource || 'custom';
 window.currentOfficialCardId = window.currentOfficialCardId || '';
 window.currentOfficialCardAwakeningMode = window.currentOfficialCardAwakeningMode || '';
+window.currentCustomCardAssetBaseUrl = window.currentCustomCardAssetBaseUrl || '';
 window.currentCardThemeVariant = window.currentCardThemeVariant || '';
 window.currentPartnerLimit = window.currentPartnerLimit || 9;
 // Individual progression controls replace the old all-or-nothing switch.
@@ -37,7 +38,7 @@ window.showAwakeningProgression = window.showSsrProgression || window.showTurPro
     let absUnitTagValue = window.absUnitTag;
 
     const renderAbsUnitTag = () => {
-        const header = document.getElementById('abs-art-header-text');
+        const header = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-header-text') : document.getElementById('abs-art-header-text'));
         if (!header || absUnitTagValue === undefined) return;
         header.dataset.unitTag = absUnitTagValue;
         header.textContent = absUnitTagValue;
@@ -105,13 +106,124 @@ window.savedInputs = window.savedInputs || [
 ];
 var savedInputs = window.savedInputs;
 
+// Super Attack and Active Skill blocks are editor data, not part of any card
+// presentation. Keep one canonical store outside the three theme roots so a
+// native Dokkan Info renderer can never display editor-source markup by
+// accident. The migration also repairs older autosaves that placed source
+// blocks beside the Dokkan Info insert markers.
+window.ensureEditorSkillSourceHost = function() {
+    let host = document.getElementById('editor-skill-source-host');
+    if (!host && document.body) {
+        host = document.createElement('div');
+        host.id = 'editor-skill-source-host';
+        host.hidden = true;
+        host.setAttribute('aria-hidden', 'true');
+        host.style.display = 'none';
+        document.body.appendChild(host);
+    }
+    if (!host) return null;
+
+    ['.sa-block', '.active-block'].forEach(selector => {
+        Array.from(document.querySelectorAll(selector))
+            .filter(block => block !== host && !host.contains(block))
+            .filter(block => block.closest('[data-card-layout]'))
+            .forEach(block => host.appendChild(block));
+    });
+    return host;
+};
+window.getSuperAttackSourceBlocks = function() {
+    const host = window.ensureEditorSkillSourceHost?.();
+    return Array.from((host || document).querySelectorAll(':scope > .sa-block'));
+};
+window.getActiveSkillSourceBlocks = function() {
+    const host = window.ensureEditorSkillSourceHost?.();
+    return Array.from((host || document).querySelectorAll(':scope > .active-block'));
+};
+window.clearEditorSkillSources = function() {
+    window.ensureEditorSkillSourceHost?.()?.replaceChildren();
+};
+window.ensureEditorSkillSourceHost();
+
+// Resolve custom-card image sources without ever appending arbitrary payload
+// text to a URL. Older exports sometimes lost the data: prefix from embedded
+// images; restore it only when a known image signature proves the format.
+window.resolveImportedAssetUrl = function(source, baseUrl = '', fallbackFolder = '') {
+    if (source === undefined || source === null) return '';
+    const value = String(source).trim();
+    if (!value) return '';
+    if (/^(?:data:|blob:|https?:)/i.test(value)) return value;
+    if (/^\/\//.test(value)) return `${window.location.protocol}${value}`;
+
+    if (value.length > 512 && /^[A-Za-z0-9+/=\s]+$/.test(value)) {
+        const compact = value.replace(/\s+/g, '');
+        let mime = '';
+        if (compact.startsWith('iVBORw0KGgo')) mime = 'image/png';
+        else if (compact.startsWith('/9j/')) mime = 'image/jpeg';
+        else if (/^R0lGOD(?:dh|lh)/.test(compact)) mime = 'image/gif';
+        else if (compact.startsWith('UklGR')) mime = 'image/webp';
+        else if (/^AAAA[A-Za-z0-9+/=]{16,}/.test(compact) && /ZnR5cGF2aWY|ZnR5cGF2aXM/.test(compact.slice(0, 96))) mime = 'image/avif';
+        if (mime) return `data:${mime};base64,${compact}`;
+        throw new Error('An embedded image is missing its data URL prefix and has an unrecognized image format.');
+    }
+
+    const fileName = value.split(/[?#]/)[0].split('/').pop();
+    const sharedIcon = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i.test(fileName);
+    if (sharedIcon) return `https://abscustom.github.io/assets/images/${fileName}`;
+
+    const commonAssetNames = new Set([
+        'frame_agl.png', 'frame_teq.png', 'frame_int.png', 'frame_str.png', 'frame_phy.png', 'frame_none.png',
+        'type_agl.png', 'type_teq.png', 'type_int.png', 'type_str.png', 'type_phy.png', 'type_none.png',
+        'super_type_agl.png', 'super_type_teq.png', 'super_type_int.png', 'super_type_str.png', 'super_type_phy.png',
+        'extreme_type_agl.png', 'extreme_type_teq.png', 'extreme_type_int.png', 'extreme_type_str.png', 'extreme_type_phy.png',
+        'rarity_ssr.png', 'rarity_TUR.png', 'rarity_LR.png', 'rarity_none.png', 'rarity_ssr_abs.png', 'rarity_TUR_abs.png', 'rarity_lr_abs.png',
+        'eza_abs.png', 'superza_abs.png', 'eza_img.png', 'supereza_img.png', 'z-awaken.png', 'dokkan-awaken.png',
+        'lr_spin_dial.png', 'lightningfx.webm', 'SSR_Icon.png', 'TUR_Icon.png', 'LR_Icon.png', 'default.png',
+        'abs.custom.png', 'abs.style.png', 'dokkan-info-logo.png'
+    ]);
+    if (commonAssetNames.has(fileName)) return `https://abscustom.github.io/assets/images/${fileName}`;
+
+    const base = baseUrl || fallbackFolder;
+    if (!base) return value;
+    try {
+        const absoluteBase = new URL(base, window.location.href);
+        if (!absoluteBase.pathname.endsWith('/')) {
+            const finalSegment = absoluteBase.pathname.slice(absoluteBase.pathname.lastIndexOf('/') + 1);
+            if (/\.[a-z0-9]{1,8}$/i.test(finalSegment)) {
+                absoluteBase.pathname = absoluteBase.pathname.slice(0, absoluteBase.pathname.lastIndexOf('/') + 1);
+            } else {
+                absoluteBase.pathname += '/';
+            }
+        }
+        return new URL(value, absoluteBase).href;
+    } catch (error) {
+        throw new Error(`Could not resolve imported image path "${value}": ${error.message}`);
+    }
+};
+
+window.rewriteImportedAssetUrls = function(markup, baseUrl = '', fallbackFolder = '') {
+    if (typeof markup !== 'string' || !markup.includes('<')) return markup || '';
+    const template = document.createElement('template');
+    template.innerHTML = markup;
+    template.content.querySelectorAll('[src], [poster]').forEach(element => {
+        ['src', 'poster'].forEach(attribute => {
+            const current = element.getAttribute(attribute);
+            if (!current) return;
+            const resolved = window.resolveImportedAssetUrl(current, baseUrl, fallbackFolder);
+            if (resolved !== current) element.setAttribute(attribute, resolved);
+        });
+    });
+    return template.innerHTML;
+};
+
 window.normalizeAssetUrl = function(str) {
     if (!str || typeof str !== 'string') return str || "";
     const repoBase = "https://abscustom.github.io/assets/images/";
     const sharedIconPattern = /^(?:card_category_label_|sp_skill_icon_|st_|pot_skill_|passive_skill_dialog_|ki_change_).+\.(?:png|webp)$/i;
     
-    // 1. Rewrite explicit images/ and ./images/
-    let out = str.replace(/(?:src|href)=["'](?:\.\/)?images\/([^"']+)["']/gi, `src="${repoBase}$1"`);
+    // Leave card-relative images/ paths untouched. Custom card markup is
+    // resolved against its own folder by rewriteImportedAssetUrls; treating
+    // every local image as a shared asset caused real 404s for card artwork.
+    let out = str;
     
     // 2. Rewrite common bare asset filenames
     out = out.replace(/(?:src|href)=["'](card_category_label_[^"']+\.png)["']/gi, `src="${repoBase}$1"`);

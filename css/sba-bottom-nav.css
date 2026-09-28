@@ -4416,9 +4416,7 @@ body.theme-abs-clean.fx-static #abs-clean-grid-circuit {
 
 /* 3. Suppress blocking background overlays in Clean Mode */
 body.theme-abs-clean .glass-overlay,
-body.theme-abs-clean #wave-bg-container,
-body.theme-abs-clean #fluted-glass-background,
-body.theme-abs-clean .fluted-glass-overlay {
+body.theme-abs-clean #wave-bg-container {
     display: none !important;
 }
 
@@ -4645,14 +4643,6 @@ body.theme-abs-clean #abs-clean-grid-circuit {
     z-index: 1 !important;
     /* Brighter grid lines over the dimmed stars */
     opacity: 0.90 !important;
-}
-
-/* In abs-clean-dark, the stars video IS the background.
-   Hide the fluted-glass WebGL canvas and overlay so they don't
-   paint a white/grey sheet over the video. */
-body.theme-abs-clean.theme-abs-clean-dark .fluted-glass-background,
-body.theme-abs-clean.theme-abs-clean-dark .fluted-glass-overlay {
-    display: none !important;
 }
 
 /* When Static Only hides the video, fall back to solid dark

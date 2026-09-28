@@ -12,6 +12,11 @@ window.uploadIcon = function(event, targetId) {
             // previous card's resolved circle asset.
             delete targetImg.dataset.absCleanCircleSrc;
             targetImg.src = e.target.result; 
+            const guiPreview = document.getElementById(`gui-icon-preview-${targetId}`);
+            if (guiPreview) {
+                guiPreview.hidden = false;
+                guiPreview.src = e.target.result;
+            }
             
             if (targetId === 'img-lr') {
                 targetImg.dataset.savedLrSrc = e.target.result;
@@ -25,7 +30,7 @@ window.uploadIcon = function(event, targetId) {
             }
 
             // Immediately live sync to ABS composed icon
-            const dbThumbImg = document.getElementById('abs-thumb-img');
+            const dbThumbImg = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-thumb-img') : document.getElementById('abs-thumb-img'));
             if (dbThumbImg) {
                 const isLR = activeRarity === 'LR';
                 const lrThumb = document.getElementById('img-lr');
@@ -54,21 +59,27 @@ window.updateImageLink = function(url) {
     if (window.syncToAbsLayout) window.syncToAbsLayout();
 };
 
-window.resetEditorCache = function() {
+window.resetEditorCache = async function() {
     const confirmed = confirm("Are you sure you want to RESET the editor? All unsaved progress will be permanently lost!");
     if (!confirmed) return;
 
     window.IS_RESETTING = true;
     window.onbeforeunload = null;
 
-    // 1. Clear Storage Completely
+    // Remove only the editor-owned save and theme preference. Other apps on
+    // this origin may use localStorage/sessionStorage and must remain intact.
     try {
-        window.localStorage.clear();
-        window.sessionStorage.clear();
-        localStorage.removeItem('dokkan_autosave');
+        await window.EditorAutosaveStore?.clear?.();
+        window.localStorage.removeItem('dokkan_autosave');
         localStorage.removeItem('dokkan_selected_theme');
     } catch (e) {
-        console.error("Storage clear error:", e);
+        window.IS_RESETTING = false;
+        console.error("Editor autosave clear error:", e);
+        window.CardHubToast?.error('Reset could not clear the saved card', {
+            detail: 'Your saved card was kept. Close other editor tabs and retry.',
+            duration: 8000
+        });
+        return false;
     }
 
     // 2. Reset All Text & Input Fields in DOM
@@ -146,6 +157,7 @@ window.resetEditorCache = function() {
     setTimeout(() => {
         window.location.href = window.location.origin + window.location.pathname + '?reset=' + Date.now();
     }, 50);
+    return true;
 };
 
 /**
@@ -154,64 +166,65 @@ window.resetEditorCache = function() {
  */
 window.clearEditorForCleanImport = function() {
     window.currentCardThumbnail = '';
+    window.currentCustomCardAssetBaseUrl = '';
     window.currentCardSource = 'custom';
     window.currentOfficialCardId = '';
     window.currentOfficialCardAwakeningMode = '';
     window.setAbsUnitTag?.('');
 
-    // A blank editor template is not card art. Clear it and any previously
-    // pinned published-card PNG so importing a custom card cannot leave an
-    // invisible/empty static layer above newly selected artwork.
-    const artBox = document.getElementById('abs-art-layers-container');
-    if (artBox) delete artBox.dataset.staticArtSrc;
-    ['abs-art-bg', 'abs-art-char', 'abs-art-effect'].forEach(id => {
-        const layer = document.getElementById(id);
-        if (!layer) return;
-        layer.removeAttribute('src');
-        layer.removeAttribute('data-failed');
-        layer.removeAttribute('data-official-card-art');
-        layer.style.display = 'none';
-    });
-    const blankArtTemplate = 'https://abscustom.github.io/assets/images/Card Art Template.png';
-    ['myOverlayImage', 'abs-art-img'].forEach(id => {
-        const image = document.getElementById(id);
-        if (!image) return;
-        image.src = blankArtTemplate;
-        image.removeAttribute('data-failed');
-        image.removeAttribute('data-official-card-art');
-        image.style.display = 'none';
-    });
+    // The layouts contain duplicate presentation IDs. Clear art per root so
+    // an import from one theme cannot leave stale layers in a hidden theme;
+    // document.getElementById() only finds the first matching ID.
+    const presentationRoots = ['dokkaninfo', 'abs-style', 'abs-clean']
+        .map(theme => window.getCardLayoutRoot?.(theme))
+        .filter(Boolean);
+    presentationRoots.forEach(root => {
+        const artBox = window.getCardLayoutElement?.('abs-art-layers-container', root);
+        if (artBox) delete artBox.dataset.staticArtSrc;
 
-    // Clear the previous card's animated media before resolving the next card's
-    // Info-side preference. Otherwise a stale MP4 can incorrectly take priority
-    // over the newly imported card's LWF.
-    const infoVideo = document.getElementById('myOverlayVideo');
-    const infoVideoSource = infoVideo?.querySelector('source');
-    if (infoVideo) {
-        infoVideo.pause();
-        infoVideo.removeAttribute('src');
-        infoVideo.removeAttribute('data-failed');
-        infoVideo.style.display = 'none';
-    }
-    if (infoVideoSource) infoVideoSource.removeAttribute('src');
+        ['abs-art-bg', 'abs-art-char', 'abs-art-effect'].forEach(id => {
+            const layer = window.getCardLayoutElement?.(id, root) ||
+                root.querySelector(`[data-card-element="${id}"]`);
+            if (!layer) return;
+            layer.removeAttribute('src');
+            layer.removeAttribute('data-failed');
+            layer.removeAttribute('data-official-card-art');
+            layer.style.display = 'none';
+        });
 
-    const absVideo = document.getElementById('abs-art-video');
-    if (absVideo) {
-        absVideo.pause();
-        absVideo.removeAttribute('src');
-        absVideo.style.display = 'none';
-    }
+        const artImage = root.dataset.cardLayout === 'dokkaninfo'
+            ? root.querySelector('#myOverlayImage')
+            : (window.getCardLayoutElement?.('abs-art-img', root) || root.querySelector('[data-card-element="abs-art-img"]'));
+        if (artImage) {
+            artImage.removeAttribute('src');
+            artImage.removeAttribute('data-failed');
+            artImage.removeAttribute('data-official-card-art');
+            artImage.style.display = 'none';
+        }
 
-    ['info-card-bg-lwf-canvas', 'abs-card-bg-lwf-canvas'].forEach(canvasId => {
-        const canvas = document.getElementById(canvasId);
-        if (!canvas) return;
-        window.DokkanLWF?.destroy?.(canvasId);
-        canvas.classList.remove('lwf-active');
-        canvas.style.display = 'none';
-        delete canvas.dataset.lwfCardId;
-        delete canvas.dataset.lwfLoadedCardId;
-        delete canvas.dataset.lwfLoading;
-        delete canvas.dataset.lwfFailed;
+        const artVideo = root.dataset.cardLayout === 'dokkaninfo'
+            ? root.querySelector('#myOverlayVideo')
+            : window.getCardLayoutElement?.('abs-art-video', root);
+        if (artVideo) {
+            artVideo.pause();
+            artVideo.removeAttribute('src');
+            artVideo.removeAttribute('data-failed');
+            artVideo.querySelector('source')?.removeAttribute('src');
+            artVideo.style.display = 'none';
+        }
+
+        const bgCanvas = root.dataset.cardLayout === 'dokkaninfo'
+            ? root.querySelector('#info-card-bg-lwf-canvas')
+            : window.getCardLayoutElement?.('abs-card-bg-lwf-canvas', root);
+        if (bgCanvas) {
+            window.DokkanLWF?.destroy?.(bgCanvas.id);
+            bgCanvas.classList.remove('lwf-active');
+            bgCanvas.style.display = 'none';
+            delete bgCanvas.dataset.lwfCardId;
+            delete bgCanvas.dataset.lwfLoadedCardId;
+            delete bgCanvas.dataset.lwfLoading;
+            delete bgCanvas.dataset.lwfFailed;
+        }
     });
 
     window.uploadedArtFile = null;
@@ -219,7 +232,9 @@ window.clearEditorForCleanImport = function() {
     window.uploadedArtImageFile = null;
     window.uploadedArtVideoFile = null;
 
-    // 1. Remove dynamic SA & Active blocks
+    // 1. Clear editor-only skill source data. It lives outside presentation
+    // roots so imports can never leave source blocks visible in Dokkan Info.
+    window.clearEditorSkillSources?.();
     document.querySelectorAll(".sa-block, .active-block").forEach(el => el.remove());
 
     // 2. Clear dynamic HTML containers
@@ -245,9 +260,20 @@ window.clearEditorForCleanImport = function() {
         "release-dates-container"
     ];
 
+    const sharedEditorContainers = new Set(['sidebar-sections-area']);
     elementsToClear.forEach(id => {
-        const el = document.getElementById(id);
-        if (el) el.innerHTML = "";
+        if (sharedEditorContainers.has(id)) {
+            const el = document.getElementById(id);
+            if (el) el.replaceChildren();
+            return;
+        }
+        presentationRoots.forEach(root => {
+            const el = window.getCardLayoutElement?.(id, root) || null;
+            if (el) el.replaceChildren();
+        });
+    });
+    presentationRoots.forEach(root => {
+        root.querySelectorAll('.info-rendered-skill').forEach(element => element.remove());
     });
 
     // 3. Clear text & input fields
