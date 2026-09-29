@@ -202,35 +202,8 @@ function updateToggleBarActiveButtons(mode) {
    ========================================================================== */
 function switchEzaForm(mode) {
     if (!selectedCard) return;
-    currentEzaMode = mode;
-
-    const idStr = String(selectedCard.id);
-    const base7Id = idStr.length >= 8 ? idStr.substring(0, 7) : idStr;
-    const baseNormId = parseInt(base7Id, 10);
-
-    let targetCard = null;
-
-    if (mode === 'seza') {
-        const seza8Id = parseInt(base7Id + '9', 10);
-        targetCard = DB.cards.find(c => parseInt(c.id, 10) === seza8Id) || selectedCard;
-    } else if (mode === 'eza') {
-        const eza8Id = parseInt(base7Id + '8', 10);
-        targetCard = DB.cards.find(c => parseInt(c.id, 10) === eza8Id) || selectedCard;
-    } else {
-        targetCard = DB.cards.find(c => parseInt(c.id, 10) === baseNormId) || selectedCard;
-    }
-
-    if (targetCard) {
-        selectedCard = targetCard;
-
-        const newUrl = `card.html?viewer=1&id=${base7Id}&mode=${mode}`;
-        window.history.replaceState({ cardId: selectedCard.id, mode }, '', newUrl);
-        window.persistViewerSelection?.(base7Id, mode);
-        window.renderViewerCardPicker?.();
-
-        renderCardDetails(selectedCard, mode);
-        updateToggleBarActiveButtons(mode);
-    }
+    // Use the same validation and refresh path as a character selection.
+    selectCard(selectedCard.id, false, mode);
 }
 
 
@@ -529,36 +502,9 @@ function getCardSiblings(card) {
     let eza = DB.cards.find(c => String(c.id) === eza8DigitId) || network.ezas.find(c => String(c.id).startsWith(currentForm7DigitId)) || null;
     let seza = DB.cards.find(c => String(c.id) === seza8DigitId) || network.sezas.find(c => String(c.id).startsWith(currentForm7DigitId)) || null;
 
-    // `optimal_awakening_growths` is keyed by a growth-group id, not by a
-    // card id or the numeric EZA/SEZA mode. It therefore cannot by itself tell
-    // us that a toggle card exists. Use the actual card rows as the source of
-    // truth so a base card does not grow a phantom EZA/SEZA button.
-    const familyRootId = normalizeViewerCardId(base || card);
-    const familyRows = DB.cards.filter(candidate => {
-        const candidateId = normalizeViewerCardId(candidate);
-        const candidateParentId = normalizeViewerCardId(candidate?.parent_id);
-        return candidateId === familyRootId
-            || candidateParentId === familyRootId
-            || normalizeViewerCardId(getRootParentId(candidate)) === familyRootId;
-    });
-    const isViewerEzaRow = candidate => {
-        const candidateId = String(candidate?.id || '');
-        return Boolean(candidate?.is_eza || candidate?.is_eza_awakened || candidate?.eza_type === 1)
-            || (candidateId.length >= 8 && candidateId.endsWith('8'));
-    };
-    const isViewerSezaRow = candidate => {
-        const candidateId = String(candidate?.id || '');
-        return Boolean(candidate?.is_seza || candidate?.is_super_eza || candidate?.eza_type === 2)
-            || (candidateId.length >= 8 && candidateId.endsWith('9'));
-    };
-    const familyHasSeza = Boolean(seza)
-        || network.sezas.some(Boolean)
-        || familyRows.some(isViewerSezaRow);
-    const familyHasEza = Boolean(eza)
-        || network.ezas.some(Boolean)
-        || familyRows.some(isViewerEzaRow)
-        || familyHasSeza;
-
+    // Modes belong to this exact form, not another stage in its family.
+    const familyHasSeza = Boolean(seza);
+    const familyHasEza = Boolean(eza);
     return {
         base: base || card,
         eza: eza,
@@ -590,6 +536,9 @@ function selectCard(cardId, preserveExactId = false, forcedMode = null) {
         else if (isIdEza) mode = 'eza';
         else mode = 'base';
     }
+    if (!['base', 'eza', 'seza'].includes(mode)
+        || (mode === 'seza' && !siblings.seza)
+        || (mode === 'eza' && !siblings.eza)) mode = 'base';
     currentEzaMode = mode;
 
     if (mode === 'seza' && siblings.seza) card = siblings.seza;
