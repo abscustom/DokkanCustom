@@ -591,7 +591,7 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
     const fullTitle = rawDesc ? `[${rawDesc}] ${rawName}` : rawName;
     const descText = projectData?.inputs?.leaderInput || rawDesc || '';
     const previewImg = projectData?.cardArtImage || projectData?.thumbMain || projectData?.thumbLr || projectData?.thumbTur || projectData?.thumbSsr || '';
-    const bootstrapperVersion = '20260927-clean-motion-update-v17';
+    const bootstrapperVersion = '20260928-custom-no-motion-v1';
     
     const escapeAttr = (str) => String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const escapeText = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -624,6 +624,9 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
 
     <script id="card-data" type="application/json">
 ${JSON.stringify(projectData || {}, null, 2)}
+    </script>
+    <script id="abs-published-loader-watchdog">
+${window.buildPublishedLoaderWatchdogScript()}
     </script>
     <script>
         (function() {
@@ -667,6 +670,8 @@ ${JSON.stringify(projectData || {}, null, 2)}
     </div>
 </body>
 </html>`;
+    window.assertGeneratedInlineScripts(html, `${folderPath || 'published card'}/index.html`);
+    return html;
 };
 
 function getPublishedCardPreviewImage(clone) {
@@ -914,7 +919,21 @@ window.ensurePublishedCustomCardRuntime = function() {
     staticProbe.src = staticArtUrl;
 };
 
+function ensurePublishedLoaderWatchdog(clone) {
+    const head = clone.querySelector('head');
+    if (!head || head.querySelector('#abs-published-loader-watchdog')) return;
+
+    const watchdog = document.createElement('script');
+    watchdog.id = 'abs-published-loader-watchdog';
+    watchdog.textContent = window.buildPublishedLoaderWatchdogScript();
+    const bootstrapScript = Array.from(head.querySelectorAll('script'))
+        .find(script => script.textContent?.includes('custom-card-bootstrapper.js'));
+    if (bootstrapScript) head.insertBefore(watchdog, bootstrapScript);
+    else head.appendChild(watchdog);
+}
+
 function preparePublishedCloneResourcePointers(clone, folderName) {
+    ensurePublishedLoaderWatchdog(clone);
     const cleanFolder = String(folderName || '').replace(/^\/+|\/+$/g, '');
     const cardRoot = `${PUBLISHED_CARD_SITE_ROOT}${encodePublishedRepoPath(cleanFolder)}/`;
     const head = clone.querySelector('head');
@@ -1825,6 +1844,7 @@ jobs:
         let htmlContent = window.generateDynamicCardHtml
             ? window.generateDynamicCardHtml(projectData, basePath)
             : ("<!DOCTYPE html>\n" + clone.outerHTML);
+        window.assertGeneratedInlineScripts(htmlContent, `${basePath}/index.html`);
         filesToUpload.push({
             path: `${basePath}/index.html`,
             blob: new Blob([htmlContent], { type: 'text/html' })
@@ -2047,6 +2067,7 @@ window.executeQuickSave = async function() {
         const htmlContent = isDynamic && window.generateDynamicCardHtml
             ? window.generateDynamicCardHtml(projectData, folderName)
             : ("<!DOCTYPE html>\n" + clone.outerHTML);
+        window.assertGeneratedInlineScripts(htmlContent, `${folderName}/index.html`);
         filesToUpload.push({ path: `${folderName}/index.html`, blob: new Blob([htmlContent], { type: 'text/html' }) });
 
         await uploadBatchToGitHub(token, owner, repo, filesToUpload, `Live Quick Edit Update`);
