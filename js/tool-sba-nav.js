@@ -160,7 +160,13 @@
         });
     };
     const applyCalculatorTheme = (style) => {
-        const norm = style === 'dokkaninfo' ? 'dokkaninfo' : (style === 'sba' ? 'sba' : 'abs-style');
+        // Standalone libraries keep the ABS.Clean dock regardless of saved card/editor theme.
+        if (document.body.classList.contains('other-tool-body')) {
+            document.body.classList.remove('theme-abs-style', 'theme-abs-clean', 'theme-dokkaninfo', 'theme-placeholder');
+            document.body.classList.add('theme-sba', 'theme-abs-clean');
+            return;
+        }
+        const norm = style === 'dokkaninfo' ? 'dokkaninfo' : ((style === 'sba' || style === 'abs-clean') ? 'sba' : 'abs-style');
         document.body.classList.remove('theme-abs-style', 'theme-sba', 'theme-abs-clean', 'theme-dokkaninfo', 'theme-placeholder');
         if (norm === 'sba') {
             document.body.classList.add('theme-sba', 'theme-abs-clean');

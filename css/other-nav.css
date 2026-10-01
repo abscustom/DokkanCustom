@@ -1,0 +1,96 @@
+#sba-other-destinations-menu.sba-other-destinations-menu {
+    position: fixed;
+    z-index: 10080;
+    box-sizing: border-box;
+    display: grid;
+    gap: 5px;
+    width: 264px;
+    max-width: calc(100vw - 16px);
+    padding: 8px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border: 1px solid rgba(212, 225, 245, 0.28);
+    border-radius: 14px;
+    background: rgba(13, 21, 36, 0.96);
+    color: #edf4ff;
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.42), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+    backdrop-filter: blur(18px) saturate(130%);
+    -webkit-backdrop-filter: blur(18px) saturate(130%);
+}
+
+#sba-other-destinations-menu[hidden] {
+    display: none !important;
+}
+
+#sba-other-destinations-menu .sba-other-destination {
+    display: flex;
+    min-height: 42px;
+    align-items: center;
+    padding: 8px 11px;
+    border: 1px solid transparent;
+    border-radius: 9px;
+    color: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-decoration: none;
+    transition: background-color 140ms ease, border-color 140ms ease, color 140ms ease;
+}
+
+#sba-other-destinations-menu .sba-other-destination:hover,
+#sba-other-destinations-menu .sba-other-destination:focus-visible {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+#sba-other-destinations-menu .sba-other-destination.is-current {
+    border-color: rgba(255, 255, 255, 0.32);
+    background: rgba(255, 255, 255, 0.16);
+    color: #fff;
+}
+
+body.theme-abs-clean #sba-other-destinations-menu {
+    border-radius: 0;
+    border-color: rgba(202, 222, 255, 0.34);
+    background: linear-gradient(180deg, rgba(8, 14, 26, 0.98), rgba(4, 7, 14, 0.98));
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+}
+
+body.theme-abs-clean #sba-other-destinations-menu .sba-other-destination {
+    border-radius: 0;
+}
+
+body.theme-abs-style #sba-other-destinations-menu {
+    border-color: rgba(113, 162, 219, 0.45);
+    background: linear-gradient(145deg, rgba(16, 24, 40, 0.98), rgba(8, 14, 26, 0.98));
+    box-shadow: 0 16px 42px rgba(0, 0, 0, 0.58), 0 0 18px rgba(56, 189, 248, 0.1);
+}
+
+body.theme-abs-style #sba-other-destinations-menu .sba-other-destination.is-current {
+    border-color: rgba(56, 189, 248, 0.55);
+    background: rgba(56, 189, 248, 0.16);
+    color: #bae6fd;
+}
+
+body.theme-dokkaninfo #sba-other-destinations-menu {
+    border-radius: 0;
+    border-color: #3f3f46;
+    background: #18181b;
+}
+
+body.theme-dokkaninfo #sba-other-destinations-menu .sba-other-destination {
+    border-radius: 0;
+}
+
+body.theme-dokkaninfo #sba-other-destinations-menu .sba-other-destination.is-current {
+    border-color: #71717a;
+    background: #3f3f46;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #sba-other-destinations-menu .sba-other-destination {
+        transition: none;
+    }
+}

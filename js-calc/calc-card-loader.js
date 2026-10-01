@@ -4,8 +4,18 @@
 
 let allPickerCards = [];
 
-window.handlePickerCircleError = function(img, folderId, parentFolderId) {
+window.handlePickerCircleError = function(img, folderId, parentFolderId, isCustom = false) {
     if (!img) return;
+    if (window.DokkanCustomCardMedia) {
+        window.DokkanCustomCardMedia.handlePickerCircleError(img, folderId, parentFolderId, isCustom);
+        return;
+    }
+    if (isCustom) {
+        img.onerror = null;
+        img.classList.add('picker-thumb-error');
+        img.removeAttribute('src');
+        return;
+    }
     img.onerror = null;
     if (parentFolderId && parentFolderId !== folderId && !img.dataset.triedParentCircle) {
         img.dataset.triedParentCircle = 'true';
@@ -740,6 +750,11 @@ async function loadCustomCardsForCalculator() {
     if (cachedCustom) {
         try { customCardsArray = JSON.parse(cachedCustom); } catch(e) {}
     }
+    if (!Array.isArray(customCardsArray)) customCardsArray = [];
+    if (window.DokkanCustomCardMedia) {
+        customCardsArray = customCardsArray.map(card => window.DokkanCustomCardMedia.normalizeCachedCustomCard(card));
+        try { localStorage.setItem('hub_cached_custom_only', JSON.stringify(customCardsArray)); } catch(e) {}
+    }
 
     try {
         const repoRes = await fetch('https://api.github.com/repos/abscustom/abscustom.github.io/contents/');
@@ -798,11 +813,16 @@ async function loadCustomCardsForCalculator() {
                     else cardType = 'agl';
                 }
 
-                const fixUrl = (src) => src?.startsWith('http') ? src : `${cardUrl}${src?.replace(/^\.\//, '')}`;
                 const isLR = exactRarity === 'LR';
                 const iconEl = doc.querySelector(isLR ? '#img-lr' : '#img-tur') || doc.querySelector('#abs-thumb-img, .thumb-img');
-                const rawThumb = cardJson?.thumbMain || (isLR ? cardJson?.thumbLr : cardJson?.thumbTur) || iconEl?.getAttribute('src');
-                const thumbUrl = fixUrl(rawThumb);
+                const artEl = doc.querySelector('#myOverlayImage, #abs-art-img, .card-art-canvas img');
+                const resolvedThumb = window.DokkanCustomCardMedia?.resolveCustomThumbnail(cardJson || {}, {
+                    cardUrl,
+                    rarity: exactRarity,
+                    iconUrl: iconEl?.getAttribute('src'),
+                    artUrl: artEl?.getAttribute('src')
+                });
+                const thumbUrl = resolvedThumb?.primary || window.DokkanCustomCardMedia?.resolveCustomMediaUrl(iconEl?.getAttribute('src'), cardUrl) || '';
 
                 customCards.push({
                     id: folderName,
@@ -811,6 +831,8 @@ async function loadCustomCardsForCalculator() {
                     source: 'custom',
                     cardUrl: cardUrl,
                     thumbUrl: thumbUrl,
+                    thumbFallbacks: resolvedThumb?.fallbacks || [],
+                    cardArtImageUrl: window.DokkanCustomCardMedia?.resolveCustomMediaUrl(cardJson?.cardArtImage || artEl?.getAttribute('src'), cardUrl) || '',
                     type: cardType,
                     cardClass: (cardJson?.characterState?.cardClass || cardJson?.currentClass || getCustomCardClassFromDoc(doc, htmlText)).toLowerCase(),
                     rarity: exactRarity,
@@ -892,9 +914,17 @@ function renderPickerGrid() {
         const parentFolderId = (c.source === 'official' && typeof getCardParentId === 'function') ? Math.floor(getCardParentId(c.id) / 10) * 10 : circleFolderId;
 
         const isCustom = c.source === 'custom';
+        const media = window.DokkanCustomCardMedia;
         const circleUrl = isCustom
-            ? (c.thumbUrl || `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`)
+            ? (media?.resolveCustomMediaUrl(c.thumbUrl, c.cardUrl) || c.thumbUrl || '')
             : `./assets/card-art/cards/${circleFolderId}/card_${circleFolderId}_circle.png`;
+        const fallbackUrls = isCustom && media
+            ? media.escapeHtml(JSON.stringify((c.thumbFallbacks || []).map(url => media.resolveCustomMediaUrl(url, c.cardUrl)).filter(Boolean)))
+            : '';
+        const accessibleName = `${c.name || 'Unknown unit'}, ${c.rarity || 'unknown rarity'}, ${typeKeyForCard(c.type)}${c.isTransformed ? ', transformed form' : ''}${isCustom ? ', custom card' : ''}`;
+        const safeAccessibleName = media ? media.escapeHtml(accessibleName) : accessibleName.replace(/[&<>"']/g, '');
+        const tooltipText = `${c.name || 'Unknown unit'} · ${c.rarity || 'unknown rarity'} · ${typeKeyForCard(c.type)}`;
+        const safeTooltipText = media ? media.escapeHtml(tooltipText) : tooltipText.replace(/[&<>"']/g, '');
         const frameSrc = `${CALC_ASSET_URL}frame_${c.type || 'agl'}.png`;
 
         // Top-Left Purple Form Badge
@@ -910,18 +940,20 @@ function renderPickerGrid() {
         const typeClass = `picker-type-${typeKey}`;
 
         return `
-        <div class="picker-unit-card ${typeClass}" data-type="${typeKey}" onclick="selectUnitFromPicker(${i})">
+        <button type="button" class="picker-unit-card ${typeClass}" data-type="${typeKey}" aria-label="${safeAccessibleName}" data-picker-tooltip="${safeTooltipText}" onclick="selectUnitFromPicker(${i})">
             <div class="picker-thumb-wrapper">
                 ${transBadge}
                 ${customBadge}
                 ${sezaBadge}
-                <img class="picker-frame" src="${frameSrc}" loading="lazy">
-                <img class="picker-thumb${isCustom ? ' is-fallback-thumb' : ''}" src="${circleUrl}" loading="lazy" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}')">
+                <img class="picker-frame" src="${frameSrc}" loading="lazy" alt="" aria-hidden="true">
+                <img class="picker-thumb${isCustom ? ' is-fallback-thumb' : ''}" src="${media ? media.escapeHtml(circleUrl) : circleUrl}" ${isCustom ? `data-picker-fallbacks="${fallbackUrls}"` : ''} loading="lazy" alt="" aria-hidden="true" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}', ${isCustom})">
             </div>
-            <span class="picker-name">${c.name}</span>
-            <span class="picker-sub">${c.rarity} • ${typeKey.toUpperCase()}${c.isTransformed ? ' (Form)' : ''}</span>
-        </div>`;
+        </button>`;
     }).join('\n');
+}
+
+function typeKeyForCard(type) {
+    return String(type || 'AGL').toUpperCase();
 }
 
 function resetCalculatorForNewCharacterSelection() {
@@ -1784,28 +1816,33 @@ window.openFormPickerModal = function() {
 
     grid.innerHTML = window.currentFamilyForms.map(f => {
         const exactCardId = String(f.id);
-        const folderId = exactCardId.length >= 7 ? exactCardId.substring(0, 7) : exactCardId;
+        const numericCardId = parseInt(exactCardId, 10);
+        const circleFolderId = Math.floor(numericCardId / 10) * 10;
         const parentFolderId = Math.floor(getRootParentId(f) / 10) * 10;
         const typeObj = getCardClassAndType(f.element !== undefined ? f.element : f.attribute);
         const titleObj = parseTitleAndName(f);
         const frameSrc = `${CALC_ASSET_URL}frame_${typeObj.cardType || 'agl'}.png`;
-        const thumbUrl = `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${folderId}_thumb/card_${folderId}_thumb.png`;
+        const circleUrl = `./assets/card-art/cards/${circleFolderId}/card_${circleFolderId}_circle.png`;
 
         const isCurrent = parseInt(f.id, 10) === currentLoadedId;
         const isTransformed = parseInt(f.id, 10) >= 4000000;
         const formTag = isTransformed ? 'FORM' : 'BASE';
         const tagColor = isTransformed ? 'linear-gradient(135deg, #a855f7 0%, #7e22ce 100%)' : 'linear-gradient(135deg, #38bdf8 0%, #0284c7 100%)';
 
+        const media = window.DokkanCustomCardMedia;
+        const accessibleName = `${titleObj.name || 'Unknown unit'}, ${isCurrent ? 'currently selected, ' : ''}${formTag} form, ${isCardLR(f) ? 'LR' : 'TUR'}`;
+        const safeAccessibleName = media ? media.escapeHtml(accessibleName) : accessibleName.replace(/[&<>"']/g, '');
+        const tooltipText = `${titleObj.name || 'Unknown unit'} · ${formTag} · ${isCardLR(f) ? 'LR' : 'TUR'}`;
+        const safeTooltipText = media ? media.escapeHtml(tooltipText) : tooltipText.replace(/[&<>"']/g, '');
+
         return `
-        <div class="picker-unit-card" style="${isCurrent ? 'border-color: #38bdf8; background: rgba(56, 189, 248, 0.25);' : ''}" onclick="window.selectFormFromPicker(${f.id})">
+        <button type="button" class="picker-unit-card ${isCurrent ? 'is-current' : ''}" aria-label="${safeAccessibleName}" data-picker-tooltip="${safeTooltipText}" aria-current="${isCurrent ? 'true' : 'false'}" onclick="window.selectFormFromPicker(${f.id})">
             <div class="picker-thumb-wrapper">
                 <span style="position: absolute; top: -3px; left: -3px; background: ${tagColor}; color: #fff; font-size: 7.5px; font-weight: 900; padding: 1px 4px; border-radius: 0px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">${formTag}</span>
-                <img class="picker-frame" src="${frameSrc}" loading="lazy">
-                <img class="picker-thumb" src="${circleUrl}" loading="lazy" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}')">
+                <img class="picker-frame" src="${frameSrc}" loading="lazy" alt="" aria-hidden="true">
+                <img class="picker-thumb" src="${circleUrl}" loading="lazy" alt="" aria-hidden="true" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}', false)">
             </div>
-            <span class="picker-name" style="font-size: 9.5px; font-weight: 800;">${titleObj.name}</span>
-            <span class="picker-sub" style="color: ${isCurrent ? '#38bdf8' : '#94a3b8'}; font-weight: 800;">${isCurrent ? '● Active' : (isCardLR(f) ? 'LR' : 'TUR')}</span>
-        </div>`;
+        </button>`;
     }).join('\n');
 
     modal.style.display = 'flex';

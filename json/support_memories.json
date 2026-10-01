@@ -1,0 +1,2983 @@
+{
+  "schemaVersion": 1,
+  "generatedAt": "2026-09-29T19:35:30.153Z",
+  "source": "CardHub Console support_memories database",
+  "memories": [
+    {
+      "id": "10001",
+      "name": "Oolong's Wish",
+      "effect": "Chance of obtaining bonus rewards +50% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+      "durationText": null,
+      "activationCondition": "Once only",
+      "filmType": "Red",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10001.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10001.png"
+      },
+      "animation": {
+        "key": "sm10001",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10001.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100012",
+          "level": 2,
+          "effect": "Chance of obtaining bonus rewards +60% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10001.png"
+          }
+        },
+        {
+          "id": "100013",
+          "level": 3,
+          "effect": "Chance of obtaining bonus rewards +85% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10001.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10002",
+      "name": "Goku Gets Married!",
+      "effect": "\"Goku's Family\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Red",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10002.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10002.png"
+      },
+      "animation": {
+        "key": "sm10002",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10002.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100022",
+          "level": 2,
+          "effect": "\"Goku's Family\" Category allies' \nATK & DEF +15% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10002.png"
+          }
+        },
+        {
+          "id": "100023",
+          "level": 3,
+          "effect": "\"Goku's Family\" Category allies' \nKi +1 and ATK & DEF +20% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10002.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10003",
+      "name": "Training Complete!",
+      "effect": "All allies' ATK & DEF +3000 and chance of \nperforming a critical hit +3% for 3000 turns \nfrom the start of battle (once only)",
+      "durationText": "3000 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Red",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10003.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10003.png"
+      },
+      "animation": {
+        "key": "sm10003",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10003.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100032",
+          "level": 2,
+          "effect": "All allies' ATK & DEF +4000 and chance of \nperforming a critical hit +4% for 4000 turns \nfrom the start of battle and \"Turtle School\" \nCategory allies' Ki +1 and ATK & DEF +20% \nfor 4 turns from the start of battle (once only)",
+          "durationText": "4000 turns",
+          "activationCondition": "from the start of battle and \"Turtle School\" Category allies' Ki +1 and ATK & DEF +20% for 4 turns from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10003.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10003.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10004",
+      "name": "Martial Artist's Mettle",
+      "effect": "All allies' Ki +1 and ATK & DEF +10% for 3 turns \nwhen there is a \"World Tournament\" Category \nenemy or ally on the team starting from \nthe 3rd turn from the start of battle (once only)",
+      "durationText": "3 turns",
+      "activationCondition": "when there is a \"World Tournament\" Category enemy or ally on the team starting from the 3rd turn from the start of battle (once only)",
+      "filmType": "Red",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10004.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10004.png"
+      },
+      "animation": {
+        "key": "sm10004",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10004.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "10005",
+      "name": "Meet the Flying Nimbus",
+      "effect": "\"DB Saga\" Category allies' ATK & DEF +10% \nfor 2 turns from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Red",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10005.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10005.png"
+      },
+      "animation": {
+        "key": "sm10005",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10005.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100052",
+          "level": 2,
+          "effect": "\"DB Saga\" or \"Dragon Ball Seekers\" \nCategory allies' ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10005.png"
+          }
+        },
+        {
+          "id": "100053",
+          "level": 3,
+          "effect": "\"DB Saga\" or \"Dragon Ball Seekers\" \nCategory allies' Ki +1 and ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10005.png"
+          }
+        },
+        {
+          "id": "100054",
+          "level": 4,
+          "effect": "\"DB Saga\" or \"Dragon Ball Seekers\" Category \nallies' Ki +1 and ATK & DEF +15%, \nplus an additional ATK & DEF +5% \nfor characters who also belong to the \n\"Bond of Master and Disciple\" Category, \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10005.png"
+          }
+        },
+        {
+          "id": "100055",
+          "level": 5,
+          "effect": "\"DB Saga\" or \"Dragon Ball Seekers\" Category \nallies' Ki +2 and ATK & DEF +20%, \nplus an additional ATK & DEF +10% \nfor characters who also belong to the \n\"Bond of Master and Disciple\" Category, \nfor 3 turns from the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10005.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10006",
+      "name": "First Friend Ever",
+      "effect": "\"Youth\" or \"Androids\" Category allies' \nATK, DEF & chance of performing a critical hit +8% \nfor 2 turns from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Red",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10006.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10006.png"
+      },
+      "animation": {
+        "key": "sm10006",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10006.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100062",
+          "level": 2,
+          "effect": "\"Youth\" or \"Androids\" Category allies' \nATK, DEF & chance of performing a critical hit +10% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10006.png"
+          }
+        },
+        {
+          "id": "100063",
+          "level": 3,
+          "effect": "For 2 turns from the start of battle, \n\"Youth\" or \"Androids\" Category allies' \nATK, DEF & chance of performing a critical hit +10% \nand if there are 2 or more \"DB Saga\" Category allies \non the team, all allies' ATK & DEF +5% (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10006.png"
+          }
+        },
+        {
+          "id": "100064",
+          "level": 4,
+          "effect": "For 2 turns from the start of battle, \n\"Youth\" or \"Androids\" Category allies' \nATK, DEF & chance of performing a critical hit +15% \nand if there are 2 or more \"DB Saga\" Category allies \non the team, all allies' ATK & DEF +8% (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10006.png"
+          }
+        },
+        {
+          "id": "100065",
+          "level": 5,
+          "effect": "For 3 turns from the start of battle, \n\"Youth\" or \"Androids\" Category allies' \nATK, DEF & chance of performing a critical hit +18% \nand if there are 2 or more \"DB Saga\" or \n\"Bond of Friendship\" Category allies on the team, \nall allies' ATK & DEF +8% (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10006.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10007",
+      "name": "Reunion Guided by Fate",
+      "effect": "\"Otherworld Warriors\" or \n\"Time Limit\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Red",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10007.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10007.png"
+      },
+      "animation": {
+        "key": "sm10007",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10007.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "100072",
+          "level": 2,
+          "effect": "\"Otherworld Warriors\" or \n\"Time Limit\" Category allies' \nATK & DEF +15% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10007.png"
+          }
+        },
+        {
+          "id": "100073",
+          "level": 3,
+          "effect": "\"Otherworld Warriors\" or \n\"Time Limit\" Category allies' \nKi +1 and ATK & DEF +20% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+            "large": "assets/item/support_memory/large/support_memory_large_10007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10007.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "10008",
+      "name": "The \"Full Moon\"",
+      "effect": "All allies' ATK +22% and \nall enemies' ATK -10% for 2 turns \nfrom the start of battle when there is \na \"World Tournament\" Category ally \non the team (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle when there is a \"World Tournament\" Category ally on the team (once only)",
+      "filmType": "Red",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_original.png",
+        "large": "assets/item/support_memory/large/support_memory_large_10008.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_10008.png"
+      },
+      "animation": {
+        "key": "sm10008",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm10008.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20001",
+      "name": "Frieza's Fury",
+      "effect": "Extreme Class allies' ATK +15% \nfor 1 turn when there is a \nSuper Class enemy (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "when there is a Super Class enemy (once only)",
+      "filmType": "Yellow",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20001.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20001.png"
+      },
+      "animation": {
+        "key": "sm20001",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20001.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200012",
+          "level": 2,
+          "effect": "Extreme Class allies' ATK +20% \nfor 1 turn when there is a \nSuper Class enemy (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "when there is a Super Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20001.png"
+          }
+        },
+        {
+          "id": "200013",
+          "level": 3,
+          "effect": "Extreme Class allies' ATK +20% \nfor 2 turns when there is a \nSuper Class enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when there is a Super Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20001.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20002",
+      "name": "Secret Feelings",
+      "effect": "\"Majin Buu Saga\" Category allies' Ki +2 \nfor 2 turns from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20002.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20002.png"
+      },
+      "animation": {
+        "key": "sm20002",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20002.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200022",
+          "level": 2,
+          "effect": "\"Majin Buu Saga\" or \"Defenders of Justice\" \nCategory allies' Ki +2 for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20002.png"
+          }
+        },
+        {
+          "id": "200023",
+          "level": 3,
+          "effect": "\"Majin Buu Saga\" or \"Defenders of Justice\" \nCategory allies' Ki +2 and ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20002.png"
+          }
+        },
+        {
+          "id": "200024",
+          "level": 4,
+          "effect": "\"Majin Buu Saga\" or \"Defenders of Justice\" \nCategory allies' Ki +2 and ATK & DEF +20% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20002.png"
+          }
+        },
+        {
+          "id": "200025",
+          "level": 5,
+          "effect": "\"Majin Buu Saga\" or \"Defenders of Justice\" \nCategory allies' Ki +3 and ATK & DEF +20% \nfor 3 turns from the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20002.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20003",
+      "name": "Birth of the Strongest Pair on the Planet",
+      "effect": "All allies' Ki +2 for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20003.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20003.png"
+      },
+      "animation": {
+        "key": "sm20003",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20003.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20004",
+      "name": "Transcend the Super Saiyan!",
+      "effect": "\"Super Saiyans\" Category allies' ATK & DEF +10% or \n\"Super Saiyan 2\" Category allies' ATK & DEF +20% \nfor 2 turns from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 150,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20004.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20004.png"
+      },
+      "animation": {
+        "key": "sm20004",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20004.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200042",
+          "level": 2,
+          "effect": "\"Pure Saiyans\" or \"Hybrid Saiyans\" Category allies' Ki +1, \n\"Super Saiyans\" Category allies' ATK & DEF +10% and \n\"Super Saiyan 2\" Category allies' ATK & DEF +20% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20004.png"
+          }
+        },
+        {
+          "id": "200043",
+          "level": 3,
+          "effect": "\"Pure Saiyans\" or \"Hybrid Saiyans\" Category allies' Ki +1, \n\"Super Saiyans\" Category allies' Ki +1 and \nATK & DEF +15% and \"Super Saiyan 2\" Category \nallies' Ki +2 and ATK & DEF +25% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20004.png"
+          }
+        },
+        {
+          "id": "200044",
+          "level": 4,
+          "effect": "\"Pure Saiyans\" or \"Hybrid Saiyans\" Category allies' \nKi +1 and ATK +5%, \"Super Saiyans\" \nCategory allies' Ki +1 and ATK & DEF +15% \nand \"Super Saiyan 2\" Category allies' \nKi +2 and ATK & DEF +25% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20004.png"
+          }
+        },
+        {
+          "id": "200045",
+          "level": 5,
+          "effect": "\"Pure Saiyans\" or \"Hybrid Saiyans\" Category allies' \nKi +1 and ATK +8%, \"Super Saiyans\" \nCategory allies' Ki +1 and ATK & DEF +15% \nand \"Super Saiyan 2\" Category allies' \nKi +2 and ATK & DEF +25% for 3 turns \nfrom the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20004.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20005",
+      "name": "Power Level 530000",
+      "effect": "\"Planet Namek Saga\" Category \nExtreme Class allies' ATK & DEF +15% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20005.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20005.png"
+      },
+      "animation": {
+        "key": "sm20005",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20005.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200052",
+          "level": 2,
+          "effect": "\"Planet Namek Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Planet Namek Saga\" Category \nExtreme Class allies' ATK & DEF +5%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20005.png"
+          }
+        },
+        {
+          "id": "200053",
+          "level": 3,
+          "effect": "\"Planet Namek Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Planet Namek Saga\" Category \nExtreme Class allies' Ki +1 and ATK & DEF +7%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20005.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20006",
+      "name": "Warrior Awakened through Fury",
+      "effect": "\"Planet Namek Saga\" Category \nSuper Class allies' ATK & DEF +15% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20006.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20006.png"
+      },
+      "animation": {
+        "key": "sm20006",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20006.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200062",
+          "level": 2,
+          "effect": "\"Planet Namek Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Planet Namek Saga\" Category \nSuper Class allies' ATK & DEF +5%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20006.png"
+          }
+        },
+        {
+          "id": "200063",
+          "level": 3,
+          "effect": "\"Planet Namek Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Planet Namek Saga\" Category \nSuper Class allies' Ki +1 and ATK & DEF +7%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20006.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20007",
+      "name": "Gohan's Tears",
+      "effect": "\"Goku's Family\" Category allies' \nATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20007.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20007.png"
+      },
+      "animation": {
+        "key": "sm20007",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20007.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20008",
+      "name": "Curious Destiny",
+      "effect": "Recovers 35% HP on the 4th turn from \nthe start of battle, or when HP is 40% or less with \na \"Pure Saiyans\" Category ally on the team (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "on the 4th turn from the start of battle; when HP is 40% or less with a \"Pure Saiyans\" Category ally on the team (once only)",
+      "filmType": "Yellow",
+      "filmCost": 170,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20008.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20008.png"
+      },
+      "animation": {
+        "key": "sm20008",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20008.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200082",
+          "level": 2,
+          "effect": "Recovers 35% HP on the 4th turn from the start of battle, \nor when HP is 40% or less with a \"Pure Saiyans\" or \n\"Earthlings\" Category ally on the team (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "on the 4th turn from the start of battle; when HP is 40% or less with a \"Pure Saiyans\" or \"Earthlings\" Category ally on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20008.png"
+          }
+        },
+        {
+          "id": "200083",
+          "level": 3,
+          "effect": "Recovers 50% HP on the 4th turn from the start of battle, \nor when HP is 40% or less with a \"Pure Saiyans\" or \n\"Earthlings\" Category ally on the team (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "on the 4th turn from the start of battle; when HP is 40% or less with a \"Pure Saiyans\" or \"Earthlings\" Category ally on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20008.png"
+          }
+        },
+        {
+          "id": "200084",
+          "level": 4,
+          "effect": "Recovers 50% HP and, for 1 turn, \"Pure Saiyans\" \nor \"Earthlings\" Category allies' ATK & DEF +10% \non the 4th turn from the start of battle, or \nwhen HP is 40% or less with a \"Pure Saiyans\" or \n\"Earthlings\" Category ally on the team (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "on the 4th turn from the start of battle; when HP is 40% or less with a \"Pure Saiyans\" or \"Earthlings\" Category ally on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20008.png"
+          }
+        },
+        {
+          "id": "200085",
+          "level": 5,
+          "effect": "Recovers 50% HP and, for 2 turns, \"Pure Saiyans\" \nor \"Earthlings\" Category allies' ATK & DEF +10% \non the 4th turn from the start of battle, or \nwhen HP is 40% or less with a \"Pure Saiyans\" or \n\"Earthlings\" Category ally on the team (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 4th turn from the start of battle; when HP is 40% or less with a \"Pure Saiyans\" or \"Earthlings\" Category ally on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20008.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20009",
+      "name": "Captain Ginyu's Super Fighting Pose",
+      "effect": "Extreme Class allies' ATK & DEF +10% \nfor 2 turns when there is a \nSuper Class enemy (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "when there is a Super Class enemy (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20009.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20009.png"
+      },
+      "animation": {
+        "key": "sm20009",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20009.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20011",
+      "name": "Bonds Forged in the Past",
+      "effect": "\"Vegeta's Family\" Category allies' \nATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20011.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20011.png"
+      },
+      "animation": {
+        "key": "sm20010",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20010.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200112",
+          "level": 2,
+          "effect": "\"Vegeta's Family\" or \"Bond of Parent and Child\" \nCategory allies' ATK & DEF +15% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20011.png"
+          }
+        },
+        {
+          "id": "200113",
+          "level": 3,
+          "effect": "\"Vegeta's Family\" or \"Bond of Parent and Child\" \nCategory allies' Ki +1 and ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20011.png"
+          }
+        },
+        {
+          "id": "200114",
+          "level": 4,
+          "effect": "\"Vegeta's Family\" or \"Bond of Parent and Child\" \nCategory allies' Ki +1 and ATK & DEF +20% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20011.png"
+          }
+        },
+        {
+          "id": "200115",
+          "level": 5,
+          "effect": "\"Vegeta's Family\" or \"Bond of Parent and Child\" \nCategory allies' Ki +1 and ATK & DEF +20% \nfor 3 turns from the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20011.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20012",
+      "name": "Vegeta's Pride",
+      "effect": "\"Corroded Body and Mind\" Category allies' \nKi +1 and ATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20012.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20012.png"
+      },
+      "animation": {
+        "key": "sm20012",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20012.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200122",
+          "level": 2,
+          "effect": "\"Corroded Body and Mind\" or \n\"Gifted Warriors\" Category allies' \nKi +1 and ATK & DEF +15% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20012.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20012.png"
+          }
+        },
+        {
+          "id": "200123",
+          "level": 3,
+          "effect": "\"Corroded Body and Mind\" or \n\"Gifted Warriors\" Category allies' \nKi +1 and ATK & DEF +20% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20012.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20012.png"
+          }
+        },
+        {
+          "id": "200124",
+          "level": 4,
+          "effect": "\"Corroded Body and Mind\" or \n\"Gifted Warriors\" Category allies' \nKi +2 and ATK & DEF +20% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20012.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20012.png"
+          }
+        },
+        {
+          "id": "200125",
+          "level": 5,
+          "effect": "\"Corroded Body and Mind\" or \n\"Gifted Warriors\" Category allies' \nKi +2 and ATK & DEF +25% for 3 turns \nfrom the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20012.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20012.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20013",
+      "name": "Krillin's Astonishing Power-Up",
+      "effect": "\"Rapid Growth\" Category allies' ATK & DEF +10% \nand \"Planet Namek Saga\" Category allies' Ki +3 \nfor 2 turns from the start of battle",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Yellow",
+      "filmCost": 170,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20013.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20013.png"
+      },
+      "animation": {
+        "key": "sm20013",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20013.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20014",
+      "name": "Declaration of the Cell Games",
+      "effect": "\"Androids/Cell Saga\" Category \nExtreme Class allies' ATK & DEF +15% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20014.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20014.png"
+      },
+      "animation": {
+        "key": "sm20014",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20014.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200142",
+          "level": 2,
+          "effect": "\"Androids/Cell Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Androids/Cell Saga\" Category \nExtreme Class allies' ATK & DEF +5%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20014.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20014.png"
+          }
+        },
+        {
+          "id": "200143",
+          "level": 3,
+          "effect": "\"Androids/Cell Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Androids/Cell Saga\" Category \nExtreme Class allies' Ki +1 and ATK & DEF +7%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20014.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20014.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20015",
+      "name": "Gift from Piccolo",
+      "effect": "\"Androids/Cell Saga\" Category \nSuper Class allies' ATK & DEF +15% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20015.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20015.png"
+      },
+      "animation": {
+        "key": "sm20015",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20015.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200152",
+          "level": 2,
+          "effect": "\"Androids/Cell Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Androids/Cell Saga\" Category \nSuper Class allies' ATK & DEF +5%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20015.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20015.png"
+          }
+        },
+        {
+          "id": "200153",
+          "level": 3,
+          "effect": "\"Androids/Cell Saga\" Category allies' \nATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Androids/Cell Saga\" Category \nSuper Class allies' Ki +1 and ATK & DEF +7%",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20015.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20015.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20016",
+      "name": "Wavering Thoughts",
+      "effect": "\"Androids\" or \"Earthlings\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20016.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20016.png"
+      },
+      "animation": {
+        "key": "sm20016",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20016.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200162",
+          "level": 2,
+          "effect": "\"Androids\" or \"Earthlings\" Category allies' \nATK & DEF +15% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20016.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20016.png"
+          }
+        },
+        {
+          "id": "200163",
+          "level": 3,
+          "effect": "\"Androids\" or \"Earthlings\" Category allies' \nKi +1 and ATK & DEF +20% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20016.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20016.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20017",
+      "name": "Goku Finally Arrives!",
+      "effect": "All allies' Ki +2 for 2 turns when HP is 59% or less \nwith an \"Earth-Bred Fighters\" Category ally \non the team (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "when HP is 59% or less with an \"Earth-Bred Fighters\" Category ally on the team (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20017.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20017.png"
+      },
+      "animation": {
+        "key": "sm20017",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20017.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20018",
+      "name": "Goku's Compassion",
+      "effect": "\"Exploding Rage\" Category allies' ATK & DEF +15% \nfor 2 turns on the 4th turn from the start of battle \nand all allies' Ki +2 for 1 turn when there is \na \"Battle of Fate\" Category enemy starting from \nthe 4th turn from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "on the 4th turn from the start of battle and all allies' Ki +2 for 1 turn when there is a \"Battle of Fate\" Category enemy starting from the 4th turn from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20018.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20018.png"
+      },
+      "animation": {
+        "key": "sm20018",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20018.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20019",
+      "name": "Android #16 Activated!",
+      "effect": "\"Target: Goku\" Category allies' ATK & DEF +16% \nfor 2 turns from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20019.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20019.png"
+      },
+      "animation": {
+        "key": "sm20019",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20019.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20020",
+      "name": "Get Even Stronger!",
+      "effect": "\"Bond of Master and Disciple\" Category \nallies' ATK & DEF +10% in battle and \nfor 7 turns from the start of battle, \n\"Earth-Bred Fighters\" Category \nallies' Ki +1 (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20020.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20020.png"
+      },
+      "animation": {
+        "key": "sm20020",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20020.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200202",
+          "level": 2,
+          "effect": "\"Bond of Master and Disciple\" Category \nallies' ATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Earth-Bred Fighters\" Category \nallies' Ki +1 (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20020.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20020.png"
+          }
+        },
+        {
+          "id": "200203",
+          "level": 3,
+          "effect": "\"Bond of Master and Disciple\" Category \nallies' Ki +1 and ATK & DEF +20% in battle \nand for 7 turns from the start of battle, \n\"Earth-Bred Fighters\" Category \nallies' Ki +1 (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20020.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20020.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20021",
+      "name": "Bardock and Kakarot",
+      "effect": "\"Low-Class Warrior\" Category allies' \nKi +1 and ATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20021.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20021.png"
+      },
+      "animation": {
+        "key": "sm20021",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20021.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20022",
+      "name": "Please Go! #18",
+      "effect": "\"Androids/Cell Saga\" Category allies' \nKi +1 and ATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20022.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20022.png"
+      },
+      "animation": {
+        "key": "sm20022",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20022.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20023",
+      "name": "Gohan's Birthday",
+      "effect": "\"Golden Fighters\" Category allies' \nKi +5 and ATK, DEF & chance of \nperforming a critical hit +8% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Yellow",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20023.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20023.png"
+      },
+      "animation": {
+        "key": "sm20023",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20023.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "20024",
+      "name": "Vow to Return",
+      "effect": "\"Saiyan Saga\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20024.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20024.png"
+      },
+      "animation": {
+        "key": "sm20024",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20024.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200242",
+          "level": 2,
+          "effect": "\"Saiyan Saga\" Category allies' \nATK & DEF +15% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20024.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20024.png"
+          }
+        },
+        {
+          "id": "200243",
+          "level": 3,
+          "effect": "\"Saiyan Saga\" Category allies' \nATK & DEF +20% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20024.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20024.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "20025",
+      "name": "Buu's Slumber",
+      "effect": "\"Majin Buu Saga\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Yellow",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+        "large": "assets/item/support_memory/large/support_memory_large_20025.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20025.png"
+      },
+      "animation": {
+        "key": "sm20025",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm20025.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "200252",
+          "level": 2,
+          "effect": "\"Majin Buu Saga\" Category allies' \nATK & DEF +15% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20025.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20025.png"
+          }
+        },
+        {
+          "id": "200253",
+          "level": 3,
+          "effect": "\"Majin Buu Saga\" Category allies' \nATK & DEF +20% in battle",
+          "durationText": null,
+          "activationCondition": null,
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_z.png",
+            "large": "assets/item/support_memory/large/support_memory_large_20025.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_20025.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "30001",
+      "name": "Pull Out the Tail!",
+      "effect": "Super Class allies' ATK +15% \nfor 1 turn when there is an \nExtreme Class enemy (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "when there is an Extreme Class enemy (once only)",
+      "filmType": "Blue",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30001.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30001.png"
+      },
+      "animation": {
+        "key": "sm30001",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30001.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "300012",
+          "level": 2,
+          "effect": "Super Class allies' ATK +20% \nfor 1 turn when there is an \nExtreme Class enemy (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "when there is an Extreme Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30001.png"
+          }
+        },
+        {
+          "id": "300013",
+          "level": 3,
+          "effect": "Super Class allies' ATK +20% \nfor 2 turns when there is an \nExtreme Class enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when there is an Extreme Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30001.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "30002",
+      "name": "Enter the Para Para Brothers!",
+      "effect": "Seals all enemies' Super Attacks for 1 turn \nwhen HP is 88% or more starting from the \n3rd turn from the start of battle (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "when HP is 88% or more starting from the 3rd turn from the start of battle (once only)",
+      "filmType": "Blue",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30002.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30002.png"
+      },
+      "animation": {
+        "key": "sm30002",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30002.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30003",
+      "name": "Bulla Went Shopping",
+      "effect": "Chance of obtaining bonus rewards +85% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+      "durationText": null,
+      "activationCondition": "Once only",
+      "filmType": "Blue",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30003.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30003.png"
+      },
+      "animation": {
+        "key": "sm30003",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30003.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30004",
+      "name": "In Unison! Piccolo and Dende",
+      "effect": "Randomly changes Ki Spheres of a certain Type \n(PHY excluded) to PHY Ki Spheres and \"GT Heroes\" \nCategory allies' ATK & DEF +20% for 1 turn \non the 3rd turn from the start of battle (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "on the 3rd turn from the start of battle (once only)",
+      "filmType": "Blue",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30004.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30004.png"
+      },
+      "animation": {
+        "key": "sm30004",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30004.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "300042",
+          "level": 2,
+          "effect": "Randomly changes Ki Spheres of a certain Type \n(PHY excluded) to PHY Ki Spheres and \"GT Heroes\" \nCategory allies' Ki +1 and ATK & DEF +25% for 1 turn \non the 3rd turn from the start of battle (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30004.png"
+          }
+        },
+        {
+          "id": "300043",
+          "level": 3,
+          "effect": "Randomly changes Ki Spheres of a certain Type \n(PHY excluded) to PHY Ki Spheres and \n\"GT Heroes\" or \"Joined Forces\" Category allies' \nKi +1 and ATK & DEF +25% for 1 turn on the \n3rd turn from the start of battle (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30004.png"
+          }
+        },
+        {
+          "id": "300044",
+          "level": 4,
+          "effect": "Randomly changes Ki Spheres of a certain Type \n(PHY excluded) to PHY Ki Spheres and \n\"GT Heroes\" or \"Joined Forces\" Category allies' \nKi +1 and ATK & DEF +25% for 2 turns on the \n3rd turn from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30004.png"
+          }
+        },
+        {
+          "id": "300045",
+          "level": 5,
+          "effect": "Randomly changes Ki Spheres of a certain Type \n(PHY excluded) to PHY Ki Spheres, \n\"GT Heroes\" or \"Joined Forces\" Category allies' \nKi +2 and ATK & DEF +25% for 2 turns and \nSuper Class allies' ATK +10% for 1 turn on the \n3rd turn from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30004.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "30005",
+      "name": "Goku Becomes a Kid?!",
+      "effect": "All enemies' ATK & DEF -5% for 2 turns \nfrom the start of battle, plus an additional \nATK & DEF -5% for all enemies if there is a \n\"Goku's Family\" Category enemy (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Blue",
+      "filmCost": 170,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30005.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30005.png"
+      },
+      "animation": {
+        "key": "sm30005",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30005.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "300052",
+          "level": 2,
+          "effect": "All enemies' ATK & DEF -5% for 2 turns from the \nstart of battle, plus an additional ATK & DEF -10% \nfor all enemies if there is a \"Goku's Family\" or \n\"GT Heroes\" Category enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30005.png"
+          }
+        },
+        {
+          "id": "300053",
+          "level": 3,
+          "effect": "All enemies' ATK & DEF -10% for 2 turns from the \nstart of battle, plus an additional ATK & DEF -10% \nfor all enemies if there is a \"Goku's Family\" or \n\"GT Heroes\" Category enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30005.png"
+          }
+        },
+        {
+          "id": "300054",
+          "level": 4,
+          "effect": "All enemies' ATK & DEF -15% for 2 turns from the \nstart of battle, plus an additional ATK & DEF -10% \nfor all enemies if there is a \"Goku's Family\" or \n\"GT Heroes\" Category enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30005.png"
+          }
+        },
+        {
+          "id": "300055",
+          "level": 5,
+          "effect": "All enemies' ATK & DEF -15% for 3 turns from the \nstart of battle, plus an additional ATK & DEF -10% \nfor all enemies if there is a \"Goku's Family\" or \n\"GT Heroes\" Category enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30005.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "30006",
+      "name": "Farewell, Goku!",
+      "effect": "\"GT Heroes\" Category allies' ATK & DEF +10% \nin battle and for 7 turns from the start of battle, \nKi +1 for allies whose names include \"Goku\" \n(Captain Ginyu, Jr., etc. excluded) (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Blue",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30006.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30006.png"
+      },
+      "animation": {
+        "key": "sm30006",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30006.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30008",
+      "name": "Shenron as an Enemy?!",
+      "effect": "\"Shadow Dragon Saga\" Category allies' ATK & DEF +10% \nin battle and \"Shadow Dragon Saga\" Category Extreme Class \nallies' Ki +1 for 7 turns from the start of battle (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Blue",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30008.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30008.png"
+      },
+      "animation": {
+        "key": "sm30008",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30008.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "300082",
+          "level": 2,
+          "effect": "\"Shadow Dragon Saga\" Category allies' ATK & DEF +15% \nin battle and \"Shadow Dragon Saga\" Category Extreme Class \nallies' Ki +2 for 7 turns from the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30008.png"
+          }
+        },
+        {
+          "id": "300083",
+          "level": 3,
+          "effect": "\"Shadow Dragon Saga\" Category allies' \nKi +1 and ATK & DEF +20% in battle and \n\"Shadow Dragon Saga\" Category Extreme Class allies' \nKi +2 for 7 turns from the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+            "large": "assets/item/support_memory/large/support_memory_large_30008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30008.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "30009",
+      "name": "Piccolo's Encouragement",
+      "effect": "Ki +3 for all allies plus an additional Ki +1 \nfor Super Class allies for 2 turns \nwhen HP is 59% or less with a \"Saviors\" \nCategory ally on the team (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "when HP is 59% or less with a \"Saviors\" Category ally on the team (once only)",
+      "filmType": "Blue",
+      "filmCost": 150,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30009.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30009.png"
+      },
+      "animation": {
+        "key": "sm30009",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30009.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30010",
+      "name": "Pan's First Kiss",
+      "effect": "\"Bond of Friendship\" Category allies' \nATK & DEF +10% for 2 turns from \nthe start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Blue",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30010.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30010.png"
+      },
+      "animation": {
+        "key": "sm30010",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30010.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30011",
+      "name": "A Photo Full of Memories",
+      "effect": "\"Giant Ape Power\" Category allies' \nKi +1 and ATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Blue",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30011.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30011.png"
+      },
+      "animation": {
+        "key": "sm30011",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30011.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30012",
+      "name": "A Hundred Years Later...",
+      "effect": "\"Goku's Family\" or \n\"Vegeta's Family\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Blue",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30012.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30012.png"
+      },
+      "animation": {
+        "key": "sm30012",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30012.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30013",
+      "name": "Confident Gogeta",
+      "effect": "\"Fused Fighters\" Category allies' \nATK & DEF +10% in battle and \nfor 7 turns from the start of battle, \n\"Shadow Dragon Saga\" Category allies' \nKi +1 (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Blue",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30013.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30013.png"
+      },
+      "animation": {
+        "key": "sm30013",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30013.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "30014",
+      "name": "To the Infinite Galaxy and Beyond",
+      "effect": "All allies' ATK & DEF +20% for 7 turns when there is \na \"GT Bosses\" Category enemy (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "when there is a \"GT Bosses\" Category enemy (once only)",
+      "filmType": "Blue",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_gt.png",
+        "large": "assets/item/support_memory/large/support_memory_large_30014.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_30014.png"
+      },
+      "animation": {
+        "key": "sm30014",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm30014.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "40001",
+      "name": "First Taste of Tempura",
+      "effect": "All allies' Ki +3 for 1 turn on the \n3rd turn from the start of battle \n(once only)",
+      "durationText": "1 turn",
+      "activationCondition": "on the 3rd turn from the start of battle (once only)",
+      "filmType": "Orange",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40001.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40001.png"
+      },
+      "animation": {
+        "key": "sm40001",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40001.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400012",
+          "level": 2,
+          "effect": "All allies' Ki +3 for 2 turns on the \n3rd turn from the start of battle \n(once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40001.png"
+          }
+        },
+        {
+          "id": "400013",
+          "level": 3,
+          "effect": "All allies' Ki +3 for 3 turns on the \n3rd turn from the start of battle \n(once only)",
+          "durationText": "3 turns",
+          "activationCondition": "on the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40001.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40002",
+      "name": "Master and Disciple's Goal",
+      "effect": "\"Bond of Master and Disciple\" \nCategory allies' ATK & DEF +10% \nfor 2 turns from the start of battle \n(once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Orange",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40002.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40002.png"
+      },
+      "animation": {
+        "key": "sm40002",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40002.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400022",
+          "level": 2,
+          "effect": "\"Bond of Master and Disciple\" or \n\"Joined Forces\" Category allies' \nATK & DEF +15% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40002.png"
+          }
+        },
+        {
+          "id": "400023",
+          "level": 3,
+          "effect": "\"Bond of Master and Disciple\" or \n\"Joined Forces\" Category allies' \nKi +1 and ATK & DEF +15% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40002.png"
+          }
+        },
+        {
+          "id": "400024",
+          "level": 4,
+          "effect": "\"Bond of Master and Disciple\" or \n\"Joined Forces\" Category allies' \nKi +1 and ATK & DEF +20% for 2 turns \nfrom the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40002.png"
+          }
+        },
+        {
+          "id": "400025",
+          "level": 5,
+          "effect": "\"Bond of Master and Disciple\" or \n\"Joined Forces\" Category allies' \nKi +1 and ATK & DEF +20% for 3 turns \nfrom the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40002.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40003",
+      "name": "Zen-Ohs' Welcome Words",
+      "effect": "\"Universe Survival Saga\" Category \nallies' ATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40003.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40003.png"
+      },
+      "animation": {
+        "key": "sm40003",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40003.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400032",
+          "level": 2,
+          "effect": "\"Universe Survival Saga\" Category allies' \nATK & DEF +15% in battle and \nfor characters who also belong to the \n\"Tournament Participants\" Category, \nplus an additional Ki +1 for 7 turns \nfrom the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40003.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40003.png"
+          }
+        },
+        {
+          "id": "400033",
+          "level": 3,
+          "effect": "\"Universe Survival Saga\" Category allies' \nKi +1 and ATK & DEF +20% in battle and \nfor characters who also belong to the \n\"Tournament Participants\" Category, \nplus an additional Ki +2 for 7 turns \nfrom the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40003.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40003.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40004",
+      "name": "Bond of Sister and Brother",
+      "effect": "Recovers 18% HP and, for 1 turn, \n\"Siblings' Bond\" Category allies' ATK & DEF +18% \nwhen HP is 50% or less (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "when HP is 50% or less (once only)",
+      "filmType": "Orange",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40004.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40004.png"
+      },
+      "animation": {
+        "key": "sm40004",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40004.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400042",
+          "level": 2,
+          "effect": "Recovers 18% HP and, for 1 turn, \"Siblings' Bond\" or \n\"Representatives of Universe 7\" Category allies' Ki +1 \nand ATK & DEF +18% when HP is 50% or less (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "when HP is 50% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40004.png"
+          }
+        },
+        {
+          "id": "400043",
+          "level": 3,
+          "effect": "Recovers 18% HP and, for 2 turns, \"Siblings' Bond\" or \n\"Representatives of Universe 7\" Category allies' Ki +1 \nand ATK & DEF +18% when HP is 50% or less (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 50% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40004.png"
+          }
+        },
+        {
+          "id": "400044",
+          "level": 4,
+          "effect": "Recovers 35% HP and, for 2 turns, \"Siblings' Bond\" or \n\"Representatives of Universe 7\" Category allies' Ki +1 \nand ATK & DEF +18% when HP is 50% or less (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 50% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40004.png"
+          }
+        },
+        {
+          "id": "400045",
+          "level": 5,
+          "effect": "Recovers 35% HP and, for 2 turns, \"Siblings' Bond\" or \n\"Representatives of Universe 7\" Category allies' \nKi +1, ATK & DEF +18% and chance of performing \na critical hit +17% when HP is 50% or less (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 50% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40004.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40005",
+      "name": "Trunks and Mai's Reunion",
+      "effect": "All allies' ATK & DEF +10% for 2 turns \nfrom the start of battle when there are \n2 or more \"Time Travelers\" Category \nallies on the team (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle when there are 2 or more \"Time Travelers\" Category allies on the team (once only)",
+      "filmType": "Orange",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40005.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40005.png"
+      },
+      "animation": {
+        "key": "sm40005",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40005.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400052",
+          "level": 2,
+          "effect": "All allies' ATK & DEF +15% for 2 turns \nfrom the start of battle when there are \n2 or more \"Time Travelers\" Category \nallies on the team (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle when there are 2 or more \"Time Travelers\" Category allies on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40005.png"
+          }
+        },
+        {
+          "id": "400053",
+          "level": 3,
+          "effect": "All allies' Ki +1 and ATK & DEF +15% \nfor 2 turns from the start of battle \nwhen there are 2 or more \"Time Travelers\" \nCategory allies on the team (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle when there are 2 or more \"Time Travelers\" Category allies on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40005.png"
+          }
+        },
+        {
+          "id": "400054",
+          "level": 4,
+          "effect": "All allies' Ki +1 and ATK & DEF +15%, plus an \nadditional ATK & DEF +5% for \"Time Travelers\" \nCategory allies, for 2 turns from the start of battle \nwhen there are 2 or more \"Time Travelers\" \nCategory allies on the team (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle when there are 2 or more \"Time Travelers\" Category allies on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40005.png"
+          }
+        },
+        {
+          "id": "400055",
+          "level": 5,
+          "effect": "All allies' Ki +1 and ATK & DEF +15%, plus an \nadditional ATK & DEF +5% for \"Time Travelers\" \nCategory allies, for 3 turns from the start of battle \nwhen there are 2 or more \"Time Travelers\" \nCategory allies on the team (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle when there are 2 or more \"Time Travelers\" Category allies on the team (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40005.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40006",
+      "name": "Bulla Is Born!",
+      "effect": "\"Vegeta's Family\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40006.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40006.png"
+      },
+      "animation": {
+        "key": "sm40006",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40006.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400062",
+          "level": 2,
+          "effect": "\"Vegeta's Family\" Category allies' \nATK & DEF +15% in battle, plus an additional \nKi +1 for characters who also belong to \nthe \"Bond of Parent and Child\" Category \nfor 7 turns from the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40006.png"
+          }
+        },
+        {
+          "id": "400063",
+          "level": 3,
+          "effect": "\"Vegeta's Family\" Category allies' Ki +1 and \nATK & DEF +20% in battle, plus an additional \nKi +2 for characters who also belong to \nthe \"Bond of Parent and Child\" Category \nfor 7 turns from the start of battle (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40006.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40006.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40007",
+      "name": "Two Zamasus",
+      "effect": "\"Worldwide Chaos\" Category allies' \nATK & DEF +10% in battle and for 7 turns from \nthe start of battle, Ki +1 for allies whose names \ninclude \"Zamasu\" or \"Goku Black\" (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40007.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40007.png"
+      },
+      "animation": {
+        "key": "sm40007",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40007.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400072",
+          "level": 2,
+          "effect": "\"Worldwide Chaos\" Category allies' \nATK & DEF +15% in battle and for 7 turns from \nthe start of battle, Ki +2 for allies whose names \ninclude \"Zamasu\" or \"Goku Black\" (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40007.png"
+          }
+        },
+        {
+          "id": "400073",
+          "level": 3,
+          "effect": "\"Worldwide Chaos\" Category allies' Ki +1 and \nATK & DEF +20% in battle and for 7 turns from \nthe start of battle, Ki +2 for allies whose names \ninclude \"Zamasu\" or \"Goku Black\" (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40007.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40008",
+      "name": "Lamentation of the Absolute God",
+      "effect": "\"Realm of Gods\" Category allies' \nATK & DEF +10% for 3 turns when there is \na \"Time Travelers\" Category enemy (once only)",
+      "durationText": "3 turns",
+      "activationCondition": "when there is a \"Time Travelers\" Category enemy (once only)",
+      "filmType": "Orange",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40008.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40008.png"
+      },
+      "animation": {
+        "key": "sm40008",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40008.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400082",
+          "level": 2,
+          "effect": "\"Realm of Gods\" or \"Worldwide Chaos\" Category allies' \nATK & DEF +15% for 3 turns when there is \na \"Time Travelers\" Category enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when there is a \"Time Travelers\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40008.png"
+          }
+        },
+        {
+          "id": "400083",
+          "level": 3,
+          "effect": "\"Realm of Gods\" or \"Worldwide Chaos\" Category allies' \nKi +2 and ATK & DEF +15% for 3 turns when there is \na \"Time Travelers\" Category enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when there is a \"Time Travelers\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40008.png"
+          }
+        },
+        {
+          "id": "400084",
+          "level": 4,
+          "effect": "\"Realm of Gods\" or \"Worldwide Chaos\" Category allies' \nKi +2 and ATK & DEF +20% for 3 turns when there is \na \"Time Travelers\" Category enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when there is a \"Time Travelers\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40008.png"
+          }
+        },
+        {
+          "id": "400085",
+          "level": 5,
+          "effect": "\"Realm of Gods\" or \"Worldwide Chaos\" Category allies' \nKi +2 and ATK & DEF +20% for 4 turns \nwhen there is a \"Time Travelers\" or \n\"Fused Fighters\" Category enemy (once only)",
+          "durationText": "4 turns",
+          "activationCondition": "when there is a \"Time Travelers\" or \"Fused Fighters\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40008.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40008.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40009",
+      "name": "Trunks and Mai's Departure",
+      "effect": "\"Future Saga\" Category allies' ATK & DEF +10% \nin battle and for 7 turns from the start of battle, \nKi +1 for allies whose names include \"Trunks\" \n(Kid and GT excluded) or \"Mai (Future)\" (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40009.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40009.png"
+      },
+      "animation": {
+        "key": "sm40009",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40009.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "40010",
+      "name": "The Miracle of Super Hercule?!",
+      "effect": "Super Class allies' Ki +4 and \nATK & DEF +10% for 3 turns when there is \na \"Realm of Gods\" Category enemy (once only)",
+      "durationText": "3 turns",
+      "activationCondition": "when there is a \"Realm of Gods\" Category enemy (once only)",
+      "filmType": "Orange",
+      "filmCost": 150,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40010.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40010.png"
+      },
+      "animation": {
+        "key": "sm40010",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40010.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400102",
+          "level": 2,
+          "effect": "Super Class allies' Ki +4 and ATK & DEF +10% \nand \"Saviors\" Category allies' ATK & DEF +5% \nfor 3 turns when there is a \"Realm of Gods\" \nCategory enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when there is a \"Realm of Gods\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40010.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40010.png"
+          }
+        },
+        {
+          "id": "400103",
+          "level": 3,
+          "effect": "Super Class allies' Ki +4 and ATK & DEF +10% \nand \"Saviors\" Category allies' ATK & DEF +5% \nfor 3 turns when there is a \"Realm of Gods\" \nCategory or Extreme Class enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when there is a \"Realm of Gods\" Category or Extreme Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40010.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40010.png"
+          }
+        },
+        {
+          "id": "400104",
+          "level": 4,
+          "effect": "Super Class allies' Ki +4 and ATK & DEF +10% \nand \"Saviors\" or \"Earth-Protecting Heroes\" \nCategory allies' ATK & DEF +5% for 4 turns \nwhen there is a \"Realm of Gods\" Category or \nExtreme Class enemy (once only)",
+          "durationText": "4 turns",
+          "activationCondition": "when there is a \"Realm of Gods\" Category or Extreme Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40010.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40010.png"
+          }
+        },
+        {
+          "id": "400105",
+          "level": 5,
+          "effect": "Super Class allies' Ki +5 and ATK & DEF +10% \nand \"Saviors\" or \"Earth-Protecting Heroes\" \nCategory allies' ATK & DEF +10% for 4 turns \nwhen there is a \"Realm of Gods\" Category or \nExtreme Class enemy (once only)",
+          "durationText": "4 turns",
+          "activationCondition": "when there is a \"Realm of Gods\" Category or Extreme Class enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40010.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40010.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40011",
+      "name": "Endless Battles of Saiyans",
+      "effect": "\"Power Beyond Super Saiyan\" Category \nallies' ATK & DEF +10% in battle and \nfor 7 turns from the start of battle, \n\"Pure Saiyans\" Category allies' Ki +1 (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40011.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40011.png"
+      },
+      "animation": {
+        "key": "sm40011",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40011.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "400112",
+          "level": 2,
+          "effect": "\"Power Beyond Super Saiyan\" Category \nallies' ATK & DEF +15% in battle and \nfor 7 turns from the start of battle, \n\"Pure Saiyans\" Category allies' Ki +1 (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40011.png"
+          }
+        },
+        {
+          "id": "400113",
+          "level": 3,
+          "effect": "\"Power Beyond Super Saiyan\" Category \nallies' Ki +1 and ATK & DEF +20% in battle \nand for 7 turns from the start of battle, \n\"Pure Saiyans\" Category allies' Ki +1 (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+            "large": "assets/item/support_memory/large/support_memory_large_40011.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40011.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "40013",
+      "name": "Two Zen-Ohs",
+      "effect": "\"Time Travelers\" Category allies' \nATK & DEF +10% in battle and \nfor 7 turns from the start of battle, \n\"Realm of Gods\" Category allies' \nKi +1 (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40013.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40013.png"
+      },
+      "animation": {
+        "key": "sm40013",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40013.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "40014",
+      "name": "To the World of Void",
+      "effect": "All allies' ATK & DEF +20% for 7 turns when there is \na \"Super Bosses\" Category enemy (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "when there is a \"Super Bosses\" Category enemy (once only)",
+      "filmType": "Orange",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_super.png",
+        "large": "assets/item/support_memory/large/support_memory_large_40014.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_40014.png"
+      },
+      "animation": {
+        "key": "sm40014",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm40014.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50001",
+      "name": "Fly, Icarus!",
+      "effect": "All allies' ATK & DEF +10% for 1 turn \nwhen HP is 70% or less (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "when HP is 70% or less (once only)",
+      "filmType": "Green",
+      "filmCost": 70,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50001.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50001.png"
+      },
+      "animation": {
+        "key": "sm50001",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50001.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500012",
+          "level": 2,
+          "effect": "All allies' ATK & DEF +15% for 1 turn \nwhen HP is 70% or less (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "when HP is 70% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50001.png"
+          }
+        },
+        {
+          "id": "500013",
+          "level": 3,
+          "effect": "All allies' ATK & DEF +15% for 1 turn and \nrecovers 15% HP when HP is 70% or less (once only)",
+          "durationText": "1 turn",
+          "activationCondition": "when HP is 70% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50001.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50001.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50002",
+      "name": "Krillin Sings His Heart Out",
+      "effect": "All enemies' ATK \n-5% on the first turn of battle, \n-4% on the second turn and \n-3% on the third turn (once only)",
+      "durationText": null,
+      "activationCondition": "Once only",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50002.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50002.png"
+      },
+      "animation": {
+        "key": "sm50002",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50002.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500022",
+          "level": 2,
+          "effect": "All enemies' ATK & DEF \n-5% on the first turn of battle, \n-4% on the second turn and \n-3% on the third turn (once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50002.png"
+          }
+        },
+        {
+          "id": "500023",
+          "level": 3,
+          "effect": "All enemies' ATK & DEF \n-7% on the first turn of battle, \n-6% on the second turn and \n-5% on the third turn (once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50002.png"
+          }
+        },
+        {
+          "id": "500024",
+          "level": 4,
+          "effect": "\"Power of Wishes\" Category allies' \nKi +1 and ATK & DEF +5% for 3 turns \nfrom the start of battle and \nall enemies' ATK & DEF \n-10% on the first turn of battle, \n-9% on the second turn and \n-8% on the third turn (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle and all enemies' ATK & DEF -10% on the first turn of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50002.png"
+          }
+        },
+        {
+          "id": "500025",
+          "level": 5,
+          "effect": "\"Power of Wishes\" Category allies' \nKi +2, ATK & DEF +8% and \nchance of performing a critical hit +3% \nfor 3 turns from the start of battle and \nall enemies' ATK & DEF \n-10% on the first turn of battle, \n-9% on the second turn and \n-8% on the third turn (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle and all enemies' ATK & DEF -10% on the first turn of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50002.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50002.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50003",
+      "name": "Kakarot",
+      "effect": "\"Movie Heroes\" Category allies' ATK & DEF +10% \nin battle and for 7 turns from the start of battle, \nKi +1 for allies whose names include \"Goku\" \n(Captain Ginyu, Jr., etc. excluded) (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50003.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50003.png"
+      },
+      "animation": {
+        "key": "sm50003",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50003.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500032",
+          "level": 2,
+          "effect": "\"Movie Heroes\" Category allies' ATK & DEF +15% \nin battle and for 7 turns from the start of battle, \nKi +2 for allies whose names include \"Goku\" \n(Captain Ginyu, Jr., etc. excluded) (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50003.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50003.png"
+          }
+        },
+        {
+          "id": "500033",
+          "level": 3,
+          "effect": "\"Movie Heroes\" Category allies' Ki +1 and ATK & DEF +20% \nin battle and for 7 turns from the start of battle, \nKi +2 for allies whose names include \"Goku\" \n(Captain Ginyu, Jr., etc. excluded) (once only)",
+          "durationText": "7 turns",
+          "activationCondition": "from the start of battle",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50003.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50003.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50004",
+      "name": "Curiosity About the Realm of Gods",
+      "effect": "\"Realm of Gods\" Category allies' ATK & DEF +10% for 2 turns \nfrom the start of battle (once only); all allies' Ki +1 for 2 turns \nwhen there is a \"Realm of Gods\" Category enemy (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only); when there is a \"Realm of Gods\" Category enemy (once only)",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50004.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50004.png"
+      },
+      "animation": {
+        "key": "sm50004",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50004.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500042",
+          "level": 2,
+          "effect": "\"Realm of Gods\" Category allies' ATK & DEF +10% \nfor 2 turns from the start of battle (once only); \nall allies' Ki +2 for 2 turns when there is \na \"Realm of Gods\" or \"Movie Bosses\" \nCategory enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only); when there is a \"Realm of Gods\" or \"Movie Bosses\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50004.png"
+          }
+        },
+        {
+          "id": "500043",
+          "level": 3,
+          "effect": "\"Realm of Gods\" Category allies' ATK & DEF +15% \nfor 2 turns from the start of battle (once only); \nall allies' Ki +2 for 2 turns when there is \na \"Realm of Gods\" or \"Movie Bosses\" \nCategory enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only); when there is a \"Realm of Gods\" or \"Movie Bosses\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50004.png"
+          }
+        },
+        {
+          "id": "500044",
+          "level": 4,
+          "effect": "\"Realm of Gods\" Category allies' ATK & DEF +20% \nfor 2 turns from the start of battle (once only); \nall allies' Ki +2 for 2 turns when there is \na \"Realm of Gods\" or \"Movie Bosses\" \nCategory enemy (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only); when there is a \"Realm of Gods\" or \"Movie Bosses\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50004.png"
+          }
+        },
+        {
+          "id": "500045",
+          "level": 5,
+          "effect": "\"Realm of Gods\" Category allies' ATK & DEF +25% \nfor 3 turns from the start of battle (once only); \nall allies' Ki +2 for 3 turns when there is \na \"Realm of Gods\" or \"Movie Bosses\" \nCategory enemy (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only); when there is a \"Realm of Gods\" or \"Movie Bosses\" Category enemy (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50004.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50004.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50005",
+      "name": "Strike from the Otherworld",
+      "effect": "All allies' ATK & DEF +10% for 2 turns on the 5th turn \nfrom the start of battle, and Super Class allies' ATK +10% \nfor 1 turn when there is a \"Movie Bosses\" Category enemy \nstarting from the 5th turn from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "on the 5th turn from the start of battle; when there is a \"Movie Bosses\" Category enemy starting from the 5th turn from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50005.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50005.png"
+      },
+      "animation": {
+        "key": "sm50005",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50005.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500052",
+          "level": 2,
+          "effect": "All allies' ATK & DEF +15% for 2 turns \non the 5th turn from the start of battle, \nand Super Class allies' ATK +10% for 1 turn \nwhen there is a \"Movie Bosses\" or \n\"Space-Traveling Warriors\" Category enemy \nstarting from the 5th turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 5th turn from the start of battle; when there is a \"Movie Bosses\" or \"Space-Traveling Warriors\" Category enemy starting from the 5th turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50005.png"
+          }
+        },
+        {
+          "id": "500053",
+          "level": 3,
+          "effect": "All allies' ATK & DEF +15% for 2 turns \non the 5th turn from the start of battle, \nand Super Class allies' ATK & DEF +10% \nfor 2 turns when there is a \"Movie Bosses\" or \n\"Space-Traveling Warriors\" Category enemy \nstarting from the 5th turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 5th turn from the start of battle; when there is a \"Movie Bosses\" or \"Space-Traveling Warriors\" Category enemy starting from the 5th turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50005.png"
+          }
+        },
+        {
+          "id": "500054",
+          "level": 4,
+          "effect": "All allies' ATK & DEF +15% for 2 turns \non the 5th turn from the start of battle, and \nSuper Class allies' ATK & DEF +10% for 2 turns and \n\"Otherworld Warriors\" Category allies' ATK +5% \nfor 1 turn when there is a \"Movie Bosses\" or \n\"Space-Traveling Warriors\" Category enemy \nstarting from the 5th turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "on the 5th turn from the start of battle; when there is a \"Movie Bosses\" or \"Space-Traveling Warriors\" Category enemy starting from the 5th turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50005.png"
+          }
+        },
+        {
+          "id": "500055",
+          "level": 5,
+          "effect": "All allies' ATK & DEF +15% for 3 turns \non the 5th turn from the start of battle, and \nSuper Class allies' ATK & DEF +10% for 2 turns and \n\"Otherworld Warriors\" Category allies' ATK +10% \nfor 1 turn when there is a \"Movie Bosses\" or \n\"Space-Traveling Warriors\" Category enemy \nstarting from the 5th turn from \nthe start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "on the 5th turn from the start of battle; when there is a \"Movie Bosses\" or \"Space-Traveling Warriors\" Category enemy starting from the 5th turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50005.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50005.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50006",
+      "name": "Cooler's Cold Remark",
+      "effect": "\"Wicked Bloodline\" Category allies' ATK & DEF +10% \nin battle and for 7 turns from the start of battle, Ki +1 \nfor allies whose names include \"Cooler\" (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50006.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50006.png"
+      },
+      "animation": {
+        "key": "sm50006",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50006.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50007",
+      "name": "Cruel Provocation",
+      "effect": "\"Terrifying Conquerors\" Category allies' \nKi +1 and ATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50007.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50007.png"
+      },
+      "animation": {
+        "key": "sm50007",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50007.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500072",
+          "level": 2,
+          "effect": "\"Terrifying Conquerors\" or \"Wicked Bloodline\" \nCategory allies' Ki +1 and ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50007.png"
+          }
+        },
+        {
+          "id": "500073",
+          "level": 3,
+          "effect": "\"Terrifying Conquerors\" or \"Wicked Bloodline\" \nCategory allies' Ki +2 and ATK & DEF +15% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50007.png"
+          }
+        },
+        {
+          "id": "500074",
+          "level": 4,
+          "effect": "\"Terrifying Conquerors\" or \"Wicked Bloodline\" \nCategory allies' Ki +2 and ATK & DEF +20% \nfor 2 turns from the start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50007.png"
+          }
+        },
+        {
+          "id": "500075",
+          "level": 5,
+          "effect": "\"Terrifying Conquerors\" or \"Wicked Bloodline\" \nCategory allies' Ki +2 and ATK & DEF +20% \nfor 3 turns from the start of battle (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50007.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50007.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50008",
+      "name": "Rescue Gohan!",
+      "effect": "Starting from the 4th turn from the start of battle and \nif HP is 58% or less, Super Class allies' ATK & DEF +20% \nfor 1 turn and when there is a \"Saviors\" Category ally \non the team, recovers 10% HP (once only)",
+      "durationText": "1 turn",
+      "activationCondition": "Starting from the 4th turn from the start of battle and if HP is 58% or less; when there is a \"Saviors\" Category ally on the team",
+      "filmType": "Green",
+      "filmCost": 150,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50008.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50008.png"
+      },
+      "animation": {
+        "key": "sm50008",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50008.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50009",
+      "name": "Gohan's Heart",
+      "effect": "\"Hybrid Saiyans\" Category allies' ATK & DEF +20% \nand \"Giant Ape Power\" Category allies' Ki +2 \nfor 2 turns when HP is 58% or less starting from \nthe 3rd turn from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "when HP is 58% or less starting from the 3rd turn from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 150,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50009.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50009.png"
+      },
+      "animation": {
+        "key": "sm50009",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50009.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500092",
+          "level": 2,
+          "effect": "Recovers 20% HP, \n\"Hybrid Saiyans\" Category allies' \nATK & DEF +20% for 2 turns and \n\"Giant Ape Power\" Category allies' \nKi +2 for 2 turns when HP is 58% or less \nstarting from the 3rd turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 58% or less starting from the 3rd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50009.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50009.png"
+          }
+        },
+        {
+          "id": "500093",
+          "level": 3,
+          "effect": "Recovers 20% HP, \"Hybrid Saiyans\" or \n\"Bond of Friendship\" Category allies' \nATK & DEF +20% for 2 turns and \n\"Giant Ape Power\" Category allies' \nKi +2 for 2 turns when HP is 58% or less \nstarting from the 2nd turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 58% or less starting from the 2nd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50009.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50009.png"
+          }
+        },
+        {
+          "id": "500094",
+          "level": 4,
+          "effect": "Recovers 30% HP, \"Hybrid Saiyans\" or \n\"Bond of Friendship\" Category allies' \nATK & DEF +25% for 2 turns and \n\"Giant Ape Power\" Category allies' \nKi +2 for 2 turns when HP is 58% or less \nstarting from the 2nd turn from \nthe start of battle (once only)",
+          "durationText": "2 turns",
+          "activationCondition": "when HP is 58% or less starting from the 2nd turn from the start of battle (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50009.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50009.png"
+          }
+        },
+        {
+          "id": "500095",
+          "level": 5,
+          "effect": "Recovers 30% HP, \"Hybrid Saiyans\" or \n\"Bond of Friendship\" Category allies' \nATK & DEF +25% for 3 turns and \n\"Giant Ape Power\" Category allies' \nKi +2 and ATK +10% for 3 turns \nwhen HP is 58% or less (once only)",
+          "durationText": "3 turns",
+          "activationCondition": "when HP is 58% or less (once only)",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50009.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50009.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50010",
+      "name": "Gift from the Hero",
+      "effect": "\"Storied Figures\" Category allies' \nATK & DEF +10% for 2 turns \nfrom the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50010.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50010.png"
+      },
+      "animation": {
+        "key": "sm50010",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50010.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50011",
+      "name": "God of Destruction's Pride",
+      "effect": "\"Realm of Gods\" Category allies' ATK & DEF +10% \nin battle and for 7 turns from the start of battle, \n\"Planetary Destruction\" Category allies' Ki +1 (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50011.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50011.png"
+      },
+      "animation": {
+        "key": "sm50011",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50011.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50012",
+      "name": "Super Hero Fading Away",
+      "effect": "\"Super Heroes\" Category allies' ATK & DEF +10% \nin battle and if there is an ally whose name \nincludes \"Gamma\" on the team, all allies' Ki +2 \nfor 7 turns from the start of battle (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50012.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50012.png"
+      },
+      "animation": {
+        "key": "sm50012",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50012.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50013",
+      "name": "Earth's Hell",
+      "effect": "\"Movie Bosses\" or \"Otherworld Warriors\" Category \nenemies' ATK -10% for 2 turns starting from \nthe 4th turn from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "starting from the 4th turn from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50013.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50013.png"
+      },
+      "animation": {
+        "key": "sm50013",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50013.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50014",
+      "name": "Goku and Chi-Chi's Interview",
+      "effect": "\"Bond of Parent and Child\" Category allies' \nATK & DEF +10% in battle and for 7 turns \nfrom the start of battle, Ki +1 for allies \nwhose names include \"Gohan\" (Grandpa, \nPossessed, etc. excluded) (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50014.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50014.png"
+      },
+      "animation": {
+        "key": "sm50014",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50014.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50015",
+      "name": "Broly's Inner Power",
+      "effect": "\"Movie Bosses\" or \"Revenge\" Category \nallies' ATK & DEF +10% in battle and \nfor 7 turns from the start of battle, \nKi +1 for allies whose names include \n\"Broly\" or \"Paragus\" (once only)",
+      "durationText": "7 turns",
+      "activationCondition": "from the start of battle",
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50015.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50015.png"
+      },
+      "animation": {
+        "key": "sm50015",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50015.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50016",
+      "name": "Android #18's Fees",
+      "effect": "Chance of obtaining bonus rewards +85% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+      "durationText": null,
+      "activationCondition": "Once only",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50016.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50016.png"
+      },
+      "animation": {
+        "key": "sm50016",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50016.json"
+      },
+      "upgradeLevels": [
+        {
+          "id": "500162",
+          "level": 2,
+          "effect": "Chance of obtaining bonus rewards +100% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50016.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50016.png"
+          }
+        },
+        {
+          "id": "500163",
+          "level": 3,
+          "effect": "Chance of obtaining bonus rewards +120% \nin events with the special effect \n\"Bonus Reward Drop Rate Increased\" \n(once only)",
+          "durationText": null,
+          "activationCondition": "Once only",
+          "assets": {
+            "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+            "large": "assets/item/support_memory/large/support_memory_large_50016.png",
+            "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50016.png"
+          }
+        }
+      ]
+    },
+    {
+      "id": "50017",
+      "name": "Powerful and Gentle Father",
+      "effect": "All allies' ATK & DEF +15% for 2 turns \nwhen HP is 50% or less with an \n\"Entrusted Will\" Category ally \non the team (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "when HP is 50% or less with an \"Entrusted Will\" Category ally on the team (once only)",
+      "filmType": "Green",
+      "filmCost": 120,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50017.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50017.png"
+      },
+      "animation": {
+        "key": "sm50017",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50017.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50020",
+      "name": "Thank You",
+      "effect": "\"Gifted Warriors\" or \"Pure Saiyans\" Category allies' \nATK & DEF +10% in battle",
+      "durationText": null,
+      "activationCondition": null,
+      "filmType": "Green",
+      "filmCost": 200,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50020.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50020.png"
+      },
+      "animation": {
+        "key": "sm50020",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50020.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50021",
+      "name": "Pan Flying in the Sky",
+      "effect": "All allies' ATK, DEF & chance of performing a critical hit +5% \nfor 3 turns when there is a \"Bond of Master and Disciple\" \nCategory ally on the team starting from the 3rd turn \nfrom the start of battle (once only)",
+      "durationText": "3 turns",
+      "activationCondition": "when there is a \"Bond of Master and Disciple\" Category ally on the team starting from the 3rd turn from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50021.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50021.png"
+      },
+      "animation": {
+        "key": "sm50021",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50021.json"
+      },
+      "upgradeLevels": []
+    },
+    {
+      "id": "50022",
+      "name": "The Final Crush",
+      "effect": "Extreme Class enemies' ATK & DEF -7% and \n\"Artificial Life Forms\" Category enemies' \nATK & DEF -7% for 2 turns starting from \nthe 3rd turn from the start of battle (once only)",
+      "durationText": "2 turns",
+      "activationCondition": "starting from the 3rd turn from the start of battle (once only)",
+      "filmType": "Green",
+      "filmCost": 100,
+      "assets": {
+        "filmIcon": "assets/item/support_memory/film_icon/support_memory_film_movie.png",
+        "large": "assets/item/support_memory/large/support_memory_large_50022.png",
+        "thumb": "assets/item/support_memory/thumb/support_memory_thumb_50022.png"
+      },
+      "animation": {
+        "key": "sm50022",
+        "manifestUrl": "https://raw.githubusercontent.com/abscustom/DokkanCustom-animation-index/main/api/animation/sm50022.json"
+      },
+      "upgradeLevels": []
+    }
+  ]
+}

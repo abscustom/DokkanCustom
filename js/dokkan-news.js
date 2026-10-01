@@ -624,9 +624,10 @@ class DokkanNewsEngine {
         // Triple top 5 articles for a seamless continuous scroll loop
         const displayArticles = [...top5Articles, ...top5Articles, ...top5Articles];
 
-        // SBA Home uses the same current news data as a compact ticker instead
-        // of the large dashboard card. The dedicated News view is unchanged.
-        if (document.body.classList.contains('theme-sba')) {
+        // SBA Home and standalone Other tools use the same live article data
+        // as a compact ticker instead of the large dashboard card. The
+        // dedicated News view is unchanged.
+        if (document.body.classList.contains('theme-sba') || document.body.classList.contains('other-tool-body')) {
             const tickerItemsHtml = displayArticles.map((art) => {
                 const imgUrl = normalizeDokkanNewsUrl(art.banner)
                     || (art.bodies && art.bodies.find(seg => seg.image)?.image)
@@ -1689,9 +1690,14 @@ class DokkanNewsEngine {
                             <div class="liquid-search-border-container news-search-border">
                                 <div class="liquid-search-box" role="search" tabindex="0" onclick="this.querySelector('input')?.focus()">
                                     <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 30 30" fill="#94a3b8" class="search-icon" aria-hidden="true"><path d="M13 3C7.489 3 3 7.489 3 13s4.489 10 10 10a9.95 9.95 0 0 0 6.322-2.264l5.971 5.971a1 1 0 1 0 1.414-1.414l-5.97-5.97A9.95 9.95 0 0 0 23 13c0-5.511-4.489-10-10-10m0 2c4.43 0 8 3.57 8 8s-3.57 8-8 8-8-3.57-8-8 3.57-8 8-8"/></svg>
-                                    <input type="search" id="newsSearchInput" value="${escapeNewsHtml(this.searchQuery)}" placeholder="Search news..." autocomplete="off">
+                                    <input type="search" id="newsSearchInput" value="${escapeNewsHtml(this.searchQuery)}" placeholder="Search news..." aria-label="Search news" autocomplete="off">
                                 </div>
                             </div>
+                        </div>
+                        <div class="news-source-switcher" role="group" aria-label="News source">
+                            <span class="news-source-switcher-label" aria-hidden="true">Source</span>
+                            <button type="button" class="news-source-switcher-option${selectedFeed === 'game' ? ' is-active' : ''}" data-news-source-tab="game" aria-pressed="${selectedFeed === 'game'}">Official</button>
+                            <button type="button" class="news-source-switcher-option${selectedFeed === 'discord' ? ' is-active' : ''}" data-news-source-tab="discord" aria-pressed="${selectedFeed === 'discord'}">Discord</button>
                         </div>
                     </div>
                 </div>
@@ -1707,8 +1713,28 @@ class DokkanNewsEngine {
         newsSection.querySelectorAll('[data-news-open]').forEach(button => {
             button.addEventListener('click', () => this.openEnlargedArticle(button.dataset.newsId, button.dataset.newsSource));
         });
-        newsSection.querySelectorAll('[data-news-source-tab]').forEach(button => {
+        newsSection.querySelectorAll('[data-news-source-tab]:not(.news-source-switcher-option)').forEach(button => {
             button.addEventListener('click', () => this.setNewsFeed(button.dataset.newsSourceTab));
+        });
+        newsSection.querySelectorAll('.news-source-switcher-option').forEach(button => {
+            button.addEventListener('click', () => {
+                const source = button.dataset.newsSourceTab;
+                const keepFilterPopoverOpen = newsSection.querySelector('#sbaNewsFilterPopover')?.classList.contains('is-open');
+                this.setNewsFeed(source);
+
+                if (!keepFilterPopoverOpen) {
+                    const filterPopover = newsSection.querySelector('#sbaNewsFilterPopover');
+                    const filterButton = newsSection.querySelector('#newsFiltersBtn');
+                    filterPopover?.classList.remove('is-open');
+                    filterPopover?.setAttribute('aria-hidden', 'true');
+                    filterButton?.setAttribute('aria-expanded', 'false');
+                    filterButton?.classList.toggle('active', this.getNewsFilterCount() > 0);
+                }
+
+                const nextSourceButton = Array.from(newsSection.querySelectorAll('.news-source-switcher-option'))
+                    .find(option => option.dataset.newsSourceTab === source);
+                requestAnimationFrame(() => nextSourceButton?.focus({ preventScroll: true }));
+            });
         });
         newsSection.querySelectorAll('[data-news-category]').forEach(button => {
             button.addEventListener('click', () => this.setCategory(button.dataset.newsCategory));

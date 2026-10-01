@@ -255,6 +255,7 @@
         'js/ui-toast.js',
         'js/sba-ring-effects.js',
         'js/tool-sba-nav.js',
+        'js/other-nav.js',
         'js/loading-screen.js',
         'js/stars-pingpong.js',
         'js-card-details/viewer-card-picker.js'
@@ -263,6 +264,8 @@
     for (const s of scripts) {
         const scriptVersion = s === 'js/published-card-guards.js'
             ? '20260928-loader-guard-v1'
+            : s === 'js/other-nav.js'
+                ? '20260929-other-menu-v2'
             : s === 'js-card-details/card-helpers.js'
                 ? cleanLayoutRuntimeVersion
                 : runtimeVersion;

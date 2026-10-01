@@ -1,0 +1,109 @@
+/* Compact, portrait-first shared picker for calculator, editor, and form dialogs. */
+#unitPickerGrid,
+#importerGrid,
+#formPickerGrid {
+    display: grid !important;
+    grid-template-columns: repeat(auto-fill, minmax(68px, 1fr)) !important;
+    align-content: start !important;
+    justify-items: center !important;
+    gap: 7px 5px !important;
+    min-width: 0 !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card {
+    display: grid !important;
+    place-items: center !important;
+    width: 100% !important;
+    max-width: 78px !important;
+    min-width: 0 !important;
+    min-height: 68px !important;
+    margin: 0 !important;
+    padding: 2px !important;
+    border: 1px solid transparent !important;
+    border-radius: 0 !important;
+    color: inherit !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    font: inherit !important;
+    line-height: 1 !important;
+    text-align: center !important;
+    appearance: none !important;
+    -webkit-appearance: none !important;
+    cursor: pointer !important;
+    transform: none !important;
+    transition: none !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card:hover,
+.calc-unit-picker-dialog .picker-unit-card.picker-type-agl:hover,
+.calc-unit-picker-dialog .picker-unit-card.picker-type-teq:hover,
+.calc-unit-picker-dialog .picker-unit-card.picker-type-int:hover,
+.calc-unit-picker-dialog .picker-unit-card.picker-type-str:hover,
+.calc-unit-picker-dialog .picker-unit-card.picker-type-phy:hover {
+    border-color: transparent !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card:focus-visible {
+    outline: 2px solid #fff !important;
+    outline-offset: 1px !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card.is-current .picker-thumb-wrapper {
+    outline: 2px solid #fff !important;
+    outline-offset: 2px !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card .picker-thumb-wrapper {
+    width: 64px !important;
+    height: 64px !important;
+    min-width: 64px !important;
+    min-height: 64px !important;
+    margin: 0 !important;
+    flex: 0 0 64px !important;
+    overflow: visible !important;
+    transform: none !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card:hover .picker-thumb-wrapper {
+    transform: none !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card .picker-thumb {
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    border-radius: 50% !important;
+    /* Enlarge the artwork but keep its visible crop inside the unchanged ring. */
+    clip-path: circle(31.5% at 50% 50%) !important;
+    object-fit: cover !important;
+    object-position: center !important;
+    transform: scale(1.4) !important;
+    transform-origin: center center !important;
+    z-index: 1 !important;
+}
+
+.calc-unit-picker-dialog .picker-unit-card .picker-thumb-error {
+    visibility: hidden !important;
+}
+
+.calc-unit-picker-dialog .picker-name,
+.calc-unit-picker-dialog .picker-sub {
+    display: none !important;
+}
+
+@media (max-width: 520px) {
+    #unitPickerGrid,
+    #importerGrid,
+    #formPickerGrid {
+        grid-template-columns: repeat(auto-fill, minmax(66px, 1fr)) !important;
+        gap: 6px 3px !important;
+    }
+
+    .calc-unit-picker-dialog .picker-unit-card {
+        min-height: 66px !important;
+    }
+}

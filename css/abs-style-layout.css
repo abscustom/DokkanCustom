@@ -1523,6 +1523,13 @@ body:not(.theme-abs-clean) .abs-link-effect {
     box-sizing: border-box;
 }
 
+/* Active Skill multiplier is hidden only in the ABS.Style presentation.
+   Keep its data/calculations and all Super Attack multipliers unchanged. */
+body.theme-abs-style #layout-abs-style #abs-active-container .abs-sa-header-meta,
+body.theme-abs-style #layout-abs-style #abs-active-container .abs-damage-multiplier-box {
+    display: none !important;
+}
+
 .partner-stat-pill {
     display: inline-flex !important;
     align-items: center !important;

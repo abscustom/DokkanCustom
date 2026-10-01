@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Check which Dokkan Battle characters receive a leader's base or full leader skill buff.">
+    <title>Leader Compatibility | absCustom</title>
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png">
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260916-showcase-clean-v3">
+    <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
+    <link rel="stylesheet" href="css/other-tools.css?v=20260929-other-tools-v2">
+    <link rel="stylesheet" href="css/other-tool-pages.css?v=20260930-leader-portrait-crop-v23">
+    <link rel="stylesheet" href="css/leader-compatibility-picker.css?v=20260930-dokkan-layers-v3">
+</head>
+<body class="other-tool-body calc-liquid-body theme-sba theme-abs-clean theme-abs-clean-dark">
+    <video id="stars-bg-video" autoplay muted playsinline aria-hidden="true" loop>
+        <source src="assets/video/Stars BG.webm?v=pingpong2" type="video/webm">
+    </video>
+    <header class="apple-hud-wrapper" aria-label="Site navigation">
+        <div class="liquid-metal-frame">
+            <nav class="apple-hud-bar">
+                <div class="hud-nav-group">
+                    <a href="index.html" class="hud-nav-link" aria-label="Home" title="Home"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m3 10 9-7 9 7v10a1 1 0 0 1-1 1h-5v-7H9v7H4a1 1 0 0 1-1-1Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/></svg><span>Home</span></a>
+                    <a href="index.html?view=cards" class="hud-nav-link" aria-label="Cards" title="Cards"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 20c.8-3 2.8-4.5 6-4.5s5.2 1.5 6 4.5" stroke="currentColor" stroke-width="2"/></svg><span>Cards</span></a>
+                    <a href="card.html?viewer=1" class="hud-nav-link" aria-label="Viewer" title="Viewer"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg><span>Viewer</span></a>
+                    <a href="calculator.html" class="hud-nav-link" aria-label="Calculator" title="Calculator"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 8h8M8 12h2m4 0h2M8 16h2m4 0h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Calculator</span></a>
+                    <a href="editor.html" class="hud-nav-link" aria-label="Editor" title="Editor"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 16-.8 4.8L8 20l11.6-11.6a2.8 2.8 0 0 0-4-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m13.8 6.2 4 4" stroke="currentColor" stroke-width="2"/></svg><span>Editor</span></a>
+                    <a href="index.html?view=news" class="hud-nav-link" aria-label="News" title="News"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v15H6a2 2 0 0 1-2-2Zm0 12h16M8 8h8m-8 3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>News</span></a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="dokkan-news-snippet cards-news-snippet other-tool-news-strip" aria-label="Dokkan news"></div>
+
+        <main class="other-tool-main leader-compatibility-page" id="leader-compatibility-page" data-card-presentation="abs">
+        <p id="lc-data-status" class="lc-load-state" role="status" aria-live="polite">Loading the card and leader skill database…</p>
+        <div id="lc-leader-picker" class="lc-unit-picker-backdrop" hidden aria-hidden="true"></div>
+        <div class="lc-selector-layout">
+            <section class="other-tool-panel lc-leader-panel" id="lc-selected-leader" aria-labelledby="lc-selected-name" aria-live="polite" hidden>
+                <div class="lc-leader-summary">
+                    <button type="button" class="lc-leader-portrait" id="lc-leader-portrait" aria-label="Change leader" aria-haspopup="dialog" aria-controls="lc-leader-picker"></button>
+                    <div>
+                        <span class="lc-type-badge lc-visually-hidden" id="lc-leader-type"></span>
+                        <h2 class="lc-leader-title" id="lc-selected-name"></h2>
+                        <p class="lc-leader-skill-name" id="lc-leader-skill-name"></p>
+                    </div>
+                    <button type="button" class="lc-select-leader-button" id="lc-picker-open" aria-haspopup="dialog" aria-controls="lc-leader-picker" aria-label="Change leader">CHANGE LEADER</button>
+                </div>
+                <p class="lc-leader-description" id="lc-leader-description"></p>
+                <p class="lc-leader-note" id="lc-leader-note">Full matches include the additional category bonus. Base-only matches receive the primary leader skill buff.</p>
+            </section>
+        </div>
+
+        <div class="lc-results-workspace">
+            <header class="other-tool-heading lc-workspace-header">
+                <div class="hub-view-info cards-workspace-title lc-workspace-title">
+                    <svg class="cards-workspace-title-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                        <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
+                        <path d="M8 8h8M8 12h8M8 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <div>
+                        <h1 class="hub-section-title">LEADER COMPATIBILITY</h1>
+                        <p class="hub-section-subtitle">Compare units against the selected leader</p>
+                    </div>
+                </div>
+                <div class="cards-workspace-actions lc-workspace-actions">
+                    <button type="button" class="lc-select-leader-button lc-select-leader-fallback" id="lc-picker-open-fallback" aria-haspopup="dialog" aria-controls="lc-leader-picker">SELECT LEADER</button>
+                    <div class="lc-results-toolbar" id="lc-results-toolbar" hidden>
+                        <div class="lc-filter-group" role="group" aria-label="Filter by leader skill buff">
+                            <button type="button" class="lc-filter-button" data-match-filter="all" aria-pressed="true">All</button>
+                            <button type="button" class="lc-filter-button" data-match-filter="full" aria-pressed="false">Full</button>
+                            <button type="button" class="lc-filter-button" data-match-filter="half" aria-pressed="false" title="Base leader skill only, without the additional bonus">Half</button>
+                        </div>
+                        <input id="lc-unit-search" class="lc-unit-search" type="search" placeholder="Search compatible characters…" aria-label="Filter compatible characters">
+                    </div>
+                </div>
+            </header>
+
+            <section class="lc-results-section" id="lc-results-section" aria-labelledby="lc-results-title" hidden>
+                <div class="lc-panel-heading">
+                    <div>
+                        <h2 id="lc-results-title" class="lc-visually-hidden">Compatible characters</h2>
+                        <p id="lc-results-summary" class="lc-results-summary"></p>
+                    </div>
+                    <div class="lc-display-toggle lc-presentation-toggle" role="group" aria-label="Portrait presentation">
+                        <button type="button" class="lc-filter-button lc-presentation-button" data-card-presentation-option="abs" aria-pressed="true">ABS</button>
+                        <button type="button" class="lc-filter-button lc-presentation-button" data-card-presentation-option="dokkan" aria-pressed="false">Dokkan</button>
+                    </div>
+                </div>
+                <div id="lc-units-grid" class="lc-units-grid"></div>
+                <div class="lc-load-more-wrap" id="lc-load-more-wrap" hidden>
+                    <button type="button" class="lc-load-more" id="lc-load-more">Show more</button>
+                </div>
+            </section>
+        </div>
+
+        <section class="other-tool-panel lc-results-empty" id="lc-empty-state" role="status" hidden>
+            No compatible characters to display.
+        </section>
+    </main>
+
+    <script src="js/stars-pingpong.js?v=20260914-seamless-v3"></script>
+    <script src="js/tool-sba-nav.js?v=20260930-clean-library-nav-v3"></script>
+    <script src="js/other-nav.js?v=20260929-other-menu-v2"></script>
+    <script src="js/unit-picker.js?v=20260930-public-api-v1"></script>
+    <script src="js/leader-compatibility.js?v=20260930-leader-picker-v2"></script>
+    <script src="js/dokkan-news.js?v=20260929-other-pages-v2"></script>
+    <script src="js/other-tools-news.js?v=20260929-other-pages-v1"></script>
+</body>
+</html>
