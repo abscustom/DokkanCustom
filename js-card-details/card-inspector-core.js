@@ -521,7 +521,10 @@ function selectCard(cardId, preserveExactId = false, forcedMode = null) {
 
     let card = DB.cards.find(c => parseInt(c.id, 10) === rawId) || 
                DB.cards.find(c => parseInt(c.id, 10) === norm7Id);
-    if (!card) return;
+    if (!card) {
+        document.title = '';
+        return;
+    }
 
     const isIdSeza = idStr.length >= 8 && idStr.endsWith('9');
     const isIdEza = idStr.length >= 8 && idStr.endsWith('8');
@@ -1395,7 +1398,13 @@ function syncAbsCleanViewerSurfaces(card, mode, cardClass, cardType, rarity, uni
 
 
 function renderCardDetails(card, mode = currentEzaMode) {
-    if (!card) return;
+    if (!card) {
+        document.title = '';
+        return;
+    }
+    // Do not leave the prior unit's name visible while a new selection is
+    // being rendered. The selected record supplies the title below.
+    document.title = '';
     const layoutRoot = window.getCardLayoutRoot?.() || document;
 
     // Animation buttons are rendered in several independent sections. Keep the
@@ -1413,7 +1422,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
         const isSEZA = mode === 'seza';
         const isEZA = mode === 'eza' || mode === 'seza';
         const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-        const showPassiveBadges = isAbsCleanTheme || layoutRoot?.dataset?.cardLayout === 'abs-style';
+        const showPassiveBadges = isAbsCleanTheme || layoutRoot?.dataset?.cardLayout === 'abs-style' || layoutRoot?.dataset?.cardLayout === 'phantom';
         const isDokkanInfoLayout = layoutRoot?.dataset?.cardLayout === 'dokkaninfo';
         window.__absCleanViewerEffectsState = { isLR, isEZA, isSEZA, cardType };
         if (document.body) document.body.dataset.absCleanType = cardType;
@@ -1457,8 +1466,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
         if (artLoadingStatus) artLoadingStatus.hidden = false;
         composedIcon?.classList.add('is-viewer-card-art-loading');
 
-        const fullCardTitle = title ? `[${title}] ${name}` : (name || "Character Inspector");
-        document.title = `${fullCardTitle} | absCustom`;
+        document.title = String(name || '').trim();
 
         // Carry this exact card and its currently selected awakening state into
         // the calculator instead of making the visitor pick it a second time.
@@ -1540,7 +1548,7 @@ function renderCardDetails(card, mode = currentEzaMode) {
                 </div>`
                 : `<div class="abs-passive-header-title">
                     <span>Passive Skill</span>
-                    <span class="mx-1">&ndash;</span>
+                    <span class="mx-1">${layoutRoot?.dataset?.cardLayout === 'phantom' ? '|' : '&ndash;'}</span>
                     <i>${pName}</i>
                     ${passiveAnimationButton}
                 </div>`;
@@ -1829,8 +1837,11 @@ window.refreshAbsCardViewer = function() {
     return true;
 };
 
-window.switchCardArtMode = function(mode) {
-    currentCardArtMode = mode;
+window.switchCardArtMode = function(mode, options = {}) {
+    const phantomRoot = window.getCardLayoutRoot?.('phantom');
+    if (document.body?.classList.contains('theme-phantom') && phantomRoot?.dataset?.phantomArtChoice !== 'animated') mode = 'static';
+    const shouldRemember = options?.remember ?? !document.body?.classList.contains('theme-phantom');
+    if (shouldRemember) currentCardArtMode = mode;
     if (document.body.classList.contains('theme-abs-clean')) window.syncAbsCleanArtMediaMode?.(mode);
     const artBox = cardLayoutElement('abs-art-layers-container');
     const staticBtn = cardLayoutElement('art-toggle-static');
@@ -1897,6 +1908,11 @@ window.switchCardArtMode = function(mode) {
         }
     }
     window.syncAbsCleanCategoryArtModeButtons?.(mode);
+    window.syncPhantomMotionPlayback?.(mode);
+};
+window.getCardArtMode = () => currentCardArtMode;
+window.setCardArtModePreference = mode => {
+    if (mode === 'static' || mode === 'animated') currentCardArtMode = mode;
 };
 
 async function updateCardArtAnimation(card) {
@@ -1995,37 +2011,41 @@ async function updateCardArtAnimation(card) {
         toggleBar.setAttribute('aria-hidden', hasAnimated ? 'false' : 'true');
     }
 
-    if (hasAnimated) {
-        window.switchCardArtMode(currentCardArtMode || 'animated');
-    } else {
-        window.switchCardArtMode('static');
-    }
+    const isPhantom = document.body?.classList.contains('theme-phantom');
+    const phantomChoice = cardLayoutElement('layout-phantom')?.dataset?.phantomArtChoice;
+    const artMode = isPhantom
+        ? (phantomChoice === 'animated' ? 'animated' : 'static')
+        : (hasAnimated ? (currentCardArtMode || 'animated') : 'static');
+    window.switchCardArtMode(artMode, { remember: !isPhantom });
 }
 
 async function startViewer() {
     try {
         await loadDokkanDatabase();
         if (DB.cards && !Array.isArray(DB.cards)) DB.cards = Object.values(DB.cards);
-        
         const urlParams = new URLSearchParams(window.location.search);
         let storedSelection = null;
-        try {
-            storedSelection = JSON.parse(localStorage.getItem('abs_viewer_selection') || 'null');
-        } catch (error) {}
-        const cardIdParam = parseInt(urlParams.get('id') || urlParams.get('card') || storedSelection?.id || '1032881', 10);
+        try { storedSelection = JSON.parse(localStorage.getItem('abs_viewer_selection') || 'null'); } catch (error) {}
+        const requestedId = urlParams.get('id') || urlParams.get('card') || storedSelection?.id;
+        const cardIdParam = parseInt(requestedId, 10);
+        const normalizedId = String(cardIdParam).length >= 8 ? parseInt(String(cardIdParam).substring(0,7),10) : cardIdParam;
+        const requestedCard = (Array.isArray(DB.cards) ? DB.cards : []).find(card => parseInt(card.id,10)===cardIdParam || parseInt(card.id,10)===normalizedId);
         const modeParam = urlParams.get('mode') || storedSelection?.mode || null;
-        
-        selectCard(cardIdParam, false, modeParam);
+        if (requestedCard) selectCard(cardIdParam, false, modeParam);
         window.initializeViewerCardPicker?.();
         window.renderViewerCardPicker?.();
-    } catch(e) {
-        console.error("Error starting viewer:", e);
+        window.openViewerCardPickerOnEntry?.({
+            key: 'official-viewer-entry',
+            hasValidSelection: Boolean(requestedCard && selectedCard)
+        });
+    } catch (error) {
+        console.error('Error starting viewer:', error);
+        window.openViewerCardPickerOnEntry?.({key:'official-viewer-entry',hasValidSelection:false});
     } finally {
         window.absCardContentReady = true;
         window.dispatchEvent(new Event('abs-card-content-ready'));
     }
 }
-
 // abs.clean places Categories in the left half of its lower progression row.
 // Other themes keep every box in its original location untouched.
 window.syncAbsCleanCardLinkCategoryPlacement = function() {

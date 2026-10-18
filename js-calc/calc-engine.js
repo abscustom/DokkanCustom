@@ -12,6 +12,17 @@ function getDefaultExToggleEnabled() {
     return window.currentLoadedCardMeta?.cardItemMeta?.source !== 'custom';
 }
 
+function getSaAttackEffectForHit(saBlock, saAttackEffect) {
+    const turnEffect = Number(saBlock?.draftTurnAtk) || 0;
+    return saBlock?.draftAtkTiming !== undefined ? saAttackEffect : saAttackEffect + turnEffect;
+}
+
+function getSaAttackEffectForTurn(saBlock, saAttackEffect) {
+    if (saBlock?.draftAtkTiming === undefined) return saAttackEffect;
+    const turnEffect = Number(saBlock.draftTurnAtk) || 0;
+    return saBlock.draftAtkTiming === 'current-turn' ? saAttackEffect : turnEffect;
+}
+
 function getHighestEligibleSaIndex(saBlocksData, currentKi, isLR) {
     if (!saBlocksData || saBlocksData.length === 0) return 0;
     
@@ -22,6 +33,35 @@ function getHighestEligibleSaIndex(saBlocksData, currentKi, isLR) {
             standardBlocks.push({ sa, idx });
         }
     });
+
+    // Draft mode can manually mark a conditional Super Attack as available
+    // (for example, a same-turn Vegeta condition). Keep the original selection
+    // rules untouched for ordinary calculator sessions.
+    if (saBlocksData.some(sa => sa.draftConditionMet !== undefined)) {
+        const draftCandidates = saBlocksData
+            .map((sa, idx) => ({ sa, idx }))
+            .filter(({ sa }) => !sa.is_ex && sa.draftConditionMet !== false);
+        const eligible = draftCandidates;
+        const byKi = eligible.filter(({ sa, idx }) => {
+            const reqKi = sa.startKi || sa.eball_num_start || (idx === 0 ? 12 : 18);
+            return currentKi >= reqKi;
+        });
+        let candidates = byKi;
+        if (!candidates.length && eligible.length) {
+            const minKi = Math.min(...eligible.map(({ sa, idx }) => sa.startKi || sa.eball_num_start || (idx === 0 ? 12 : 18)));
+            candidates = eligible.filter(({ sa, idx }) => (sa.startKi || sa.eball_num_start || (idx === 0 ? 12 : 18)) === minKi);
+        }
+        if (candidates.length) {
+            candidates.sort((left, right) => {
+                const leftPriority = Number(left.sa.priority) || 0;
+                const rightPriority = Number(right.sa.priority) || 0;
+                const leftKi = left.sa.startKi || left.sa.eball_num_start || (left.idx === 0 ? 12 : 18);
+                const rightKi = right.sa.startKi || right.sa.eball_num_start || (right.idx === 0 ? 12 : 18);
+                return rightPriority - leftPriority || rightKi - leftKi || right.idx - left.idx;
+            });
+            return candidates[0].idx;
+        }
+    }
 
     if (isLR && standardBlocks.length >= 2) {
         return (currentKi >= 18) ? standardBlocks[1].idx : standardBlocks[0].idx;
@@ -193,7 +233,7 @@ window.openUnitSaPickerModal = function() {
     const currentActiveIdx = window.activeUnitSaBlockIdx;
 
     let html = `
-        <div class="unit-sa-picker-item ${currentActiveIdx === null ? 'active' : ''}" onclick="window.selectUnitSaFromPicker(null)">
+        <div class="unit-sa-picker-item ${currentActiveIdx === null ? 'active' : ''}" role="button" tabindex="0" aria-pressed="${currentActiveIdx === null ? 'true' : 'false'}" onclick="window.selectUnitSaFromPicker(null)">
             <div class="unit-sa-item-header">
                 <div class="unit-sa-item-title-group">
                     <span class="box-badge-standard-off">DEFAULT</span>
@@ -208,7 +248,7 @@ window.openUnitSaPickerModal = function() {
     unitCaps.unitSaBlocks.forEach((usa, i) => {
         const isSelected = (currentActiveIdx === usa.blockIdx);
         html += `
-            <div class="unit-sa-picker-item ${isSelected ? 'active' : ''}" onclick="window.selectUnitSaFromPicker(${usa.blockIdx})">
+            <div class="unit-sa-picker-item ${isSelected ? 'active' : ''}" role="button" tabindex="0" aria-pressed="${isSelected ? 'true' : 'false'}" onclick="window.selectUnitSaFromPicker(${usa.blockIdx})">
                 <div class="unit-sa-item-header">
                     <div class="unit-sa-item-title-group">
                         <span class="box-badge-purple">UNIT SA #${i + 1}</span>
@@ -227,16 +267,34 @@ window.openUnitSaPickerModal = function() {
     });
 
     list.innerHTML = html;
-    modal.style.display = 'flex';
+    list.onkeydown = event => {
+        if (event.key !== 'Enter' && event.key !== ' ') return;
+        const item = event.target.closest('.unit-sa-picker-item[role="button"]');
+        if (!item || !list.contains(item)) return;
+        event.preventDefault();
+        item.click();
+    };
+
+    const pickerOptions = {
+        title: 'Select Unit Super Attack',
+        closeLabel: 'Close Unit Super Attack picker'
+    };
+    const picker = window.DokkanUnitPicker;
+    if (typeof picker?.openEnhanced === 'function') picker.openEnhanced(modal.id, pickerOptions);
+    else modal.style.display = 'flex';
 };
 
-window.closeUnitSaPickerModal = function() {
+window.closeUnitSaPickerModal = function(event, options = {}) {
     const modal = document.getElementById('calc-unit-sa-picker-modal');
-    if (modal) modal.style.display = 'none';
+    if (!modal) return;
+
+    const reason = options.reason || (event?.target === modal ? 'backdrop' : 'dismiss');
+    const closed = window.DokkanUnitPicker?.close?.(modal.id, { ...options, reason });
+    if (!closed) modal.style.display = 'none';
 };
 
 window.selectUnitSaFromPicker = function(blockIdx) {
-    window.closeUnitSaPickerModal();
+    window.closeUnitSaPickerModal(null, { restoreFocus: false, reason: 'select' });
     window.activeUnitSaBlockIdx = blockIdx;
     calculateDokkanStats();
 };
@@ -494,6 +552,8 @@ window.resetSkillOrbs = function() {
    CORE CALCULATION ENGINE
    ========================================================================== */
 function calculateDokkanStats() {
+    window.CalculatorDraftMode?.beforeCalculate?.();
+
     // In this calculator, type advantage is an automatic Super Effective hit.
     // Keep it separate from the manual button so clicking the button cannot
     // apply the multiplier a second time.
@@ -664,15 +724,6 @@ function calculateDokkanStats() {
     const totalP2Def = p2DefBase + (hitCount * hitStepDef);
     const p2DefMult = 1 + (totalP2Def / 100);
 
-    // --- DEFENSE CALCULATION ---
-    const saDefEffect1 = parseFloat(document.getElementById(`calc-sa-def-effect-0`)?.value) || 0;
-    const prevSaStacks = parseInt(document.getElementById('calc-prev-sa-stacks')?.value || 0, 10);
-    const extraSaDefStackBuff = saDefEffect1 * prevSaStacks;
-
-    const saDefMult = 1 + ((saDefEffect1 + extraSaDefStackBuff) / 100);
-    let postSuperDef = Math.floor(startOfTurnDef * p2DefMult);
-    postSuperDef = Math.floor(postSuperDef * saDefMult);
-
     // --- ATTACK CALCULATION ---
     const isLR = (window.currentCalcRarity === 'LR');
     const isEZA = window.currentCalcEza || false;
@@ -723,13 +774,26 @@ function calculateDokkanStats() {
     const mainSaBlock = saBlocksData[targetMainSaIdx] || null;
     const mainKiBadge = mainSaBlock?.kiText || (isLR ? `${currentKi} Ki` : `${Math.min(12, currentKi)} Ki`);
 
+    // --- DEFENSE CALCULATION ---
+    const isDraftSaBlock = mainSaBlock?.draftAtkTiming !== undefined;
+    const defEffectIdx = isDraftSaBlock ? targetMainSaIdx : 0;
+    const mainSaDefEffect = parseFloat(document.getElementById(`calc-sa-def-effect-${defEffectIdx}`)?.value) || 0;
+    const mainSaTurnDefEffect = isDraftSaBlock ? Number(mainSaBlock?.draftTurnDef) || 0 : 0;
+    const saDefEffect1 = mainSaDefEffect + mainSaTurnDefEffect;
+    const prevSaStacks = parseInt(document.getElementById('calc-prev-sa-stacks')?.value || 0, 10);
+    const extraSaDefStackBuff = mainSaDefEffect * prevSaStacks;
+    const saDefMult = 1 + ((saDefEffect1 + extraSaDefStackBuff) / 100);
+    let postSuperDef = Math.floor(startOfTurnDef * p2DefMult);
+    postSuperDef = Math.floor(postSuperDef * saDefMult);
+
     let atkAfterKi = Math.floor(atkStepBeforeKi * activeKiMult1);
 
     const baseStackEffectAtk = parseFloat(document.getElementById(`calc-sa-atk-effect-0`)?.value) || 0;
     const prevStacksBuffAtk = baseStackEffectAtk * prevSaStacks;
     const hipoBoost = parseFloat(document.getElementById('calc-sa-hipo-boost')?.value) || 0;
 
-    let currentTurnSaBuffAtk = saAtkEffect1;
+    const mainSaHitAtkEffect = getSaAttackEffectForHit(mainSaBlock, saAtkEffect1);
+    let currentTurnSaBuffAtk = getSaAttackEffectForTurn(mainSaBlock, saAtkEffect1);
     let currentSaSeq = (activeSkillActive && activeIsAttack) ? 2 : 1;
 
     // STEP 7: PHASE 2 PASSIVE (1st SA)
@@ -738,7 +802,7 @@ function calculateDokkanStats() {
     let firstSuperAtk = Math.floor(atkAfterKi * firstAttackP2Mult);
 
     // STEP 8: SA MULTIPLIER BRACKET (1st SA)
-    const totalFirstSaMult = saMult1 + hipoBoost + saAtkEffect1 + prevStacksBuffAtk + lrBonus;
+    const totalFirstSaMult = saMult1 + hipoBoost + mainSaHitAtkEffect + prevStacksBuffAtk + lrBonus;
     const finalFirstAtk = Math.floor(firstSuperAtk * (totalFirstSaMult / 100));
 
     // SEQUENTIAL ADDITIONAL SUPER ATTACKS
@@ -773,9 +837,12 @@ function calculateDokkanStats() {
         let atkUltra = Math.floor(atkStepBeforeKi * activeKiMult1);
         atkUltra = Math.floor(atkUltra * p2MultUltra);
         
-        const totalSaMultUltra = saMultUltra + hipoBoost + saAtkEffectUltra + prevStacksBuffAtk + currentTurnSaBuffAtk + lrBonus;
+        const ultraBlock = saBlocksData[targetUltraIdx] || null;
+        const ultraHitAtkEffect = getSaAttackEffectForHit(ultraBlock, saAtkEffectUltra);
+        const ultraCarriesAtk = getSaAttackEffectForTurn(ultraBlock, saAtkEffectUltra);
+        const totalSaMultUltra = saMultUltra + hipoBoost + ultraHitAtkEffect + prevStacksBuffAtk + currentTurnSaBuffAtk + lrBonus;
         const atkStatUltra = Math.floor(atkUltra * (totalSaMultUltra / 100));
-        currentTurnSaBuffAtk += saAtkEffectUltra;
+        currentTurnSaBuffAtk += ultraCarriesAtk;
 
         calculatedAdditionals.push({
             label: isExUltra ? `Add. EX SA #${u}` : `Add. Ultra SA #${u}`,
@@ -830,9 +897,12 @@ function calculateDokkanStats() {
         let atkAdd = Math.floor(atkStepBeforeKi * curKiMult);
         atkAdd = Math.floor(atkAdd * p2MultAdd);
         
-        const totalAddSaMult = curSaMult + hipoBoost + curSaEffect + prevStacksBuffAtk + currentTurnSaBuffAtk + lrBonus;
+        const currentAddSaBlock = saBlocksData[targetExIdx] || null;
+        const currentAddHitAtkEffect = getSaAttackEffectForHit(currentAddSaBlock, curSaEffect);
+        const currentAddCarriesAtk = getSaAttackEffectForTurn(currentAddSaBlock, curSaEffect);
+        const totalAddSaMult = curSaMult + hipoBoost + currentAddHitAtkEffect + prevStacksBuffAtk + currentTurnSaBuffAtk + lrBonus;
         const atkStatAdd = Math.floor(atkAdd * (totalAddSaMult / 100));
-        currentTurnSaBuffAtk += curSaEffect; 
+        currentTurnSaBuffAtk += currentAddCarriesAtk;
 
         const addNum = a + passiveAddUltraSaCount;
         calculatedAdditionals.push({
@@ -1252,6 +1322,7 @@ function calculateDokkanStats() {
     
     // Auto-update the Stats Card Preview whenever stats change
     window.renderDokkanStatsCardData();
+    window.CalculatorDraftMode?.afterCalculate?.();
 }
 
 function renderMultiAttackDamageDealtTable(

@@ -1,0 +1,97 @@
+{
+  "source": "User supplied local Downloads/outgame pack; no remote asset download performed",
+  "date": "2026-10-09",
+  "sourceDirectory": "C:/Users/Ruffy/Downloads/outgame/effect/icon_rare_20000/en",
+  "referenceRenderer": "https://www.dokkandb.com/chunk-DC2MK2LQ.js",
+  "referenceRuntime": "https://www.dokkandb.com/chunk-VE3T7T3F.js",
+  "movie": "ef_001",
+  "nativeStage": {
+    "width": 852,
+    "height": 1536,
+    "frameRate": 30
+  },
+  "textureTable": [
+    {
+      "filename": "icon_rare_20000-0.png",
+      "width": 1024,
+      "height": 1024
+    },
+    {
+      "filename": "icon_rare_20000-1.png",
+      "width": 512,
+      "height": 512
+    },
+    {
+      "filename": "Images_ef_039_text.png",
+      "width": 110,
+      "height": 50
+    },
+    {
+      "filename": "Images_mandatory_chara.png",
+      "width": 98,
+      "height": 111
+    },
+    {
+      "filename": "Images_ef_016_boost_mark_text.png",
+      "width": 110,
+      "height": 50
+    },
+    {
+      "filename": "Images_ef_009_drop_rate_mark_text.png",
+      "width": 110,
+      "height": 50
+    }
+  ],
+  "files": [
+    {
+      "name": "icon_rare_20000.lwf",
+      "bytes": 426540,
+      "sha256": "e86818bd25029fb42f80e7d7d795659ad62fb9f6806a7f2f4e526fd01cebfb24",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\icon_rare_20000.lwf",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/icon_rare_20000.lwf"
+    },
+    {
+      "name": "icon_rare_20000-0.png",
+      "bytes": 145650,
+      "sha256": "96d06e3ee581eda907bb0beb0a4cf6aac7d45114dbffb8315cc0dcf648f6cc44",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\icon_rare_20000-0.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/icon_rare_20000-0.png"
+    },
+    {
+      "name": "icon_rare_20000-1.png",
+      "bytes": 41466,
+      "sha256": "18cd05eb032f531b9af4b0032cd5a6b8fae8c63bbc354f42be03daef795808a7",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\icon_rare_20000-1.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/icon_rare_20000-1.png"
+    },
+    {
+      "name": "Images_ef_039_text.png",
+      "bytes": 1161,
+      "sha256": "60448472ef515be87bd1b13de80085f16d54e4c3e06a716d39a9e3cba0b22d8f",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\Images_ef_039_text.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/Images_ef_039_text.png"
+    },
+    {
+      "name": "Images_mandatory_chara.png",
+      "bytes": 4171,
+      "sha256": "31f76a8e4d5af5112ee71371b2c88274e020133933d60c0bda72c25579d75224",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\Images_mandatory_chara.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/Images_mandatory_chara.png"
+    },
+    {
+      "name": "Images_ef_016_boost_mark_text.png",
+      "bytes": 1359,
+      "sha256": "31c383ff0e3525607440d0b293260a141ce39dd5b78bcf14acf171c45bac357e",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\Images_ef_016_boost_mark_text.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/Images_ef_016_boost_mark_text.png"
+    },
+    {
+      "name": "Images_ef_009_drop_rate_mark_text.png",
+      "bytes": 1180,
+      "sha256": "3b565154d6d0dca2962410adc623086ce11d7430e4ede230a3abc31bb1e6b01d",
+      "suppliedPath": "C:\\Users\\Ruffy\\Downloads\\outgame\\effect\\icon_rare_20000\\en\\Images_ef_009_drop_rate_mark_text.png",
+      "referenceUrl": "https://api.dokkandb.com/assets/outgame/effect/icon_rare_20000_folder/en/Images_ef_009_drop_rate_mark_text.png"
+    }
+  ],
+  "license": "No license declaration provided with downloaded assets; provenance is not a license grant"
+}

@@ -6,14 +6,33 @@
     'use strict';
 
     const STORAGE_KEY = 'abs_viewer_selection';
+    const sharedAssetBase = new URL('../', document.currentScript?.src || new URL('js-card-details/viewer-card-picker.js', document.baseURI)).href;
     const MAX_RESULTS = 30;
-    const PICKER_CLOSE_DURATION = 320;
     let cardScreenOrderCache = null;
     let initialized = false;
     let pickerIsOpen = false;
-    let closeTimer = null;
     let isLoadingCards = false;
     let cardsLoadPromise = null;
+    let contentCards = [];
+    let contentLoadPromise = null;
+
+    function refreshContentCards() {
+        if (!window.CardContent?.enabled() || contentLoadPromise) return contentLoadPromise;
+        // Revalidate each opening so archived cards cannot return from legacy storage.
+        contentCards = [];
+        isLoadingCards = true;
+        contentLoadPromise = window.CardContent.listCards().then(cards => {
+            contentCards = cards.map(window.CardContent.toCatalogCard);
+        }).catch(error => {
+            contentCards = [];
+            console.warn('[Viewer Card Picker] Card content unavailable:', error);
+        }).finally(() => {
+            contentLoadPromise = null;
+            isLoadingCards = false;
+            renderViewerCardPicker();
+        });
+        return contentLoadPromise;
+    }
 
     async function ensureCardsAvailable() {
         if (Array.isArray(window.DB?.cards) && window.DB.cards.length > 0) return;
@@ -245,18 +264,6 @@
         }
     }
 
-    function positionPickerArrow() {
-        const picker = document.getElementById('viewer-card-picker');
-        const viewerButton = document.getElementById('nav-btn-viewer');
-        if (!picker || !viewerButton || picker.hidden) return;
-
-        const pickerRect = picker.getBoundingClientRect();
-        const buttonRect = viewerButton.getBoundingClientRect();
-        const buttonCenter = buttonRect.left + (buttonRect.width / 2);
-        const arrowLeft = Math.max(18, Math.min(pickerRect.width - 18, buttonCenter - pickerRect.left));
-        picker.style.setProperty('--viewer-picker-arrow-left', `${arrowLeft}px`);
-    }
-
     function cardTypeLabel(card) {
         try {
             const fn = (typeof getCardClassAndType === 'function') ? getCardClassAndType : window.getCardClassAndType;
@@ -279,6 +286,11 @@
     }
 
     function cardImageUrl(card) {
+        if (card?.source === 'custom') {
+            const media = window.DokkanCustomCardMedia;
+            return { primary: media?.resolveCustomMediaUrl(card.thumbUrl || card.thumbMain,card.cardUrl) || card.thumbUrl || card.thumbMain || '',
+                fallback: media?.resolveCustomMediaUrl(card.thumbFallbacks?.[0],card.cardUrl) || card.thumbFallbacks?.[0] || '' };
+        }
         let rawId = Number.parseInt(cardId(card), 10) || 0;
         if (rawId > 10000000) rawId = Math.floor(rawId / 10);
         const folderId = Math.floor(rawId / 10) * 10;
@@ -306,52 +318,26 @@
             circleUrl = `./assets/card-art/cards/${folderId}/card_${folderId}_circle.png`;
         }
 
-        let fallbackUrl = '';
-        try {
-            if (typeof getViewerCircleAsset === 'function') {
-                const asset = getViewerCircleAsset(card) || {};
-                if (!circleUrl && asset.circleUrl) circleUrl = asset.circleUrl;
-                if (asset.fallbackUrl) fallbackUrl = asset.fallbackUrl;
-            }
-            const resolveFn = (typeof resolveCardAssets === 'function') ? resolveCardAssets : window.resolveCardAssets;
-            if (typeof resolveFn === 'function') {
-                const assets = resolveFn(card) || {};
-                if (!circleUrl && assets.circleUrl) circleUrl = assets.circleUrl;
-                if (!fallbackUrl) fallbackUrl = assets.thumbUrl || assets.artUrl || '';
-            }
-        } catch (error) {}
-
-        const cid = cardId(card);
-        if (!fallbackUrl) {
-            fallbackUrl = card?.thumbMain || card?.thumbLr || card?.thumbTur || card?.thumbSsr || card?.image || (folderId
-                ? `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`
-                : (cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : 'assets/images/SSR_Icon.png'));
-        }
-
-        return {
-            primary: circleUrl || fallbackUrl,
-            fallback: (fallbackUrl && fallbackUrl !== circleUrl) ? fallbackUrl : (cid ? `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${cid}_thumb/card_${cid}_thumb.png` : 'assets/images/SSR_Icon.png')
-        };
+        // Published editor resolvers may return the active authored portrait.
+        // Official choices use their own explicit or canonical asset paths.
+        const fallbackUrl = card?.thumb_url || card?.thumbnail_url || (card?.folder
+            ? `./${String(card.folder).replace(/^\.\//,'').replace(/\/+$/,'')}/card_${folderId}_thumb.png`
+            : `./assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`);
+        const absolute = value => value ? new URL(value,sharedAssetBase).href : '';
+        return { primary:absolute(circleUrl || fallbackUrl), fallback:absolute(fallbackUrl) };
     }
 
     function getCardPool() {
-        return buildCardScreenOrder().map(record => record.card);
+        if (window.CardContent?.enabled()) return [...contentCards, ...buildCardScreenOrder().map(record => record.card)];
+        let custom = [];
+        try {
+            const cached = JSON.parse(localStorage.getItem('hub_cached_custom_only') || '[]');
+            if (Array.isArray(cached)) custom = cached.map(card => window.DokkanCustomCardMedia?.normalizeCachedCustomCard(card) || card);
+        } catch (error) {}
+        return [...custom, ...buildCardScreenOrder().map(record => record.card)];
     }
 
-    function matchesQuery(card, query) {
-        if (!query) return true;
-        const searchText = [
-            cardName(card),
-            cardId(card),
-            card?.tag,
-            card?.category,
-            card?.element,
-            card?.attribute
-        ].filter(Boolean).join(' ').toLowerCase();
-        return searchText.includes(query);
-    }
-
-    function createResultButton(card, currentId) {
+    function createResultButton(card, currentId, bindSelection = true) {
         const button = document.createElement('button');
         button.type = 'button';
         button.className = 'viewer-card-picker-result';
@@ -367,12 +353,18 @@
         image.decoding = 'async';
         const imageUrl = cardImageUrl(card);
         if (imageUrl.primary) image.src = imageUrl.primary;
-        if (imageUrl.fallback && imageUrl.fallback !== imageUrl.primary) {
-            image.addEventListener('error', () => {
-                if (image.src !== imageUrl.fallback) image.src = imageUrl.fallback;
-            }, { once: true });
-        }
-
+        let triedFallback = false;
+        image.addEventListener('error', () => {
+            if (!triedFallback && imageUrl.fallback && imageUrl.fallback !== imageUrl.primary) {
+                triedFallback = true;image.src = imageUrl.fallback;
+                return;
+            }
+            image.hidden = true;
+            button.classList.add('has-missing-portrait');
+            if (!button.querySelector('.abs-picker-missing-art')) {
+                const missing = document.createElement('span');missing.className='abs-picker-missing-art';missing.textContent='No portrait';missing.setAttribute('aria-hidden','true');button.prepend(missing);
+            }
+        });
         const copy = document.createElement('span');
         copy.className = 'viewer-card-picker-result-copy';
 
@@ -390,35 +382,53 @@
 
         copy.append(name, release, meta);
         button.append(image, copy);
-        button.addEventListener('click', () => selectViewerCard(card));
+        if (bindSelection) button.addEventListener('click', () => selectViewerCard(card));
         return button;
     }
 
-    function renderViewerCardPicker(query = '') {
-        const results = document.getElementById('viewer-card-picker-results');
-        if (!results) return;
-
-        const normalizedQuery = String(query || '').trim().toLowerCase();
+    function viewerPickerConfig() {
         const selection = readSelection();
-        const currentId = selection?.id || '';
-        const matchingCards = getCardPool().filter(card => matchesQuery(card, normalizedQuery));
-
-        results.replaceChildren();
-        if (!matchingCards.length) {
-            const empty = document.createElement('div');
-            empty.className = 'viewer-card-picker-empty';
-            empty.textContent = isLoadingCards
-                ? 'Loading cards...'
-                : (normalizedQuery ? 'No cards match that search.' : 'No cards are available yet.');
-            results.append(empty);
-            return;
-        }
-
-        const fragment = document.createDocumentFragment();
-        matchingCards.slice(0, MAX_RESULTS).forEach(card => fragment.append(createResultButton(card, currentId)));
-        results.append(fragment);
+        return {
+            id: 'viewer-card-picker',
+            gridId: 'viewer-card-picker-results',
+            title: 'Select Viewer Card',
+            presentation: 'abs-viewer',
+            origin: '#nav-btn-viewer',
+            animationDuration: 240,
+            pageSize: MAX_RESULTS,
+            items: getCardPool(),
+            loading: isLoadingCards,
+            getSearchText: card => [cardName(card),cardId(card),card?.tag,card?.category,card?.element,card?.attribute].filter(Boolean).join(' '),
+            renderItem: card => createResultButton(card,selection?.id || '',false),
+            isSelected: card => cardId(card)===selection?.id,
+            onSelect: selectViewerCard,
+            onCloseStart: () => {
+                pickerIsOpen = false;
+                document.getElementById('nav-btn-viewer')?.setAttribute('aria-expanded','false');
+            },
+            onClose: () => {
+                document.body.classList.remove('viewer-picker-open');
+            },
+            mountControls(host,api) {
+                const group = document.createElement('div');group.className='picker-source-tabs';
+                [['all','All'],['official','Official'],['custom','Custom']].forEach(([source,label]) => {
+                    const button = document.createElement('button');button.type='button';button.className='picker-source-tab';button.textContent=label;
+                    button.classList.toggle('active',source==='all');button.setAttribute('aria-pressed',String(source==='all'));
+                    button.addEventListener('click',()=>{
+                        group.querySelectorAll('button').forEach(control=>{const selected=control===button;control.classList.toggle('active',selected);control.setAttribute('aria-pressed',String(selected));});
+                        api.setFilter(card=>source==='all'||(source==='custom'?card.source==='custom':card.source!=='custom'));
+                    });group.append(button);
+                });host.append(group);
+            },
+            emptyMessage: 'No viewer cards match this search.'
+        };
     }
-
+    function renderViewerCardPicker(query = '') {
+        if (!pickerIsOpen || !window.DokkanUnitPicker) return;
+        window.DokkanUnitPicker.update('viewer-card-picker', {
+            items: getCardPool(), loading: isLoadingCards
+        });
+    }
     function selectViewerCard(card) {
         const id = cardId(card);
         if (!id) return;
@@ -427,6 +437,10 @@
         persistSelection(id, mode);
         setPickerOpen(false);
 
+        if (card.source === 'custom' && (card.cardUrl || card.url)) {
+            window.location.href = new URL(card.cardUrl || card.url, document.baseURI).href;
+            return;
+        }
         if (typeof window.selectCard === 'function') {
             window.selectCard(id, false, mode);
         } else if (typeof selectCard === 'function') {
@@ -452,78 +466,36 @@
 
     function setPickerOpen(open) {
         const picker = document.getElementById('viewer-card-picker');
-        const button = document.getElementById('nav-btn-viewer');
-        if (!picker) return;
-
-        pickerIsOpen = Boolean(open);
-        window.clearTimeout(closeTimer);
-
-        if (pickerIsOpen) {
-            document.body.classList.add('viewer-picker-open');
-            picker.hidden = false;
-            picker.setAttribute('aria-hidden', 'false');
-            picker.classList.remove('is-closing');
-            button?.setAttribute('aria-expanded', 'true');
-            if (!Array.isArray(window.DB?.cards) || window.DB.cards.length === 0) {
-                ensureCardsAvailable();
-            }
-            renderViewerCardPicker(document.getElementById('viewer-card-picker-input')?.value || '');
-            window.requestAnimationFrame(() => {
-                picker.classList.add('is-open');
-                positionPickerArrow();
-            });
-            window.setTimeout(() => document.getElementById('viewer-card-picker-input')?.focus(), 0);
-        } else {
-            document.body.classList.remove('viewer-picker-open');
-            picker.classList.add('is-closing');
-            picker.classList.remove('is-open');
-            picker.setAttribute('aria-hidden', 'true');
-            button?.setAttribute('aria-expanded', 'false');
-            closeTimer = window.setTimeout(() => {
-                if (!pickerIsOpen) picker.hidden = true;
-            }, PICKER_CLOSE_DURATION + 24);
-        }
+        if (!picker || !window.DokkanUnitPicker) return;
+        if (!open) { window.DokkanUnitPicker.close('viewer-card-picker'); return; }
+        picker.classList.remove('viewer-card-picker','is-open','is-closing');
+        pickerIsOpen = true;
+        document.body.classList.add('viewer-picker-open');
+        document.getElementById('nav-btn-viewer')?.setAttribute('aria-expanded','true');
+        refreshContentCards();
+        if (!Array.isArray(window.DB?.cards) || !window.DB.cards.length) ensureCardsAvailable();
+        window.DokkanUnitPicker.open(viewerPickerConfig());
     }
-
-    function toggleViewerCardPicker() {
-        setPickerOpen(!pickerIsOpen);
-    }
-
+    function toggleViewerCardPicker() { setPickerOpen(!pickerIsOpen); }
     function initializeViewerCardPicker() {
-        if (initialized) {
-            renderViewerCardPicker(document.getElementById('viewer-card-picker-input')?.value || '');
-            return;
-        }
-
+        if (initialized) { renderViewerCardPicker(); return; }
         const picker = document.getElementById('viewer-card-picker');
-        const input = document.getElementById('viewer-card-picker-input');
-        const close = document.getElementById('viewer-card-picker-close');
-        if (!picker || !input) return;
-
+        if (!picker) return;
         initialized = true;
         picker.hidden = true;
-        input.addEventListener('input', () => renderViewerCardPicker(input.value));
-        close?.addEventListener('click', () => setPickerOpen(false));
-
-        document.addEventListener('keydown', event => {
-            if (event.key === 'Escape' && pickerIsOpen) setPickerOpen(false);
-        });
-
-        document.addEventListener('pointerdown', event => {
-            if (!pickerIsOpen) return;
-            const target = event.target;
-            const viewerButton = document.getElementById('nav-btn-viewer');
-            if (picker.contains(target) || viewerButton?.contains(target)) return;
-            setPickerOpen(false);
-        });
-
-        window.addEventListener('resize', () => {
-            if (pickerIsOpen) positionPickerArrow();
-        }, { passive: true });
-
-        renderViewerCardPicker();
+        // The selected viewer URL/storage is validated by the page workflow;
+        // NAV may call the public entry method after restoration completes.
     }
-
+    window.openViewerCardPickerOnEntry = ({key='viewer-entry', hasValidSelection=false}={}) => {
+        const picker = document.getElementById('viewer-card-picker');
+        if (!picker || !window.DokkanUnitPicker) return false;
+        picker.classList.remove('viewer-card-picker','is-open','is-closing');
+        if (!hasValidSelection) refreshContentCards();
+        if (!hasValidSelection && (!Array.isArray(window.DB?.cards) || !window.DB.cards.length)) ensureCardsAvailable();
+        const opened = window.DokkanUnitPicker.openOnEntry(viewerPickerConfig(),{key,hasValidSelection});
+        if(opened){pickerIsOpen=true;document.body.classList.add('viewer-picker-open');document.getElementById('nav-btn-viewer')?.setAttribute('aria-expanded','true');}
+        return opened;
+    };
     window.persistViewerSelection = persistSelection;
     window.renderViewerCardPicker = renderViewerCardPicker;
     window.initializeViewerCardPicker = initializeViewerCardPicker;

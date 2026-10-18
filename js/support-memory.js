@@ -48,6 +48,15 @@
         activeTooltipCard: null
     };
 
+    const filterUi = {
+        button: null,
+        modal: null,
+        dialog: null,
+        options: null,
+        count: null,
+        reset: null
+    };
+
     function isObject(value) {
         return value !== null && typeof value === 'object' && !Array.isArray(value);
     }
@@ -146,9 +155,14 @@
                 const url = new URL(path);
                 return ['http:', 'https:'].includes(url.protocol) ? url.href : null;
             }
-            const cleanPath = path.replace(/^\/+/, '');
-            if (!cleanPath.startsWith('assets/item/')) return null;
-            return new URL(`/${cleanPath}`, window.location.origin).href;
+            const pathSegments = path.replace(/\\/g, '/').replace(/^\/+/, '').split('/');
+            const decodedSegments = pathSegments.map((segment) => decodeURIComponent(segment));
+            if (decodedSegments[0] !== 'assets' || decodedSegments[1] !== 'item'
+                || decodedSegments.some((segment) => !segment || segment === '.' || segment === '..' || /[\\/]/.test(segment))) {
+                return null;
+            }
+            const encodedPath = decodedSegments.map((segment) => encodeURIComponent(segment)).join('/');
+            return new URL(encodedPath, document.baseURI).href;
         } catch {
             return null;
         }
@@ -163,6 +177,124 @@
     function setLibraryStatus(message, kind = 'info') {
         elements.libraryStatus.textContent = message;
         elements.libraryStatus.dataset.state = kind;
+    }
+
+    function mountLibraryChrome() {
+        const controls = elements.library.querySelector('.sm-library-controls');
+        const searchField = elements.search.closest('.sm-control-field');
+        const filmField = elements.filmFilter.closest('.sm-control-field');
+        const picker = window.DokkanUnitPicker;
+        if (!controls || !searchField || !filmField || !picker?.enhance) return false;
+
+        const search = document.createElement('div');
+        search.className = 'sm-search-field';
+        search.setAttribute('role', 'search');
+        search.setAttribute('aria-label', 'Search Support Memories');
+
+        const trigger = document.createElement('button');
+        trigger.type = 'button';
+        trigger.id = 'sm-filter-button';
+        trigger.className = 'sm-filter-button';
+        trigger.setAttribute('aria-haspopup', 'dialog');
+        trigger.setAttribute('aria-expanded', 'false');
+        trigger.setAttribute('aria-controls', 'sm-filter-modal');
+        trigger.setAttribute('aria-label', 'Filter Support Memories');
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('aria-hidden', 'true');
+        const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        iconPath.setAttribute('d', 'M4 7h10m4 0h2M4 17h2m4 0h10m-6-13v6M6 14v6');
+        iconPath.setAttribute('stroke', 'currentColor');
+        iconPath.setAttribute('stroke-width', '1.8');
+        iconPath.setAttribute('stroke-linecap', 'round');
+        icon.appendChild(iconPath);
+        trigger.appendChild(icon);
+
+        elements.search.type = 'search';
+        elements.search.autocomplete = 'off';
+        elements.search.placeholder = 'Search memories…';
+        elements.search.setAttribute('aria-label', 'Search Support Memories');
+        elements.search.setAttribute('aria-controls', elements.memoryGrid.id);
+        searchField.replaceWith(search);
+        search.append(trigger, elements.search);
+        filmField.remove();
+        controls.replaceChildren(search);
+        controls.classList.add('sm-search-toolbar');
+        controls.setAttribute('role', 'search');
+        controls.setAttribute('aria-label', 'Search Support Memories');
+
+        const modal = document.createElement('div');
+        modal.id = 'sm-filter-modal';
+        modal.className = 'calc-unit-picker-backdrop sm-filter-modal';
+        modal.hidden = true;
+        modal.setAttribute('aria-hidden', 'true');
+        modal.innerHTML = `
+            <section class="calc-unit-picker-dialog sm-filter-dialog" aria-hidden="true" aria-labelledby="sm-filter-title">
+                <header class="calc-picker-header">
+                    <h2 class="calc-picker-title-text" id="sm-filter-title">Filter Support Memories</h2>
+                    <button type="button" class="picker-source-tab sm-filter-reset" id="sm-filter-reset">Reset all</button>
+                    <button type="button" class="calc-picker-close-btn" aria-label="Close Support Memory filters">×</button>
+                </header>
+                <div class="sm-filter-content">
+                    <section class="sm-filter-group" aria-labelledby="sm-filter-film-heading">
+                        <h3 id="sm-filter-film-heading">Film type</h3>
+                        <div id="sm-film-filter" role="group" aria-labelledby="sm-filter-film-heading"></div>
+                    </section>
+                </div>
+                <p class="lc-unit-picker-count" id="sm-filter-count" role="status" aria-live="polite"></p>
+            </section>`;
+        document.body.appendChild(modal);
+
+        const dialog = modal.querySelector('.sm-filter-dialog');
+        filterUi.button = trigger;
+        filterUi.modal = modal;
+        filterUi.dialog = dialog;
+        filterUi.options = modal.querySelector('#sm-film-filter');
+        filterUi.count = modal.querySelector('#sm-filter-count');
+        filterUi.reset = modal.querySelector('#sm-filter-reset');
+        elements.filmFilter = filterUi.options;
+
+        dialog?.addEventListener('click', (event) => {
+            const option = event.target.closest('[data-film-filter]');
+            if (!option || !dialog.contains(option)) return;
+            state.filmFilter = option.dataset.filmFilter || 'all';
+            renderLibrary();
+        });
+        filterUi.reset?.addEventListener('click', () => {
+            state.filmFilter = 'all';
+            renderLibrary();
+        });
+
+        picker.enhance(modal, {
+            title: 'Filter Support Memories',
+            closeLabel: 'Close Support Memory filters',
+            onClose: () => {
+                dialog?.classList.remove('is-open');
+                dialog?.setAttribute('aria-hidden', 'true');
+                trigger.setAttribute('aria-expanded', 'false');
+            }
+        });
+        trigger.addEventListener('click', (event) => {
+            event.preventDefault();
+            if (picker.isOpen(modal.id)) {
+                picker.close(modal.id);
+                return;
+            }
+            dialog?.classList.add('is-open');
+            dialog?.removeAttribute('aria-hidden');
+            trigger.setAttribute('aria-expanded', 'true');
+            picker.openEnhanced(modal.id);
+        });
+        return true;
+    }
+
+    function syncFilterUi(matchCount = state.memories.length) {
+        if (filterUi.count) filterUi.count.textContent = `${Number(matchCount || 0).toLocaleString()} matching Support Memories`;
+        filterUi.options?.querySelectorAll('[data-film-filter]').forEach((button) => {
+            button.setAttribute('aria-pressed', String(button.dataset.filmFilter === state.filmFilter));
+            button.classList.toggle('active', button.dataset.filmFilter === state.filmFilter);
+        });
     }
 
     function makeArtworkPlaceholder(message, className = 'sm-artwork-placeholder', id = '') {
@@ -206,14 +338,6 @@
         }, { once: true });
         image.src = url;
         container.appendChild(image);
-    }
-
-    function createMemoryUrl(memoryId, levelId = '') {
-        const url = new URL(window.location.href);
-        url.searchParams.set('id', memoryId);
-        if (levelId) url.searchParams.set('level', levelId);
-        else url.searchParams.delete('level');
-        return url.href;
     }
 
     function hideActiveTooltip() {
@@ -281,11 +405,11 @@
     }
 
     function createMemoryCard(memory) {
-        const link = document.createElement('a');
-        link.className = 'sm-memory-card';
-        link.href = createMemoryUrl(memory.id);
-        link.dataset.memoryId = memory.id;
-        link.setAttribute('aria-label', `${memory.name}, ${memory.filmType || 'film type not listed'} film${memory.filmCost === null ? '' : `, cost ${memory.filmCost}`}`);
+        const card = document.createElement('button');
+        card.type = 'button';
+        card.className = 'sm-memory-card';
+        card.dataset.memoryId = memory.id;
+        card.setAttribute('aria-label', `${memory.name}, ${memory.filmType || 'film type not listed'} film${memory.filmCost === null ? '' : `, cost ${memory.filmCost}`}`);
         const tooltip = document.createElement('span');
         tooltip.id = `sm-memory-tooltip-${encodeURIComponent(memory.id)}`;
         tooltip.className = 'sm-memory-tooltip';
@@ -301,21 +425,19 @@
         appendTooltipLine(tooltip, 'sm-memory-tooltip-effect', safeEffectText(memory.effect) || 'Effect text is not available.', 'span');
         appendTooltipLine(tooltip, 'sm-memory-tooltip-condition', memory.activationCondition ? `Condition: ${memory.activationCondition}` : '');
         appendTooltipLine(tooltip, 'sm-memory-tooltip-duration', memory.durationText ? `Duration: ${memory.durationText}` : '');
-        link._supportMemoryTooltip = tooltip;
-        link.setAttribute('aria-describedby', tooltip.id);
+        card._supportMemoryTooltip = tooltip;
+        card.setAttribute('aria-describedby', tooltip.id);
 
-        link.addEventListener('pointerenter', (event) => {
-            if (event.pointerType !== 'touch') showMemoryTooltip(link);
+        card.addEventListener('pointerenter', (event) => {
+            if (event.pointerType !== 'touch') showMemoryTooltip(card);
         });
-        link.addEventListener('pointerleave', () => {
-            if (document.activeElement !== link) hideActiveTooltip();
+        card.addEventListener('pointerleave', () => {
+            if (document.activeElement !== card) hideActiveTooltip();
         });
-        link.addEventListener('focus', () => showMemoryTooltip(link));
-        link.addEventListener('blur', () => hideActiveTooltip());
-        link.addEventListener('click', (event) => {
-            if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
-            event.preventDefault();
-            selectMemory(memory.id, { updateUrl: true, returnFocus: link });
+        card.addEventListener('focus', () => showMemoryTooltip(card));
+        card.addEventListener('blur', () => hideActiveTooltip());
+        card.addEventListener('click', () => {
+            selectMemory(memory.id, { returnFocus: card });
         });
 
         const artwork = document.createElement('div');
@@ -326,8 +448,8 @@
             missingPathMessage: 'Thumbnail path is not present in the dataset.',
             unavailableMessage: 'Thumbnail file is unavailable.'
         });
-        link.appendChild(artwork);
-        return link;
+        card.appendChild(artwork);
+        return card;
     }
 
     function renderLibrary() {
@@ -353,17 +475,41 @@
         }
 
         const summary = `${filtered.length.toLocaleString()} of ${state.memories.length.toLocaleString()} Support Memories shown.`;
+        syncFilterUi(filtered.length);
         setLibraryStatus([summary, state.statusNote].filter(Boolean).join(' '), state.statusNote ? 'warning' : 'ready');
     }
 
     function buildFilmOptions() {
-        const known = new Set(state.memories.map((memory) => memory.filmType).filter(Boolean));
+        const known = new Map();
+        state.memories.forEach((memory) => {
+            const film = memory.filmType?.trim();
+            if (film && !known.has(film.toLocaleLowerCase())) known.set(film.toLocaleLowerCase(), film);
+        });
         const ordered = [
-            ...FILM_ORDER.filter((film) => known.has(film)),
-            ...Array.from(known).filter((film) => !FILM_ORDER.includes(film)).sort((a, b) => a.localeCompare(b))
+            ...FILM_ORDER.filter((film) => known.has(film.toLocaleLowerCase())),
+            ...Array.from(known.entries())
+                .filter(([key]) => !FILM_ORDER.some((film) => film.toLocaleLowerCase() === key))
+                .map(([, film]) => film)
+                .sort((first, second) => first.localeCompare(second))
         ];
-        elements.filmFilter.replaceChildren(new Option('All film types', 'all'));
-        ordered.forEach((film) => elements.filmFilter.add(new Option(`${film} film`, film)));
+        if (elements.filmFilter.tagName === 'SELECT') {
+            elements.filmFilter.replaceChildren(new Option('All film types', 'all'));
+            ordered.forEach((film) => elements.filmFilter.add(new Option(`${film} film`, film)));
+            return;
+        }
+
+        const choices = [['all', 'All'], ...ordered.map((film) => [film, `${film} film`])];
+        elements.filmFilter.replaceChildren();
+        choices.forEach(([value, label]) => {
+            const button = document.createElement('button');
+            button.type = 'button';
+            button.className = 'filter-pill-btn';
+            button.dataset.filmFilter = value;
+            button.textContent = label;
+            button.setAttribute('aria-pressed', String(value === state.filmFilter));
+            elements.filmFilter.appendChild(button);
+        });
+        syncFilterUi(state.memories.length);
     }
 
     function stopPlayerForSelection() {
@@ -385,20 +531,6 @@
                 resolve();
             }, 230);
         });
-    }
-
-    function updateAddress(memory, levelId, replace = false) {
-        const url = new URL(window.location.href);
-        if (memory) {
-            url.searchParams.set('id', memory.id);
-            if (levelId) url.searchParams.set('level', levelId);
-            else url.searchParams.delete('level');
-        } else {
-            url.searchParams.delete('id');
-            url.searchParams.delete('level');
-        }
-        const method = replace ? 'replaceState' : 'pushState';
-        window.history[method]({ supportMemoryId: memory?.id || null, supportMemoryLevel: levelId || '' }, '', url);
     }
 
     function selectedVariant(memory = state.selectedMemory) {
@@ -495,7 +627,6 @@
                 if (!state.selectedMemory) return;
                 state.selectedLevelId = details.querySelector('#sm-player-level').value;
                 renderPlayerDetails();
-                updateAddress(state.selectedMemory, state.selectedLevelId, true);
             });
         }
 
@@ -522,7 +653,7 @@
         return modal;
     }
 
-    function selectMemory(memoryId, { updateUrl = false, levelId = '', returnFocus = null } = {}) {
+    function selectMemory(memoryId, { levelId = '', returnFocus = null } = {}) {
         const requestedId = String(memoryId || '');
         let memory = state.memories.find((candidate) => candidate.id === requestedId);
         let requestedLevelId = levelId;
@@ -541,26 +672,11 @@
         if (returnFocus) state.returnFocus = returnFocus;
         state.selectedMemory = memory;
         state.selectedLevelId = memory.upgradeLevels.some((level) => level.id === requestedLevelId) ? requestedLevelId : '';
-        if (updateUrl) updateAddress(memory, state.selectedLevelId, false);
         setLibraryStatus(`Opening ${memory.name}…`, 'loading');
         if (selectionChanged || document.getElementById('abs-animation-modal')?.hidden !== false) {
             void playSelectedMemory();
         } else {
             renderPlayerDetails();
-        }
-    }
-
-    function clearSelection({ updateUrl = false, restoreFocus = true } = {}) {
-        const playerWasOpen = document.getElementById('abs-animation-modal')?.hidden === false;
-        stopPlayerForSelection();
-        state.selectedMemory = null;
-        state.selectedLevelId = '';
-        if (updateUrl) updateAddress(null, '', true);
-        if (restoreFocus) {
-            const target = state.returnFocus?.isConnected ? state.returnFocus : elements.search;
-            state.returnFocus = null;
-            if (playerWasOpen) window.setTimeout(() => target.focus({ preventScroll: true }), 230);
-            else target.focus({ preventScroll: true });
         }
     }
 
@@ -656,7 +772,6 @@
             state.playerObserver?.disconnect();
             state.playerObserver = null;
             state.playerToken += 1;
-            if (state.selectedMemory) updateAddress(null, '', true);
             state.selectedMemory = null;
             state.selectedLevelId = '';
             setLibraryStatus('Preview closed. Choose a Support Memory to open it again.', 'info');
@@ -744,6 +859,7 @@
     function displayLoadFailure(message, kind = 'error') {
         state.memories = [];
         elements.memoryGrid.replaceChildren();
+        syncFilterUi(0);
         const panel = document.createElement('p');
         panel.className = 'sm-empty-results';
         panel.dataset.state = kind;
@@ -822,27 +938,19 @@
         buildFilmOptions();
         renderLibrary();
 
-        const params = new URLSearchParams(window.location.search);
-        const requestedId = params.get('id');
-        if (requestedId) {
-            selectMemory(requestedId, { levelId: params.get('level') || '' });
-        }
     }
 
+    mountLibraryChrome();
     elements.search.addEventListener('input', () => {
         state.searchText = elements.search.value;
         renderLibrary();
     });
-    elements.filmFilter.addEventListener('change', () => {
-        state.filmFilter = elements.filmFilter.value;
-        renderLibrary();
-    });
-    window.addEventListener('popstate', () => {
-        const params = new URLSearchParams(window.location.search);
-        const id = params.get('id');
-        if (id) selectMemory(id, { levelId: params.get('level') || '' });
-        else clearSelection();
-    });
+    if (elements.filmFilter.tagName === 'SELECT') {
+        elements.filmFilter.addEventListener('change', () => {
+            state.filmFilter = elements.filmFilter.value;
+            renderLibrary();
+        });
+    }
     window.addEventListener('resize', positionActiveTooltip);
     window.addEventListener('scroll', positionActiveTooltip, { capture: true, passive: true });
     window.addEventListener('pagehide', () => {

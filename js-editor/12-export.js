@@ -105,6 +105,8 @@ window.getProjectDataObject = function() {
             thumbSrc: formEl.getAttribute('data-thumb-src') || "",
             name: nameSpan?.innerText || "",
             link: formEl.querySelector(".form-link")?.getAttribute("href") || "",
+            ...(formEl.dataset.targetCardId ? { targetId: formEl.dataset.targetCardId } : {}),
+            ...(formEl.dataset.formSource ? { source: formEl.dataset.formSource } : {}),
             ...(formEl.dataset.adminLinkedSlug ? { adminLinkedSlug: formEl.dataset.adminLinkedSlug } : {}),
             ...(formEl.dataset.adminLinkAdopted === 'true' ? {
                 adminLinkAdopted: true, adminPreviousHref: formEl.dataset.adminPreviousHref || ''
@@ -193,6 +195,9 @@ window.exportProjectAsJson = function() {
 
 window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false) {
     if (!projectData || (!allowLocked && !window.__absDynamicBootstrapping && window.isPublishedEditorLocked?.())) return;
+    // A file import or new card must not inherit another card's database revision.
+    // Database callers restore the matching record only after hydration succeeds.
+    window.currentContentCard = null;
     const projectImageInput = String(projectData.inputs?.imageInput || '');
     const projectHasOfficialArt = /(?:dokkaninfo\.com|images\.weserv\.nl).*\/character\/card\/\d+/i.test(projectImageInput);
     window.currentCardSource = projectData.cardSource === 'official' || (!projectData.cardSource && projectHasOfficialArt)
@@ -322,6 +327,8 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
             if (projectData.formsData && projectData.formsData.length > 0) {
                 projectData.formsData.forEach(fData => {
                     window.addFormBlock(fData.name, fixUrl(norm(fData.imageSrc)), fData.imageExportName, fixUrl(norm(fData.thumbSrc || "")));
+                    if (selectedForm && fData.targetId) selectedForm.dataset.targetCardId = fData.targetId;
+                    if (selectedForm && fData.source) selectedForm.dataset.formSource = fData.source;
                     if (selectedForm && fData.adminLinkedSlug) selectedForm.dataset.adminLinkedSlug = fData.adminLinkedSlug;
                     if (selectedForm && fData.adminLinkAdopted) {
                         selectedForm.dataset.adminLinkAdopted = 'true';
@@ -399,6 +406,8 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
     const artImg = document.getElementById("myOverlayImage");
     const vidOverlay = document.getElementById("myOverlayVideo");
     const preferredArtMode = projectData.editorArtMode === 'animated' ? 'animated' : 'static';
+    const phantomStartupStatic = document.body?.classList.contains('theme-phantom');
+    const displayedArtMode = phantomStartupStatic ? 'static' : preferredArtMode;
     const projectStaticArt = window.isPlaceholderCardArtUrl?.(projectData.cardArtImage)
         ? ''
         : fixUrl(projectData.cardArtImage);
@@ -407,14 +416,15 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
         const vidSource = vidOverlay?.querySelector('source');
         if (vidSource && vidOverlay) {
             delete vidOverlay.dataset.failed;
+            if (phantomStartupStatic) vidOverlay.removeAttribute('autoplay');
             vidSource.src = fixUrl(projectData.cardArtVideo);
             vidOverlay.removeAttribute('src');
             vidOverlay.load();
         }
     }
-    if (artImg) artImg.style.display = preferredArtMode === 'static' && projectStaticArt ? 'block' : 'none';
+    if (artImg) artImg.style.display = displayedArtMode === 'static' && projectStaticArt ? 'block' : 'none';
     if (vidOverlay) {
-        vidOverlay.style.display = preferredArtMode === 'animated' && projectData.cardArtVideo ? 'block' : 'none';
+        vidOverlay.style.display = displayedArtMode === 'animated' && projectData.cardArtVideo ? 'block' : 'none';
         if (vidOverlay.style.display === 'block') vidOverlay.play().catch(() => {});
         else vidOverlay.pause();
     }
@@ -479,7 +489,7 @@ window.loadProjectData = function(projectData, baseUrl = '', allowLocked = false
         window.syncToAbsLayout();
     }
     window.renderEditorSkillsInDokkanInfo?.();
-    if (window.switchEditorArtMode) window.switchEditorArtMode(preferredArtMode);
+    if (window.switchEditorArtMode) window.switchEditorArtMode(displayedArtMode, { remember: !phantomStartupStatic });
     if (window.updateAbsStyleSuperAttacks) {
         window.updateAbsStyleSuperAttacks();
     }
@@ -591,7 +601,8 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
     const fullTitle = rawDesc ? `[${rawDesc}] ${rawName}` : rawName;
     const descText = projectData?.inputs?.leaderInput || rawDesc || '';
     const previewImg = projectData?.cardArtImage || projectData?.thumbMain || projectData?.thumbLr || projectData?.thumbTur || projectData?.thumbSsr || '';
-    const bootstrapperVersion = '20260928-custom-no-motion-v1';
+    const bootstrapperVersion = '40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5';
+    const criticalLoaderCss = "/* One opaque cover, the existing ABS logo and a circular ring. */\n#abs-loading-screen {\n    position: fixed;\n    inset: 0;\n    z-index: 2147483647;\n    display: grid;\n    place-items: center;\n    overflow: hidden;\n    color: #fff;\n    background: #08090b;\n    opacity: 1;\n    visibility: visible;\n    pointer-events: auto;\n    transition: opacity 0.18s ease-out;\n}\n\nhtml.abs-page-loading,\nhtml.abs-page-loading body { overflow: hidden; }\nhtml { scrollbar-gutter: stable; }\n\n#abs-loading-screen.is-entering {\n    opacity: 0;\n    pointer-events: none;\n}\n#abs-loading-screen.is-navigating {\n    opacity: 1;\n    transition: none;\n}\n#abs-loading-screen.is-exiting {\n    opacity: 0;\n    pointer-events: none !important;\n    animation: abs-loader-exit-dissolve 0.18s cubic-bezier(0.22, 1, 0.36, 1) forwards !important;\n    transform: none !important;\n    filter: none !important;\n}\n#abs-loading-screen.is-hidden {\n    opacity: 0 !important;\n    visibility: hidden !important;\n    pointer-events: none !important;\n    display: none !important;\n}\n\n/* Already-published cards retain old decorative markup. Hide it from the\n   first CSS paint, before legacy restoration scripts can insert artwork. */\n#abs-loading-screen .abs-loader-bg-art,\n#abs-loading-screen .abs-loader-art-backdrop,\n#abs-loading-screen .abs-loader-bg-stars,\n#abs-loading-screen .abs-loader-bg-grid,\n#abs-loading-screen .abs-loader-bg-glass,\n#abs-loading-screen .abs-loader-art,\n#abs-loading-screen .abs-loader-percent,\n#abs-loading-screen .abs-loader-sub { display: none !important; }\n\n#abs-loading-screen .abs-loader-stage {\n    position: relative;\n    top: clamp(8px, 2vh, 20px);\n    width: clamp(152px, 22vw, 204px);\n    aspect-ratio: 1;\n    display: flex;\n    flex-direction: column;\n    align-items: center;\n    justify-content: center;\n    pointer-events: none;\n}\n#abs-loading-screen .abs-loader-stage::before {\n    content: '';\n    position: absolute;\n    inset: 0;\n    border: 2px solid rgba(255, 255, 255, 0.16);\n    border-top-color: rgba(255, 255, 255, 0.88);\n    border-right-color: rgba(255, 255, 255, 0.5);\n    border-radius: 50%;\n    box-sizing: border-box;\n    animation: abs-loader-ring-turn 1.1s linear infinite;\n    pointer-events: none;\n}\n#abs-loading-screen .abs-loader-logo {\n    display: block;\n    width: clamp(120px, 18vw, 170px);\n    height: clamp(120px, 18vw, 170px);\n    aspect-ratio: 1;\n    flex: none;\n    object-fit: contain;\n    margin: 0;\n    user-select: none;\n    -webkit-user-drag: none;\n    pointer-events: none;\n}\n#abs-loading-screen .abs-loader-status {\n    position: absolute;\n    width: 1px;\n    height: 1px;\n    padding: 0;\n    margin: -1px;\n    overflow: hidden;\n    clip-path: inset(50%);\n    white-space: nowrap;\n    border: 0;\n}\n#abs-loading-screen[data-loader-error=\"true\"] .abs-loader-stage {\n    width: min(90vw, 560px);\n    aspect-ratio: auto;\n    top: 0;\n    text-align: center;\n}\n#abs-loading-screen[data-loader-error=\"true\"] .abs-loader-stage::before { display: none; }\n\n@keyframes abs-loader-ring-turn { to { transform: rotate(360deg); } }\n@keyframes abs-loader-exit-dissolve { from { opacity: 1; } to { opacity: 0; } }\n@media (prefers-reduced-motion: reduce) {\n    #abs-loading-screen,\n    #abs-loading-screen *,\n    #abs-loading-screen *::before {\n        animation: none !important;\n        transition: none !important;\n    }\n}";
     
     const escapeAttr = (str) => String(str || '').replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
     const escapeText = (str) => String(str || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
@@ -601,15 +612,15 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>${escapeText(fullTitle)}</title>
+    <title>${escapeText(rawName)}</title>
 
     <link rel="icon" type="image/png" href="https://abscustom.github.io/DokkanCustom/assets/ui/images/editor-favicon.png?v=1" sizes="48x48">
     <meta name="color-scheme" content="dark">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@HarryTurney">
     <meta property="og:type" content="website">
-    <meta property="og:site_name" content="abs Info">
-    <meta name="application-name" content="Dokkan Info!">
+    <meta property="og:site_name" content="ABS">
+    <meta name="application-name" content="ABS">
     <meta itemprop="name" content="${escapeAttr(fullTitle)}">
     <meta property="og:title" content="${escapeAttr(fullTitle)}">
     <meta name="twitter:title" content="${escapeAttr(fullTitle)}">
@@ -620,7 +631,8 @@ window.generateDynamicCardHtml = function(projectData, folderPath) {
     <!-- Keep the published-card first paint identical to card.html. The
          bootstrapper loads the rest of the viewer later, but this stylesheet
          must be parser-discovered before the loader markup is painted. -->
-    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
+    <style id="abs-loader-critical-styles" data-loader-version="20261007-stable-ring-v1">${criticalLoaderCss}</style>
+    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20261007-stable-ring-v1">
 
     <script id="card-data" type="application/json">
 ${JSON.stringify(projectData || {}, null, 2)}
@@ -656,16 +668,10 @@ ${window.buildPublishedLoaderWatchdogScript()}
     </script>
 </head>
 <body class="is-published theme-abs-style">
-    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady">
-        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
-        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
-        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
-        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
-        <div class="abs-loader-art" aria-hidden="true"></div>
+    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady" data-loader-shell-ready-event="abs-shell-ready" data-loader-shell-ready-flag="absShellReady">
         <div class="abs-loader-stage">
-            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async">
-            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">Loading...</div>
-            <div class="abs-loader-sub" aria-hidden="true">custom card</div>
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" loading="eager" decoding="async" width="1000" height="1000" fetchpriority="high">
+            <div class="abs-loader-status">Loading…</div>
         </div>
     </div>
 </body>
@@ -817,6 +823,7 @@ function configurePublishedCardActions(clone, cardSource) {
 }
 
 window.exportPublishedCardJson = async function() {
+    if (window.currentContentCard) return window.exportProjectAsJson();
     const folderName = String(window.PUBLISHED_SITE_FOLDER || '').replace(/^\/+|\/+$/g, '');
     if (!folderName) {
         window.exportProjectAsJson();
@@ -866,10 +873,26 @@ window.ensureAdminActionsDock = function() {
     return quickSaveButton;
 };
 
+function setPublishedImageSourceIfChanged(image, nextSource) {
+    if (!image || !nextSource) return false;
+    const sameSource = image.src === nextSource;
+    const shouldRetryFailedSource = sameSource && image.complete && image.naturalWidth === 0;
+    if (sameSource && !shouldRetryFailedSource) return false;
+    image.src = nextSource;
+    return true;
+}
+
 window.ensurePublishedCustomCardRuntime = function() {
     if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
 
     window.openPublishedCardInCalculator = function() {
+        if (window.currentContentCard && window.CardContent) {
+            const url = new URL('calculator.html', window.CardContent.viewerUrl(window.currentContentCard.id));
+            url.searchParams.set('custom', window.currentContentCard.id);
+            url.searchParams.set('content', 'database');
+            window.location.assign(url.href);
+            return;
+        }
         const folderName = String(window.PUBLISHED_SITE_FOLDER || getPublishedPathFromLocation() || '').replace(/^\/+|\/+$/g, '');
         if (!folderName) return;
         window.location.assign(`${PUBLISHED_REPO_ROOT}calculator.html?custom=${encodeURIComponent(folderName)}`);
@@ -908,7 +931,7 @@ window.ensurePublishedCustomCardRuntime = function() {
         const absImage = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-art-img') : document.getElementById('abs-art-img'));
         [infoImage, absImage].forEach(image => {
             if (!image) return;
-            image.src = staticArtUrl;
+            setPublishedImageSourceIfChanged(image, staticArtUrl);
             image.removeAttribute('data-failed');
             image.removeAttribute('data-official-card-art');
         });
@@ -1369,7 +1392,37 @@ function getUploadCharacterName(rawName) {
     return fullName.split('+', 1)[0].trim();
 }
 
+function isDatabaseContentModeActive() {
+    const queryMode = new URLSearchParams(String(window.location?.search || '')).get('content') === 'database';
+    return window.CARD_CONTENT_CONFIG?.enabled === true
+        || queryMode
+        || (typeof window.CardContent?.enabled === 'function' && window.CardContent.enabled());
+}
+
+function publishDatabaseCardContent() {
+    if (typeof window.CardContent?.publishCurrent !== 'function') {
+        throw Object.assign(new Error('Database content mode is active, but the card publisher is unavailable.'), { code: 'DATABASE_PUBLISHER_UNAVAILABLE' });
+    }
+    return window.CardContent.publishCurrent();
+}
+
+function rejectLegacyCardContentWrite() {
+    if (!isDatabaseContentModeActive()) return;
+    if (typeof window.CardContent?.assertLegacyWriteAllowed === 'function') {
+        window.CardContent.assertLegacyWriteAllowed([{ path: 'index.html' }]);
+    }
+    throw Object.assign(new Error('Direct GitHub card HTML/JSON writes are disabled while database content mode is active.'), { code: 'LEGACY_CONTENT_DISABLED' });
+}
+
 window.openUploadModal = function() {
+    if (isDatabaseContentModeActive()) {
+        if (window.currentCardSource === 'official') {
+            try { rejectLegacyCardContentWrite(); }
+            catch (error) { window.alert(error.message); return; }
+        }
+        try { return publishDatabaseCardContent(); }
+        catch (error) { window.alert(error.message); return; }
+    }
     let baseId = "";
     const urlInputVal = document.getElementById('asset-url-input')?.value || "";
     const urlMatch = urlInputVal.match(/cards\/(\d{7})/);
@@ -1526,6 +1579,10 @@ window.checkUploadFormValidity = function() {
 };
 
 window.executeGitHubUpload = async function() {
+    if (isDatabaseContentModeActive()) {
+        if (window.currentCardSource !== 'official') return publishDatabaseCardContent();
+        rejectLegacyCardContentWrite();
+    }
     const rawFolderId = document.getElementById('upload-folder-id').value.trim().toLowerCase();
     const githubToken = document.getElementById('upload-github-token').value.trim();
     const rememberBox = document.getElementById('upload-remember-token');
@@ -1625,7 +1682,7 @@ window.executeGitHubUpload = async function() {
         const publishedShowSsr = window.showSsrProgression !== false;
         const publishedShowTur = window.showTurProgression !== false;
 
-        if (clone.querySelector('title')) clone.querySelector('title').innerText = fullDisplayName;
+        if (clone.querySelector('title')) clone.querySelector('title').innerText = charName;
 
         let pubScript = clone.querySelector('#pub-site-marker');
         if (!pubScript) {
@@ -1887,6 +1944,14 @@ jobs:
 // ============================================================
 
 window.openQuickSaveModal = function() {
+    if (isDatabaseContentModeActive()) {
+        if (window.currentCardSource !== 'official') {
+            try { return publishDatabaseCardContent(); }
+            catch (error) { window.alert(error.message); return; }
+        }
+        try { rejectLegacyCardContentWrite(); }
+        catch (error) { window.alert(error.message); return; }
+    }
     if (window.isPublishedEditorLocked?.()) {
         window.unlockAdminMode?.();
         return;
@@ -1928,8 +1993,10 @@ window.saveQuickEditToGitHub = function() {
 };
 
 window.executeQuickSave = async function() {
+    if (isDatabaseContentModeActive() && window.currentCardSource !== 'official') return publishDatabaseCardContent();
     if (window.isPublishedEditorLocked?.()) return;
     if (!window.IS_PUBLISHED || window.PUBLISHED_CARD_SOURCE === 'official') return;
+    if (isDatabaseContentModeActive()) rejectLegacyCardContentWrite();
 
     const token = document.getElementById('quicksave-github-token').value.trim();
     const rememberBox = document.getElementById('quicksave-remember-token');

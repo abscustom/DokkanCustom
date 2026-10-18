@@ -354,6 +354,26 @@ body.type-theme-phy .apple-glass-character-deck { border-color: rgba(241, 196, 1
     z-index: 1;
 }
 
+/* The desktop shell reserves 96px for a fixed news strip; Calculator no
+   longer mounts that strip, so keep its page heading aligned with Cards. */
+@media (min-width: 991px) {
+    html body.calc-liquid-body:not(:has(.calc-news-snippet)) #calculator-view {
+        padding-top: 0 !important;
+    }
+}
+
+.calc-page-header {
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    padding: 0 12px 14px;
+    margin: 0 0 4px;
+    border-bottom: 1px solid var(--abs-shell-border, rgba(255, 255, 255, 0.12));
+    text-align: center;
+}
+
 /* --- 3. TOP COMMAND DECK --- */
 .apple-glass-character-deck {
     margin-top: 24px !important;
@@ -1810,10 +1830,6 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
 }
 
 /* --- CIRCLE PORTRAITS --- */
-.calc-unit-picker-dialog .picker-frame {
-    display: none !important;
-}
-
 .picker-thumb-wrapper { 
     position: relative !important; 
     width: 60px !important; 
@@ -1939,6 +1955,11 @@ select.ds-stack-select, .ds-stack-select { width: auto !important; min-width: 44
     border-color: rgba(192, 132, 252, 0.4) !important;
     transform: translateY(-2px);
     box-shadow: 0 6px 18px rgba(0, 0, 0, 0.35), 0 0 12px rgba(192, 132, 252, 0.15) !important;
+}
+
+.unit-sa-picker-item:focus-visible {
+    outline: 2px solid #c084fc !important;
+    outline-offset: 2px !important;
 }
 
 .unit-sa-picker-item.active {

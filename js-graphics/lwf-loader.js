@@ -387,7 +387,7 @@ const DokkanLWF = {
         if (canvas) canvas.dataset.lwfPlaying = 'false';
     },
 
-    async attachSezaFlameBorder(targetContainer, cardType = 'agl') {
+    async attachSezaFlameBorder(targetContainer, cardType = 'agl', options = {}) {
         if (!targetContainer) return;
 
         const cType = (cardType || 'agl').toLowerCase();
@@ -421,7 +421,9 @@ const DokkanLWF = {
             const files = await fetchSezaPackFiles();
             if (!files) return;
 
-            const player = new LwfPackPlayer(canvas, () => {});
+            const player = new LwfPackPlayer(canvas, () => {}, {
+                disableAdditiveReduction: options?.disableAdditiveReduction === true
+            });
             player.loopMovie = true;
 
             const ingested = player.ingestFiles(files);

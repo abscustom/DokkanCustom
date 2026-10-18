@@ -557,3 +557,15 @@ window.addEventListener('DOMContentLoaded', () => {
     syncLeaderPillsFromInput();
     setCalcTab(window.currentCalcTab || 'atk');
 });
+
+window.calcDraftUiBridge = {
+    getLinks: () => activeCharacterLinks.map(link => ({ ...link })),
+    setLinks: links => {
+        activeCharacterLinks = Array.isArray(links) ? links.map(link => ({ ...link })) : [];
+        window.activeCharacterLinks = activeCharacterLinks;
+        renderLinkSkillBadges();
+    },
+    renderSaRows: blocks => renderDynamicSaRows(blocks || [], window.currentCalcRarity === 'LR', !!window.currentCalcEza),
+    refreshPassiveRows: () => renderPassiveLinesByCurrentViewMode?.(),
+    refreshLinkTotals: () => recalculateLinkTotals()
+};

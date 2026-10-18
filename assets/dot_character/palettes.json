@@ -1,0 +1,777 @@
+{
+  "schemaVersion": 1,
+  "algorithm": "opaque-vivid-rgb32-weighted-v1",
+  "description": "Dominant vivid colour of the source PNG atlas; not a per-frame colour or card typing. Transparent, dark, and neutral pixels are excluded. See build-dot-character-palettes.mjs. Runtime checks the selected texture SHA-256 before applying metadata.",
+  "palettes": {
+    "001/001": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/001/dot_character.png",
+      "sourceSha256": "1f74573361ad960e46510f915e130dce802c35e3f06cd1645bb409421a5881c1"
+    },
+    "001/002": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/002/dot_character.png",
+      "sourceSha256": "4f2e9d8f91ed8ae6bafffb8a3573046a059e2ff908f707708ea339fb89b60892"
+    },
+    "001/003": {
+      "accentRgb": [
+        0,
+        160,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/003/dot_character.png",
+      "sourceSha256": "bab0274456bf5970028bec91c59c8d1ff1491f8f96db3da3f1273f17c1160c5d"
+    },
+    "001/004": {
+      "accentRgb": [
+        160,
+        224,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/004/dot_character.png",
+      "sourceSha256": "1b90d2c471c6ab4ff2fbcb0b3198418050eb369d0759d15a8090688d42ff117b"
+    },
+    "001/005": {
+      "accentRgb": [
+        192,
+        192,
+        0
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/005/dot_character.png",
+      "sourceSha256": "756f19b879ecb55596214677b466bb81012cc27eac29100ad89b6f3f1aa370e4"
+    },
+    "001/006": {
+      "accentRgb": [
+        192,
+        224,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/006/dot_character.png",
+      "sourceSha256": "4e46e0510238cd1e50bd4da17d3022510024ee63e7816d5e5aa0f4416f4e6d23"
+    },
+    "001/007": {
+      "accentRgb": [
+        64,
+        224,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/007/dot_character.png",
+      "sourceSha256": "cb10ddb71389503da817600d52484fc3c894850c2920663aab0317b372137c62"
+    },
+    "001/008": {
+      "accentRgb": [
+        0,
+        160,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/008/dot_character.png",
+      "sourceSha256": "c4659f931ab24d20065d326b213027f6ba05a94008605883dfae8d853a693794"
+    },
+    "001/009": {
+      "accentRgb": [
+        128,
+        192,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/009/dot_character.png",
+      "sourceSha256": "4478c3679fb149c7c08772298ef723f6447b651335ff613d2f842e12b88d1bf2"
+    },
+    "001/010": {
+      "accentRgb": [
+        192,
+        192,
+        0
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/010/dot_character.png",
+      "sourceSha256": "4278c15fd1323c2c3cecba5034ac6732fba79fd58ee07b3537816fcfdf8a3893"
+    },
+    "001/011": {
+      "accentRgb": [
+        192,
+        192,
+        0
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/011/dot_character.png",
+      "sourceSha256": "bf74eeca63f677768f466caa758dae9e106ce54bdadf9843127c7a5bb6323308"
+    },
+    "001/012": {
+      "accentRgb": [
+        0,
+        192,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/012/dot_character.png",
+      "sourceSha256": "1f90b2e0e356ead246073ee1c6a23fda9b71dd7b259de2a47a1ef7ead9e6d94b"
+    },
+    "001/013": {
+      "accentRgb": [
+        96,
+        160,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/013/dot_character.png",
+      "sourceSha256": "5c73958cfdc01357d1848f61bd18c5afe17cfe4568ebc8b0e926f7843a2040c0"
+    },
+    "001/014": {
+      "accentRgb": [
+        192,
+        224,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/014/dot_character.png",
+      "sourceSha256": "e0f1aebb242911523afcc60cce86197e63aecf29dbef3d175126a2729bb94399"
+    },
+    "001/015": {
+      "accentRgb": [
+        96,
+        160,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/015/dot_character.png",
+      "sourceSha256": "b15c04222f02f1f8416dbc972689fa9b7f9b4ecee9af5a6abdcc2e789c67df75"
+    },
+    "001/016": {
+      "accentRgb": [
+        96,
+        64,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/016/dot_character.png",
+      "sourceSha256": "bf14e87dc91df174ae79561e2ac4835d475d315e317728c34399498a3586db46"
+    },
+    "001/017": {
+      "accentRgb": [
+        160,
+        224,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "001/017/dot_character.png",
+      "sourceSha256": "b583d23b5c709a4b8769286b829e63630b97200680a253e1268539c7cbc60f36"
+    },
+    "002/001": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/001/dot_character.png",
+      "sourceSha256": "465a59d92eaeaa445fba9865d05bf1deb72e29f541988e3fd93a658b1f61dfbf"
+    },
+    "002/002": {
+      "accentRgb": [
+        224,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/002/dot_character.png",
+      "sourceSha256": "a21f4c7850c175e7a942353243212ff78b706c341e121e34cd2332f137c17bfe"
+    },
+    "002/003": {
+      "accentRgb": [
+        192,
+        224,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/003/dot_character.png",
+      "sourceSha256": "a60cbf18588d90f091231bc277a40cb265d887f1ab73604ce4b4eebf7561687c"
+    },
+    "002/004": {
+      "accentRgb": [
+        96,
+        192,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/004/dot_character.png",
+      "sourceSha256": "d9ac027ea3ee1e21820326e87810b11da30baa6896276d12e852746e7a858cc4"
+    },
+    "002/005": {
+      "accentRgb": [
+        96,
+        192,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/005/dot_character.png",
+      "sourceSha256": "b31e4b1bf9893eefd5f93a0dcbde852e8f468f43882c05ed1bac9d672aef2e28"
+    },
+    "002/006": {
+      "accentRgb": [
+        0,
+        64,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/006/dot_character.png",
+      "sourceSha256": "174b4d623ee04095903f09822973364a883f274def10463156027b2f125f4bd0"
+    },
+    "002/007": {
+      "accentRgb": [
+        224,
+        96,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/007/dot_character.png",
+      "sourceSha256": "6f004dddcbea1ba0b85f41c7c409f4a26cdd4872d632b08c9c1671eb5a364734"
+    },
+    "002/008": {
+      "accentRgb": [
+        96,
+        128,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/008/dot_character.png",
+      "sourceSha256": "8a200c208e6e7197f52f5fa712054ee85f26d82e2dc2f09cc4d7c6e0f434771c"
+    },
+    "002/009": {
+      "accentRgb": [
+        128,
+        192,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/009/dot_character.png",
+      "sourceSha256": "3154e80200b94e1f2909a78965f6da9097701a6594f8482752edf95ebee598a8"
+    },
+    "002/010": {
+      "accentRgb": [
+        128,
+        192,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/010/dot_character.png",
+      "sourceSha256": "649616ea40672ba1328005f48a7e5e4c29061c3c52efee965c976d38618dad11"
+    },
+    "002/011": {
+      "accentRgb": [
+        128,
+        192,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/011/dot_character.png",
+      "sourceSha256": "336e8617a0df28d2b1ebc6c23891f49fbc6f3ccf5b8fddbe5d99034c4f3d9ac1"
+    },
+    "002/012": {
+      "accentRgb": [
+        128,
+        160,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "002/012/dot_character.png",
+      "sourceSha256": "c9cbaa398dc891ece44a4383c2e9568e966b9bc7f4d047ae5d59418f1c69a7f1"
+    },
+    "003/001": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/001/dot_character.png",
+      "sourceSha256": "465a59d92eaeaa445fba9865d05bf1deb72e29f541988e3fd93a658b1f61dfbf"
+    },
+    "003/002": {
+      "accentRgb": [
+        160,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/002/dot_character.png",
+      "sourceSha256": "95a5f58ef8fd181c501081fac815231375f622bd986432eddb4dadf8c3ede53b"
+    },
+    "003/003": {
+      "accentRgb": [
+        160,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/003/dot_character.png",
+      "sourceSha256": "30a75787bccdca1649d453046541381b571117089f1546e4361494bcc65ee645"
+    },
+    "003/004": {
+      "accentRgb": [
+        32,
+        128,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/004/dot_character.png",
+      "sourceSha256": "41e7cbdce85306b280461234a8365c0247197e7206fe7268864b7303722b6ec4"
+    },
+    "003/005": {
+      "accentRgb": [
+        160,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/005/dot_character.png",
+      "sourceSha256": "6e69bf420411c2eddea8e5900bf0331e1e20f30d71765925150b8e824d3beca6"
+    },
+    "003/006": {
+      "accentRgb": [
+        224,
+        160,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/006/dot_character.png",
+      "sourceSha256": "ebf05057855181a637399ad261e28717a0e157d5da72a4d16d1d76d4dab2feb5"
+    },
+    "003/007": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/007/dot_character.png",
+      "sourceSha256": "f7ce1901b505a4dd704a8bca55f0eb3553a341dfbf028b2fa1408fd856072c7b"
+    },
+    "003/008": {
+      "accentRgb": [
+        224,
+        96,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/008/dot_character.png",
+      "sourceSha256": "aa229a1c037b9c69366078643a7fa1e7569712c346400a8a6a05cffe30d3aea8"
+    },
+    "003/009": {
+      "accentRgb": [
+        128,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/009/dot_character.png",
+      "sourceSha256": "d93e5ae72e5ddc21a6d8425cb994e6534d5657150393e9d1c4754d18c2622d51"
+    },
+    "003/010": {
+      "accentRgb": [
+        128,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/010/dot_character.png",
+      "sourceSha256": "cb6d3d85b624266d7d60c6d8b69fc4709b4bb238e3a772ccf0b7d019fbdfb957"
+    },
+    "003/011": {
+      "accentRgb": [
+        128,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/011/dot_character.png",
+      "sourceSha256": "673aae9d89baecc8a6f4b0173058d051d007655e3be47e2224fd16c1482afe71"
+    },
+    "003/012": {
+      "accentRgb": [
+        32,
+        32,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "003/012/dot_character.png",
+      "sourceSha256": "1d98ba6901fc545eb506eb3d8610a04a8c1a53cf36922bc993caa56d54d8502b"
+    },
+    "004/001": {
+      "accentRgb": [
+        224,
+        192,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/001/dot_character.png",
+      "sourceSha256": "e1bc29c5ba0011df7aa98a67c352a87b868f7f027b75d35138b57bf1735e0b63"
+    },
+    "004/002": {
+      "accentRgb": [
+        224,
+        224,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/002/dot_character.png",
+      "sourceSha256": "8eb7e990ed06324e1ffd32841a7c14acf90005a2412361690d40ca9c38d1fb8a"
+    },
+    "004/003": {
+      "accentRgb": [
+        128,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/003/dot_character.png",
+      "sourceSha256": "266449ec4dbaebffb42e0a89308c49eb41ad11c430928ab322280a6e08df6bba"
+    },
+    "004/004": {
+      "accentRgb": [
+        224,
+        192,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/004/dot_character.png",
+      "sourceSha256": "23a44ff524de511e1685c5ac04984424163e89e504cb8b10858e964ca5966750"
+    },
+    "004/005": {
+      "accentRgb": [
+        224,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/005/dot_character.png",
+      "sourceSha256": "1264df4085669bea85bf34fe9cb2ec3a4d37c5c0a21af8b978bacac21a70803a"
+    },
+    "004/006": {
+      "accentRgb": [
+        192,
+        224,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/006/dot_character.png",
+      "sourceSha256": "77a8e73ac4c99ea6f776131d2e682f776530e610e8a0c6eedfc38bbdeb305df6"
+    },
+    "004/007": {
+      "accentRgb": [
+        224,
+        192,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/007/dot_character.png",
+      "sourceSha256": "f573bc3292bf1d6ef5a4ea68e627be04a1c5b4b32c878d8218bd9ee42b41dacb"
+    },
+    "004/008": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/008/dot_character.png",
+      "sourceSha256": "565425a926d2e2ca29856f4c594ce463889ca0bbaffa0528848cc55fe18e846a"
+    },
+    "004/009": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/009/dot_character.png",
+      "sourceSha256": "ab60cdccd3ffd3d757077e6216d027bf004a1e60ca33c68ec6008854b93cd1c1"
+    },
+    "004/010": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/010/dot_character.png",
+      "sourceSha256": "cb492a38da8e3958e86cedd87ae3a58cbbf26f05a78514956fea63d5fe878f74"
+    },
+    "004/011": {
+      "accentRgb": [
+        64,
+        96,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/011/dot_character.png",
+      "sourceSha256": "2cb020390afea1ed9d542853717f989c926143025ec3aa8471e743f11570b1f6"
+    },
+    "004/012": {
+      "accentRgb": [
+        96,
+        160,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "004/012/dot_character.png",
+      "sourceSha256": "3b35acb404d01b9aa1e4599ab4a256decba74e70131134df1f43e6d95c6aca4e"
+    },
+    "005/001": {
+      "accentRgb": [
+        160,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/001/dot_character.png",
+      "sourceSha256": "f82fbdd4335a066b1329538c1dc8f61fe24f680b3028600a53f89107bbd48904"
+    },
+    "005/002": {
+      "accentRgb": [
+        128,
+        192,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/002/dot_character.png",
+      "sourceSha256": "1ed305180fd8c64755c6e42ce91700104d4a5e9c76fccd793ceb9be4db74a9f7"
+    },
+    "005/003": {
+      "accentRgb": [
+        224,
+        224,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/003/dot_character.png",
+      "sourceSha256": "8eb7e990ed06324e1ffd32841a7c14acf90005a2412361690d40ca9c38d1fb8a"
+    },
+    "005/004": {
+      "accentRgb": [
+        128,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/004/dot_character.png",
+      "sourceSha256": "266449ec4dbaebffb42e0a89308c49eb41ad11c430928ab322280a6e08df6bba"
+    },
+    "005/005": {
+      "accentRgb": [
+        224,
+        192,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/005/dot_character.png",
+      "sourceSha256": "ff6d431fe9188b2c19a1ea7bf364f172247c101a3cb0c2a29cac6bd2d849b61c"
+    },
+    "005/006": {
+      "accentRgb": [
+        224,
+        192,
+        128
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/006/dot_character.png",
+      "sourceSha256": "665ea367eb3b2146aef1a0a70c717b81ba97152d8b44224dafb410f07724d04d"
+    },
+    "005/007": {
+      "accentRgb": [
+        96,
+        192,
+        255
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/007/dot_character.png",
+      "sourceSha256": "c115b850a65e27ba5196baeaeeb0f86ca1bcf5402948b634ab5c81b49dc4510c"
+    },
+    "005/008": {
+      "accentRgb": [
+        96,
+        128,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/008/dot_character.png",
+      "sourceSha256": "032bb7cf02e4bb1b47604e1eaa09e1b099b5f14e11c676ac6cc68727d4c0fcd2"
+    },
+    "005/009": {
+      "accentRgb": [
+        224,
+        192,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/009/dot_character.png",
+      "sourceSha256": "0855bece87ffe20754e9b0e98ef6e91b645901ef8a580045c0adb86ae679b074"
+    },
+    "005/010": {
+      "accentRgb": [
+        96,
+        128,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/010/dot_character.png",
+      "sourceSha256": "c034e597f856938917a326be38fd53eea93d51c194f537acdcbfcd27abfceca3"
+    },
+    "005/011": {
+      "accentRgb": [
+        160,
+        128,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/011/dot_character.png",
+      "sourceSha256": "7be5f50fd5734032696c72344533425c5fef14023cd0a097e7a88d234d5306d7"
+    },
+    "005/012": {
+      "accentRgb": [
+        255,
+        192,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "005/012/dot_character.png",
+      "sourceSha256": "87282f4f50adf2f73b8987e7e22d47439ba8cc5757bfb3ef9de2e7e37b6a93eb"
+    },
+    "006/001": {
+      "accentRgb": [
+        192,
+        160,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/001/dot_character.png",
+      "sourceSha256": "952744d2c6a9b719e4dddbbb991f44713b03a1492153afc658442fcf9ee6668e"
+    },
+    "006/002": {
+      "accentRgb": [
+        0,
+        64,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/002/dot_character.png",
+      "sourceSha256": "a6fcec0030b0eb8ed7e0868d2640a79f0034c3db831ebf07a667f0f8793210aa"
+    },
+    "006/003": {
+      "accentRgb": [
+        96,
+        192,
+        192
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/003/dot_character.png",
+      "sourceSha256": "f96dac28ae3e42de3da827b05d8ab7a5bde281a222b872bc4a98a765e36339a9"
+    },
+    "006/004": {
+      "accentRgb": [
+        32,
+        32,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/004/dot_character.png",
+      "sourceSha256": "2b09c89efa76010a1b0913ecd3bcade7707aa07d199be0ae1f2cd294a6239520"
+    },
+    "006/005": {
+      "accentRgb": [
+        64,
+        32,
+        96
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/005/dot_character.png",
+      "sourceSha256": "374ab6488f54e2c939f78f583aaa66e0ba055e14185437a01575a885a82d22ff"
+    },
+    "006/006": {
+      "accentRgb": [
+        64,
+        96,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/006/dot_character.png",
+      "sourceSha256": "8aeb0d84a0d9c4f6c988b20da109261992a8a2f052a05d0ea16f9da6410efc03"
+    },
+    "006/007": {
+      "accentRgb": [
+        32,
+        96,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/007/dot_character.png",
+      "sourceSha256": "37f06b595709a8e8c14efc4271e7b2151f5800ee9d9e7828e05660d1da5086c9"
+    },
+    "006/008": {
+      "accentRgb": [
+        96,
+        96,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/008/dot_character.png",
+      "sourceSha256": "b2518956753443ef63ac2c5ab62ee8f5af4fd215e8b148d0a011ced45ea0b03e"
+    },
+    "006/009": {
+      "accentRgb": [
+        128,
+        96,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/009/dot_character.png",
+      "sourceSha256": "d02b975e5a0e5afef3625f3c89b56bf67c2405c5d0a4dc4abe3a9ae7f4ff76e1"
+    },
+    "006/010": {
+      "accentRgb": [
+        128,
+        160,
+        160
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/010/dot_character.png",
+      "sourceSha256": "fd870d38b68db000005119f5e07bde8d60c3b0ea785b51f3804c9b1783569241"
+    },
+    "006/011": {
+      "accentRgb": [
+        64,
+        64,
+        224
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/011/dot_character.png",
+      "sourceSha256": "9a5292c3b9a1d287b554e88f6578aede8c5f19dc63b2b4d1f40432ef8d3143bc"
+    },
+    "006/012": {
+      "accentRgb": [
+        96,
+        96,
+        64
+      ],
+      "sourceName": "dot_character.png",
+      "sourcePath": "006/012/dot_character.png",
+      "sourceSha256": "26e0f6fa4e0d94b695ec48e9e788a4987e087f3ff7907ef6900943d01fe60c7a"
+    }
+  }
+}

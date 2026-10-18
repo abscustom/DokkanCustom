@@ -3,6 +3,7 @@
    ============================================================ */
 
 async function uploadBatchToGitHub(token, owner, repo, files, commitMessage) {
+    window.CardContent?.assertLegacyWriteAllowed(files || []);
     if (!files || files.length === 0) return true;
 
     const htmlFiles = files.filter(file => /\.html?$/i.test(String(file.path || '')));
@@ -124,6 +125,7 @@ async function uploadBatchToGitHub(token, owner, repo, files, commitMessage) {
 }
 
 async function uploadFileToGitHub(token, owner, repo, path, blob, message) {
+    window.CardContent?.assertLegacyWriteAllowed([{ path }]);
     try {
         const fileSizeMB = blob.size / (1024 * 1024);
         if (fileSizeMB > 100) {

@@ -187,149 +187,10 @@
         document.querySelectorAll('[data-tool-theme]').forEach((button) => button.classList.toggle('active', button.dataset.toolTheme === style));
     };
 
-    // ── Bottom-dock reveal (matches main.js behaviour exactly) ──────────────
-    let sbaNavHideTimer = null;
-
-    const isBottomDockActive = () => {
-        return document.body.classList.contains('theme-sba') ||
-               document.body.classList.contains('theme-abs-clean') ||
-               document.body.classList.contains('editor-tool-page') ||
-               document.body.classList.contains('calc-liquid-body') ||
-               document.body.classList.contains('is-published');
-    };
-
-    const isEditorSidebarActive = () => {
-        const editor = document.getElementById('editor');
-        const toggleBtn = document.getElementById('toggleBtn');
-        const picker = document.getElementById('viewer-card-picker');
-        return document.body.classList.contains('editor-sidebar-open') ||
-               Boolean(editor?.classList.contains('open')) ||
-               Boolean(editor?.classList.contains('is-open')) ||
-               Boolean(toggleBtn?.classList.contains('active')) ||
-               document.body.classList.contains('sba-side-settings-open') ||
-               document.body.classList.contains('viewer-picker-open') ||
-               Boolean(picker && !picker.hidden && picker.classList.contains('is-open'));
-    };
-
-    const isPublishedEditorLocked = () => {
-        const body = document.body;
-        return Boolean(body?.classList.contains('is-published') &&
-            !body.classList.contains('admin-mode-active'));
-    };
-
-    function revealToolSbaNav() {
-        if (!isBottomDockActive()) return;
-        if (sbaNavHideTimer) { clearTimeout(sbaNavHideTimer); sbaNavHideTimer = null; }
-        document.body.classList.add('sba-bottom-nav-visible');
-    }
-
-    function scheduleToolSbaNavHide(delay = 800) {
-        if (!isBottomDockActive()) return;
-        // Keep dock visible permanently while editor sidebar or settings drawer is active
-        if (isEditorSidebarActive()) return;
-        if (sbaNavHideTimer) clearTimeout(sbaNavHideTimer);
-        sbaNavHideTimer = setTimeout(() => {
-            if (isEditorSidebarActive()) return;
-            document.body.classList.remove('sba-bottom-nav-visible');
-            sbaNavHideTimer = null;
-        }, delay);
-    }
-
-    // Expose helpers globally
-    window.revealToolSbaNav = revealToolSbaNav;
-    window.scheduleToolSbaNavHide = scheduleToolSbaNavHide;
-    window.isEditorSidebarActive = isEditorSidebarActive;
-
-    document.addEventListener('pointermove', (event) => {
-        if (!isBottomDockActive()) return;
-        const nav = document.querySelector('.hud-nav-group');
-        const drawer = document.getElementById('settingsDrawer');
-        const editor = document.getElementById('editor');
-        const picker = document.getElementById('viewer-card-picker');
-        const isInsideNav = Boolean(nav?.contains(event.target));
-        const isInsideDrawer = Boolean(drawer?.contains(event.target));
-        const isInsideEditor = Boolean(editor?.contains(event.target));
-        const isInsidePicker = Boolean(picker?.contains(event.target));
-        const isNearBottom = event.clientY >= window.innerHeight - 112;
-        if (isNearBottom || isInsideNav || isInsideDrawer || isInsideEditor || isInsidePicker || isEditorSidebarActive()) {
-            revealToolSbaNav();
-        } else {
-            scheduleToolSbaNavHide();
-        }
-    }, { passive: true });
-
-    window.addEventListener('resize', () => {
-        if (isBottomDockActive() && !isEditorSidebarActive()) {
-            document.body.classList.remove('sba-bottom-nav-visible');
-        }
-    }, { passive: true });
-
-    // ── Shared liquid-glass lens (matches Home's main.js initialisation) ─────
-    function initializeToolSbaLiquidGlass() {
-        const displacementImage = document.getElementById('sba-liquid-displacement-map');
-        if (displacementImage) {
-            const size = 128;
-            const canvas = document.createElement('canvas');
-            canvas.width = size;
-            canvas.height = size;
-            const context = canvas.getContext('2d', { willReadFrequently: false });
-            const pixels = context?.createImageData(size, size);
-
-            if (context && pixels) {
-                for (let y = 0; y < size; y += 1) {
-                    for (let x = 0; x < size; x += 1) {
-                        const nx = ((x + 0.5) / size - 0.5) * 2;
-                        const ny = ((y + 0.5) / size - 0.5) * 2;
-                        const radius = Math.min(1, Math.hypot(nx, ny));
-                        const edge = Math.max(0, Math.min(1, (radius - 0.38) / 0.62));
-                        const easedEdge = edge * edge * (3 - (2 * edge));
-                        const inverseRadius = radius > 0.0001 ? 1 / radius : 0;
-                        const offset = (y * size + x) * 4;
-                        pixels.data[offset] = Math.round(128 - (nx * inverseRadius * easedEdge * 112));
-                        pixels.data[offset + 1] = Math.round(128 - (ny * inverseRadius * easedEdge * 112));
-                        pixels.data[offset + 2] = 128;
-                        pixels.data[offset + 3] = 255;
-                    }
-                }
-                context.putImageData(pixels, 0, 0);
-                displacementImage.setAttribute('href', canvas.toDataURL('image/png'));
-            }
-        }
-
-        document.querySelectorAll('.hud-nav-link').forEach((control) => {
-            if (control.dataset.glassHighlightAttached) return;
-            control.dataset.glassHighlightAttached = 'true';
-            control.addEventListener('pointermove', (event) => {
-                if (!isBottomDockActive()) return;
-                const bounds = control.getBoundingClientRect();
-                const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-                const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-                control.style.setProperty('--sba-glass-x', `${Math.max(0, Math.min(100, x))}%`);
-                control.style.setProperty('--sba-glass-y', `${Math.max(0, Math.min(100, y))}%`);
-            });
-            control.addEventListener('pointerleave', () => {
-                control.style.removeProperty('--sba-glass-x');
-                control.style.removeProperty('--sba-glass-y');
-            });
-        });
-
-        document.querySelectorAll('.hud-nav-group').forEach((dock) => {
-            if (dock.dataset.highlightAttached) return;
-            dock.dataset.highlightAttached = 'true';
-            dock.addEventListener('pointermove', (event) => {
-                if (!isBottomDockActive()) return;
-                const bounds = dock.getBoundingClientRect();
-                const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-                const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-                dock.style.setProperty('--sba-dock-x', `${Math.max(0, Math.min(100, x))}%`);
-                dock.style.setProperty('--sba-dock-y', `${Math.max(0, Math.min(100, y))}%`);
-            });
-            dock.addEventListener('pointerleave', () => {
-                dock.style.removeProperty('--sba-dock-x');
-                dock.style.removeProperty('--sba-dock-y');
-            });
-        });
-    }
+    // Existing editor modules call these optional names. The persistent sidebar
+    // needs no reveal/hide loop; retain aliases until those callers are migrated.
+    window.revealToolSbaNav = () => window.absNavigation?.refresh();
+    window.scheduleToolSbaNavHide = () => {};
 
     window.addEventListener('DOMContentLoaded', () => {
         const rawStyle = localStorage.getItem(KEY);
@@ -344,52 +205,13 @@
             button.classList.toggle('active', button.dataset.toolTheme === style);
             button.addEventListener('click', () => setStyle(button.dataset.toolTheme));
         });
-        initializeToolSbaLiquidGlass();
         initializeEditorTopBar();
 
-        // ── Auto-attach news ticker horizontal scrolling if present ──────
-        const initToolNewsTicker = () => {
-            document.querySelectorAll('.sba-news-ticker-track').forEach((track) => {
-                if (!track.dataset.hScrollAttached && window.attachSmoothHorizontalScroll) {
-                    window.attachSmoothHorizontalScroll(track, 0.30);
-                }
-            });
-        };
-        setTimeout(initToolNewsTicker, 300);
-        setTimeout(initToolNewsTicker, 1000);
     });
 
     // ── Universal Settings Drawer & Popover Engine ────────────────────────
     window.positionSettingsMiniGui = function() {
-        const drawer = document.getElementById('settingsDrawer');
-        const btn = document.getElementById('sba-side-settings-button') || document.querySelector('.hud-nav-link[aria-label="Settings"]');
-        if (!drawer || !btn) return;
-        const btnRect = btn.getBoundingClientRect();
-        const drawerWidth = Math.min(480, window.innerWidth - 24);
-        
-        let left = btnRect.left + (btnRect.width / 2) - (drawerWidth / 2);
-        left = Math.max(12, Math.min(window.innerWidth - drawerWidth - 12, left));
-        
-        const isTopNav = btnRect.top < window.innerHeight / 2;
-        drawer.style.setProperty('position', 'fixed', 'important');
-        drawer.style.setProperty('left', `${Math.round(left)}px`, 'important');
-        drawer.style.setProperty('right', 'auto', 'important');
-        drawer.style.setProperty('width', `${drawerWidth}px`, 'important');
-        drawer.style.setProperty('height', 'auto', 'important');
-
-        if (isTopNav) {
-            const top = Math.round(btnRect.bottom + 10);
-            drawer.style.setProperty('top', `${top}px`, 'important');
-            drawer.style.setProperty('bottom', 'auto', 'important');
-            drawer.style.setProperty('max-height', `${Math.max(160, Math.round(window.innerHeight - top - 16))}px`, 'important');
-            drawer.style.setProperty('transform-origin', 'top center', 'important');
-        } else {
-            const bottom = Math.max(16, Math.round(window.innerHeight - btnRect.top + 10));
-            drawer.style.setProperty('bottom', `${bottom}px`, 'important');
-            drawer.style.setProperty('top', 'auto', 'important');
-            drawer.style.setProperty('max-height', `${Math.max(160, Math.round(window.innerHeight - bottom - 16))}px`, 'important');
-            drawer.style.setProperty('transform-origin', 'bottom center', 'important');
-        }
+        window.absNavigation?.positionPopover(document.getElementById('settingsDrawer'), document.getElementById('sba-side-settings-button') || document.querySelector('#abs-main-sidebar [aria-label="Settings"]'));
     };
 
     window.toggleSettingsDrawer = function() {
@@ -455,53 +277,10 @@
         }
     });
 
-    // ── Editor Top Auto-Revealing Action Bar Engine ───────────────────────────
+    // Existing progression controls now live in the persistent context sidebar.
     function initializeEditorTopBar() {
         const topBar = document.getElementById('editor-top-bar');
-        const trigger = document.getElementById('editor-top-bar-trigger');
         if (!topBar) return;
-
-        let hideTimer = null;
-
-        const reveal = () => {
-            if (isPublishedEditorLocked()) return;
-            if (hideTimer) {
-                clearTimeout(hideTimer);
-                hideTimer = null;
-            }
-            topBar.classList.add('is-revealed');
-        };
-
-        const scheduleHide = (delay = 240) => {
-            if (hideTimer) clearTimeout(hideTimer);
-            hideTimer = setTimeout(() => {
-                if (!topBar.matches(':hover') && !topBar.matches(':focus-within')) {
-                    topBar.classList.remove('is-revealed');
-                }
-                hideTimer = null;
-            }, delay);
-        };
-
-        window.addEventListener('pointermove', (event) => {
-            if (isPublishedEditorLocked()) return;
-            // Reveal if pointer is within 36px of the top edge
-            if (event.clientY <= 36) {
-                reveal();
-            } else if (event.clientY > 90) {
-                if (!topBar.matches(':hover') && !topBar.matches(':focus-within')) {
-                    scheduleHide(160);
-                }
-            }
-        }, { passive: true });
-
-        topBar.addEventListener('pointerenter', reveal);
-        topBar.addEventListener('pointerleave', () => scheduleHide(200));
-        topBar.addEventListener('focusin', reveal);
-        topBar.addEventListener('focusout', () => scheduleHide(250));
-
-        if (trigger) {
-            trigger.addEventListener('pointerenter', reveal);
-        }
 
         window.toggleTopBarProgression = function(kind) {
             const prop = kind === 'ssr' ? 'showSsrProgression' : 'showTurProgression';

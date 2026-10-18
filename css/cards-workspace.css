@@ -1,0 +1,147 @@
+/* Full Cards frame with safe foreground in the animated sidebar reservation. */
+html body.abs-shell.hub-cards-active {
+    padding-top:0 !important; padding-bottom:0 !important; container-type:inline-size;
+    --cards-safe-left:calc(100vw - 100cqw - var(--abs-shell-gap, 16px));
+    --cards-top-clearance:0px;
+}
+html body.abs-shell.hub-cards-active #hubMain.hub-main-container {
+    margin:0 !important; padding:0 !important;
+}
+html body.abs-shell.hub-cards-active section#hubCardsSection.hub-cards-view {
+    display:flex !important; flex-direction:column; box-sizing:border-box;
+    width:100vw !important; max-width:none !important; margin-left:calc(-1 * var(--cards-safe-left)) !important;
+    min-height:calc(100dvh - var(--cards-top-clearance));
+    padding:0 !important;
+    border-radius:0 !important; background:var(--abs-shell-panel);
+}
+html body.abs-shell #hubCardsSection .cards-workspace-header {
+    flex:0 0 auto; width:100% !important; margin:0 !important;
+    padding:16px 24px 14px calc(var(--cards-safe-left) + 24px) !important;
+    border-radius:0 !important; border-bottom:1px solid var(--abs-shell-border) !important;
+    background:transparent !important;
+}
+html body.abs-shell #hubCardsSection .cards-workspace-heading {
+    min-height:48px !important; padding:0 !important; flex-direction:column !important;
+    align-items:center !important; flex-wrap:nowrap !important; gap:14px !important;
+}
+html body.abs-shell #hubCardsSection .cards-workspace-title { justify-content:center !important; margin:0 !important; }
+html body.abs-shell #hubCardsSection .cards-workspace-title :is(div,h2,p) { text-align:center !important; }
+html body.abs-shell #hubCardsSection .cards-workspace-divider { display:none !important; }
+html body.abs-shell #hubCardsSection .cards-workspace-actions { flex:0 0 auto !important; width:100% !important; flex-direction:column !important; align-items:center !important; justify-content:center !important; gap:12px !important; }
+html body.abs-shell #hubCardsSection .cards-search-toolbar {
+    display:flex !important; flex:0 0 auto !important; width:100% !important; max-width:560px !important;
+    min-width:0 !important; gap:10px !important; padding:0 !important; margin:0 !important;
+}
+html body.abs-shell #hubCardsSection .cards-layout-switcher {
+    position:static !important; flex:0 0 auto; margin:0 !important;
+}
+html body.abs-shell #hubCardsSection .cards-workspace-search {
+    display:flex; align-items:center; gap:8px; flex:1; min-width:0;
+    padding:0 10px 0 4px; border:1px solid var(--abs-shell-border); border-radius:12px;
+    background:rgba(255,255,255,.04); color:var(--abs-shell-muted); box-shadow:0 1px 3px rgba(0,0,0,.18);
+}
+html body.abs-shell #hubCardsSection #cardSearchInput {
+    width:100% !important; min-width:0 !important; min-height:42px; padding:0 !important;
+    border:0 !important; background:transparent !important; box-shadow:none !important;
+    color:var(--abs-shell-text); font:inherit; outline:none;
+}
+html body.abs-shell #hubCardsSection .cards-workspace-search:focus-within { outline:2px solid #fff; outline-offset:2px; }
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn {
+    display:flex !important; gap:4px; flex:0 0 auto; min-width:36px !important; width:auto !important; min-height:36px;
+    padding:6px !important; border:0 !important;
+    border-radius:8px !important; background:transparent !important; box-shadow:none !important;
+}
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn .filter-button-label { display:none !important; }
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn:focus-visible { outline:2px solid #fff; outline-offset:0; }
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn,
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn * {
+    animation:none !important; transform:none !important;
+    transition:color 120ms ease,background-color 120ms ease !important;
+}
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn:hover { color:#fff; background-color:rgba(255,255,255,.08) !important; }
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn::before,
+html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn::after { animation:none !important; transform:none !important; }
+html body.abs-shell #hubCardsSection .cards-grid-surface {
+    flex:1 0 auto; box-sizing:border-box; width:100% !important; max-width:none !important;
+    min-height:0 !important; margin:0 !important;
+    padding:44px 24px 24px calc(var(--cards-safe-left) + 24px) !important;
+    border:0 !important; border-bottom:1px solid var(--abs-shell-border) !important;
+    border-radius:0 !important; background:rgba(0,0,0,.22) !important;
+    box-shadow:none !important; overflow:visible !important;
+}
+html body.abs-shell #hubCardsSection .cards-grid-surface::before { display:none !important; }
+html body.abs-shell #hubCardsSection #cardGrid {
+    margin:0 !important; padding:26px 16px 36px !important; width:100% !important; box-sizing:border-box;
+    height:auto !important; max-height:none !important; overflow:visible !important;
+    row-gap:14px !important; border:0 !important; border-radius:0 !important; background:transparent !important; box-shadow:none !important;
+}
+html body.abs-shell.cards-layout-dokkan #hubCardsSection #cardGrid .char-box { zoom:.70 !important; }
+html body.abs-shell #hubCardsSection #paginationBottom:empty { display:none !important; }
+html body.abs-shell #hubCardsSection #paginationTop .hub-pagination-control {
+    position:absolute !important; inset:8px auto auto calc(50% + var(--cards-safe-left) / 2) !important;
+    display:flex !important; align-items:center !important; gap:4px !important;
+    width:max-content !important; height:32px !important; transform:translateX(-50%) !important;
+    border:1px solid var(--abs-shell-border) !important; border-radius:9px !important;
+    background:rgba(255,255,255,.04) !important; padding:0 3px !important;
+}
+html body.abs-shell #hubCardsSection #paginationTop :is(.hub-page-nav-btn,.hub-page-status) {
+    position:static !important; inset:auto !important; transform:none !important; height:30px !important;
+    box-sizing:border-box !important; margin:0 !important; border:0 !important; border-radius:6px !important;
+    background:transparent !important; box-shadow:none !important; backdrop-filter:none !important;
+}
+html body.abs-shell #hubCardsSection #paginationTop .hub-page-nav-btn { width:30px !important; }
+html body.abs-shell #hubCardsSection #paginationTop .hub-page-nav-btn:disabled { display:grid !important; opacity:.3; }
+html body.abs-shell #hubCardsSection #paginationTop .hub-page-nav-btn:hover:not(:disabled) { background:rgba(255,255,255,.08) !important; }
+html body.abs-shell #hubCardsSection #paginationTop .hub-page-status { padding:0 8px !important; }
+body #cardsFilterModal { position:fixed; inset:0; display:flex; }
+body #cardsFilterModal .cards-filter-dialog {
+    position:relative !important; inset:auto !important; display:flex !important; flex-direction:column;
+    width:min(900px,100%) !important; max-width:900px !important;
+    opacity:1 !important; transform:none !important; pointer-events:auto !important;
+    visibility:visible !important; margin:0 !important;
+}
+body #cardsFilterModal .calc-picker-header { display:flex; align-items:center; gap:12px; padding-right:54px !important; }
+body #cardsFilterModal .calc-picker-title-text { flex:1; }
+body #cardsFilterModal .cards-filter-reset { width:auto; min-height:36px; }
+body #cardsFilterModal .cards-filter-columns {
+    display:grid; grid-template-columns:minmax(220px, .75fr) minmax(0,1.25fr);
+    min-height:0; overflow:auto; overscroll-behavior:contain; gap:20px; padding:18px 20px;
+}
+body #cardsFilterModal .cards-filter-controls { display:flex !important; grid-column:auto !important; grid-row:auto !important; flex-direction:column; gap:16px !important; padding:0 !important; overflow:visible !important; }
+body #cardsFilterModal :is(#sbaCardFiltersSlot,#sbaAdvancedFilterSlot) { display:block !important; }
+body #cardsFilterModal .cards-inline-filter-bar { display:flex !important; flex-direction:column !important; align-items:stretch !important; width:100% !important; margin:0 !important; padding:0 !important; border:0 !important; border-radius:0 !important; box-shadow:none !important; background:none !important; gap:20px !important; }
+body #cardsFilterModal .filter-pill-group { display:flex !important; flex-wrap:wrap !important; gap:6px !important; padding:0 !important; }
+body #cardsFilterModal .filter-group-label { flex:0 0 100%; color:var(--abs-shell-muted); }
+body #cardsFilterModal .filter-bar-divider { display:none !important; }
+body #cardsFilterModal :is(.filter-pill-btn,.category-filter-option) { min-height:36px; padding:8px 10px !important; font:500 12px/1.3 system-ui,sans-serif !important; border-radius:8px !important; background:rgba(255,255,255,.04) !important; border:1px solid var(--abs-shell-border) !important; box-shadow:none !important; color:var(--abs-shell-text) !important; }
+body #cardsFilterModal :is(.filter-pill-btn.active,.category-filter-option.active) { background:rgba(255,255,255,.16) !important; border-color:rgba(255,255,255,.35) !important; }
+body #cardsFilterModal .filter-group { margin:0 !important; padding:0 !important; border:0 !important; background:transparent !important; }
+body #cardsFilterModal :is(.filter-group-title,.filter-group-label,.category-filter-heading) { text-align:left !important; font:600 12px/1.4 system-ui,sans-serif !important; color:var(--abs-shell-muted); }
+body #cardsFilterModal #sbaAdvancedFilterSlot { border-top:1px solid var(--abs-shell-border); padding-top:16px; }
+body #cardsFilterModal .advanced-filter-toggle-copy { text-align:left !important; }
+body #cardsFilterModal .category-filter-search-wrap { border-radius:9px; background:rgba(255,255,255,.04); margin:12px 0; }
+body #cardsFilterModal #categoryFilterSearch { min-height:40px; background:transparent !important; }
+body #cardsFilterModal .lc-unit-picker-count { padding:12px 20px; margin:0 !important; border-top:1px solid var(--abs-shell-border); text-align:left !important; font:500 12px/1.4 system-ui,sans-serif; }
+body #cardsFilterModal :is(.filter-group-title,.filter-group-label,.advanced-filter-toggle-copy,.filter-pill-btn) { text-transform:none !important; letter-spacing:0 !important; }
+body #cardsFilterModal .filter-pill-group { justify-content:flex-start !important; }
+body #cardsFilterModal .category-filter-list { max-height:none !important; overflow:visible !important; }
+body #cardsFilterModal .advanced-filter-toggle { display:flex; gap:10px; align-items:center; }
+body #cardsFilterModal .advanced-filter-toggle-copy { flex:1; }
+body #cardsFilterModal .advanced-filter-toggle-copy strong,body #cardsFilterModal .advanced-filter-toggle-copy small { display:block; }
+body #cardsFilterModal .advanced-filter-toggle-copy small { color:var(--abs-shell-muted); font-size:11px; }
+@media (max-width:900px) {
+    html body.abs-shell.hub-cards-active { padding-top:72px !important; --cards-top-clearance:72px; }
+    html body.abs-shell #hubCardsSection .cards-workspace-header { padding:12px 16px !important; }
+    html body.abs-shell #hubCardsSection .cards-grid-surface { padding:44px 16px 20px !important; }
+    html body.abs-shell #hubCardsSection .cards-workspace-divider { display:none !important; }
+    html body.abs-shell #hubCardsSection .cards-workspace-heading { gap:12px !important; }
+    html body.abs-shell #hubCardsSection .cards-workspace-actions { flex-basis:100%; }
+    html body.abs-shell #hubCardsSection .cards-search-toolbar { flex-basis:100% !important; }
+    html body.abs-shell #hubCardsSection .cards-workspace-actions { flex-wrap:wrap !important; }
+    html body.abs-shell #hubCardsSection .cards-layout-switcher { position:static; margin:0 !important; }
+    body #cardsFilterModal .cards-filter-columns { grid-template-columns:1fr; padding:12px; }
+}
+@media (prefers-reduced-motion:reduce) {
+    html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn,
+    html body.abs-shell #hubCardsSection #cardsAdvancedFilterBtn * { transition:none !important; }
+}

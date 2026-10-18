@@ -32,15 +32,15 @@ let categoryDefinitions = [];
 let koScreenCardIds = new Set();
 let koScreenIndexPromise = null;
 let allCardItems = [];
+let hubCardsDataReady = false;
 let filteredCardItems = [];
 let currentPage = 1;
 const CARDS_PER_PAGE = 40;
-// Keep the SBA Cards panel compact enough to read as a landscape section.
-// 40 items cleanly fills 10 columns (4 rows) or 5 columns (8 rows).
+// The Cards component adds two complete rows using the resolved grid columns.
+// Keep 40 display units as the fallback when the responsive adapter is absent.
 const SBA_CARDS_PER_PAGE = 40;
 const HOME_LOGO_DEFAULT_SRC = 'https://abscustom.github.io/assets/images/abs_logo_home.png';
 const HOME_LOGO_ALT_SRC = 'https://abscustom.github.io/assets/images/abs_logo_other.png';
-let sbaBottomNavHideTimer = null;
 let hubLightningObserver = null;
 let sbaLrLwfObserver = null;
 
@@ -118,6 +118,7 @@ function canPlaySbaLrLwf() {
 
 function updateSbaLrLwf(canvas) {
     if (!canvas?.isConnected) return;
+    if (window.CardsLRLightning?.owns(canvas)) return;
     const shouldPlay = canPlaySbaLrLwf() && canvas.dataset.sbaLrVisible === 'true';
 
     if (!shouldPlay) {
@@ -153,8 +154,10 @@ function ensureSbaLrLwfObserver() {
 }
 
 function mountSbaLrLwfEffects(container = document) {
+    if (currentHubView === 'cards') window.CardsLRLightning?.mount(container);
     ensureSbaLrLwfObserver();
     container.querySelectorAll?.('.sba-lr-lwf-canvas').forEach((canvas) => {
+        if (window.CardsLRLightning?.owns(canvas)) return;
         if (canvas.dataset.sbaLrObserved === 'true') {
             updateSbaLrLwf(canvas);
             return;
@@ -172,7 +175,9 @@ function mountSbaLrLwfEffects(container = document) {
 
 function unmountSbaLrLwfEffects(container) {
     if (!container) return;
+    window.CardsLRLightning?.unmount(container);
     container.querySelectorAll('.sba-lr-lwf-canvas').forEach((canvas) => {
+        if (window.CardsLRLightning?.owns(canvas)) return;
         sbaLrLwfObserver?.unobserve(canvas);
         if (canvas.id) window.DokkanLWF?.destroy?.(canvas.id);
         delete canvas.dataset.lwfReady;
@@ -182,6 +187,7 @@ function unmountSbaLrLwfEffects(container) {
 }
 
 function syncSbaLrLwfPlayback() {
+    window.CardsLRLightning?.sync();
     document.querySelectorAll('.sba-lr-lwf-canvas').forEach(updateSbaLrLwf);
 }
 
@@ -259,12 +265,6 @@ function setAppStyle(styleKey) {
     document.body.classList.remove('theme-abs-style', 'theme-sba', 'theme-placeholder');
     document.body.classList.add(`theme-${styleKey}`);
     syncSbaCardsFilterPlacement();
-    // The SBA home ticker and the ABS home news card use different markup.
-    // Rebuild it after the body theme changes so ticker elements can never
-    // remain behind when the user returns to ABS (or vice versa).
-    if (currentHubView === 'home') window.dokkanNews?.renderHomeSnippet?.();
-    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
-
     // The SBA rail uses its own compact identity mark. Keep the shared header
     // image in the other themes untouched rather than maintaining duplicate navs.
     const hubLogo = document.getElementById('nav-center-logo');
@@ -300,6 +300,7 @@ function setAppStyle(styleKey) {
             window.DokkanLWF?.destroy?.(canvas.id);
             canvas.remove();
         });
+        mountGridSezaFlames();
     } else if (currentFxMode !== 'no-seza' && currentFxMode !== 'static') {
         mountGridSezaFlames();
     }
@@ -333,7 +334,12 @@ function setCardsLayout(layoutKey) {
         // Start with an empty grid so a previous mode's relationship stacks,
         // alternate portraits, and effects cannot overlap the new mode.
         const cardGrid = document.getElementById('cardGrid');
-        if (cardGrid) cardGrid.replaceChildren();
+        if (cardGrid) {
+            unmountHubLightningVideos(cardGrid);
+            unmountSbaLrLwfEffects(cardGrid);
+            unmountGridSezaFlames(cardGrid);
+            cardGrid.replaceChildren();
+        }
         filterCards(true);
     }
 }
@@ -366,30 +372,8 @@ function syncSbaCardsFilterPlacement() {
 }
 
 function getCardsPerPage() {
-    return document.body.classList.contains('theme-sba') ? SBA_CARDS_PER_PAGE : CARDS_PER_PAGE;
-}
-
-function syncSbaBottomNavVisibility() {
-    document.body.classList.remove('sba-bottom-nav-visible');
-    if (sbaBottomNavHideTimer) {
-        clearTimeout(sbaBottomNavHideTimer);
-        sbaBottomNavHideTimer = null;
-    }
-}
-
-function revealSbaBottomNav() {
-    if (!document.body.classList.contains('theme-sba')) return;
-    if (sbaBottomNavHideTimer) clearTimeout(sbaBottomNavHideTimer);
-    document.body.classList.add('sba-bottom-nav-visible');
-}
-
-function scheduleSbaBottomNavHide(delay = 800) {
-    if (!document.body.classList.contains('theme-sba')) return;
-    if (sbaBottomNavHideTimer) clearTimeout(sbaBottomNavHideTimer);
-    sbaBottomNavHideTimer = setTimeout(() => {
-        document.body.classList.remove('sba-bottom-nav-visible');
-        sbaBottomNavHideTimer = null;
-    }, delay);
+    if (!document.body.classList.contains('theme-sba')) return CARDS_PER_PAGE;
+    return window.CardsWorkspace?.getPageCapacity(SBA_CARDS_PER_PAGE) || SBA_CARDS_PER_PAGE;
 }
 
 function setFxAnimationMode(fxMode) {
@@ -406,7 +390,7 @@ function setFxAnimationMode(fxMode) {
     } else if (fxMode === 'static') {
         document.body.classList.add('fx-static');
     }
-    
+
     if (fxMode === 'no-seza' || fxMode === 'static') {
         document.querySelectorAll('.seza-lwf-border-canvas').forEach((canvas) => {
             window.DokkanLWF?.destroy?.(canvas.id);
@@ -445,24 +429,8 @@ function handleSourceChange(source) {
 
 function positionSettingsMiniGui() {
     const drawer = document.getElementById('settingsDrawer');
-    const btn = document.getElementById('sba-side-settings-button') || document.querySelector('.hud-nav-link[aria-label="Settings"]');
-    if (!drawer || !btn) return;
-    const btnRect = btn.getBoundingClientRect();
-    const drawerWidth = Math.min(290, window.innerWidth - 24);
-
-    // Position horizontally centered above the Settings button (or clamped to screen edge)
-    let left = btnRect.left + (btnRect.width / 2) - (drawerWidth / 2);
-    left = Math.max(12, Math.min(window.innerWidth - drawerWidth - 12, left));
-
-    const bottom = Math.max(16, window.innerHeight - btnRect.top + 10);
-    drawer.style.setProperty('position', 'fixed', 'important');
-    drawer.style.setProperty('left', `${Math.round(left)}px`, 'important');
-    drawer.style.setProperty('bottom', `${Math.round(bottom)}px`, 'important');
-    drawer.style.setProperty('top', 'auto', 'important');
-    drawer.style.setProperty('right', 'auto', 'important');
-    drawer.style.setProperty('width', `${drawerWidth}px`, 'important');
-    drawer.style.setProperty('height', 'auto', 'important');
-    drawer.style.setProperty('max-height', `${Math.round(window.innerHeight - bottom - 16)}px`, 'important');
+    const button = document.getElementById('sba-side-settings-button');
+    window.absNavigation?.positionPopover(drawer, button);
 }
 
 function toggleSettingsDrawer() {
@@ -537,8 +505,15 @@ function switchHubView(viewKey, sourceKey = null) {
     // A click on the already-open workspace does not rebuild anything.  In
     // particular, do not create another loading-screen transition for it.
     if (currentHubView === viewKey && (!sourceKey || sourceKey === currentSourceFilter)) {
-        requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
-        return;
+            return;
+    }
+    if (currentHubView === 'cards' && viewKey !== 'cards') {
+        const cardGrid = document.getElementById('cardGrid');
+        if (cardGrid) {
+            unmountHubLightningVideos(cardGrid);
+            unmountSbaLrLwfEffects(cardGrid);
+            unmountGridSezaFlames(cardGrid);
+        }
     }
     // Tab content is already rendered in the DOM; switching is an instant
     // display toggle. No full-screen loader - keeps Home/Cards/News snappy.
@@ -593,7 +568,6 @@ function switchHubView(viewKey, sourceKey = null) {
         if (newsSection) newsSection.style.display = 'none';
         renderTimelineView();
         renderHomeShowcaseGrid();
-        if (window.dokkanNews) window.dokkanNews.renderHomeSnippet();
     } else if (viewKey === 'cards') {
         if (homeSection) homeSection.style.display = 'none';
         if (cardsSection) cardsSection.style.display = 'block';
@@ -626,7 +600,6 @@ function switchHubView(viewKey, sourceKey = null) {
         }
     }
 
-    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
 }
 
 function handleSearchInput(val) {
@@ -654,9 +627,9 @@ function getCardClassAndType(elementId) {
     const alignment = Math.floor((elementId || 0) / 10);
     const typeIndex = (elementId || 0) % 10;
     const types = { 0: "agl", 1: "teq", 2: "int", 3: "str", 4: "phy" };
-    return { 
-        cardClass: alignment === 2 ? "extreme" : "super", 
-        cardType: types[typeIndex] || "agl" 
+    return {
+        cardClass: alignment === 2 ? "extreme" : "super",
+        cardType: types[typeIndex] || "agl"
     };
 }
 
@@ -1122,7 +1095,7 @@ function getCardViewerUrl(card) {
     return mode ? `card.html?viewer=1&id=${id}&mode=${mode}` : `card.html?viewer=1&id=${id}`;
 }
 
-function generateCardHtml(c, useCssBadges = false) {
+function generateCardHtml(c, useCssBadges = false, isCardsGrid = false) {
     const folderId = getCardFolderId(c.id);
     const parentFolderId = Math.floor(getCardParentId(c.id) / 10) * 10;
     const { cardClass } = getCardClassAndType(c.element !== undefined ? c.element : 0);
@@ -1131,7 +1104,7 @@ function generateCardHtml(c, useCssBadges = false) {
     const isSeza = !!c.isSeza;
     const isEza = !!c.isEza && !isSeza;
     const rarityKey = isLR ? 'LR' : ((c.rarity === 4 || c.rarity === 'tur') ? 'TUR' : 'SSR');
-    
+
     const rarityFilename = rarityKey === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarityKey}.png`;
     const raritySrc = `${CENTRAL_ASSET_URL}${rarityFilename}`;
     const frameSrc = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
@@ -1153,7 +1126,7 @@ function generateCardHtml(c, useCssBadges = false) {
         ? `window.handleHubThumbError(this, '${folderId}', '${parentFolderId}')`
         : `window.handleHubCircleError(this, '${folderId}', '${parentFolderId}')`;
     let lrOverlayHtml = '';
-    if (isLR) {
+    if (isLR && (!isCardsGrid || currentCardsLayout === 'dokkan')) {
         lrOverlayHtml = `
             <img class="lr-dial" src="${CENTRAL_ASSET_URL}lr_spin_dial.png" loading="lazy">`;
     }
@@ -1216,7 +1189,7 @@ function generateTimelineRowHtml(c) {
     const isSeza = !!c.isSeza;
     const isEza = !!c.isEza && !isSeza;
     const rarityKey = isLR ? 'LR' : ((c.rarity === 4 || c.rarity === 'tur') ? 'TUR' : 'SSR');
-    
+
     const rarityFilename = rarityKey === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarityKey}.png`;
     const raritySrc = `${CENTRAL_ASSET_URL}${rarityFilename}`;
     const frameSrc = `${CENTRAL_ASSET_URL}frame_${cardType}.png`;
@@ -1271,18 +1244,36 @@ function generateTimelineRowHtml(c) {
     </a>`;
 }
 
+function unmountGridSezaFlames(container) {
+    if (!container) return;
+    container.querySelectorAll('.seza-lwf-border-canvas').forEach((canvas) => {
+        if (canvas.id) window.DokkanLWF?.destroy?.(canvas.id);
+        canvas.remove();
+    });
+}
+
 function mountGridSezaFlames() {
-    if (currentAppStyle === 'sba' || currentFxMode === 'no-seza' || currentFxMode === 'static') return;
+    const isDokkanCards = currentHubView === 'cards' && currentCardsLayout === 'dokkan';
+    if ((currentAppStyle === 'sba' && !isDokkanCards) || currentFxMode === 'no-seza' || currentFxMode === 'static') return;
     if (typeof window.DokkanLWF === 'undefined' || !window.DokkanLWF.attachSezaFlameBorder) {
         setTimeout(mountGridSezaFlames, 120);
         return;
     }
 
-    document.querySelectorAll('.char-box[data-seza="true"]').forEach(box => {
+    const boxes = currentAppStyle === 'sba'
+        ? document.querySelectorAll('#cardGrid .char-box[data-seza="true"]')
+        : document.querySelectorAll('.char-box[data-seza="true"]');
+    boxes.forEach(box => {
         const iconContainer = box.querySelector('.card-icon');
         const cardType = box.getAttribute('data-type') || 'agl';
         if (iconContainer && !iconContainer.querySelector('.seza-lwf-border-canvas')) {
-            window.DokkanLWF.attachSezaFlameBorder(iconContainer, cardType);
+            const pending = window.DokkanLWF.attachSezaFlameBorder(iconContainer, cardType, isDokkanCards
+                ? { disableAdditiveReduction: true }
+                : undefined);
+            const canvas = iconContainer.querySelector('.seza-lwf-border-canvas');
+            Promise.resolve(pending).then(() => {
+                if (canvas && !canvas.isConnected) window.DokkanLWF?.destroy?.(canvas.id);
+            }).catch(() => {});
         }
     });
 }
@@ -1428,8 +1419,8 @@ function renderTimelineView() {
     const timelineStream = document.getElementById('timelineNodesStream');
     if (!timelineStream) return;
 
-    const sourceList = (allCardItems && allCardItems.length > 0) 
-        ? allCardItems 
+    const sourceList = (allCardItems && allCardItems.length > 0)
+        ? allCardItems
         : (window.rawCustomCards || []);
 
     const dokkanMinTime = new Date("2015-01-30T00:00:00Z").getTime();
@@ -1521,7 +1512,7 @@ function renderTimelineView() {
 window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
     if (!el) return;
     el.dataset.autoScrollSpeed = String(autoScrollSpeed);
-    
+
     // Stop any existing animation on this element
     if (el._hAutoScrollId) {
         cancelAnimationFrame(el._hAutoScrollId);
@@ -1568,7 +1559,7 @@ window.attachSmoothHorizontalScroll = function(el, autoScrollSpeed = 0.28) {
             pauseTemporarily(2500);
         });
 
-        el.addEventListener('mouseleave', () => { 
+        el.addEventListener('mouseleave', () => {
             if (!isDown) {
                 isUserInteracting = false;
                 clearTimeout(resumeTimer);
@@ -1992,7 +1983,7 @@ function renderHomeShowcaseGrid() {
                 <span class="sba-showcase-card-label">${label}</span>
                 ${isFocused ? `<span class="sba-showcase-active-copy"><strong class="${hasLongActiveName ? 'is-marquee' : ''}"><span class="sba-showcase-name-track"><span>${label}</span>${hasLongActiveName ? `<span aria-hidden="true">${label}</span>` : ''}</span></strong><small>${activeRarity} · ${activeType}</small><span class="sba-showcase-release-date">${activeReleaseDate}</span></span>` : ''}
             </a>`;
-        }).join('') : '<p class="sba-showcase-empty">No custom cards have been uploaded yet.</p>';
+        }).join('') : `<p class="sba-showcase-empty" role="status">${hubCardsDataReady ? 'No custom cards have been uploaded yet.' : 'Loading cards…'}</p>`;
         const navigationDots = baseList.length ? baseList.map((item, itemIndex) => {
             const isCurrent = itemIndex === activeIndex;
             const itemName = escapeShowcaseHtml(item?.name || 'Custom card');
@@ -2008,6 +1999,13 @@ function renderHomeShowcaseGrid() {
             <div class="sba-showcase-eyebrow" aria-hidden="true"><span></span><strong>${escapeShowcaseHtml(activeShowcaseLabel)}</strong><span></span></div>
             ${slides}
             <div class="sba-showcase-pagination" aria-label="Custom-card carousel navigation">${navigationDots}</div>`;
+        // Keep the live ambience outside the foreground's original clip.
+        const backgroundStage = homeGrid.closest('.abs-showcase-stage');
+        if (backgroundStage) {
+            backgroundStage.querySelector(':scope > .sba-showcase-ambience')?.remove();
+            const ambience = homeGrid.querySelector(':scope > .sba-showcase-ambience');
+            if (ambience) backgroundStage.prepend(ambience);
+        }
         // Do not call scrollIntoView here. Re-rendering the carousel (including
         // its automatic card rotation) was pulling the entire document down to
         // the active dot even when the user had not opened the showcase.
@@ -2272,12 +2270,14 @@ function renderCurrentPage() {
     if (pageSlice.length === 0) {
         unmountHubLightningVideos(grid);
         unmountSbaLrLwfEffects(grid);
+        unmountGridSezaFlames(grid);
         grid.innerHTML = `<div style="grid-column: 1/-1; padding: 50px 20px; color: #94a3b8; font-weight: 800; font-size: 15px;">No cards found matching your search.</div>`;
     } else {
         unmountHubLightningVideos(grid);
         unmountSbaLrLwfEffects(grid);
+        unmountGridSezaFlames(grid);
         const useCssBadges = currentCardsLayout !== 'dokkan';
-        const cardsHtml = pageSlice.map(item => generateCardHtml(item, useCssBadges)).join('\n');
+        const cardsHtml = pageSlice.map(item => generateCardHtml(item, useCssBadges, true)).join('\n');
         grid.innerHTML = cardsHtml;
         applyLinkedCardEffects(grid, pageSlice);
         mountHubLightningVideos(grid);
@@ -2287,7 +2287,6 @@ function renderCurrentPage() {
     }
 
     renderPaginationControls(totalPages);
-    requestAnimationFrame(() => setTimeout(syncSbaBottomNavVisibility, 40));
 }
 
 function renderPaginationControls(totalPages) {
@@ -2538,6 +2537,9 @@ async function loadOfficialDatabaseCards() {
 }
 
 async function loadCustomCards() {
+    if (window.CardContent?.enabled()) {
+        return (await window.CardContent.listCards()).map(window.CardContent.toCatalogCard);
+    }
     const cachedCustom = localStorage.getItem('hub_cached_custom_only');
     let customCardsArray = [];
 
@@ -2582,7 +2584,7 @@ async function loadCustomCards() {
 
         const contents = await repoRes.json();
         const ignored = ['DokkanCustom', 'CardEditor', 'Custom Cards', 'images', 'css', 'js', 'js2', 'assets', 'json', '.github'];
-        const cardFolders = contents.filter(item => 
+        const cardFolders = contents.filter(item =>
             item.type === 'dir' && !ignored.includes(item.name) && !item.name.startsWith('.')
         ).map(item => ({ name: item.name, repoPath: item.name }));
         const groupedFolder = contents.find(item => item.type === 'dir' && item.name === 'Custom Cards');
@@ -2597,6 +2599,7 @@ async function loadCustomCards() {
         }
 
         const freshCards = [];
+        let observedUnavailableCard = false;
 
         for (const folder of cardFolders) {
             try {
@@ -2604,7 +2607,7 @@ async function loadCustomCards() {
                 const encodedPath = folder.repoPath.split('/').map(encodeURIComponent).join('/');
                 const cardUrl = `https://abscustom.github.io/${encodedPath}/`;
                 const rawUrl = `https://raw.githubusercontent.com/abscustom/abscustom.github.io/main/${encodedPath}/index.html`;
-                
+
                 const indexRes = await fetch(rawUrl);
                 if (!indexRes.ok) continue;
 
@@ -2612,6 +2615,10 @@ async function loadCustomCards() {
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
                 let cardData = null;
+                if (['archived', 'draft'].includes(doc.querySelector('meta[name="abs-card-state"]')?.content)) {
+                    observedUnavailableCard = true;
+                    continue;
+                }
                 const embeddedJson = doc.querySelector('#card-data')?.textContent;
                 if (embeddedJson) {
                     try { cardData = JSON.parse(embeddedJson); } catch (e) {}
@@ -2677,7 +2684,7 @@ async function loadCustomCards() {
 
                 const frameAttr = doc.querySelector('.card-frame')?.getAttribute('src') || '';
                 const typeImgAttr = doc.querySelector('.typing-icon')?.getAttribute('src') || '';
-                
+
                 let cardClass = cardData?.currentClass ? cardData.currentClass.toLowerCase() : (typeImgAttr.includes('extreme') ? 'extreme' : 'super');
                 let cardType = cardData?.currentType ? cardData.currentType.toLowerCase() : 'agl';
                 if (!cardData?.currentType) {
@@ -2747,7 +2754,7 @@ async function loadCustomCards() {
             } catch (e) {}
         }
 
-        if (freshCards.length > 0) {
+        if (freshCards.length > 0 || observedUnavailableCard) {
             customCardsArray = freshCards;
             try { localStorage.setItem('hub_cached_custom_only', JSON.stringify(freshCards)); } catch(e) {}
         }
@@ -2780,7 +2787,7 @@ async function updateCharacterBox() {
             if (a.isFuture && !b.isFuture) return 1;
             if (!a.isFuture && b.isFuture) return -1;
             if (b.sortTime !== a.sortTime) return b.sortTime - a.sortTime;
-            
+
             const parentA = a.parentId || getCardParentId(a.id);
             const parentB = b.parentId || getCardParentId(b.id);
             if (parentB !== parentA) {
@@ -2801,6 +2808,7 @@ async function updateCharacterBox() {
         });
 
         allCardItems = merged;
+        hubCardsDataReady = true;
 
         if (currentHubView === 'home') {
             renderTimelineView();
@@ -2823,290 +2831,10 @@ async function updateCharacterBox() {
     }
 }
 
-// ==========================================================================
-// DOKKAN STREAMERS: SINGLE SELECTABLE LIVE PREVIEW
-// ==========================================================================
-
-const DOKKAN_STREAMER_CHANNELS = [
-    { twitch: 'theironcane', youtube: 'ironcane', displayName: 'Iron' },
-    { twitch: 'datruthdt', youtube: 'datruthdt', displayName: 'DaTruthDT' },
-    { twitch: 'toonrami', youtube: 'ToonRami', displayName: 'Toon' },
-    { twitch: 'slaybix', youtube: 'slaybix', displayName: 'Slay' },
-    { twitch: 'nanogenix', youtube: 'Nanogenix', displayName: 'Nano' },
-    { youtube: 'Goresh', displayName: 'Goresh', youtubeOnly: true },
-];
-
-const MAX_SELECTED_STREAMERS = 4;
-let selectedStreamerIndexes = [];
-let latestStreamerData = DOKKAN_STREAMER_CHANNELS.map((streamer, originalIndex) => ({
-    ...streamer,
-    originalIndex,
-    isLive: false,
-    avatar: streamer.youtubeOnly ? `https://unavatar.io/youtube/${streamer.youtube}` : null,
-}));
-
-function renderSelectedStreamerPreview() {
-    const preview = document.getElementById('streamersLivePreview');
-    if (!preview) return;
-
-    document.querySelectorAll('.streamer-card-pill[data-streamer-index]').forEach((pill) => {
-        const isSelected = selectedStreamerIndexes.includes(Number(pill.dataset.streamerIndex));
-        pill.classList.toggle('is-selected', isSelected);
-        pill.setAttribute('aria-pressed', isSelected ? 'true' : 'false');
-    });
-
-    const selectedStreamers = selectedStreamerIndexes
-        .map((index) => latestStreamerData.find((item) => item.originalIndex === index))
-        .filter(Boolean);
-
-    if (selectedStreamers.length === 0) {
-        preview.innerHTML = '';
-        return;
-    }
-
-    const parent = encodeURIComponent(window.location.hostname || 'localhost');
-    preview.innerHTML = selectedStreamers.map((streamer) => {
-        const twitchUrl = streamer.twitch ? `https://www.twitch.tv/${streamer.twitch}` : '';
-        const youtubeUrl = `https://www.youtube.com/@${streamer.youtube}`;
-        const channelLinks = `
-            <span class="streamer-preview-channel-links">
-                ${twitchUrl ? `<a href="${twitchUrl}" target="_blank" rel="noopener noreferrer">Twitch ↗</a>` : ''}
-                <a href="${youtubeUrl}" target="_blank" rel="noopener noreferrer">YouTube ↗</a>
-            </span>`;
-
-        if (streamer.youtubeOnly) {
-            return `
-                <article class="streamer-live-preview is-youtube-preview">
-                    <div class="streamer-live-preview-heading">
-                        <strong>${streamer.displayName}</strong>
-                        ${channelLinks}
-                    </div>
-                    <a class="streamer-youtube-preview-link" href="${youtubeUrl}" target="_blank" rel="noopener noreferrer" aria-label="Open ${streamer.displayName} on YouTube">
-                        <img src="${streamer.avatar || ''}" alt="${streamer.displayName}">
-                        <span>Open YouTube channel ↗</span>
-                    </a>
-                </article>`;
-        }
-
-        const liveLabel = streamer.isLive
-            ? '<span class="streamer-selected-live-label"><span class="live-dot"></span>LIVE NOW</span>'
-            : '<span class="streamer-selected-live-label is-offline">OFFLINE</span>';
-
-        return `
-            <article class="streamer-live-preview">
-                <div class="streamer-live-preview-heading">
-                    <strong>${streamer.displayName}</strong>
-                    ${liveLabel}
-                    ${channelLinks}
-                </div>
-                <div class="streamer-player-shell">
-                    <iframe src="https://player.twitch.tv/?channel=${encodeURIComponent(streamer.twitch)}&parent=${parent}&autoplay=true&muted=true" title="${streamer.displayName} Twitch stream" allow="autoplay; fullscreen" allowfullscreen loading="eager"></iframe>
-                </div>
-            </article>`;
-    }).join('');
-}
-
-function toggleStreamerPreview(index) {
-    const selectedPosition = selectedStreamerIndexes.indexOf(index);
-    if (selectedPosition >= 0) {
-        selectedStreamerIndexes.splice(selectedPosition, 1);
-    } else {
-        if (selectedStreamerIndexes.length >= MAX_SELECTED_STREAMERS) {
-            selectedStreamerIndexes.shift();
-        }
-        selectedStreamerIndexes.push(index);
-    }
-    renderSelectedStreamerPreview();
-}
-
-// SBA uses the compact streamer strip as a direct channel launcher. The
-// full ABS Home view keeps its existing selectable multi-player behaviour.
-function handleStreamerPillClick(index) {
-    if (currentAppStyle !== 'sba') {
-        toggleStreamerPreview(index);
-        return;
-    }
-
-    const streamer = latestStreamerData.find((item) => item.originalIndex === index)
-        || DOKKAN_STREAMER_CHANNELS[index];
-    if (!streamer) return;
-
-    const channelUrl = streamer.youtubeOnly || !streamer.twitch
-        ? `https://www.youtube.com/@${encodeURIComponent(streamer.youtube)}`
-        : `https://www.twitch.tv/${encodeURIComponent(streamer.twitch)}`;
-    window.open(channelUrl, '_blank', 'noopener,noreferrer');
-}
-
-function renderStreamerPills(streamerData) {
-    const track = document.getElementById('streamersHorizontalTrack');
-    if (!track) return;
-
-    track.innerHTML = streamerData.map((streamer) => {
-        const initial = streamer.displayName.charAt(0).toUpperCase();
-        const avatarClass = `streamer-avatar-circle${streamer.youtubeOnly ? ' is-yt-avatar' : ''}`;
-        const avatarHtml = streamer.avatar
-            ? `<img src="${streamer.avatar}" alt="${streamer.displayName}" class="${avatarClass}" style="object-fit: cover;" onerror="this.outerHTML='<span class=\\'${avatarClass}\\'>${initial}</span>';">`
-            : `<span class="${avatarClass}">${initial}</span>`;
-
-        const statusBadge = streamer.youtubeOnly
-            ? '<span class="streamer-live-status is-youtube">YOUTUBE</span>'
-            : streamer.isLive
-                ? '<span class="streamer-live-status is-live"><span class="live-dot"></span>LIVE</span>'
-                : '<span class="streamer-live-status is-offline">OFFLINE</span>';
-        const isSelected = selectedStreamerIndexes.includes(streamer.originalIndex);
-
-        return `
-            <button type="button" class="streamer-card-pill ${streamer.youtubeOnly ? 'is-youtube-pill' : ''} ${streamer.isLive ? 'live-pill-glow' : ''} ${isSelected ? 'is-selected' : ''}" data-streamer-index="${streamer.originalIndex}" onclick="handleStreamerPillClick(${streamer.originalIndex})" aria-label="Open ${streamer.displayName}'s ${streamer.youtubeOnly ? 'YouTube' : 'Twitch'} channel" aria-pressed="${isSelected}">
-                ${avatarHtml}
-                <span class="streamer-pill-name">${streamer.displayName}</span>
-                ${statusBadge}
-            </button>`;
-    }).join('');
-
-    renderSelectedStreamerPreview();
-}
-
-window.toggleStreamerPreview = toggleStreamerPreview;
-window.handleStreamerPillClick = handleStreamerPillClick;
-
-async function updateTwitchStreamersStatus() {
-    const track = document.getElementById('streamersHorizontalTrack');
-    if (!track) return;
-
-    renderStreamerPills(latestStreamerData);
-
-    try {
-        const results = await Promise.allSettled(
-            DOKKAN_STREAMER_CHANNELS.map(async (streamer, originalIndex) => {
-                if (streamer.youtubeOnly) {
-                    return {
-                        ...streamer,
-                        originalIndex,
-                        isLive: false,
-                        avatar: `https://unavatar.io/youtube/${streamer.youtube}`,
-                    };
-                }
-
-                try {
-                    const [uptimeRes, avatarRes] = await Promise.allSettled([
-                        fetch(`https://decapi.me/twitch/uptime/${streamer.twitch}`).then((response) => response.text()),
-                        fetch(`https://decapi.me/twitch/avatar/${streamer.twitch}`).then((response) => response.text()),
-                    ]);
-
-                    const uptimeText = (uptimeRes.status === 'fulfilled' ? uptimeRes.value : '').trim();
-                    const avatarUrl = (avatarRes.status === 'fulfilled' ? avatarRes.value : '').trim();
-                    const statusText = uptimeText.toLowerCase();
-                    const isLive = Boolean(uptimeText)
-                        && !statusText.includes('offline')
-                        && !statusText.includes('not found')
-                        && !statusText.includes('error');
-
-                    return {
-                        ...streamer,
-                        originalIndex,
-                        isLive,
-                        uptime: isLive ? uptimeText : null,
-                        avatar: avatarUrl.startsWith('http') ? avatarUrl : null,
-                    };
-                } catch (error) {
-                    return { ...streamer, originalIndex, isLive: false, avatar: null };
-                }
-            }),
-        );
-
-        latestStreamerData = results.map((result, index) => result.status === 'fulfilled'
-            ? result.value
-            : { ...DOKKAN_STREAMER_CHANNELS[index], originalIndex: index, isLive: false, avatar: null });
-
-        latestStreamerData.sort((first, second) => {
-            if (first.isLive && !second.isLive) return -1;
-            if (!first.isLive && second.isLive) return 1;
-            return first.originalIndex - second.originalIndex;
-        });
-
-        renderStreamerPills(latestStreamerData);
-    } catch (error) {
-        console.warn('Streamers status check failed:', error);
-    }
-}
-
-function initializeSbaLiquidGlass() {
-    const displacementImage = document.getElementById('sba-liquid-displacement-map');
-    if (displacementImage) {
-        const size = 128;
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext('2d', { willReadFrequently: false });
-        const pixels = context?.createImageData(size, size);
-
-        if (context && pixels) {
-            for (let y = 0; y < size; y += 1) {
-                for (let x = 0; x < size; x += 1) {
-                    const nx = ((x + 0.5) / size - 0.5) * 2;
-                    const ny = ((y + 0.5) / size - 0.5) * 2;
-                    const radius = Math.min(1, Math.hypot(nx, ny));
-                    const edge = Math.max(0, Math.min(1, (radius - 0.38) / 0.62));
-                    const easedEdge = edge * edge * (3 - (2 * edge));
-                    const inverseRadius = radius > 0.0001 ? 1 / radius : 0;
-                    const offset = (y * size + x) * 4;
-
-                    // R/G encode horizontal/vertical refraction. The vector
-                    // points inward, producing a convex circular lens bezel.
-                    pixels.data[offset] = Math.round(128 - (nx * inverseRadius * easedEdge * 112));
-                    pixels.data[offset + 1] = Math.round(128 - (ny * inverseRadius * easedEdge * 112));
-                    pixels.data[offset + 2] = 128;
-                    pixels.data[offset + 3] = 255;
-                }
-            }
-            context.putImageData(pixels, 0, 0);
-            displacementImage.setAttribute('href', canvas.toDataURL('image/png'));
-        }
-    }
-
-    const glassControls = document.querySelectorAll([
-        '.hud-nav-link',
-        '#sidebarDrawer .reset-btn',
-    ].join(','));
-
-    glassControls.forEach((control) => {
-        control.addEventListener('pointermove', (event) => {
-            if (!document.body.classList.contains('theme-sba')) return;
-            const bounds = control.getBoundingClientRect();
-            const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-            const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-            control.style.setProperty('--sba-glass-x', `${Math.max(0, Math.min(100, x))}%`);
-            control.style.setProperty('--sba-glass-y', `${Math.max(0, Math.min(100, y))}%`);
-        });
-
-        control.addEventListener('pointerleave', () => {
-            control.style.removeProperty('--sba-glass-x');
-            control.style.removeProperty('--sba-glass-y');
-        });
-    });
-
-    // The SBA navigation is one larger piece of glass. Keep its highlight tied
-    // to the pointer so the light appears to travel beneath the icon buttons.
-    document.querySelectorAll('.hud-nav-group').forEach((dock) => {
-        dock.addEventListener('pointermove', (event) => {
-            if (!document.body.classList.contains('theme-sba')) return;
-            const bounds = dock.getBoundingClientRect();
-            const x = ((event.clientX - bounds.left) / bounds.width) * 100;
-            const y = ((event.clientY - bounds.top) / bounds.height) * 100;
-            dock.style.setProperty('--sba-dock-x', `${Math.max(0, Math.min(100, x))}%`);
-            dock.style.setProperty('--sba-dock-y', `${Math.max(0, Math.min(100, y))}%`);
-        });
-
-        dock.addEventListener('pointerleave', () => {
-            dock.style.removeProperty('--sba-dock-x');
-            dock.style.removeProperty('--sba-dock-y');
-        });
-    });
-}
+// Community channel polling is shared by js/sidebar-streamers-feed.js.
 
 window.addEventListener('DOMContentLoaded', async () => {
     chooseHomeLogoVariant();
-    initializeSbaLiquidGlass();
     setAppStyle(currentAppStyle);
     setCardsLayout(currentCardsLayout);
     // Inline handlers can be blocked by a strict page policy, so bind the
@@ -3149,7 +2877,6 @@ window.addEventListener('DOMContentLoaded', async () => {
     });
     window.setInterval(refreshTimelineCountdowns, 1000);
     window.addEventListener('resize', () => {
-        syncSbaBottomNavVisibility();
         if (document.body.classList.contains('sba-side-settings-open')) {
             positionSettingsMiniGui();
         }
@@ -3161,57 +2888,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             sbaCardsResizeTimer = setTimeout(renderCurrentPage, 100);
         }
     }, { passive: true });
-    document.addEventListener('pointermove', (event) => {
-        if (!document.body.classList.contains('theme-sba')) return;
-        const nav = document.querySelector('.hud-nav-group');
-        const isInsideNav = Boolean(nav?.contains(event.target));
-        const isNearBottom = event.clientY >= window.innerHeight - 112;
-        if (isNearBottom || isInsideNav) revealSbaBottomNav();
-        else scheduleSbaBottomNavHide();
-    }, { passive: true });
-
-    // SBA panels are intentionally transient. Tracking the cursor relative to
-    // the panel edge avoids the panel immediately closing during its own slide-in.
-    document.addEventListener('mousemove', (event) => {
-        if (!document.body.classList.contains('theme-sba')) return;
-        const openedAt = Number(document.body.dataset.sbaPanelOpenedAt || 0);
-        if (openedAt && Date.now() - openedAt < 350) return;
-
-        const panel = document.body.classList.contains('sba-side-filters-open')
-            ? ['sidebarDrawer', 'sba-side-filters-open', 'sba-side-filter-button']
-            : null;
-        if (!panel) return;
-
-        const [drawerId, openClass, triggerId] = panel;
-        const drawer = document.getElementById(drawerId);
-        const dock = document.querySelector('.apple-hud-wrapper');
-        if (!drawer) return;
-
-        const drawerBounds = drawer.getBoundingClientRect();
-        const dockBounds = dock?.getBoundingClientRect();
-        const within = (bounds, padding = 0) => bounds
-            && event.clientX >= bounds.left - padding
-            && event.clientX <= bounds.right + padding
-            && event.clientY >= bounds.top - padding
-            && event.clientY <= bounds.bottom + padding;
-        const inDrawer = within(drawerBounds, 8);
-        const inDock = within(dockBounds, 8);
-        const inPopoverBridge = dockBounds
-            && event.clientX >= Math.min(drawerBounds.left, dockBounds.left) - 8
-            && event.clientX <= Math.max(drawerBounds.right, dockBounds.right) + 8
-            && event.clientY >= drawerBounds.bottom
-            && event.clientY <= dockBounds.top;
-        if (inDrawer || inDock || inPopoverBridge) return;
-
-        document.body.classList.remove(openClass);
-        delete document.body.dataset.sbaPanelOpenedAt;
-        drawer.classList.remove('open');
-        document.getElementById(triggerId)?.setAttribute('aria-expanded', 'false');
-        if (drawerId === 'sidebarDrawer') {
-            document.getElementById('cardsAdvancedFilterBtn')?.setAttribute('aria-expanded', 'false');
-        }
-    });
-    
     setFxAnimationMode(currentFxMode);
     syncAdvancedFilterControls();
 
@@ -3227,8 +2903,10 @@ window.addEventListener('DOMContentLoaded', async () => {
         switchHubView('cards');
     }
 
-    updateTwitchStreamersStatus();
-    setInterval(updateTwitchStreamersStatus, 120000); // Auto-refresh live status every 2 minutes
 
+    if (currentHubView === 'home' && !window.absHomeContentReady) {
+        window.absHomeContentReady = true;
+        window.dispatchEvent(new Event('abs-home-content-ready'));
+    }
     await updateCharacterBox();
 });

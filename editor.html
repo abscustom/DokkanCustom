@@ -4,9 +4,10 @@
     <!-- META & TITLES -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>absCustom Editor</title>
+    <title>ABS - Editor</title>
 
-    <link rel="icon" type="image/png" href="assets/ui/images/editor-favicon.png?v=1" sizes="48x48">
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/DokkanCustom/assets/navigation/sidebar/support_memory_enh_lv_base.png" sizes="48x48">
+    <script src="js/favicon.js?v=20261010-page-metadata-v1" defer></script>
     <meta name="color-scheme" content="dark">
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@HarryTurney">
@@ -31,42 +32,72 @@
     <!-- STYLESHEETS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=20260914-abs-clean-filters-settings-v1">
-    <link rel="stylesheet" href="css/ui-toast.css?v=20260924-passive-undo-feedback-v1">
+    <link rel="stylesheet" href="css/ui-toast.css?v=20261008-abs-ui-v2">
     <link rel="stylesheet" href="css/dokkan-info.css?v=20260924-info-transformations-v2">
-    <link rel="stylesheet" href="css/abs-style-layout.css?v=20260929-active-multiplier-hidden-v2">
-    <link rel="stylesheet" href="css/editor-ui.css?v=20260926-sa-reorder-controls-v2">
-    <link rel="stylesheet" href="css/card-inspector.css?v=20260924-info-grid-align-v1">
+    <link rel="stylesheet" href="css/abs-style-layout.css?v=20261008-style-header-fit-v2">
+    <link rel="stylesheet" href="css/editor-ui.css?v=20261014-viewer-hover-edit-boundary-v1">
+    <link rel="stylesheet" href="css/card-inspector.css?v=20261013-info-viewport-background-v1">
     <link rel="stylesheet" href="css/lwf.css?v=20260906-abs-clean-art-hover-exact-v6">
 <link rel="stylesheet" href="css/abs-clean.css?v=20260928-field-standby-editor-parity-v29">
-    <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v12">
-    <link rel="stylesheet" href="css/card-admin.css?v=20260913-toast-fade-v1">
+    <link rel="stylesheet" href="css/loading-screen.css?v=20261007-stable-ring-v1">
     <link rel="stylesheet" href="css/sba-side-dock.css?v=20260902-search-filter-placement-v7">
     <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260914-stars-bg-v4">
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-published-lock-v1">
-<link rel="stylesheet" href="css/abs-clean-presentation.css?v=20260927-clean-presentation-v53">
-    <link rel="stylesheet" href="css/unit-picker.css?v=20260930-picker-portrait-fill-v3">
+<link rel="stylesheet" href="css/abs-clean-presentation.css?v=20261008-abs-clean-refresh-v2">
+    <link rel="stylesheet" href="css/phantom-presentation.css?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5">
+    <link rel="stylesheet" href="css/unit-picker.css?v=20261007-abs-selector-shell-v2">
 
     <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
     <script src="js-card-details/card-image-interceptor.js?v=20260924-empty-image-guard-v1"></script>
+    <link rel="stylesheet" href="css/abs-navigation.css?v=20261017-editor-four-themes-v1">
+    <script>(()=>{try{const pinned=localStorage.getItem('abs_context_pinned')==='true';document.documentElement.dataset.absNavCollapsed=String(localStorage.getItem('abs_navigation_collapsed')==='true');document.documentElement.dataset.absContextPinned=String(pinned);document.documentElement.dataset.absContextCollapsed=String(!pinned);}catch{}})();</script>
+    <link rel="stylesheet" href="css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1">
+<style id="abs-loader-critical">
+#abs-loading-screen{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;overflow:hidden;background:#08090b;color:#fff}
+#abs-loading-screen .abs-loader-stage{position:relative;top:clamp(8px,2vh,20px);width:clamp(152px,22vw,204px);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+#abs-loading-screen .abs-loader-logo{display:block;width:clamp(120px,18vw,170px);height:clamp(120px,18vw,170px);aspect-ratio:1;object-fit:contain}
+#abs-loading-screen .abs-loader-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#abs-loading-screen.is-hidden{display:none!important}#abs-loading-screen[data-loader-error="true"] .abs-loader-stage{width:min(90vw,560px);aspect-ratio:auto;flex-direction:column;text-align:center}
+</style>
 </head>
-<body class="theme-dokkaninfo editor-tool-page">
-    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-editor-content-ready" data-loader-ready-flag="absEditorContentReady">
-        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
-        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
-        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
-        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
-        <div class="abs-loader-art" aria-hidden="true"></div>
+<body class="theme-dokkaninfo editor-tool-page abs-shell abs-context-page">
+    <div id="abs-loading-screen" data-loader-shell-ready-event="abs-shell-ready" data-loader-shell-ready-flag="absShellReady" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-editor-content-ready" data-loader-ready-flag="absEditorContentReady">
+
+
+
+
+
         <div class="abs-loader-stage">
-            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async" onerror="this.style.display='none'">
-            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">1%</div>
-            <div class="abs-loader-sub" aria-hidden="true">loading</div>
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" loading="eager" decoding="async" width="1000" height="1000" fetchpriority="high">
+            <div class="abs-loader-status">Loading…</div>
         </div>
     </div>
-    <script>window.setTimeout(function(){if(!window.absLoadingScreen){var s=document.getElementById('abs-loading-screen');if(s){s.style.transition='opacity .5s ease';s.style.opacity='0';s.style.pointerEvents='none';window.setTimeout(function(){s.style.visibility='hidden';},550);}}},5000);</script>
-    <video id="stars-bg-video" autoplay muted playsinline aria-hidden="true" loop>
-        <source src="assets/video/Stars BG.webm?v=pingpong2" type="video/webm">
-    </video>
-    <canvas id="abs-clean-grid-circuit" class="abs-clean-grid-circuit" aria-hidden="true"></canvas>
+
+    <script id="abs-loader-runtime-watchdog">
+    window.setTimeout(function () {
+        if (window.absLoadingScreen) return;
+        var screen = document.getElementById('abs-loading-screen');
+        if (!screen || screen.classList.contains('is-hidden')) return;
+        screen.dataset.loaderError = 'true';
+        screen.setAttribute('role', 'alert');
+        screen.setAttribute('aria-busy', 'false');
+        screen.setAttribute('aria-label', 'Page could not load');
+        var stage = screen.querySelector('.abs-loader-stage');
+        if (stage) {
+            var message = document.createElement('p');
+            message.textContent = 'Page could not load. Please retry.';
+            var retry = document.createElement('button');
+            retry.type = 'button';
+            retry.textContent = 'Retry';
+            retry.style.cssText = 'pointer-events:auto;padding:10px 20px;border:1px solid #85888f;border-radius:10px;background:#27292e;color:#fff;';
+            retry.addEventListener('click', function () { window.location.reload(); });
+            stage.replaceChildren(message, retry);
+        }
+        document.documentElement.classList.remove('abs-page-loading');
+    }, 15000);
+    </script>
+
+
 
     <!-- Shared SBA liquid-control lens -->
     <svg style="display: none;" aria-hidden="true">
@@ -270,78 +301,6 @@
     </div>
 </div>
 
-<!-- CUSTOM CARD ADMIN MODAL -->
-<div id="card-admin-modal" class="clean-modal-backdrop card-admin-overlay" style="display: none;" onclick="window.closeCardAdminModal()">
-    <div class="clean-modal-panel card-admin-dialog" onclick="event.stopPropagation()">
-        <div class="clean-modal-header">
-            <span id="card-admin-title" class="clean-modal-title">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/></svg>
-                LINK CUSTOM CARDS
-            </span>
-            <button type="button" class="clean-modal-close" onclick="window.closeCardAdminModal()">×</button>
-        </div>
-        <div class="clean-modal-body card-admin-body">
-            <div class="card-admin-auth-row">
-                <div class="glass-input-group">
-                    <label class="form-label">GitHub Access Token (Password)</label>
-                    <input type="password" id="card-admin-token" class="glass-form-control font-mono" placeholder="ghp_********************************">
-                </div>
-                <button type="button" class="gui-preset-btn card-admin-load-btn" onclick="window.loadCardAdminCards()">Unlock & Load Cards</button>
-            </div>
-
-            <div id="card-admin-status" class="card-admin-status">Enter your GitHub token to unlock the custom-card tools.</div>
-
-            <div id="card-admin-tools" style="display: none;">
-            <section id="card-admin-link-section" class="card-admin-section mt-3">
-                <h3>Link One or More Forms</h3>
-                <p>Choose one main card, then select one or more linked forms. Every selected card receives a link back to the main card.</p>
-                <div class="card-admin-link-grid">
-                    <div>
-                        <label class="form-label">Main / Base Card</label>
-                        <input type="hidden" id="card-admin-base-select">
-                        <input id="card-admin-base-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminBaseCards(this.value)">
-                        <div id="card-admin-base-checklist" class="card-admin-form-checklist"></div>
-                        <div id="card-admin-base-preview" class="card-admin-preview"></div>
-                    </div>
-                    <div class="card-admin-link-arrow">⇄</div>
-                    <div>
-                        <label class="form-label">Linked Forms</label>
-                        <div class="card-admin-mode-toggle" role="group" aria-label="Number of linked forms">
-                            <button type="button" id="card-admin-mode-single" class="active" onclick="window.setCardAdminLinkMode('single')">One Form</button>
-                            <button type="button" id="card-admin-mode-multiple" onclick="window.setCardAdminLinkMode('multiple')">Multiple Forms</button>
-                        </div>
-                        <div id="card-admin-form-picker">
-                            <input id="card-admin-form-filter" class="glass-form-control" type="search" placeholder="Filter custom cards..." oninput="window.filterCardAdminMultiForms(this.value)">
-                            <div id="card-admin-form-checklist" class="card-admin-form-checklist"></div>
-                        </div>
-                        <div id="card-admin-form-preview" class="card-admin-preview"></div>
-                    </div>
-                </div>
-                <div class="card-admin-actions">
-                    <button type="button" class="gui-preset-btn card-admin-link-btn" onclick="window.linkSelectedCustomCards()">Link Selected Cards</button>
-                    <button type="button" class="gui-preset-btn card-admin-unlink-btn" onclick="window.unlinkSelectedCustomCards()">Unlink Selected Cards</button>
-                </div>
-            </section>
-
-            <section id="card-admin-delete-section" class="card-admin-section card-admin-danger-section">
-                <h3>Delete Custom Character</h3>
-                <p>This permanently deletes the selected card folder from GitHub and removes admin-created links pointing to it.</p>
-                <label class="form-label">Character</label>
-                <input type="hidden" id="card-admin-delete-select">
-                <input id="card-admin-delete-filter" class="glass-form-control" type="search" placeholder="Search characters to delete..." oninput="window.filterCardAdminDeleteCards(this.value)">
-                <div id="card-admin-delete-picker" class="card-admin-delete-picker" role="listbox" aria-label="Choose a character to delete"></div>
-                <div id="card-admin-delete-preview" class="card-admin-preview card-admin-delete-preview"></div>
-                <label class="form-label mt-3">Separate delete password</label>
-                <input type="password" id="card-admin-delete-password" class="glass-form-control" autocomplete="current-password" placeholder="Delete password">
-                <label class="form-label mt-3">Type the folder name to confirm</label>
-                <input type="text" id="card-admin-delete-confirm" class="glass-form-control" autocomplete="off">
-                <button type="button" class="gui-preset-btn btn-danger card-admin-delete-btn" onclick="window.deleteSelectedCustomCard()">Delete From GitHub</button>
-            </section>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- ADMIN UNLOCK MODAL -->
 <div id="glass-admin-unlock-modal" class="clean-modal-backdrop" style="display: none;" onclick="closeAdminUnlockModal()">
     <div class="clean-modal-panel" style="max-width: 380px;" onclick="event.stopPropagation()">
@@ -368,9 +327,17 @@
 </div>
 
 <!-- TOP AUTO-REVEALING DOCK TRIGGER & BAR -->
-<div id="editor-top-bar-trigger" class="editor-top-bar-trigger" aria-hidden="true"></div>
 
-<header id="editor-top-bar" class="editor-top-hud-bar" role="toolbar" aria-label="Editor Action Bar">
+
+<aside id="abs-context-sidebar" aria-label="Editor actions">
+    <div class="abs-sidebar-heading">
+        <h2 class="abs-context-title">Editor actions</h2>
+        <button type="button" class="abs-shell-collapse abs-context-close" data-abs-context-collapse aria-controls="abs-context-sidebar" aria-label="Close editor actions" title="Close editor actions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg>
+        </button>
+    </div>
+    <div class="abs-sidebar-scroll">
+        <header id="editor-top-bar" class="editor-top-hud-bar" role="toolbar" aria-label="Editor Action Bar">
     <div class="hud-nav-group editor-top-hud-group">
         <!-- CREATION ACTIONS -->
         <button type="button" class="hud-nav-link top-hud-btn" onclick="window.addSuperAttackSection()" aria-label="Super Attack" title="Add Super Attack">
@@ -448,17 +415,7 @@
             <span>History</span>
         </button>
 
-        <div class="top-hud-divider published-editor-actions-divider" role="separator" aria-orientation="vertical"></div>
-
-        <!-- PUBLISHED-CARD QUICK EDIT & SAVE -->
-        <button type="button" class="hud-nav-link top-hud-btn" id="topbar-quick-edit-btn" onclick="window.openQuickCardEditor ? window.openQuickCardEditor() : window.openContextGUI?.(0,0,'identity')" aria-label="Quick Card Editor" title="Open Quick Card Editor">
-            <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/>
-                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/>
-            </svg>
-            <span>Quick Edit</span>
-        </button>
-
+        <!-- Published-card save remains available; Quick Edit is intentionally removed. -->
         <button type="button" class="hud-nav-link top-hud-btn" id="admin-quick-save-btn" onclick="window.saveQuickEditToGitHub ? window.saveQuickEditToGitHub() : window.openQuickSaveModal()" aria-label="Save Quick Edit" title="Save Quick Edit to GitHub">
             <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M17 3H5c-1.11 0-2 .9-2 2v14c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V7l-4-4zm-5 16c-1.66 0-3-1.34-3-3s1.34-3 3-3 3 1.34 3 3-1.34 3-3 3zm3-10H5V5h10v4z"/>
@@ -467,7 +424,15 @@
         </button>
 
     </div>
-</header>
+        </header>
+    </div>
+    <div class="abs-context-footer">
+        <button type="button" class="abs-context-pin" data-abs-context-pin aria-controls="abs-context-sidebar" aria-pressed="false" aria-label="Pin editor actions" title="Pin editor actions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16m-7-12 4 4-4 4"/></svg>
+            <span class="abs-context-pin-label">Pin editor actions</span>
+        </button>
+    </div>
+</aside>
 
 
 <!-- LEGACY HIDDEN STORE (Preserves compatibility for cache, parser, import/export) -->
@@ -488,17 +453,13 @@
 
 
     <!-- UNIFIED APPLE-STYLE HUD NAVIGATION BAR (FLOATING BOTTOM DOCK) -->
-    <header class="apple-hud-wrapper">
-        <div class="liquid-metal-frame">
-            <nav class="apple-hud-bar">
-                <!-- DOCK NAVIGATION GROUP -->
-                <div class="hud-nav-group">
-                    <a href="index.html" class="hud-nav-link" aria-label="Home" title="Home">
-                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <path d="M9 21V13.6C9 13.04 9 12.76 9.11 12.55C9.2 12.36 9.36 12.2 9.55 12.11C9.76 12 10.04 12 10.6 12H13.4C13.96 12 14.24 12 14.45 12.11C14.64 12.2 14.8 12.36 14.89 12.55C15 12.76 15 13.04 15 13.6V21M11.02 2.76L4.24 8.04C3.78 8.39 3.56 8.57 3.39 8.79C3.25 8.98 3.14 9.2 3.07 9.44C3 9.7 3 9.99 3 10.57V17.8C3 18.92 3 19.48 3.22 19.91C3.41 20.28 3.72 20.59 4.09 20.78C4.52 21 5.08 21 6.2 21H17.8C18.92 21 19.48 21 19.91 20.78C20.28 20.59 20.59 20.28 20.78 19.91C21 19.48 21 18.92 21 17.8V10.57C21 9.99 21 9.7 20.93 9.44C20.86 9.2 20.75 8.98 20.61 8.79C20.44 8.57 20.22 8.39 19.76 8.04L12.98 2.76C12.63 2.49 12.46 2.35 12.26 2.3C12.09 2.26 11.91 2.26 11.74 2.3C11.54 2.35 11.37 2.49 11.02 2.76Z"/>
-                        </svg>
-                        <span>Home</span>
-                    </a>
+    <div class="abs-mobile-shell"><button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-main-sidebar" aria-controls="abs-main-sidebar" aria-expanded="false" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><a class="abs-mobile-brand" href="index.html" aria-label="ABS — Home"><img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000"></a><button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-context-sidebar" aria-controls="abs-context-sidebar" aria-expanded="false" aria-label="Open editor actions"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16m-7-15v6m-6 0v6m10 0v6"/></svg></button></div><div id="abs-shell-backdrop" hidden></div><aside id="abs-main-sidebar" aria-label="Main navigation" data-abs-selector-anchor>
+        <div class="abs-sidebar-heading">
+            <a class="abs-sidebar-brand" href="index.html" aria-label="ABS — Home"><img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" data-sba-src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000" decoding="async"></a>
+            <button type="button" class="abs-shell-collapse" data-abs-nav-collapse aria-controls="abs-main-sidebar" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m7-12-4 4 4 4"/></svg></button>
+        </div>
+        <div class="abs-sidebar-scroll"><nav aria-label="Destinations"><div class="hud-nav-group">
+
 
                     <a href="index.html" class="hud-nav-link" onclick="localStorage.setItem('hub_force_cards_view', 'true')" aria-label="Cards" title="Cards">
                         <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -545,17 +506,11 @@
                         </svg>
                         <span>Settings</span>
                     </button>
-                </div>
-
-                <!-- AUTOSAVE INDICATOR — hidden, toast is used instead -->
-                <div id="main-autosave-indicator" class="main-autosave-ui scouter-autosave" style="display:none!important" aria-hidden="true">
+                </div></nav><div id="abs-sidebar-twitch" aria-label="Community channels"></div></div>
+    </aside><div id="main-autosave-indicator" class="main-autosave-ui scouter-autosave" style="display:none!important" aria-hidden="true">
                     <span class="autosave-dot"></span>
                     <span class="autosave-label">autosave!</span>
                 </div>
-
-            </nav>
-        </div>
-    </header>
 
 <!-- CARD PREVIEW CONTENT -->
 <div class="content" id="app">
@@ -566,11 +521,11 @@
         <div class="sidebar-header sba-settings-header">
             <div class="sba-settings-brand" style="display: flex; align-items: center; gap: 12px;">
                 <a class="nav-center-link" href="index.html" title="Return to Main Hub" style="display: flex; align-items: center; text-decoration: none;">
-                    <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs.custom.png" alt="Custom Dokkan Logo" class="nav-center-logo-img" style="width: 34px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
+                    <img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" class="nav-center-logo-img" style="width: 34px; height: 38px; object-fit: contain; filter: drop-shadow(0 2px 8px rgba(0,0,0,0.4));">
                 </a>
                 <div style="display: flex; flex-direction: column;">
                     <h2 style="margin: 0; font-size: 15px; font-weight: 800; letter-spacing: 0.8px; line-height: 1.2;">Settings &amp; Tools</h2>
-                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 0.5px;">absCustom Editor</span>
+                    <span style="font-size: 10px; color: #94a3b8; font-weight: 600; letter-spacing: 0.5px;">ABS Editor</span>
                 </div>
             </div>
             <button type="button" class="close-btn sba-settings-close-btn" onclick="toggleSettingsDrawer()" aria-label="Close settings">✕</button>
@@ -579,18 +534,21 @@
         <!-- 1. CARD THEME STYLE (MOVED TO TOP OF SETTINGS PANEL) -->
         <div class="settings-theme-section sba-settings-section">
             <span class="filter-group-title">Card Theme Style</span>
-            <div class="hud-theme-stack sba-settings-btn-grid" style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; width: 100%; box-sizing: border-box;" role="group" aria-label="Card Theme Style">
+            <div class="hud-theme-stack sba-settings-btn-grid" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 6px; width: 100%; box-sizing: border-box;" role="group" aria-label="Card Theme Style">
                 <button type="button" id="theme-btn-info" class="abs-hud-theme-btn sba-gui-btn active" onclick="switchCardTheme('dokkaninfo')" title="Dokkan Info Theme">
                     <img src="https://abscustom.github.io/assets/images/dokkan-info-logo.png" alt="Dokkan Info" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
                     <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">dokkan.info</span>
                 </button>
-                <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('abs-style')" title="ABS Style Theme">
+                <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('abs-style')" title="ABS Theme">
                     <img src="https://abscustom.github.io/assets/images/abs.style.png" alt="ABS" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
-                    <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">abs.style</span>
+                    <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">ABS</span>
                 </button>
                 <button type="button" id="theme-btn-sba" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('sba')" title="abs.clean Theme">
                     <img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean" class="hud-btn-logo" style="max-height: 20px; object-fit: contain;">
                     <span class="hud-btn-indicator" style="font-size: 11px; font-weight: 700;">abs.clean</span>
+                </button>
+                <button type="button" id="theme-btn-phantom" class="abs-hud-theme-btn sba-gui-btn" onclick="switchCardTheme('phantom')" title="Phantom Theme" aria-label="Phantom">
+                    <span class="phantom-theme-mark" aria-hidden="true">Phantom</span>
                 </button>
             </div>
         </div>
@@ -618,7 +576,7 @@
                 </div>
 
                 <div id="topbar-card-admin-dock-wrap">
-                    <button type="button" id="cardAdminBtn" class="sba-gui-btn" onclick="window.openCardAdminModal('link'); toggleSettingsDrawer();" title="Link uploaded custom cards" aria-label="Link uploaded custom cards">
+                    <button type="button" id="cardAdminBtn" class="sba-gui-btn" onclick="window.location.href='manager.html?tool=link'" title="Link uploaded custom cards" aria-label="Link uploaded custom cards">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #a78bfa;">
                             <path d="M19.14 12.94a7.43 7.43 0 0 0 .05-.94 7.43 7.43 0 0 0-.05-.94l2.03-1.58-1.92-3.32-2.39.96a7.2 7.2 0 0 0-1.62-.94L14.88 3h-3.84l-.36 3.18c-.58.24-1.12.55-1.62.94l-2.39-.96-1.92 3.32 2.03 1.58a7.43 7.43 0 0 0-.05.94c0 .32.02.63.05.94l-2.03 1.58 1.92 3.32 2.39-.96c.5.39 1.04.7 1.62.94l.36 3.18h3.84l.36-3.18c.58-.24 1.12-.55 1.62-.94l2.39.96 1.92-3.32-2.03-1.58zM13 15.5A3.5 3.5 0 1 1 13 8a3.5 3.5 0 0 1 0 7.5z"/>
                         </svg>
@@ -627,7 +585,7 @@
                 </div>
 
                 <div id="topbar-card-delete-dock-wrap">
-                    <button type="button" id="cardDeleteBtn" class="sba-gui-btn" onclick="window.openCardAdminModal('delete'); toggleSettingsDrawer();" title="Delete uploaded custom cards" aria-label="Delete uploaded custom cards">
+                    <button type="button" id="cardDeleteBtn" class="sba-gui-btn" onclick="window.location.href='manager.html?tool=delete'" title="Delete uploaded custom cards" aria-label="Delete uploaded custom cards">
                         <svg viewBox="0 0 24 24" width="18" height="18" fill="currentColor" style="color: #f87171;">
                             <path d="M9 3h6l1 2h4v2H4V5h4l1-2zm-3 6h12l-1 12H7L6 9zm4 3v6h2v-6h-2zm4 0v6h2v-6h-2z"/>
                         </svg>
@@ -670,7 +628,7 @@
             <div id="abs-clean-leader-text" class="abs-clean-leader-text"></div>
         </div>
         <div class="container-1220 container-text-center padding-top-bottom-5 container-text-light">
-            
+
             <!-- 1. DOKKAN INFO LAYOUT (100% UNTOUCHED & AUTHENTIC) -->
             <div id="layout-dokkaninfo" data-card-layout="dokkaninfo">
                 <div class="row align-items-start">
@@ -733,7 +691,7 @@
                                         <img id="myOverlayImage" src="https://abscustom.github.io/assets/images/Card Art Template.png" alt="Card Art" style="position: relative; z-index: 2;">
                                     </div>
                                 </div>
-                                
+
                                 <div id="release-dates-container" class="margin-top-bottom-5 mb-4"></div>
 
                                 <div class="row border border-2 border-dark border-none bg-none dokkan-card" id="forms-card-wrapper" data-edit="forms" style="display: none;">
@@ -778,7 +736,7 @@
                             </div>
                         </div>
                     </div>
-                    
+
                     <div class="col-xl-8">
                         <div class="row padding-left-right-1 margin-top-bottom-5">
                             <div class="col">
@@ -874,7 +832,7 @@
 
             <!-- 2. ABS.STYLE 3D LAYOUT (MATCHING CARD INSPECTOR VIEWER 1:1) -->
             <div id="layout-abs-style" data-card-layout="abs-style" style="display: none;">
-                
+
                 <!-- HEADER -->
                 <div class="abs-top-header">
                     <div class="abs-header-left">
@@ -1057,7 +1015,7 @@
                                 <img id="abs-art-bg" class="abs-art-layer abs-art-bg" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
                                 <img id="abs-art-char" class="abs-art-layer abs-art-char" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
                                 <img id="abs-art-effect" class="abs-art-layer abs-art-effect" src="" alt="" onerror="this.dataset.failed='true'; this.style.display='none'; window.refreshEditorArtModeAvailability?.();" style="display: none;">
-                                
+
                                 <canvas id="abs-tur-sticker-canvas" class="abs-sticker-canvas" style="display: none;"></canvas>
                                 <canvas id="abs-card-bg-lwf-canvas" class="abs-art-bg-lwf-canvas" style="display: none;"></canvas>
                                  <img id="abs-art-img" class="abs-art-layer" src="https://abscustom.github.io/assets/images/Card Art Template.png" onerror="this.dataset.failed='true'; window.refreshEditorArtModeAvailability?.();" style="width: 100%; height: 100%; object-fit: cover; display: none;">
@@ -1077,7 +1035,7 @@
                         <div class="abs-box" id="abs-stats-box" data-edit="stats">
                             <div class="abs-header text-center" style="justify-content: center;">Stats</div>
                             <div class="abs-content p-3 text-center">
-                                
+
                                 <div class="abs-stat-cards-row">
                                     <div class="abs-stat-card hp-card">
                                         <span class="abs-stat-card-label hp-label">HP</span>
@@ -1307,13 +1265,17 @@
 </div>
 
 <!-- JAVASCRIPT MODULES -->
-<script src="js-card-details/card-layout-roots.js?v=20260924-info-transformations-v2"></script>
-<script src="js-card-details/card-helpers.js?v=20260927-clean-layout-runtime-v3"></script>
+<script src="js-card-details/card-layout-roots.js?v=20261010-phantom-foundation-v7"></script>
+<script src="js-card-details/card-helpers.js?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5"></script>
 <script src="js-card-details/abs-category-art-toggle.js?v=20260910-abs-clean-art-toggle-v93"></script>
 <script src="js-card-details/card-formatters.js?v=20260924-theme-render-isolation-v1"></script>
 <script src="js-card-details/card-renderers.js?v=20260927-clean-field-container-v1"></script>
     <script src="js-card-details/card-partners.js?v=20260925-clean-layout-runtime-v2"></script>
 <script src="js/published-card-guards.js?v=20260928-loader-guard-v1"></script>
+<script src="js/unit-picker.js?v=20261012-viewer-picker-animation-v1"></script>
+<script src="js/card-content-config.js?v=20261017-card-content-config-v1"></script>
+<script src="js/card-content-client.js?v=20261017-card-content-client-v1"></script>
+<script src="js/card-content-renderer.js?v=20261017-card-content-renderer-v1"></script>
 <script src="js-editor/01-state.js?v=20260830-progression-controls"></script>
 <script src="js-editor/02-icon-picker.js"></script>
 <script src="js-editor/03-core.js?v=20260924-theme-art-reset-v1"></script>
@@ -1325,28 +1287,30 @@
 <script src="js-editor/09-super-attacks.js?v=20260926-sa-reorder-v1"></script>
 <script src="js-editor/10-awakening.js"></script>
 <script src="js-editor/11-active-skills.js?v=20260912-active-standby-kind-v4"></script>
-<script src="js-editor/12-export.js?v=20260928-custom-no-motion-v1"></script>
-<script src="js-editor/13-github.js?v=20260928-loader-guard-v1"></script>
+<script src="js-editor/12-export.js?v=20261017-card-content-v1"></script>
+<script src="js-editor/13-github.js?v=20261017-card-content-v1"></script>
 <script src="js-editor/14-assets.js?v=20260914-dokkaninfo-rarity-v2"></script>
 <script src="js-editor/15-parser.js?v=20260912-standby-kind-v4"></script>
 <script src="js-editor/16-cache.js?v=20260924-theme-art-cache-v2"></script>
-    <script src="js-editor/17-theme.js?v=20260926-sa-order-v1"></script>
+    <script src="js-editor/17-theme.js?v=20261010-phantom-foundation-v7"></script>
 <script src="js-editor/18-init.js?v=20260923-idb-autosave-v1"></script>
 <script src="js-editor/19-click-to-edit.js?v=20260926-sa-reorder-v2&amp;fix=20260924-sa-actions-visible-v1&amp;clean-passive-badges=v3"></script>
 <script src="js/custom-card-media.js?v=20260930-custom-portraits-v2"></script>
 <script src="js/unit-picker-tooltips.js?v=20260930-picker-tooltips-v1"></script>
-<script src="js-editor/20-card-importer.js?v=20260930-picker-portraits-tooltip-v3"></script>
-<script src="js-editor/21-card-admin.js?v=20260928-loader-guard-v1"></script>
+<script src="js-editor/20-card-importer.js?v=20261017-card-content-v1"></script>
 <script src="js-graphics/lwf.js"></script>
 <script type="module" src="js-graphics/lwf-loader.js?v=20260907-abs-clean-media-restart-v2"></script>
-<script src="js/ui-toast.js?v=2"></script>
+<script src="js/ui-toast.js?v=20261008-abs-ui-v1"></script>
 <script src="js-editor/22-editor-history.js?v=20260923-session-history-v1"></script>
 <script src="js/sba-ring-effects.js?v=20260906-abs-clean-fx"></script>
-<script src="js/tool-sba-nav.js?v=20260914-published-lock-v1"></script>
-<script src="js/other-nav.js?v=20260929-other-menu-v2"></script>
-<script src="js/loading-screen.js?v=20260916-zoom-blur-fade-v12"></script>
-<script src="js/stars-pingpong.js?v=20260914-seamless-v3"></script>
+<script src="js/tool-sba-nav.js?v=20261008-abs-sidebar-v1"></script>
+<script src="js/other-nav.js?v=20261016-profile-gate-v1"></script>
+<script src="js/loading-screen.js?v=20261007-stable-ring-v1"></script>
 <script src="js-card-details/abs-clean-presentation.js?v=20260927-clean-presentation-v53"></script>
+<script src="js-card-details/phantom-presentation.js?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5"></script>
 <script src="js-editor/23-info-skill-presentation.js?v=20260924-info-source-render-v2"></script>
+    <script src="js/sidebar-streamers.js?v=20261008-sidebar-live-indicator-v1"></script>
+    <script src="js/sidebar-streamers-feed.js?v=20261007-sidebar-status-v1"></script>
+    <script src="js/abs-navigation.js?v=20261016-profile-ui-v1"></script>
 </body>
 </html>

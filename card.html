@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>absCustom - Card Inspector</title>
+    <title></title>
 
     <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png" sizes="48x48">
     <meta name="color-scheme" content="light dark">
@@ -11,10 +11,10 @@
     <!-- STYLESHEETS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=20260914-abs-clean-filters-settings-v1">
-    <link rel="stylesheet" href="css/ui-toast.css?v=2">
-    <link rel="stylesheet" href="css/abs-style-layout.css?v=20260929-active-multiplier-hidden-v2">
-    <link rel="stylesheet" href="css/editor-ui.css?v=20260926-sa-reorder-controls-v1">
-    <link rel="stylesheet" href="css/card-inspector.css?v=20260924-info-grid-align-v1">
+    <link rel="stylesheet" href="css/ui-toast.css?v=20261008-abs-ui-v2">
+    <link rel="stylesheet" href="css/abs-style-layout.css?v=20261008-style-header-fit-v2">
+    <link rel="stylesheet" href="css/editor-ui.css?v=20261014-viewer-hover-edit-boundary-v1">
+    <link rel="stylesheet" href="css/card-inspector.css?v=20261013-info-viewport-background-v1">
     <link rel="stylesheet" href="css/lwf.css?v=20260906-abs-clean-art-hover-exact-v6">
 <link rel="stylesheet" href="css/abs-clean.css?v=20260928-field-standby-editor-parity-v29">
     <link rel="stylesheet" href="css/dokkan-sticker.css">
@@ -24,15 +24,27 @@
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
     <link rel="stylesheet" href="css/sba-mobile-layout.css?v=20260905-showcase-anchor-v10">
     <link rel="stylesheet" href="css/card-viewer-settings.css?v=20260928-page-top-motion-v4">
-    <link rel="stylesheet" href="css/viewer-card-picker.css?v=20260914-viewer-picker-v7">
-    <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
-    <link rel="stylesheet" href="css/abs-clean-presentation.css?v=20260927-clean-presentation-v53">
+    <link rel="stylesheet" href="css/viewer-card-picker.css?v=20261012-viewer-picker-animation-v1">
+    <link rel="stylesheet" href="css/loading-screen.css?v=20261007-stable-ring-v1">
+    <link rel="stylesheet" href="css/abs-clean-presentation.css?v=20261008-abs-clean-refresh-v2">
+    <link rel="stylesheet" href="css/phantom-presentation.css?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5">
 
     <!-- GLOBAL IMAGE FAILOVER INTERCEPTOR -->
     <script src="js-card-details/card-image-interceptor.js?v=20260924-empty-image-guard-v1"></script>
     <script src="js/release-time.js?v=20260928-eastern-release-time-v1"></script>
+    <link rel="stylesheet" href="css/abs-navigation.css?v=20261013-editor-context-rail-mobile-close-v1">
+    <script>(()=>{try{const pinned=localStorage.getItem('abs_context_pinned')==='true';document.documentElement.dataset.absNavCollapsed=String(localStorage.getItem('abs_navigation_collapsed')==='true');document.documentElement.dataset.absContextPinned=String(pinned);document.documentElement.dataset.absContextCollapsed=String(!pinned);}catch{}})();</script>
+    <link rel="stylesheet" href="css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1">
+<style id="abs-loader-critical">
+#abs-loading-screen{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;overflow:hidden;background:#08090b;color:#fff}
+#abs-loading-screen .abs-loader-stage{position:relative;top:clamp(8px,2vh,20px);width:clamp(152px,22vw,204px);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+#abs-loading-screen .abs-loader-logo{display:block;width:clamp(120px,18vw,170px);height:clamp(120px,18vw,170px);aspect-ratio:1;object-fit:contain}
+#abs-loading-screen .abs-loader-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#abs-loading-screen.is-hidden{display:none!important}#abs-loading-screen[data-loader-error="true"] .abs-loader-stage{width:min(90vw,560px);aspect-ratio:auto;flex-direction:column;text-align:center}
+</style>
+    <link rel="stylesheet" href="css/unit-picker.css?v=20261007-abs-selector-shell-v2">
 </head>
-<body class="theme-sba theme-abs-clean is-published card-viewer-page">
+<body class="theme-sba theme-abs-clean is-published card-viewer-page abs-shell">
     <svg style="display: none;" aria-hidden="true">
         <filter id="sba-liquid-button-refraction" x="-18%" y="-18%" width="136%" height="136%" color-interpolation-filters="sRGB">
             <feImage id="sba-liquid-displacement-map" x="0" y="0" width="100%" height="100%" preserveAspectRatio="none" result="sbaLiquidMap" />
@@ -54,36 +66,53 @@
             <feBlend in="SourceGraphic" in2="glassSoft" mode="screen" />
         </filter>
     </svg>
-    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady">
-        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
-        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
-        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
-        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
-        <div class="abs-loader-art" aria-hidden="true"></div>
+    <div id="abs-loading-screen" data-loader-shell-ready-event="abs-shell-ready" data-loader-shell-ready-flag="absShellReady" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady">
+
+
+
+
+
         <div class="abs-loader-stage">
-            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async" onerror="this.style.display='none'">
-            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">1%</div>
-            <div class="abs-loader-sub" aria-hidden="true">loading</div>
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" loading="eager" decoding="async" width="1000" height="1000" fetchpriority="high">
+            <div class="abs-loader-status">Loading…</div>
         </div>
     </div>
-    <script>window.setTimeout(function(){if(!window.absLoadingScreen){var s=document.getElementById('abs-loading-screen');if(s){s.style.transition='opacity .5s ease';s.style.opacity='0';s.style.pointerEvents='none';window.setTimeout(function(){s.style.visibility='hidden';},550);}}},5000);</script>
-    <video id="stars-bg-video" autoplay muted playsinline aria-hidden="true" loop>
-        <source src="assets/video/Stars BG.webm?v=pingpong2" type="video/webm">
-    </video>
-    <canvas id="abs-clean-grid-circuit" class="abs-clean-grid-circuit" aria-hidden="true"></canvas>
+
+    <script id="abs-loader-runtime-watchdog">
+    window.setTimeout(function () {
+        if (window.absLoadingScreen) return;
+        var screen = document.getElementById('abs-loading-screen');
+        if (!screen || screen.classList.contains('is-hidden')) return;
+        screen.dataset.loaderError = 'true';
+        screen.setAttribute('role', 'alert');
+        screen.setAttribute('aria-busy', 'false');
+        screen.setAttribute('aria-label', 'Page could not load');
+        var stage = screen.querySelector('.abs-loader-stage');
+        if (stage) {
+            var message = document.createElement('p');
+            message.textContent = 'Page could not load. Please retry.';
+            var retry = document.createElement('button');
+            retry.type = 'button';
+            retry.textContent = 'Retry';
+            retry.style.cssText = 'pointer-events:auto;padding:10px 20px;border:1px solid #85888f;border-radius:10px;background:#27292e;color:#fff;';
+            retry.addEventListener('click', function () { window.location.reload(); });
+            stage.replaceChildren(message, retry);
+        }
+        document.documentElement.classList.remove('abs-page-loading');
+    }, 15000);
+    </script>
+
+
 
 <div class="content theme-sba theme-abs-clean" id="app">
     <!-- GLOBAL APPLE-STYLE HUD NAVIGATION BAR -->
-    <header class="apple-hud-wrapper card-viewer-site-nav" aria-label="Site navigation">
-        <div class="liquid-metal-frame">
-            <nav class="apple-hud-bar">
-                <div class="hud-nav-group">
-                    <a href="index.html" class="hud-nav-link" aria-label="Home" title="Home">
-                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 21V13.6C9 13.0399 9 12.7599 9.10899 12.546C9.20487 12.3578 9.35785 12.2049 9.54601 12.109C9.75992 12 10.0399 12 10.6 12H13.4C13.9601 12 14.2401 12 14.454 12.109C14.6422 12.2049 14.7951 12.3578 14.891 12.546C15 12.7599 15 13.0399 15 13.6V21M11.0177 2.764L4.23539 8.03912C3.78202 8.39175 3.55534 8.56806 3.39203 8.78886C3.24737 8.98444 3.1396 9.20478 3.07403 9.43905C3 9.70352 3 9.9907 3 10.5651V17.8C3 18.9201 3 19.4801 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4801 21 18.9201 21 17.8V10.5651C21 9.9907 21 9.70352 20.926 9.43905C20.8604 9.20478 20.7526 8.98444 20.608 8.78886C20.4447 8.56806 20.218 8.39175 19.7646 8.03913L12.9823 2.764C12.631 2.49075 12.4553 2.35412 12.2613 2.3016C12.0902 2.25526 11.9098 2.25526 11.7387 2.3016C11.5447 2.35412 11.369 2.49075 11.0177 2.764Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>Home</span>
-                    </a>
+    <div class="abs-mobile-shell"><button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-main-sidebar" aria-controls="abs-main-sidebar" aria-expanded="false" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><a class="abs-mobile-brand" href="index.html" aria-label="ABS — Home"><img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000"></a></div><div id="abs-shell-backdrop" hidden></div><aside id="abs-main-sidebar" aria-label="Main navigation" data-abs-selector-anchor>
+        <div class="abs-sidebar-heading">
+            <a class="abs-sidebar-brand" href="index.html" aria-label="ABS — Home"><img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" data-sba-src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000" decoding="async"></a>
+            <button type="button" class="abs-shell-collapse" data-abs-nav-collapse aria-controls="abs-main-sidebar" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m7-12-4 4 4 4"/></svg></button>
+        </div>
+        <div class="abs-sidebar-scroll"><nav aria-label="Destinations"><div class="hud-nav-group">
+
 
                     <a href="index.html" class="hud-nav-link" onclick="localStorage.setItem('hub_force_cards_view', 'true')" aria-label="Cards" title="Cards">
                         <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -135,23 +164,11 @@
                     </button>
 
 
-                </div>
-            </nav>
-        </div>
-    </header>
+                </div></nav><div id="abs-sidebar-twitch" aria-label="Community channels"></div></div>
+    </aside>
 
 
-    <!-- COMPACT VIEWER CARD SWITCHER (OPENS UP FROM THE VIEWER TAB) -->
-    <section id="viewer-card-picker" class="viewer-card-picker" hidden aria-hidden="true" role="dialog" aria-label="Choose viewer card">
-        <label class="viewer-card-picker-search" for="viewer-card-picker-input">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-                <circle cx="11" cy="11" r="7" stroke="currentColor" stroke-width="2"/>
-                <path d="m20 20-4-4" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <input id="viewer-card-picker-input" type="search" placeholder="Search cards by name or ID" autocomplete="off">
-        </label>
-        <div id="viewer-card-picker-results" class="viewer-card-picker-results" role="listbox" aria-label="Viewer cards"></div>
-    </section>
+    <div id="viewer-card-picker" hidden aria-hidden="true"></div>
 
 
 
@@ -647,13 +664,16 @@
     <div class="settings-theme-section sba-settings-section">
         <span class="filter-group-title">Card Theme Style</span>
         <div class="hud-theme-stack sba-settings-btn-grid card-viewer-style-options" role="group" aria-label="Card Theme Style">
-            <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn sba-gui-btn" data-viewer-theme="abs-style" aria-pressed="false" title="ABS Style Theme">
+            <button type="button" id="theme-btn-abs" class="abs-hud-theme-btn sba-gui-btn" data-viewer-theme="abs-style" aria-pressed="false" title="ABS Theme">
                 <img src="https://abscustom.github.io/assets/images/abs.style.png" alt="ABS" class="hud-btn-logo">
-                <span class="hud-btn-indicator">abs.style</span>
+                <span class="hud-btn-indicator">ABS</span>
             </button>
             <button type="button" id="theme-btn-sba" class="abs-hud-theme-btn sba-gui-btn active" data-viewer-theme="sba" aria-pressed="true" title="abs.clean Theme">
                 <img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean" class="hud-btn-logo">
                 <span class="hud-btn-indicator">abs.clean</span>
+            </button>
+            <button type="button" id="theme-btn-phantom" class="abs-hud-theme-btn sba-gui-btn" data-viewer-theme="phantom" aria-pressed="false" title="Phantom Theme" aria-label="Phantom">
+                <span class="phantom-theme-mark" aria-hidden="true">Phantom</span>
             </button>
         </div>
     </div>
@@ -722,10 +742,10 @@
 </script>
 <script src="vendor/fengari-web.min.js"></script>
     <script src="js-card-details/card-animation-player.js?v=20260928-eza-animation-assets-v1"></script>
-<script src="js-card-details/card-viewer-bootstrap.js?v=20260924-independent-presentation-roots-v1"></script>
+<script src="js-card-details/card-viewer-bootstrap.js?v=20261010-phantom-foundation-v7"></script>
 <script src="js-card-details/json-card-loader.js?v=20260918-v7"></script>
-<script src="js-card-details/card-layout-roots.js?v=20260924-info-transformations-v2"></script>
-<script src="js-card-details/card-helpers.js?v=20260928-eastern-release-time-v1"></script>
+<script src="js-card-details/card-layout-roots.js?v=20261010-phantom-foundation-v7"></script>
+<script src="js-card-details/card-helpers.js?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5"></script>
 <script src="js-card-details/abs-category-art-toggle.js?v=20260910-abs-clean-art-toggle-v93"></script>
 <script src="js-card-details/card-formatters.js?v=20260924-theme-render-isolation-v1"></script>
     <script src="js-card-details/card-partners.js?v=20260925-clean-layout-runtime-v2"></script>
@@ -733,16 +753,20 @@
 <script src="js/sba-ring-effects.js?v=20260912-card-viewer-ring-v1"></script>
 <script src="js-card-details/card-viewer-clean-grid.js?v=20260914-abs-clean-filters-settings-v1"></script>
 <script src="js-card-details/viewer-card-art-loader.js?v=20260928-card-art-race-v1"></script>
-<script src="js-card-details/card-inspector-core.js?v=20260929-validated-awakening-mode-v2"></script>
-<script src="js-card-details/viewer-card-picker.js?v=20260928-eastern-release-time-v1"></script>
+<script src="js-card-details/card-inspector-core.js?v=20261012-phantom-header-separator-v1"></script>
+<script src="js/custom-card-media.js?v=20261008-shared-media-v1"></script>
+<script src="js/unit-picker.js?v=20261012-viewer-picker-animation-v1"></script>
+<script src="js/card-content-config.js?v=20261017-card-content-config-v1"></script>
+<script src="js/card-content-client.js?v=20261017-card-content-client-v1"></script>
+<script src="js-card-details/viewer-card-picker.js?v=20261017-card-content-v1"></script>
 
 <script src="js-graphics/dokkan-sticker-shader.js"></script>
 <script src="js-graphics/lwf.js"></script>
-  <script type="module" src="js-card-details/viewer-motion.js?v=20260928-header-motion-v12"></script>
+  <script type="module" src="js-card-details/viewer-motion.js?v=20261013-phantom-mini-player"></script>
 <script type="module" src="js-graphics/lwf-loader.js?v=20260916-cdn-v1"></script>
-<script src="js/ui-toast.js?v=2"></script>
-<script src="js/favicon.js?v=20260916-favicon-v2"></script>
-<script src="js/loading-screen.js?v=20260916-zoom-blur-fade-v10"></script>
+<script src="js/ui-toast.js?v=20261008-abs-ui-v1"></script>
+<script src="js/favicon.js?v=20261010-page-metadata-v1"></script>
+<script src="js/loading-screen.js?v=20261007-stable-ring-v1"></script>
 <script>
 (() => {
     function setViewerFxMode(fxMode) {
@@ -764,8 +788,11 @@
 })();
 </script>
 
-<script src="js/stars-pingpong.js?v=20260914-seamless-v3"></script>
 <script src="js-card-details/abs-clean-presentation.js?v=20260927-clean-presentation-v53"></script>
-<script src="js/other-nav.js?v=20260929-other-menu-v2"></script>
+<script src="js-card-details/phantom-presentation.js?v=40C02AFAED7EF69DB6C6B20B8503CF68C3542AF54E1754646CAF414ABF85D6E5"></script>
+<script src="js/other-nav.js?v=20261016-profile-gate-v1"></script>
+    <script src="js/sidebar-streamers.js?v=20261008-sidebar-live-indicator-v1"></script>
+    <script src="js/sidebar-streamers-feed.js?v=20261007-sidebar-status-v1"></script>
+    <script src="js/abs-navigation.js?v=20261016-profile-ui-v1"></script>
 </body>
 </html>

@@ -92,6 +92,7 @@ window.switchCardTheme = function(themeName) {
     );
     const appEl = layoutElement('app');
     const isClean = theme === 'abs-clean';
+    const isPhantom = theme === 'phantom';
 
     window.currentCardThemeStyle = theme;
     window.currentCardThemeVariant = theme;
@@ -102,11 +103,12 @@ window.switchCardTheme = function(themeName) {
     } catch (error) {}
     window.updateSiteFavicon?.(isClean ? 'abs-style' : theme);
 
-    const themeClasses = ['theme-abs-style', 'theme-dokkaninfo', 'theme-sba', 'theme-abs-clean'];
+    const themeClasses = ['theme-abs-style', 'theme-dokkaninfo', 'theme-sba', 'theme-abs-clean', 'theme-phantom'];
     [document.body, appEl].forEach((element) => {
         if (!element) return;
         element.classList.remove(...themeClasses);
         if (isClean) element.classList.add('theme-sba', 'theme-abs-clean');
+        else if (isPhantom) element.classList.add('theme-phantom');
         else element.classList.add(theme === 'abs-style' ? 'theme-abs-style' : 'theme-dokkaninfo');
     });
 
@@ -125,7 +127,7 @@ window.switchCardTheme = function(themeName) {
     }
 
     window.setActiveCardLayout?.(theme);
-    const buttonTheme = { 'theme-btn-info': 'dokkaninfo', 'theme-btn-abs': 'abs-style', 'theme-btn-sba': 'abs-clean' };
+    const buttonTheme = { 'theme-btn-info': 'dokkaninfo', 'theme-btn-abs': 'abs-style', 'theme-btn-sba': 'abs-clean', 'theme-btn-phantom': 'phantom' };
     Object.entries(buttonTheme).forEach(([id, value]) => {
         const button = layoutElement(id);
         if (button) button.classList.toggle('active', value === theme);
@@ -149,6 +151,7 @@ window.switchCardTheme = function(themeName) {
     } else {
         window.stopAbsCleanGridCircuit?.();
     }
+    if (isPhantom) window.refreshPhantomPresentation?.();
     window.refreshEditorLinkingPartners?.();
 };
 
@@ -1333,7 +1336,7 @@ window.syncToAbsLayout = function() {
         // duplicated fragments while a theme/layout pass is in progress.
         window.syncAbsCleanPassiveSummary?.(window.getAbsCleanPassiveSource?.() || rawPassiveText);
         const iconsStripHtml = renderPassiveIconsStrip(rawPassiveText);
-        const showPassiveBadges = isAbsCleanTheme || activeRoot?.dataset?.cardLayout === 'abs-style';
+        const showPassiveBadges = isAbsCleanTheme || activeRoot?.dataset?.cardLayout === 'abs-style' || activeRoot?.dataset?.cardLayout === 'phantom';
         const cleanPassiveIcons = layoutElement('abs-clean-passive-icons');
         if (cleanPassiveIcons) {
             cleanPassiveIcons.innerHTML = showPassiveBadges ? iconsStripHtml : '';
@@ -2528,9 +2531,11 @@ window.updateAbsStyleActiveSkills = function() {
 
 window.currentEditorArtMode = 'animated';
 
-window.switchEditorArtMode = function(mode) {
+window.switchEditorArtMode = function(mode, options = {}) {
     const isAbsCleanTheme = document.body.classList.contains('theme-abs-clean');
-    window.currentEditorArtMode = mode;
+    const isPhantomTheme = document.body.classList.contains('theme-phantom');
+    const shouldRemember = options?.remember ?? !isPhantomTheme;
+    if (shouldRemember) window.currentEditorArtMode = mode;
     const isAnim = (mode === 'animated');
     window.syncAbsCleanCategoryArtModeButtons?.(mode);
     if (isAbsCleanTheme) window.syncAbsCleanArtMediaMode?.(mode);

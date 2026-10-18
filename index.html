@@ -4,8 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png">
-    <title>absCustom - Dokkan Hub</title>
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs_logo.png">
+    <title>ABS - Dokkan Hub</title>
     <script>
         (() => {
             const allowedThemes = new Set(['sba']);
@@ -26,28 +26,43 @@
             document.documentElement.classList.remove('theme-abs-clean-light');
         })();
     </script>
-    
+
     <!-- STYLESHEETS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css?v=20260914-abs-clean-filters-settings-v1">
-    <link rel="stylesheet" href="css/ui-toast.css?v=2">
-    <link rel="stylesheet" href="css/abs-style-layout.css?v=20260925-passive-header-shadow-v1">
-    <link rel="stylesheet" href="css/editor-ui.css">
+    <link rel="stylesheet" href="css/ui-toast.css?v=20261008-abs-ui-v2">
+    <link rel="stylesheet" href="css/abs-style-layout.css?v=20261008-style-header-fit-v2">
+    <link rel="stylesheet" href="css/editor-ui.css?v=20261008-abs-ui-v2">
     <link rel="stylesheet" href="css/hub-themes.css?v=20260914-abs-clean-filters-settings-v1">
     <link rel="stylesheet" href="css/sba-side-dock.css?v=20260902-search-filter-placement-v7">
     <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260916-showcase-clean-v3">
     <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
     <link rel="stylesheet" href="css/sba-mobile-layout.css?v=20260905-showcase-anchor-v10">
-    <link rel="stylesheet" href="css/sba-news-view.css?v=20260930-news-toolbar-v18">
+    <link rel="stylesheet" href="css/sba-news-view.css?v=20261009-news-layout-v9">
     <link rel="stylesheet" href="css/lwf.css?v=5">
     <link rel="stylesheet" href="css/hub-settings.css?v=20260914-abs-clean-filters-settings-v1">
-    <link rel="stylesheet" href="css/loading-screen.css?v=20260916-zoom-blur-fade-v12">
+    <link rel="stylesheet" href="css/loading-screen.css?v=20261007-stable-ring-v1">
+    <link rel="stylesheet" href="css/dokkan-card-composite.css?v=20261007-png-v1">
+    <link rel="stylesheet" href="css/abs-navigation.css?v=20261013-editor-context-rail-mobile-close-v1">
+    <link rel="stylesheet" href="css/cards-workspace.css?v=20261009-cards-rows-filters-v3">
+    <link rel="stylesheet" href="css/cards-lr-lightning.css?v=20261009-original-lr-dokkan-v7-frame-effect-portrait">
+    <script>(()=>{try{document.documentElement.dataset.absNavCollapsed=String(localStorage.getItem('abs_navigation_collapsed')==='true');document.documentElement.dataset.absContextCollapsed=String(localStorage.getItem('abs_context_collapsed')==='true');}catch{}})();</script>
+    <link rel="stylesheet" href="css/home-theme.css?v=20261013-home-timeline-right-edge-v1">
+    <link rel="stylesheet" href="css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1">
+<style id="abs-loader-critical">
+#abs-loading-screen{position:fixed;inset:0;z-index:2147483647;display:grid;place-items:center;overflow:hidden;background:#08090b;color:#fff}
+#abs-loading-screen .abs-loader-stage{position:relative;top:clamp(8px,2vh,20px);width:clamp(152px,22vw,204px);aspect-ratio:1;display:flex;align-items:center;justify-content:center}
+#abs-loading-screen .abs-loader-logo{display:block;width:clamp(120px,18vw,170px);height:clamp(120px,18vw,170px);aspect-ratio:1;object-fit:contain}
+#abs-loading-screen .abs-loader-status{position:absolute;width:1px;height:1px;overflow:hidden;clip-path:inset(50%)}
+#abs-loading-screen.is-hidden{display:none!important}#abs-loading-screen[data-loader-error="true"] .abs-loader-stage{width:min(90vw,560px);aspect-ratio:auto;flex-direction:column;text-align:center}
+</style>
+    <link rel="stylesheet" href="css/unit-picker.css?v=20261007-abs-selector-shell-v2">
 </head>
 
 <!-- VS Code Live Preview is currently emitting repeated WebSocket reload
      commands. Keep its normal local server, but reject automatic reloads so
      an unrelated watched asset cannot continuously restart the whole app. -->
-<body class="theme-sba theme-abs-clean theme-abs-clean-dark" data-server-no-reload>
+<body class="theme-sba theme-abs-clean theme-abs-clean-dark abs-shell" data-server-no-reload>
     <script>
         (() => {
             document.body.classList.add('theme-sba', 'theme-abs-clean', 'theme-abs-clean-dark');
@@ -55,23 +70,43 @@
             document.body.dataset.absCleanType = 'none';
         })();
     </script>
-    <div id="abs-loading-screen" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-wait-for-app="true">
-        <div class="abs-loader-bg-art" aria-hidden="true"><div class="abs-loader-art-backdrop"></div></div>
-        <div class="abs-loader-bg-stars" aria-hidden="true"></div>
-        <div class="abs-loader-bg-grid" aria-hidden="true"></div>
-        <div class="abs-loader-bg-glass" aria-hidden="true"></div>
-        <div class="abs-loader-art" aria-hidden="true"></div>
+    <div id="abs-loading-screen" data-loader-shell-ready-event="abs-shell-ready" data-loader-shell-ready-flag="absShellReady" role="status" aria-label="Loading page" class="abs-loader-root" data-loader-wait-for-app="true">
+
+
+
+
+
         <div class="abs-loader-stage">
-            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async" onerror="this.style.display='none'">
-            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">1%</div>
-            <div class="abs-loader-sub" aria-hidden="true">loading</div>
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" loading="eager" decoding="async" width="1000" height="1000" fetchpriority="high">
+            <div class="abs-loader-status">Loading…</div>
         </div>
     </div>
-    <script>window.setTimeout(function(){if(!window.absLoadingScreen){var s=document.getElementById('abs-loading-screen');if(s){s.style.transition='opacity .5s ease';s.style.opacity='0';s.style.pointerEvents='none';window.setTimeout(function(){s.style.visibility='hidden';},550);}}},5000);</script>
-    <video id="stars-bg-video" autoplay muted playsinline aria-hidden="true" loop>
-        <source src="assets/video/Stars BG.webm?v=pingpong2" type="video/webm">
-    </video>
-    <canvas id="abs-clean-grid-circuit" class="abs-clean-grid-circuit" aria-hidden="true"></canvas>
+
+    <script id="abs-loader-runtime-watchdog">
+    window.setTimeout(function () {
+        if (window.absLoadingScreen) return;
+        var screen = document.getElementById('abs-loading-screen');
+        if (!screen || screen.classList.contains('is-hidden')) return;
+        screen.dataset.loaderError = 'true';
+        screen.setAttribute('role', 'alert');
+        screen.setAttribute('aria-busy', 'false');
+        screen.setAttribute('aria-label', 'Page could not load');
+        var stage = screen.querySelector('.abs-loader-stage');
+        if (stage) {
+            var message = document.createElement('p');
+            message.textContent = 'Page could not load. Please retry.';
+            var retry = document.createElement('button');
+            retry.type = 'button';
+            retry.textContent = 'Retry';
+            retry.style.cssText = 'pointer-events:auto;padding:10px 20px;border:1px solid #85888f;border-radius:10px;background:#27292e;color:#fff;';
+            retry.addEventListener('click', function () { window.location.reload(); });
+            stage.replaceChildren(message, retry);
+        }
+        document.documentElement.classList.remove('abs-page-loading');
+    }, 15000);
+    </script>
+
+
     <!-- SVG Glass Filter for Liquid Distortion Effects -->
     <svg style="display: none;">
         <filter id="glass-distortion" x="0%" y="0%" width="100%" height="100%" filterUnits="objectBoundingBox">
@@ -116,18 +151,13 @@
     </div>
 
     <!-- INTEGRATED LIQUID METAL NAVIGATION BAR -->
-    <header class="apple-hud-wrapper sticky-top">
-        <div class="liquid-metal-frame">
-            <nav class="apple-hud-bar">
-                
-                <!-- LEFT: EMBEDDED ICON NAVIGATION -->
-                <div class="hud-nav-group">
-                    <button type="button" class="hud-nav-link active" id="nav-btn-home" onclick="switchHubView('home')" aria-label="Home" title="Home">
-                        <svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                            <path d="M9 21V13.6C9 13.0399 9 12.7599 9.10899 12.546C9.20487 12.3578 9.35785 12.2049 9.54601 12.109C9.75992 12 10.0399 12 10.6 12H13.4C13.9601 12 14.2401 12 14.454 12.109C14.6422 12.2049 14.7951 12.3578 14.891 12.546C15 12.7599 15 13.0399 15 13.6V21M11.0177 2.764L4.23539 8.03912C3.78202 8.39175 3.55534 8.56806 3.39203 8.78886C3.24737 8.98444 3.1396 9.20478 3.07403 9.43905C3 9.70352 3 9.9907 3 10.5651V17.8C3 18.9201 3 19.4801 3.21799 19.908C3.40973 20.2843 3.71569 20.5903 4.09202 20.782C4.51984 21 5.07989 21 6.2 21H17.8C18.9201 21 19.4802 21 19.908 20.782C20.2843 20.5903 20.5903 20.2843 20.782 19.908C21 19.4801 21 18.9201 21 17.8V10.5651C21 9.9907 21 9.70352 20.926 9.43905C20.8604 9.20478 20.7526 8.98444 20.608 8.78886C20.4447 8.56806 20.218 8.39175 19.7646 8.03913L12.9823 2.764C12.631 2.49075 12.4553 2.35412 12.2613 2.3016C12.0902 2.25526 11.9098 2.25526 11.7387 2.3016C11.5447 2.35412 11.369 2.49075 11.0177 2.764Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                        </svg>
-                        <span>Home</span>
-                    </button>
+    <div class="abs-mobile-shell"><button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-main-sidebar" aria-controls="abs-main-sidebar" aria-expanded="false" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><a class="abs-mobile-brand" href="index.html" aria-label="ABS — Home"><img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000"></a></div><div id="abs-shell-backdrop" hidden></div><aside id="abs-main-sidebar" aria-label="Main navigation" data-abs-selector-anchor>
+        <div class="abs-sidebar-heading">
+            <a class="abs-sidebar-brand" href="index.html" aria-label="ABS — Home" onclick="switchHubView('home'); return false;"><img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" data-sba-src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000" decoding="async"></a>
+            <button type="button" class="abs-shell-collapse" data-abs-nav-collapse aria-controls="abs-main-sidebar" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m7-12-4 4 4 4"/></svg></button>
+        </div>
+        <div class="abs-sidebar-scroll"><nav aria-label="Destinations"><div class="hud-nav-group">
+
 
                     <!-- SEAMLESS CARDS HOVER DROPDOWN -->
                     <div class="hud-dropdown-wrap">
@@ -137,7 +167,7 @@
                             </svg>
                             <span>Cards</span>
                         </button>
-                        
+
                         <div class="hud-dropdown-menu">
                             <button type="button" class="hud-dropdown-item" onclick="switchHubView('cards', 'official')">
                                 <span class="dd-icon-svg">
@@ -215,18 +245,8 @@
                         </svg>
                         <span>Settings</span>
                     </button>
-                </div>
-
-                <!-- CENTER: EMBEDDED LOGO -->
-                <div class="apple-nav-center">
-                    <a class="nav-center-link" href="#" onclick="switchHubView('home'); return false;">
-                        <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs.custom.png" alt="Custom Dokkan Logo" class="nav-center-logo-img" data-sba-src="https://abscustom.github.io/assets/images/abs_logo.png">
-                    </a>
-                </div>
-
-            </nav>
-        </div>
-    </header>
+                </div></nav><div id="abs-sidebar-twitch" aria-label="Community channels"></div></div>
+    </aside>
 
     <!-- SETTINGS MINI GUI (ACCESSED VIA DOCK SETTINGS BUTTON) -->
     <div class="sidebar-overlay sba-settings-overlay" id="settingsOverlay" onclick="toggleSettingsDrawer()"></div>
@@ -325,28 +345,14 @@
 
     <!-- MAIN HUB CONTAINER -->
     <main class="hub-main-container" id="hubMain">
-        
+
         <!-- ================= HOME VIEW (NEWS + TIMELINE + SHOWCASE CUSTOM CARDS) ================= -->
         <section id="hubHomeSection" class="hub-home-view">
             <!-- TOP 2-COLUMN DASHBOARD (NEWS & TIMELINE MODAL) -->
             <div class="hub-home-top-grid">
-                
+
                 <!-- Dokkan News Snippet Banner -->
-                <div class="dokkan-news-snippet">
-                    <div class="news-snippet-badge"><svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" style="display:inline-block; vertical-align:-2px; margin-right:4px;"><path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm-5 14H4v-4h11v4zm0-5H4V9h11v4zm5 5h-4V9h4v9z"/></svg>DOKKAN NEWS & CAMPAIGNS</div>
-                    <div class="news-snippet-content">
-                        <div class="news-snippet-header">
-                            <span class="news-tag">LATEST EVENT</span>
-                            <span class="news-date">March 2025</span>
-                        </div>
-                        <h3 class="news-title">Dokkan Battle & Custom Releases</h3>
-                        <p class="news-desc">Explore the chronological data download releases, newly awakened Extreme Z-Awakenings, Super EZAs, and custom cards in the scrollable timeline.</p>
-                        
-                        <div class="news-quick-links">
-                            <a href="https://x.com/dokkan_global" target="_blank" rel="noopener" class="news-link-btn">Official News Feed ↗</a>
-                        </div>
-                    </div>
-                </div>
+
 
                 <!-- Structured Scrollable Vertical Timeline Card -->
                 <div class="dokkan-timeline-panel">
@@ -364,7 +370,7 @@
                             <button type="button" id="timelineNextBtn" aria-label="Later releases"><svg viewBox="0 0 16 16" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5.5 3.5l5 4.5-5 4.5"/></svg></button>
                         </div>
                     </div>
-                    
+
                     <div class="dokkan-timeline-scroll-track" id="timelineScrollTrack">
                         <div class="timeline-nodes-stream" id="timelineNodesStream"></div>
                     </div>
@@ -373,45 +379,6 @@
             </div>
 
             <!-- Dokkan Streamers -->
-            <div class="dokkan-streamers-longitudinal-panel" id="dokkanStreamersBar">
-                <div class="streamers-panel-header">
-                    <div class="streamers-panel-title">
-                        <svg class="twitch-header-svg" width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-                            <path d="M11.571 4.714h1.715v5.143H11.57zm4.715 0H18v5.143h-1.714zM6 0L1.714 4.286v15.428h5.143V24l4.286-4.286h3.428L22.286 12V0zm14.571 11.143l-3.428 3.428h-3.429l-3 3v-3H6.857V1.714h13.714Z"/>
-                        </svg>
-                    </div>
-                    <span class="streamers-badge-tag">Community Hub</span>
-                </div>
-                <div class="streamers-live-preview-grid" id="streamersLivePreview" aria-live="polite"></div>
-                <div class="streamers-horizontal-track" id="streamersHorizontalTrack">
-                    <a href="https://www.twitch.tv/theironcane" target="_blank" rel="noopener noreferrer" class="streamer-card-pill">
-                        <span class="streamer-avatar-circle">I</span>
-                        <span class="streamer-pill-name">TheIronCane</span>
-                        <span class="streamer-live-status is-offline">OFFLINE</span>
-                    </a>
-                    <a href="https://twitch.tv/datruthdt" target="_blank" rel="noopener noreferrer" class="streamer-card-pill">
-                        <span class="streamer-avatar-circle">D</span>
-                        <span class="streamer-pill-name">DaTruthDT</span>
-                        <span class="streamer-live-status is-offline">OFFLINE</span>
-                    </a>
-                    <a href="https://twitch.tv/toonrami" target="_blank" rel="noopener noreferrer" class="streamer-card-pill">
-                        <span class="streamer-avatar-circle">T</span>
-                        <span class="streamer-pill-name">Toonrami</span>
-                        <span class="streamer-live-status is-offline">OFFLINE</span>
-                    </a>
-                    <a href="https://www.twitch.tv/slaybix" target="_blank" rel="noopener noreferrer" class="streamer-card-pill">
-                        <span class="streamer-avatar-circle">S</span>
-                        <span class="streamer-pill-name">SlayBix</span>
-                        <span class="streamer-live-status is-offline">OFFLINE</span>
-                    </a>
-                    <a href="https://www.youtube.com/@Goresh" target="_blank" rel="noopener noreferrer" class="streamer-card-pill is-youtube-pill">
-                        <span class="streamer-avatar-circle is-yt-avatar">G</span>
-                        <span class="streamer-pill-name">Goresh</span>
-                        <span class="streamer-live-status is-youtube">YOUTUBE</span>
-                    </a>
-                </div>
-            </div>
-
             <!-- Centered custom mark between the community stream row and the
                  pixel-character divider. -->
             <div class="sba-pixel-logo-band" aria-hidden="true">
@@ -437,12 +404,14 @@
                         <path d="M8 3h10a2 2 0 0 1 2 2v10M7.5 15.5l2.3-2.3 2 1.8 2.5-3.1 1.8 2.1" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
                         <circle cx="11" cy="9.5" r="1.2" fill="currentColor"/>
                     </svg>
-                    <div class="timeline-panel-heading-copy"><span>absCustoms</span><small>Custom Dokkan characters</small></div>
+                    <div class="timeline-panel-heading-copy"><span>ABS</span><small>Custom Dokkan characters</small></div>
                     </div>
                 </div>
 
                 <!-- Multi-Row Showcase Card Grid -->
-                <div class="grid" id="homeCardGrid"></div>
+                <div class="abs-showcase-stage">
+                    <div class="grid" id="homeCardGrid"></div>
+                </div>
             </div>
         </section>
 
@@ -450,17 +419,12 @@
         <section id="hubCardsSection" class="hub-cards-view" style="display: none;">
             <!-- ABS reuses the same live news ticker shown on Home. The news
                  engine fills both ticker instances after the feed loads. -->
-            <div class="dokkan-news-snippet cards-news-snippet" id="cardsNewsSnippet" aria-label="Dokkan news"></div>
+
             <div class="hub-view-header cards-workspace-header">
-                <!-- The heading floats over the card surface, matching the
-                     Timeline treatment. The filter pills are still moved into
-                     the SBA drawer by the existing placement helper below. -->
+                <!-- Cards reuses the live search/layout controls and enhances
+                     the original filter slots through the shared modal. -->
                     <div class="cards-workspace-heading">
                         <div class="hub-view-info cards-workspace-title">
-                            <svg class="cards-workspace-title-icon" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-                                <rect x="4" y="4" width="16" height="16" rx="3" stroke="currentColor" stroke-width="1.8"/>
-                                <path d="M8 8h8M8 12h8M8 16h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>
-                            </svg>
                             <div>
                                 <h2 class="hub-section-title" id="cardsViewTitle">Cards</h2>
                                 <p class="hub-section-subtitle" id="cardsViewSubtitle">Official and custom characters</p>
@@ -502,7 +466,6 @@
                             </div>
 
                             <div class="cards-layout-switcher" role="group" aria-label="Cards layout">
-                                <span>Layout</span>
                                 <button type="button" class="cards-layout-option" data-cards-layout="simple" onclick="setCardsLayout('simple')" aria-pressed="false">ABS</button>
                                 <button type="button" class="cards-layout-option" data-cards-layout="dokkan" onclick="setCardsLayout('dokkan')" aria-pressed="false">Dokkan</button>
                             </div>
@@ -569,17 +532,25 @@
 
     <!-- SCRIPTS -->
     <script src="js-graphics/lwf.js"></script>
-    <script type="module" src="js-graphics/lwf-loader.js?v=20260903-dual-aura-lightning-v2"></script>
-    <script src="js/dokkan-news.js?v=20260930-news-toolbar-v7"></script>
-    <script src="js/ui-toast.js?v=2"></script>
+    <script src="js/cards-lr-lightning.js?v=20261009-original-lr-dokkan-v5-frame-effect-portrait"></script>
+    <script type="module" src="js-graphics/lwf-loader.js?v=20261009-original-lr-dokkan-v5-frame-effect-portrait"></script>
+    <script src="js/dokkan-news.js?v=20261009-news-controls-v4"></script>
+    <script src="js/ui-toast.js?v=20261008-abs-ui-v1"></script>
     <script src="js/release-time.js?v=20260928-eastern-release-time-v1"></script>
-<script src="js/main.js?v=20260928-eastern-release-time-v1"></script>
-    <script type="module" src="js/dot-character-player.js?v=20260914-local-manifest-v1"></script>
+<script src="js/unit-picker.js?v=20261012-viewer-picker-animation-v1"></script>
+<script src="js/card-content-config.js?v=20261017-card-content-config-v1"></script>
+<script src="js/card-content-client.js?v=20261017-card-content-client-v1"></script>
+<script src="js/main.js?v=20261017-card-content-v1"></script>
+    <script src="js/dokkan-card-composite.js?v=20261009-original-lr-dokkan-v5-frame-effect-portrait"></script>
+    <script type="module" src="js/dot-character-player.js?v=20261008-home-logo-palette-v2"></script>
     <script src="js/sba-ring-effects.js?v=20260904-electric-rings-v14"></script>
-    <script src="js/favicon.js?v=20260916-favicon-v2"></script>
+    <script src="js/favicon.js?v=20261010-page-metadata-v1"></script>
     <script src="js-card-details/card-viewer-clean-grid.js?v=20260914-abs-clean-filters-settings-v1"></script>
-    <script src="js/loading-screen.js?v=20260916-zoom-blur-fade-v12"></script>
-<script src="js/stars-pingpong.js?v=20260914-seamless-v3"></script>
-<script src="js/other-nav.js?v=20260929-other-menu-v2"></script>
+    <script src="js/loading-screen.js?v=20261007-stable-ring-v1"></script>
+<script src="js/other-nav.js?v=20261016-profile-gate-v1"></script>
+    <script src="js/sidebar-streamers.js?v=20261008-sidebar-live-indicator-v1"></script>
+    <script src="js/sidebar-streamers-feed.js?v=20261007-sidebar-status-v1"></script>
+    <script src="js/abs-navigation.js?v=20261016-profile-ui-v1"></script>
+    <script src="js/cards-workspace.js?v=20261009-cards-rows-filters-v3"></script>
 </body>
 </html>

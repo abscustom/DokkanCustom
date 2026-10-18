@@ -1,0 +1,87 @@
+/* Cards Dokkan restores the LR layers above the frame and behind the portrait. */
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] .frame {
+    display: block !important;
+    z-index: 1 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] .lr-dial {
+    display: block !important;
+    width: 200px !important;
+    height: 200px !important;
+    top: -25px !important;
+    left: -25px !important;
+    z-index: 2 !important;
+}
+
+body.theme-sba #cardGrid .char-box[data-type] canvas.cards-lr-original-canvas {
+    display: none !important;
+    width: 220px !important;
+    height: 220px !important;
+    top: 50% !important;
+    left: 50% !important;
+    transform: translate(-50%, -50%) !important;
+    z-index: 2 !important;
+    opacity: 1 !important;
+    filter: none !important;
+    mask-image: none !important;
+    -webkit-mask-image: none !important;
+    mix-blend-mode: screen !important;
+    pointer-events: none;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] canvas.cards-lr-original-canvas,
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] .char-img {
+    display: block !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] :is(.char-img, .hub-circle-img) {
+    z-index: 3 !important;
+}
+
+/* Awakening FX shares the effect layer with LR lightning and the dial. */
+body.theme-sba.cards-layout-dokkan #cardGrid .card-icon .seza-lwf-border-canvas {
+    display: block !important;
+    z-index: 2 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] :is(
+    img.rarity,
+    img.type,
+    .custom-badge.rarity-badge,
+    .custom-badge.type-badge,
+    .hub-summon-badge,
+    .sba-status-badge,
+    .sba-generated-status-badge
+) {
+    z-index: 4 !important;
+}
+
+body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] .hub-eza-badge {
+    z-index: 5 !important;
+}
+
+body.theme-sba.cards-layout-dokkan.fx-no-seza #cardGrid .card-icon .seza-lwf-border-canvas,
+body.theme-sba.cards-layout-dokkan.fx-static #cardGrid .card-icon .seza-lwf-border-canvas {
+    display: none !important;
+}
+
+body.theme-sba.cards-layout-dokkan.fx-no-lightning #cardGrid .char-box[data-type] :is(
+    .lr-dial,
+    canvas.cards-lr-original-canvas
+) {
+    display: none !important;
+}
+
+body.theme-sba.cards-layout-dokkan.fx-static #cardGrid .char-box[data-type] canvas.cards-lr-original-canvas {
+    display: none !important;
+}
+
+body.theme-sba.cards-layout-dokkan.fx-static #cardGrid .char-box[data-type] .lr-dial {
+    animation: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body.theme-sba.cards-layout-dokkan #cardGrid .char-box[data-type] .lr-dial {
+        animation: none !important;
+    }
+}

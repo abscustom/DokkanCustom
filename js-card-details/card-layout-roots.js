@@ -9,10 +9,12 @@
 
     const ROOT_IDS = {
         'abs-clean': 'layout-abs-clean',
+        phantom: 'layout-phantom',
         'abs-style': 'layout-abs-style',
         dokkaninfo: 'layout-dokkaninfo'
     };
     const CLEAN_ID_PREFIX = 'clean-';
+    const PHANTOM_ID_PREFIX = 'phantom-';
     const ID_REFERENCE_ATTRIBUTES = [
         'for', 'aria-labelledby', 'aria-describedby', 'aria-controls', 'aria-owns',
         'aria-flowto', 'headers', 'list', 'form'
@@ -69,12 +71,12 @@
         return ROOT_IDS[value] ? value : fallback;
     }
 
-    function rewriteCleanReferences(root) {
+    function rewriteRootReferences(root, prefix) {
         const descendants = Array.from(root.querySelectorAll('[id]'));
         const idMap = new Map();
         descendants.forEach((element) => {
             const originalId = element.id;
-            idMap.set(originalId, `${CLEAN_ID_PREFIX}${originalId}`);
+            idMap.set(originalId, `${prefix}${originalId}`);
             element.dataset.cardElement = originalId;
         });
 
@@ -92,6 +94,10 @@
                 if (replacement) element.setAttribute(attribute, `#${replacement}`);
             });
         });
+    }
+
+    function rewriteCleanReferences(root) {
+        rewriteRootReferences(root, CLEAN_ID_PREFIX);
     }
 
     function ensureCardLayoutRoots() {
@@ -113,6 +119,17 @@
             styleRoot.insertAdjacentElement('afterend', cleanRoot);
         }
         cleanRoot.dataset.cardLayout = 'abs-clean';
+
+        let phantomRoot = document.getElementById(ROOT_IDS.phantom);
+        if (!phantomRoot) {
+            phantomRoot = styleRoot.cloneNode(true);
+            phantomRoot.id = ROOT_IDS.phantom;
+            phantomRoot.dataset.cardLayout = 'phantom';
+            phantomRoot.classList.add('card-layout-root', 'card-layout-root-phantom');
+            rewriteRootReferences(phantomRoot, PHANTOM_ID_PREFIX);
+            cleanRoot.insertAdjacentElement('afterend', phantomRoot);
+        }
+        phantomRoot.dataset.cardLayout = 'phantom';
         styleRoot.classList.add('card-layout-root', 'card-layout-root-style');
 
         const infoRoot = document.getElementById(ROOT_IDS.dokkaninfo);
@@ -161,7 +178,7 @@
                 infoSkillSlots.appendChild(infoTransformations);
             }
         }
-        return { 'abs-clean': cleanRoot, 'abs-style': styleRoot, dokkaninfo: infoRoot };
+        return { 'abs-clean': cleanRoot, phantom: phantomRoot, 'abs-style': styleRoot, dokkaninfo: infoRoot };
     }
 
     function getCardLayoutRoot(theme = null) {
@@ -176,6 +193,7 @@
         if (document.body?.classList.contains('theme-abs-clean') || document.body?.classList.contains('theme-sba')) {
             return roots['abs-clean'];
         }
+        if (document.body?.classList.contains('theme-phantom')) return roots.phantom;
         const remembered = window.activeCardLayoutRoot;
         if (remembered?.isConnected) return remembered;
         return roots['abs-style'];
@@ -194,8 +212,8 @@
             const activeRoot = getCardLayoutRoot();
             return activeRoot?.dataset.cardLayout === 'dokkaninfo' ? rootFor('abs-style') : activeRoot;
         }
-        if (value === 'layout-abs-clean' || value === 'layout-abs-style' || value === 'layout-dokkaninfo') {
-            const theme = value === 'layout-abs-clean' ? 'abs-clean' : value === 'layout-abs-style' ? 'abs-style' : 'dokkaninfo';
+        if (value === 'layout-abs-clean' || value === 'layout-phantom' || value === 'layout-abs-style' || value === 'layout-dokkaninfo') {
+            const theme = value === 'layout-abs-clean' ? 'abs-clean' : value === 'layout-phantom' ? 'phantom' : value === 'layout-abs-style' ? 'abs-style' : 'dokkaninfo';
             return rootFor(theme);
         }
 
@@ -207,7 +225,7 @@
             if (infoElement) return infoElement;
         }
         let element = null;
-        if (targetRoot?.dataset.cardLayout === 'abs-clean') {
+        if (targetRoot?.dataset.cardLayout === 'abs-clean' || targetRoot?.dataset.cardLayout === 'phantom') {
             element = targetRoot.querySelector(`[data-card-element="${value}"]`) ||
                 (/^[\w-]+$/.test(value) ? targetRoot.querySelector(`#${value}`) : null);
         } else if (/^[\w-]+$/.test(value)) {
@@ -232,7 +250,7 @@
         if (scopedSelector.startsWith('#layout-abs-style')) {
             scopedSelector = scopedSelector.slice('#layout-abs-style'.length).trim() || ':scope';
         }
-        if (targetRoot?.dataset.cardLayout === 'abs-clean') {
+        if (targetRoot?.dataset.cardLayout === 'abs-clean' || targetRoot?.dataset.cardLayout === 'phantom') {
             scopedSelector = scopedSelector.replace(/#([\w-]+)/g, (token, id) =>
                 layoutElementIds.has(id) ? `[data-card-element="${id}"]` : token
             );
@@ -278,9 +296,11 @@
         const roots = ensureCardLayoutRoots();
         if (!roots) return;
         const body = document.body;
-        const initialTheme = body?.classList.contains('theme-dokkaninfo')
-            ? 'dokkaninfo'
-            : (body?.classList.contains('theme-abs-style') ? 'abs-style' : 'abs-clean');
+        const initialTheme = body?.classList.contains('theme-phantom')
+            ? 'phantom'
+            : body?.classList.contains('theme-dokkaninfo')
+                ? 'dokkaninfo'
+                : (body?.classList.contains('theme-abs-style') ? 'abs-style' : 'abs-clean');
         setActiveCardLayout(initialTheme);
     };
 

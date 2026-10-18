@@ -1,170 +1,69 @@
 (() => {
     const screen = document.getElementById('abs-loading-screen');
-    if (!screen) return;
-    const loaderScriptUrl = document.currentScript?.src || window.location.href;
+    if (!screen || window.absLoadingScreen) return;
 
     let transitionToken = 0;
     let shownAt = performance.now();
     let hideTimer = 0;
     let safetyTimer = 0;
-    let currentArtSource = '';
-    let availableArtSources = [];
-    let customArtSources = [];
-    let officialArtSources = [];
-    let cutinArtSources = [];
-    let nextArtSource = '';
-    let nextArtImage = null;
-    let navigationArtPrepared = false;
-    const transitionArtKey = 'abs_loading_transition_art';
-
-    function isCutinSource(source) {
-        return String(source || '').toLowerCase().includes('_cutin');
-    }
-
-    function isCharacterSource(source) {
-        return String(source || '').toLowerCase().includes('_character');
-    }
-
-    function isOfficialCardSource(source) {
-        return isCharacterSource(source) || isCutinSource(source);
-    }
-
-    /* ---------- Cosmic progress driver (1% -> 100% with saturation bloom) ---------- */
-    let currentProgress = 1;
-    let targetProgress = 1;
-    let progressRaf = 0;
-    let progressRunning = false;
+    let navigationToken = null;
     let completionStarted = false;
-    let completionTimer = 0;
     let exitTimer = 0;
+    let exitListener = null;
 
-    function getPercentEl() {
-        return screen.querySelector('#abs-loader-percent') || screen.querySelector('.abs-loader-percent');
+    // Older published HTML can still contain a counter. Upgrade its markup
+    // once without starting a decorative progress driver or another overlay.
+    screen.querySelectorAll('.abs-loader-percent, .abs-loader-sub').forEach(element => element.remove());
+    if (!screen.querySelector('.abs-loader-status')) {
+        const status = document.createElement('div');
+        status.className = 'abs-loader-status';
+        status.textContent = 'Loading…';
+        (screen.querySelector('.abs-loader-stage') || screen).appendChild(status);
     }
 
-    function ensureBackdrop() {
-        let bgArt = screen.querySelector('.abs-loader-art-backdrop');
-        if (!bgArt) {
-            bgArt = document.createElement('div');
-            bgArt.className = 'abs-loader-art-backdrop';
-            bgArt.setAttribute('aria-hidden', 'true');
-            const bgArtContainer = screen.querySelector('.abs-loader-bg-art') || screen;
-            bgArtContainer.prepend(bgArt);
-        }
-        return bgArt;
-    }
-
-    function renderProgress() {
-        const clamped = Math.max(1, Math.min(100, currentProgress));
-        const display = clamped >= 99.5 ? 100 : Math.floor(clamped);
-        const percentEl = getPercentEl();
-        if (percentEl && percentEl.textContent !== `${display}%`) {
-            percentEl.textContent = `${display}%`;
-        }
-
-        // Dynamically reduce background blur as progress approaches 100% (5px -> 0px)
-        const bgBlur = Math.max(0, (1 - (clamped / 100)) * 5);
-        screen.style.setProperty('--abs-loader-bg-blur', `${bgBlur.toFixed(2)}px`);
-        const artImgs = screen.querySelectorAll('.abs-loader-art img, .abs-loader-art-backdrop img');
-        if (artImgs.length) {
-            const p = clamped;
-            const grayscale = Math.max(0, 100 - p);
-            const saturate = Math.min(140, p * 1.15);
-            const brightness = 0.92 + (p / 100) * 0.08;
-            const imageBlur = Math.max(0, (1 - (p / 100)) * 6);
-            const filterVal = `blur(${imageBlur.toFixed(2)}px) grayscale(${grayscale.toFixed(1)}%) saturate(${saturate.toFixed(1)}%) brightness(${brightness.toFixed(3)})`;
-            artImgs.forEach(img => {
-                img.style.filter = filterVal;
-            });
-        }
-    }
-
-    function stopProgressLoop() {
-        progressRunning = false;
-        if (progressRaf) cancelAnimationFrame(progressRaf);
-        progressRaf = 0;
-    }
-
-    function progressTick() {
-        if (!progressRunning) return;
-        const diff = targetProgress - currentProgress;
-        if (diff <= 0.05) {
-            currentProgress = targetProgress;
-        } else {
-            // Smooth natural counting rate
-            const rate = targetProgress >= 100 ? 0.14 : 0.10;
-            const step = Math.max(0.35, diff * rate);
-            currentProgress += step;
-        }
-        currentProgress = Math.max(1, Math.min(100, currentProgress));
-        renderProgress();
-        if (currentProgress >= 100) {
-            currentProgress = 100;
-            renderProgress();
-            stopProgressLoop();
-            beginCompletionSequence();
-            return;
-        }
-        progressRaf = requestAnimationFrame(progressTick);
-    }
-
-    function startProgressLoop() {
-        if (progressRunning) return;
-        progressRunning = true;
-        completionStarted = false;
-        progressRaf = requestAnimationFrame(progressTick);
-    }
-
-    function setTargetProgress(value) {
-        targetProgress = Math.max(targetProgress, Math.max(1, Math.min(100, Number(value) || 1)));
-        startProgressLoop();
-    }
-
-    function resetProgress() {
-        window.clearTimeout(completionTimer);
+    function cancelExit() {
         window.clearTimeout(exitTimer);
-        stopProgressLoop();
+        if (exitListener) screen.removeEventListener('animationend', exitListener);
+        exitListener = null;
         completionStarted = false;
         screen.classList.remove('is-exiting', 'is-complete');
         screen.style.pointerEvents = '';
-        currentProgress = 1;
-        targetProgress = 1;
-        renderProgress();
-        startProgressLoop();
     }
 
     function beginCompletionSequence() {
-        if (completionStarted) return;
+        if (completionStarted || screen.dataset.loaderError === 'true') return;
+        const token = transitionToken;
         completionStarted = true;
-        currentProgress = 100;
-        renderProgress();
-        screen.classList.add('is-complete');
+        // One fade owns the entire overlay; no child blur/scale can outlive it.
+        screen.classList.remove('is-entering');
+        screen.classList.remove('is-navigating');
+        screen.classList.add('is-exiting');
+        screen.setAttribute('aria-hidden', 'true');
+        screen.setAttribute('aria-busy', 'false');
+        screen.style.pointerEvents = 'none';
 
-        // Hold at 100% saturation: abs logo & percentage fade out smoothly, then trigger exit dissolve
-        completionTimer = window.setTimeout(() => {
-            screen.classList.remove('is-entering');
-            screen.classList.add('is-exiting');
-            screen.setAttribute('aria-hidden', 'true');
-            screen.style.pointerEvents = 'none';
+        // Release scrolling as the ready page reveals.
+        document.documentElement.classList.remove('abs-page-loading');
 
-            // Clean up body overflow lock so the page underneath is interactive as it reveals
-            document.documentElement.classList.remove('abs-page-loading');
+        const finalizeExit = event => {
+            if (event && (event.target !== screen || event.animationName !== 'abs-loader-exit-dissolve')) return;
+            if (token !== transitionToken) return;
+            screen.removeEventListener('animationend', finalizeExit);
+            exitListener = null;
+            window.clearTimeout(exitTimer);
+            screen.classList.add('is-hidden');
+            screen.classList.remove('is-exiting', 'is-complete', 'is-entering');
+            navigationToken = null;
+            screen.style.pointerEvents = '';
+            try {
+                window.dispatchEvent(new CustomEvent('abs-loading-complete'));
+            } catch {}
+        };
 
-            const finalizeExit = () => {
-                screen.removeEventListener('animationend', finalizeExit);
-                window.clearTimeout(exitTimer);
-                screen.classList.add('is-hidden');
-                screen.classList.remove('is-exiting', 'is-complete', 'is-entering');
-                screen.style.pointerEvents = '';
-                try {
-                    window.dispatchEvent(new CustomEvent('abs-loading-complete'));
-                } catch {}
-            };
-
-            screen.addEventListener('animationend', finalizeExit, { once: true });
-            // Safety timeout matching the 0.85s animation (+100ms padding) in case animationend was suppressed
-            exitTimer = window.setTimeout(finalizeExit, 950);
-        }, 500);
+        exitListener = finalizeExit;
+        screen.addEventListener('animationend', finalizeExit);
+        if (window.matchMedia?.('(prefers-reduced-motion: reduce)').matches) finalizeExit();
+        else exitTimer = window.setTimeout(finalizeExit, 280);
     }
 
     function nextFrames(count = 2) {
@@ -183,12 +82,10 @@
     }
 
     function show(options = {}) {
-        if (options.keepArt !== true) promoteNextArt();
         transitionToken += 1;
         const token = transitionToken;
         window.clearTimeout(hideTimer);
         window.clearTimeout(safetyTimer);
-        window.clearTimeout(completionTimer);
         window.clearTimeout(exitTimer);
         shownAt = performance.now();
         screen.style.opacity = '';
@@ -197,18 +94,25 @@
         screen.style.pointerEvents = '';
         // Fade in from hidden: hold transparent for a frame, then release.
         screen.classList.remove('is-hidden', 'is-exiting', 'is-complete');
-        screen.classList.add('is-entering');
+        if (!options.immediate) screen.classList.add('is-entering');
+        else screen.classList.remove('is-entering');
+        screen.classList.toggle('is-navigating', !!options.navigation);
         screen.setAttribute('aria-hidden', 'false');
+        screen.setAttribute('aria-busy', 'true');
         document.documentElement.classList.add('abs-page-loading');
-        void screen.offsetWidth;
-        requestAnimationFrame(() => {
-            requestAnimationFrame(() => screen.classList.remove('is-entering'));
-        });
-        resetProgress();
-        // Small initial nudge so the counter visibly leaves 1% on manual shows.
-        setTargetProgress(12);
+        cancelExit();
+        if (!options.immediate) {
+            requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                    if (token === transitionToken) screen.classList.remove('is-entering');
+                });
+            });
+        }
 
-        safetyTimer = window.setTimeout(() => hide({ token }), Number(options.maxVisible || 8000));
+        safetyTimer = window.setTimeout(() => {
+            if (options.navigation) hide({ token });
+            else showStartupError(token);
+        }, Number(options.maxVisible || 8000));
         return token;
     }
 
@@ -219,16 +123,14 @@
         window.clearTimeout(hideTimer);
         window.clearTimeout(safetyTimer);
         if (options.force) {
-            screen.classList.remove('is-entering');
-            screen.classList.add('is-exiting');
+            cancelExit();
+            completionStarted = true;
+            screen.classList.add('is-hidden');
+            screen.classList.remove('is-entering', 'is-exiting', 'is-complete', 'is-navigating');
+            navigationToken = null;
+            screen.setAttribute('aria-hidden', 'true');
+            screen.setAttribute('aria-busy', 'false');
             document.documentElement.classList.remove('abs-page-loading');
-            const finalizeForce = () => {
-                screen.removeEventListener('animationend', finalizeForce);
-                screen.classList.add('is-hidden');
-                screen.classList.remove('is-exiting', 'is-complete', 'is-entering');
-            };
-            screen.addEventListener('animationend', finalizeForce, { once: true });
-            window.setTimeout(finalizeForce, 950);
             return;
         }
 
@@ -237,176 +139,92 @@
         const wait = Math.max(0, minimumVisible - elapsed);
         hideTimer = window.setTimeout(() => {
             if (token !== undefined && token !== transitionToken) return;
-            setTargetProgress(100);
+            beginCompletionSequence();
         }, wait);
     }
 
-    function waitForImage(source) {
-        return new Promise(resolve => {
-            const image = new Image();
-            image.alt = '';
-            image.addEventListener('load', () => resolve(image), { once: true });
-            image.addEventListener('error', () => resolve(null), { once: true });
-            image.src = source;
-        });
+    const essentialImageSelector = '#abs-art-img, [data-card-element="abs-art-img"], #myOverlayImage, #calc-char-thumb, .char-img, .thumb-img, .form-image, .hub-circle-img, .tl-char-img, .sba-showcase-art-poster, [data-loader-essential]';
+
+    function getEssentialImages(root) {
+        return Array.from(root.querySelectorAll('img')).filter(image => image.matches?.(essentialImageSelector) && isCriticalVisibleContent(image));
     }
 
-    function takeCarriedTransitionArt() {
-        try {
-            const source = sessionStorage.getItem(transitionArtKey) || '';
-            sessionStorage.removeItem(transitionArtKey);
-            return source;
-        } catch {
-            return '';
-        }
-    }
-
-    function carryCurrentTransitionArt() {
-        const currentImage = screen.querySelector('.abs-loader-art img');
-        const source = currentArtSource || currentImage?.src || '';
-        if (!source || /^(?:blob:|data:)/i.test(source)) return;
-        try {
-            sessionStorage.setItem(transitionArtKey, source);
-        } catch {}
-    }
-
-    async function setLoaderArt(source) {
-        if (!source) return false;
-        const image = await waitForImage(source);
-        const art = screen.querySelector('.abs-loader-art');
-        if (!image || !art) return false;
-        currentArtSource = source;
-
-        screen.classList.toggle('is-cutin', isCutinSource(source));
-        screen.classList.toggle('is-character', isCharacterSource(source));
-
-        const bgArt = ensureBackdrop();
-        const bgImage = image.cloneNode(true);
-        bgImage.alt = '';
-        art.replaceChildren(image);
-        if (bgArt) bgArt.replaceChildren(bgImage);
-
-        renderProgress();
-        return true;
-    }
-
-    function resolveArtSource(source) {
-        if (!source) return '';
-        return /^(?:data:|blob:|https?:)/i.test(source)
-            ? source
-            : new URL(`../${String(source).replace(/^\.\//, '')}`, loaderScriptUrl).href;
-    }
-
-    async function loadArtManifest() {
-        if (availableArtSources.length) return availableArtSources;
-        const manifestUrl = new URL('../json/loading-screen-images.json', loaderScriptUrl).href;
-        const response = await fetch(manifestUrl, { cache: 'no-cache' });
-        if (!response.ok) return [];
-
-        const images = await response.json();
-        if (!Array.isArray(images)) return [];
-        availableArtSources = images.map(resolveArtSource).filter(Boolean);
-        customArtSources = availableArtSources.filter(src => src.includes('/ui/loading-screen/'));
-        officialArtSources = availableArtSources.filter(src => isOfficialCardSource(src));
-        cutinArtSources = availableArtSources.filter(src => isCutinSource(src));
-        return availableArtSources;
-    }
-
-    function chooseDifferentArtSource() {
-        if (!availableArtSources.length) return '';
-
-        // 50% chance for original custom loading screen images, 50% for official card character portraits
-        const pickCustom = Math.random() < 0.5;
-        let pool = pickCustom
-            ? (customArtSources.length ? customArtSources : officialArtSources)
-            : (officialArtSources.length ? officialArtSources : customArtSources);
-
-        if (!pool || !pool.length) pool = availableArtSources;
-
-        const differentSources = pool.filter(source => source !== currentArtSource);
-        const choices = differentSources.length ? differentSources : pool;
-        return choices[Math.floor(Math.random() * choices.length)] || '';
-    }
-
-    function prepareNextArt() {
-        const source = chooseDifferentArtSource();
-        if (!source) return;
-
-        const image = new Image();
-        image.alt = '';
-        image.src = source;
-        nextArtSource = source;
-        nextArtImage = image;
-    }
-
-    function promoteNextArt() {
-        if (!nextArtSource || !nextArtImage) return false;
-        const art = screen.querySelector('.abs-loader-art');
-        if (!art) return false;
-
-        currentArtSource = nextArtSource;
-        screen.classList.toggle('is-cutin', isCutinSource(currentArtSource));
-        screen.classList.toggle('is-character', isCharacterSource(currentArtSource));
-
-        const bgArt = ensureBackdrop();
-        const bgImage = nextArtImage.cloneNode(true);
-        bgImage.alt = '';
-        art.replaceChildren(nextArtImage);
-        if (bgArt) bgArt.replaceChildren(bgImage);
-
-        renderProgress();
-        nextArtSource = '';
-        nextArtImage = null;
-        prepareNextArt();
-        return true;
-    }
-
-    async function showRandomImage() {
-        try {
-            // A page transition starts on the old page and finishes on the new
-            // one. Reuse the old page's artwork so it remains one continuous
-            // loading screen instead of flashing two different characters.
-            const carriedSource = takeCarriedTransitionArt();
-            const carriedArtWasSet = carriedSource
-                ? await setLoaderArt(carriedSource)
-                : false;
-
-            await loadArtManifest();
-            setTargetProgress(35);
-            if (!carriedArtWasSet) {
-                await setLoaderArt(chooseDifferentArtSource());
-            }
-            setTargetProgress(65);
-            prepareNextArt();
-        } catch {
-            // An artwork-free cosmic backdrop is the safe fallback.
-            setTargetProgress(40);
-        }
-    }
-
-    function waitForContentImages(root, maxWait = 1400) {
+    function waitForContentImages(root) {
         const contentRoot = typeof root === 'string' ? document.querySelector(root) : root;
-        if (!contentRoot) return Promise.resolve();
-        const pending = Array.from(contentRoot.querySelectorAll('img:not([loading="lazy"])'))
-            .filter(image => !image.complete);
-        if (!pending.length) return Promise.resolve();
+        if (!contentRoot) return Promise.resolve(true);
+        const images = getEssentialImages(contentRoot);
+        return Promise.all(images.map(image => {
+            const ready = () => image.naturalWidth > 0;
+            return new Promise(resolve => {
+                let settled = false;
+                const finish = result => {
+                    if (settled) return;
+                    settled = true;
+                    window.clearTimeout(timer);
+                    image.removeEventListener('load', done);
+                    image.removeEventListener('error', done);
+                    resolve(result);
+                };
+                const done = event => {
+                    // Page-owned error handlers may have started a fallback
+                    // image request before this listener receives the error.
+                    if (!image.complete) return;
+                    // The official layout initially clones an empty portrait
+                    // slot, then assigns its circle-art source on the next
+                    // render. An empty, complete slot is not a failed request.
+                    if (!image.naturalWidth && !image.getAttribute?.('src') && !event) return;
+                    if (image.naturalWidth > 0 && image.decode) {
+                        const source = image.currentSrc || image.src;
+                        image.decode().then(() => {
+                            if (source === (image.currentSrc || image.src)) finish(true);
+                        }).catch(() => {
+                            if (source === (image.currentSrc || image.src)) finish(false);
+                        });
+                    } else finish(ready());
+                };
+                const timer = window.setTimeout(() => finish(false), 8000);
+                image.addEventListener('load', done);
+                image.addEventListener('error', done);
+                if (image.complete) done();
+            });
+        })).then(results => results.every(Boolean));
+    }
 
-        const loaded = Promise.all(pending.map(image => new Promise(resolve => {
-            image.addEventListener('load', resolve, { once: true });
-            image.addEventListener('error', resolve, { once: true });
-        })));
-        return Promise.race([loaded, delay(maxWait)]);
+    function isCriticalVisibleContent(element) {
+        if (element.closest('#abs-loading-screen, [aria-hidden="true"], [data-loader-decorative], .dokkan-news-snippet')) return false;
+        const style = getComputedStyle(element);
+        if (style.visibility === 'hidden' || style.display === 'none') return false;
+        let rect = element.getBoundingClientRect();
+        // Unloaded content images may not yet have an intrinsic height. Their
+        // reserved card/frame box still identifies visible, essential art.
+        if ((!rect.width || !rect.height) && element.tagName === 'IMG' && element.parentElement) {
+            rect = element.parentElement.getBoundingClientRect();
+        }
+        return rect.width > 0 && rect.height > 0 && rect.bottom > 0 && rect.right > 0 && rect.top < window.innerHeight && rect.left < window.innerWidth;
+    }
+
+    function waitForContentFonts(root) {
+        if (!document.fonts?.load || document.fonts.status !== 'loading') return Promise.resolve();
+        const samples = [root, ...root.querySelectorAll('h1, h2, button, input')].filter(isCriticalVisibleContent).slice(0, 5);
+        const fonts = new Set(samples.map(element => getComputedStyle(element).font).filter(Boolean));
+        return Promise.all(Array.from(fonts, font => document.fonts.load(font).catch(() => {})));
     }
 
     async function hideAfterContent(root = document.body, options = {}) {
         const token = options.token === undefined ? transitionToken : options.token;
         const maxWait = Number(options.maxWait || 1800);
-        const fontsReady = document.fonts?.ready || Promise.resolve();
-        await Promise.race([
-            Promise.all([nextFrames(2), fontsReady, waitForContentImages(root, maxWait)]),
-            delay(maxWait)
+        const contentRoot = (typeof root === 'string' ? document.querySelector(root) : root) || document.body;
+        await nextFrames(2);
+        if (token !== transitionToken || screen.dataset.loaderError === 'true') return;
+        const [, imagesReady] = await Promise.all([
+            Promise.race([waitForContentFonts(contentRoot), delay(maxWait)]),
+            waitForContentImages(contentRoot)
         ]);
-        setTargetProgress(85);
+        if (token !== transitionToken || screen.dataset.loaderError === 'true') return;
+        if (!imagesReady) {
+            showStartupError(token);
+            return;
+        }
         hide({
             token,
             minimumVisible: Number(options.minimumVisible || 0)
@@ -422,9 +240,9 @@
         }
     }
 
-    const pageLoaded = document.readyState === 'complete'
+    const documentReady = document.readyState !== 'loading'
         ? Promise.resolve()
-        : new Promise(resolve => window.addEventListener('load', resolve, { once: true }));
+        : new Promise(resolve => document.addEventListener('DOMContentLoaded', resolve, { once: true }));
 
     const readyEventName = screen.dataset.loaderReadyEvent ||
         (screen.dataset.loaderWaitForApp === 'true' ? 'abs-home-content-ready' : '');
@@ -440,45 +258,66 @@
             window.addEventListener(readyEventName, resolve, { once: true });
         });
 
-    // Initial page-load sequence: no artificial data-loader-delay. The loader
-    // advances on genuine milestones and fades as soon as the app is ready.
+    // Shared shell readiness never substitutes for page-owned readiness.
+    const shellReadyEventName = screen.dataset.loaderShellReadyEvent || '';
+    const shellReadyFlagName = screen.dataset.loaderShellReadyFlag || '';
+    const shellContentReady = !shellReadyEventName
+        ? Promise.resolve()
+        : new Promise(resolve => {
+            if (shellReadyFlagName && window[shellReadyFlagName]) {
+                resolve();
+                return;
+            }
+            window.addEventListener(shellReadyEventName, resolve, { once: true });
+        });
+
+    // Initial reveal follows application readiness and the visible content gate.
     const initialToken = transitionToken;
     shownAt = performance.now();
     // Preloader: the veil is already painted opaque by CSS alone, so the
     // site is never visible before it is ready. No JS fade-in needed.
     screen.classList.remove('is-hidden', 'is-entering', 'is-exiting', 'is-complete');
     screen.setAttribute('aria-hidden', 'false');
+    screen.setAttribute('aria-busy', 'true');
     document.documentElement.classList.add('abs-page-loading');
-    resetProgress();
+    cancelExit();
 
-    showRandomImage();
-    Promise.all([pageLoaded, nextFrames(2), document.fonts?.ready || Promise.resolve()]).then(() => {
-        setTargetProgress(85);
+    Promise.all([documentReady, appContentReady, shellContentReady]).then(() => {
+        if (initialToken !== transitionToken) return;
+        window.clearTimeout(safetyTimer);
+        hideAfterContent(document.body, { token: initialToken, maxWait: 1500 });
     });
-    waitForContentImages(document.body, 1800).then(() => {
-        if (targetProgress < 85) setTargetProgress(85);
-    });
-    appContentReady.then(() => {
-        hideAfterContent(document.body, { token: initialToken, maxWait: 1500, minimumVisible: 650 });
-    });
-    // If a page never fires its ready event, still finish cleanly from real page load.
-    pageLoaded.then(() => {
-        window.setTimeout(() => {
-            if (!completionStarted) {
-                setTargetProgress(100);
-            }
-        }, 2200);
-    });
-    window.setTimeout(() => {
-        if (!completionStarted) {
-            setTargetProgress(100);
-        }
-    }, 5500);
-    window.setTimeout(() => hide({ token: initialToken, force: true }), 9000);
+    // A missing essential ready signal must recover with an actionable error,
+    // rather than uncovering an empty card or unfinished imported calculator.
+    function showStartupError(token = initialToken) {
+        if (token !== transitionToken || completionStarted) return;
+        screen.setAttribute('aria-busy', 'false');
+        screen.setAttribute('role', 'alert');
+        if (screen.dataset.loaderError === 'true') return;
+        screen.dataset.loaderError = 'true';
+        const message = document.createElement('p');
+        message.textContent = 'This page could not finish loading. Check your connection and retry.';
+        const retry = document.createElement('button');
+        retry.type = 'button';
+        retry.textContent = 'Retry';
+        retry.addEventListener('click', () => window.location.reload());
+        const stage = screen.querySelector('.abs-loader-stage') || screen;
+        stage.replaceChildren(message, retry);
+        stage.style.pointerEvents = 'auto';
+        document.documentElement.classList.remove('abs-page-loading');
+    }
+    safetyTimer = window.setTimeout(showStartupError, 15000);
+    window.addEventListener('abs-card-bootstrap-error', () => showStartupError());
+    window.addEventListener('abs-calculator-bootstrap-error', () => showStartupError());
 
     // Cover genuine document unloads immediately. Hash-only changes, same-
     // document anchors, downloads, and new-tab clicks never trigger the
     // full-screen takeover.
+    function beginNavigation() {
+        if (navigationToken !== null) return navigationToken;
+        navigationToken = show({ maxVisible: 5000, immediate: true, navigation: true });
+        return navigationToken;
+    }
     document.addEventListener('click', event => {
         if (event.defaultPrevented || event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
         const anchor = event.target instanceof Element ? event.target.closest('a[href]') : null;
@@ -496,21 +335,14 @@
         if (destination.href === window.location.href) return;
         // Same document, different hash: in-page navigation, not a page load.
         if (destination.pathname === window.location.pathname && destination.search === window.location.search) return;
-        if (!navigationArtPrepared) {
-            promoteNextArt();
-            navigationArtPrepared = true;
-        }
-        carryCurrentTransitionArt();
-        show({ maxVisible: 5000, keepArt: true });
+        beginNavigation();
     });
 
     window.addEventListener('beforeunload', () => {
-        if (!navigationArtPrepared) promoteNextArt();
-        carryCurrentTransitionArt();
-        show({ maxVisible: 5000, keepArt: true });
+        beginNavigation();
     });
     window.addEventListener('pageshow', event => {
-        if (event.persisted) hide({ force: true });
+        if (event.persisted && screen.dataset.loaderError !== 'true') hide({ force: true });
     });
 
     window.absLoadingScreen = { show, hide, hideAfterContent, run };

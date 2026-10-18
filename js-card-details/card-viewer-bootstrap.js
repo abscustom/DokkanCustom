@@ -2,7 +2,7 @@
  * Published card viewer bootstrap.
  *
  * The editor has a larger theme controller, but the published viewer only
- * needs presentation classes, the shared bottom site navigation, and a small
+ * needs presentation classes, the shared sidebar navigation, and a small
  * viewer-safe settings popover. Keep this file independent from editor
  * controls, import/export actions, and editor cache state.
  */
@@ -12,15 +12,10 @@
     const VIEWER_THEME_KEY = 'card_viewer_theme';
     const BACKGROUND_MODE_KEY = 'abs_clean_bg_mode';
     const CLEAN_THEME = 'abs-clean';
-    const LEGACY_PRESENTATION_CLASSES = ['theme-abs-style', 'theme-dokkaninfo', 'theme-placeholder', 'theme-abs-clean'];
+    const LEGACY_PRESENTATION_CLASSES = ['theme-abs-style', 'theme-dokkaninfo', 'theme-placeholder', 'theme-abs-clean', 'theme-phantom'];
     const ALL_VIEWER_THEME_CLASSES = ['theme-sba', ...LEGACY_PRESENTATION_CLASSES];
-    const SUPPORTED_THEMES = new Set(['abs-style', 'dokkaninfo', CLEAN_THEME]);
-    let hideTimer = null;
+    const SUPPORTED_THEMES = new Set(['abs-style', 'dokkaninfo', CLEAN_THEME, 'phantom']);
     let settingsReturnFocus = null;
-
-    function isViewerReady() {
-        return Boolean(document.body?.classList.contains('card-viewer-page'));
-    }
 
     function readStoredValue(key, fallback = '') {
         try {
@@ -42,6 +37,7 @@
     function normalizeViewerTheme(themeName) {
         const value = String(themeName || '').trim().toLowerCase();
         if (value === 'sba' || value === 'abs.clean' || value === 'abs-clean') return CLEAN_THEME;
+        if (value === 'abs.phantom') return 'phantom';
         return SUPPORTED_THEMES.has(value) ? value : CLEAN_THEME;
     }
 
@@ -72,6 +68,8 @@
                 app.classList.add('theme-sba', 'theme-abs-clean');
             } else if (theme === 'dokkaninfo') {
                 app.classList.add('theme-dokkaninfo');
+            } else if (theme === 'phantom') {
+                app.classList.add('theme-phantom');
             } else {
                 app.classList.add('theme-abs-style');
             }
@@ -80,6 +78,7 @@
         if (body) {
             if (theme === CLEAN_THEME) body.classList.add('theme-abs-clean');
             else if (theme === 'dokkaninfo') body.classList.add('theme-dokkaninfo');
+            else if (theme === 'phantom') body.classList.add('theme-phantom');
             else body.classList.add('theme-abs-style');
             body.dataset.cardViewerTheme = theme;
         }
@@ -240,93 +239,9 @@
         return setCardViewerSettingsOpen(nextState);
     }
 
-    function revealViewerNav() {
-        if (!isViewerReady()) return;
-        if (hideTimer) {
-            clearTimeout(hideTimer);
-            hideTimer = null;
-        }
-        document.body.classList.add('sba-bottom-nav-visible');
-    }
-
-    function scheduleViewerNavHide(delay = 800) {
-        if (!isViewerReady() || isSettingsOpen()) return;
-        if (hideTimer) clearTimeout(hideTimer);
-        hideTimer = window.setTimeout(() => {
-            if (!isSettingsOpen()) document.body.classList.remove('sba-bottom-nav-visible');
-            hideTimer = null;
-        }, delay);
-    }
-
-    function clampPercent(value) {
-        return `${Math.max(0, Math.min(100, value))}%`;
-    }
-
-    function initializeLiquidGlassLens() {
-        const displacementImage = document.getElementById('sba-liquid-displacement-map');
-        if (!displacementImage) return;
-
-        const size = 128;
-        const canvas = document.createElement('canvas');
-        canvas.width = size;
-        canvas.height = size;
-        const context = canvas.getContext('2d', { willReadFrequently: false });
-        const pixels = context?.createImageData(size, size);
-        if (!context || !pixels) return;
-
-        for (let y = 0; y < size; y += 1) {
-            for (let x = 0; x < size; x += 1) {
-                const nx = ((x + 0.5) / size - 0.5) * 2;
-                const ny = ((y + 0.5) / size - 0.5) * 2;
-                const radius = Math.min(1, Math.hypot(nx, ny));
-                const edge = Math.max(0, Math.min(1, (radius - 0.38) / 0.62));
-                const easedEdge = edge * edge * (3 - (2 * edge));
-                const inverseRadius = radius > 0.0001 ? 1 / radius : 0;
-                const offset = (y * size + x) * 4;
-                pixels.data[offset] = Math.round(128 - (nx * inverseRadius * easedEdge * 112));
-                pixels.data[offset + 1] = Math.round(128 - (ny * inverseRadius * easedEdge * 112));
-                pixels.data[offset + 2] = 128;
-                pixels.data[offset + 3] = 255;
-            }
-        }
-
-        context.putImageData(pixels, 0, 0);
-        displacementImage.setAttribute('href', canvas.toDataURL('image/png'));
-    }
-
-    function attachLiquidGlassHighlights() {
-        document.querySelectorAll('.card-viewer-site-nav .hud-nav-link').forEach((control) => {
-            if (control.dataset.glassHighlightAttached) return;
-            control.dataset.glassHighlightAttached = 'true';
-            control.addEventListener('pointermove', (event) => {
-                if (!isViewerReady()) return;
-                const bounds = control.getBoundingClientRect();
-                if (!bounds.width || !bounds.height) return;
-                control.style.setProperty('--sba-glass-x', clampPercent(((event.clientX - bounds.left) / bounds.width) * 100));
-                control.style.setProperty('--sba-glass-y', clampPercent(((event.clientY - bounds.top) / bounds.height) * 100));
-            });
-            control.addEventListener('pointerleave', () => {
-                control.style.removeProperty('--sba-glass-x');
-                control.style.removeProperty('--sba-glass-y');
-            });
-        });
-
-        document.querySelectorAll('.card-viewer-site-nav .hud-nav-group').forEach((dock) => {
-            if (dock.dataset.highlightAttached) return;
-            dock.dataset.highlightAttached = 'true';
-            dock.addEventListener('pointermove', (event) => {
-                if (!isViewerReady()) return;
-                const bounds = dock.getBoundingClientRect();
-                if (!bounds.width || !bounds.height) return;
-                dock.style.setProperty('--sba-dock-x', clampPercent(((event.clientX - bounds.left) / bounds.width) * 100));
-                dock.style.setProperty('--sba-dock-y', clampPercent(((event.clientY - bounds.top) / bounds.height) * 100));
-            });
-            dock.addEventListener('pointerleave', () => {
-                dock.style.removeProperty('--sba-dock-x');
-                dock.style.removeProperty('--sba-dock-y');
-            });
-        });
-    }
+    // Compatibility callbacks now use the shared sidebar; no bottom hover timer.
+    function revealViewerNav() { window.absNavigation?.refresh(); }
+    function scheduleViewerNavHide() {}
 
     function attachViewerSettingsControls() {
         document.querySelectorAll('[data-viewer-theme]').forEach((button) => {
@@ -358,36 +273,9 @@
     // This executes before card-inspector-core.js registers renderCardDetails.
     enableAbsCleanViewer();
 
-    document.addEventListener('pointermove', (event) => {
-        if (!isViewerReady()) return;
-        if (isSettingsOpen()) {
-            revealViewerNav();
-            return;
-        }
-        const nav = document.querySelector('.card-viewer-site-nav .hud-nav-group');
-        const isInsideNav = Boolean(nav?.contains(event.target));
-        const isNearBottom = event.clientY >= window.innerHeight - 112;
-        if (isNearBottom || isInsideNav) revealViewerNav();
-        else scheduleViewerNavHide();
-    }, { passive: true });
-
-    document.addEventListener('focusin', (event) => {
-        const nav = document.querySelector('.card-viewer-site-nav .hud-nav-group');
-        const drawer = document.getElementById('settingsDrawer');
-        if (nav?.contains(event.target) || drawer?.contains(event.target)) revealViewerNav();
-    });
-
-    window.addEventListener('resize', () => {
-        if (!isViewerReady()) return;
-        if (isSettingsOpen()) revealViewerNav();
-        else document.body.classList.remove('sba-bottom-nav-visible');
-    }, { passive: true });
-
     const initialize = () => {
         initializeViewerTheme();
         initAbsCleanBackgroundMode();
-        initializeLiquidGlassLens();
-        attachLiquidGlassHighlights();
         attachViewerSettingsControls();
     };
 

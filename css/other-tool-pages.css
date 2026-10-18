@@ -1703,6 +1703,42 @@ body.other-tool-body .leader-compatibility-page .lc-unit-card--compact:focus-vis
     transform: none !important;
 }
 
+/* Keep the Leader results surface aligned with the full-bleed Cards shell while
+   reserving the sidebar width for readable card content. */
+body.abs-shell:has(.leader-compatibility-page) {
+    container-type: inline-size;
+    --lc-safe-left: calc(100vw - 100cqw - var(--abs-shell-gap, 16px));
+}
+
+html body.abs-shell .leader-compatibility-page .lc-results-section {
+    width: 100vw !important;
+    max-width: none !important;
+    margin-left: calc(-1 * var(--lc-safe-left)) !important;
+    padding: 34px 24px 30px calc(var(--lc-safe-left) + 24px) !important;
+    border-top: 1px solid var(--abs-shell-border, rgba(255, 255, 255, 0.12)) !important;
+    border-right: 0 !important;
+    border-bottom: 1px solid var(--abs-shell-border, rgba(255, 255, 255, 0.12)) !important;
+    border-left: 0 !important;
+    border-radius: 0 !important;
+    background: var(--abs-shell-panel, rgba(29, 30, 33, 0.88)) !important;
+    background-image: none !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+@media (max-width: 900px) {
+    html body.abs-shell .leader-compatibility-page .lc-results-section {
+        padding: 24px 16px 22px calc(var(--lc-safe-left) + 16px) !important;
+    }
+}
+
+@media (max-width: 620px) {
+    html body.abs-shell .leader-compatibility-page .lc-results-section {
+        padding: 20px 12px 18px calc(var(--lc-safe-left) + 12px) !important;
+    }
+}
+
 .leader-compatibility-page[data-card-presentation="dokkan"] :is(.lc-leader-portrait, .lc-unit-portrait) > img.lc-portrait-art {
     height: 150%;
     bottom: -20.67%;

@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light dark">
+    <title></title>
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/assets/images/abs.style.png">
+</head>
+<body class="is-published card-viewer-page">
+    <div id="abs-loading-screen" class="abs-loader-root" data-loader-ready-event="abs-card-content-ready" data-loader-ready-flag="absCardContentReady" role="status" aria-label="Loading card">
+        <div class="abs-loader-stage">
+            <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs.style.png" alt="">
+            <div class="abs-loader-status">Loading card…</div>
+        </div>
+    </div>
+
+    <script>
+        window.addEventListener('abs-card-bootstrap-error', event => {
+            const loader = document.getElementById('abs-loading-screen');
+            if (!loader) return;
+            loader.dataset.loaderError = 'true';
+            const status = loader.querySelector('.abs-loader-status');
+            if (status) status.textContent = event.detail?.message || 'This card is temporarily unavailable. Retry in a moment.';
+        });
+    </script>
+    <script src="js/card-content-config.js?v=20261017-card-content-config-v1"></script>
+    <script src="js/card-content-renderer.js?v=20261017-card-content-renderer-v1"></script>
+    <script src="js/card-content-client.js?v=20261017-card-content-client-v1"></script>
+    <script src="js/custom-card-bootstrapper.js?v=20261017-database-viewer-v1"></script>
+</body>
+</html>

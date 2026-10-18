@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Estimate damage received by a Dokkan Battle character, including DEF, guard, type, reductions, and Domain effects.">
+    <title>ABS - Tanking</title>
+    <link rel="icon" type="image/png" href="https://abscustom.github.io/DokkanCustom/assets/navigation/sidebar/thumb_support_item_90001.png">
+    <script src="js/favicon.js?v=20261010-page-metadata-v1" defer></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/sba-bottom-nav.css?v=20260916-showcase-clean-v3">
+    <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
+    <link rel="stylesheet" href="css/other-tools.css?v=20260929-other-tools-v2">
+    <link rel="stylesheet" href="css/other-tool-pages.css?v=20260929-other-pages-v4">
+    <link rel="stylesheet" href="css/damage-received.css?v=20261010-damage-received-design-v15">
+    <link rel="stylesheet" href="css/abs-navigation.css?v=20261013-editor-context-rail-mobile-close-v1">
+    <script>(()=>{try{document.documentElement.dataset.absNavCollapsed=String(localStorage.getItem('abs_navigation_collapsed')==='true');document.documentElement.dataset.absContextCollapsed=String(localStorage.getItem('abs_context_collapsed')==='true');}catch{}})();</script>
+    <link rel="stylesheet" href="css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1">
+</head>
+<body class="other-tool-body calc-liquid-body theme-sba theme-abs-clean theme-abs-clean-dark abs-shell">
+
+    <div class="abs-mobile-shell"><button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-main-sidebar" aria-controls="abs-main-sidebar" aria-expanded="false" aria-label="Open navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button><a class="abs-mobile-brand" href="index.html" aria-label="ABS — Home"><img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000"></a></div><div id="abs-shell-backdrop" hidden></div><aside id="abs-main-sidebar" aria-label="Main navigation" data-abs-selector-anchor>
+        <div class="abs-sidebar-heading">
+            <a class="abs-sidebar-brand" href="index.html" aria-label="ABS — Home"><img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" data-sba-src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000" decoding="async"></a>
+            <button type="button" class="abs-shell-collapse" data-abs-nav-collapse aria-controls="abs-main-sidebar" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m7-12-4 4 4 4"/></svg></button>
+        </div>
+        <div class="abs-sidebar-scroll"><nav aria-label="Destinations"><div class="hud-nav-group">
+
+                    <a href="index.html?view=cards" class="hud-nav-link" aria-label="Cards" title="Cards"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 20c.8-3 2.8-4.5 6-4.5s5.2 1.5 6 4.5" stroke="currentColor" stroke-width="2"/></svg><span>Cards</span></a>
+                    <a href="card.html?viewer=1" class="hud-nav-link" aria-label="Viewer" title="Viewer"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg><span>Viewer</span></a>
+                    <a href="calculator.html" class="hud-nav-link" aria-label="Calculator" title="Calculator"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 8h8M8 12h2m4 0h2M8 16h2m4 0h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Calculator</span></a>
+                    <a href="editor.html" class="hud-nav-link" aria-label="Editor" title="Editor"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 16-.8 4.8L8 20l11.6-11.6a2.8 2.8 0 0 0-4-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m13.8 6.2 4 4" stroke="currentColor" stroke-width="2"/></svg><span>Editor</span></a>
+                    <a href="index.html?view=news" class="hud-nav-link" aria-label="News" title="News"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v15H6a2 2 0 0 1-2-2Zm0 12h16M8 8h8m-8 3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>News</span></a>
+                </div></nav><div id="abs-sidebar-twitch" aria-label="Community channels"></div></div>
+    </aside>
+
+
+
+    <main class="other-tool-main damage-received-page" id="damage-received-page">
+        <header class="other-tool-heading dr-page-heading">
+            <h1 class="hub-section-title" id="dr-page-title">DAMAGE RECEIVED</h1>
+            <p class="hub-section-subtitle">Test the tanking ability of characters</p>
+        </header>
+
+        <section class="dr-content-shell" aria-labelledby="dr-page-title">
+        <div class="dr-workspace">
+        <div class="dr-input-columns">
+        <section class="dr-panel dr-character-panel" aria-labelledby="dr-character-heading">
+            <span class="dr-corner-mark dr-corner-mark--tl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--tr" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--bl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--br" aria-hidden="true">+</span>
+            <div class="dr-panel-heading">
+                <div class="dr-panel-title-group"><span class="dr-stage-tag dr-tag-def">DEF</span><h2 id="dr-character-heading">Character defense</h2></div>
+            </div>
+            <div class="dr-panel-body">
+                <div class="dr-form-grid">
+                    <label class="dr-field"><span>Character class</span><select id="dr-character-class"><option value="super">Super</option><option value="extreme">Extreme</option></select></label>
+                    <label class="dr-field"><span>Character type</span><select id="dr-character-type"><option>AGL</option><option selected>TEQ</option><option>INT</option><option>STR</option><option>PHY</option></select></label>
+                    <label class="dr-field"><span>Current HP before attack</span><input id="dr-current-hp" type="number" min="1" step="1" value="20000000" placeholder="1000000" inputmode="decimal"></label>
+                    <label class="dr-field"><span>Pre-turn in-game DEF (points)</span><input id="dr-phase1-defense" type="number" min="0" step="1" value="500000" inputmode="decimal"><small>Displayed value includes Leader Skill and active Phase 1 percentage boosts; use as-is.</small></label>
+                    <label class="dr-field"><span>Damage reduction (%)</span><input id="dr-damage-reduction" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"></label>
+                    <label class="dr-field"><span>Normal DR (%)</span><input id="dr-normal-reduction" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><small class="dr-sr-only">Normal-only damage reduction.</small></label>
+                    <label class="dr-field"><span>Type DEF Boost (0-15)</span><input id="dr-type-defense-boost" type="number" min="0" max="15" step="1" value="15" inputmode="numeric"><small class="dr-sr-only">Type DEF Boost applies only with type advantage.</small></label>
+                    <label class="dr-field"><span>SA ATK Down (points)</span><input id="dr-sa-atk-down" type="number" min="0" max="10000" step="1" value="0" inputmode="decimal"></label>
+                    <label class="dr-field"><span>ATK Down: item (%)</span><input id="dr-item-atk-down" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"></label>
+                    <label class="dr-field"><span>ATK Down: passive (%)</span><input id="dr-passive-atk-down" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"><small class="dr-sr-only">Item and passive reductions multiply as separate effects.</small></label>
+                    <label class="dr-field dr-toggle-field dr-guard-field"><span class="dr-checkbox-label-spacer" aria-hidden="true"></span><span class="dr-checkbox-control-row"><span class="dr-checkbox-control-label">Guard active</span><input id="dr-guard" type="checkbox" aria-label="Guard active"></span><small class="dr-sr-only">Guard also applies when the character and enemy types match.</small></label>
+                </div>
+                <details class="dr-advanced dr-phase2-options" id="dr-phase2-options">
+                    <summary>Optional Phase 2 and Super Attack DEF effects<span class="dr-active-count"></span></summary>
+                    <div class="dr-advanced-body">
+                        <p class="dr-help dr-sr-only">Phase 2 and Super Attack DEF effects are separate optional stages. Each applies only when its own active control is checked.</p>
+                        <div class="dr-form-grid">
+                            <label class="dr-field"><span>Phase 2 DEF bonus (%)</span><input id="dr-phase2-defense" type="number" min="-100" max="5000" step="0.1" value="0" inputmode="decimal"></label>
+                            <label class="dr-field dr-toggle-field"><span>Phase 2 active before this hit</span><input id="dr-phase2-active" type="checkbox"><small class="dr-sr-only">Enable only when the Phase 2 effect triggered before the incoming hit.</small></label>
+                            <label class="dr-field"><span>Super Attack DEF bonus (%)</span><input id="dr-sa-defense" type="number" min="-100" max="5000" step="0.1" value="0" inputmode="decimal"></label>
+                            <label class="dr-field dr-toggle-field"><span>Super Attack DEF raise active</span><input id="dr-sa-defense-active" type="checkbox"></label>
+                        </div>
+                    </div>
+                </details>
+                <details class="dr-advanced" id="dr-domain-options">
+                    <summary>Domain effects &amp; eligibility<span class="dr-active-count"></span></summary>
+                    <div class="dr-advanced-body">
+                        <p class="dr-help dr-sr-only" id="dr-domain-help">The character must match the configured class, type, and a required category.</p>
+                        <label class="dr-domain-active"><input id="dr-domain-active" type="checkbox" aria-describedby="dr-domain-help"><span>Domain active</span></label>
+                        <div class="dr-form-grid dr-domain-grid">
+                            <label class="dr-field"><span>Damage received increase (%)</span><input id="dr-domain-damage-increase" type="number" min="0" max="10000" step="0.1" value="0" inputmode="decimal"></label>
+                            <label class="dr-field"><span>Target class</span><select id="dr-domain-target-class"><option value="any">Any class</option><option value="super">Super</option><option value="extreme">Extreme</option></select></label>
+                            <label class="dr-field"><span>Target type</span><select id="dr-domain-target-type"><option value="any">Any type</option><option>AGL</option><option>TEQ</option><option>INT</option><option>STR</option><option>PHY</option></select></label>
+                            <label class="dr-field"><span>Required categories (any match)</span><input id="dr-domain-required-categories" type="text" autocomplete="off" placeholder="Optional, comma-separated"></label>
+                        </div>
+                        <div class="dr-form-grid"><label class="dr-field dr-wide-field"><span>Character categories</span><input id="dr-character-categories" type="text" autocomplete="off" placeholder="Comma-separated category names"></label></div>
+                        <p class="dr-eligibility" id="dr-domain-eligibility" role="status">Domain inactive. No Domain amplification applied.</p>
+                    </div>
+                </details>
+            </div>
+        </section>
+        <section class="dr-panel dr-enemy-panel" aria-labelledby="dr-enemy-heading">
+            <span class="dr-corner-mark dr-corner-mark--tl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--tr" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--bl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--br" aria-hidden="true">+</span>
+            <div class="dr-panel-heading"><div class="dr-panel-title-group"><span class="dr-stage-tag dr-tag-atk">ATK</span><h2 id="dr-enemy-heading">Enemy attack</h2></div></div>
+            <div class="dr-panel-body">
+                <div class="dr-form-grid">
+                    <label class="dr-field"><span>Enemy class</span><select id="dr-enemy-class"><option value="super">Super</option><option value="extreme">Extreme</option></select></label>
+                    <label class="dr-field"><span>Enemy type</span><select id="dr-enemy-type"><option>AGL</option><option selected>TEQ</option><option>INT</option><option>STR</option><option>PHY</option></select></label>
+                    <label class="dr-field"><span>Enemy ATK stat (points)</span><input id="dr-enemy-attack" type="number" min="0" step="1" value="3000000" inputmode="decimal"></label>
+                    <label class="dr-field"><span>Super ATK multiplier (%)</span><input id="dr-sa-multiplier" type="number" min="0" max="10000" step="1" value="300" inputmode="decimal"></label>
+                    <label class="dr-field"><span>Normal attacks in scenario</span><input id="dr-normal-attack-count" type="number" min="1" max="99" step="1" value="1" inputmode="numeric"><small>Normal count only; Super remains one hit.</small></label>
+                    <label class="dr-field"><span>Enemy DEF reduction (%)</span><input id="dr-defense-reduction" type="number" min="0" max="100" step="0.1" value="0" inputmode="decimal"></label>
+                    <label class="dr-field"><span>Variance (1.000-1.030)</span><input id="dr-variance" type="number" min="1" max="1.03" step="0.001" value="1.015" inputmode="decimal"></label>
+                    <div class="dr-field dr-derived-field"><span id="dr-total-sa-label">Total Super ATK <span class="dr-derived-tag">Calculated</span></span><output id="dr-total-sa" aria-labelledby="dr-total-sa-label">—</output></div>
+                    <label class="dr-field dr-toggle-field dr-critical-field"><span class="dr-checkbox-label-spacer" aria-hidden="true"></span><span class="dr-checkbox-control-row"><span class="dr-checkbox-control-label">Enemy critical hit</span><input id="dr-critical" type="checkbox" aria-label="Enemy critical hit"></span><small class="dr-sr-only">Critical hits use a 1.5 multiplier before DEF subtraction.</small></label>
+                </div>
+                <details class="dr-advanced">
+                    <summary>Enemy modifiers<span class="dr-active-count"></span></summary>
+                    <div class="dr-advanced-body"><div class="dr-form-grid">
+                        <label class="dr-field"><span>Enemy ATK stat increase (%)</span><input id="dr-enemy-atk-increase" type="number" min="-100" max="10000" step="0.1" value="0" inputmode="decimal"></label>
+                        <label class="dr-field"><span>Enemy damage increase (%)</span><input id="dr-enemy-damage-increase" type="number" min="-100" max="10000" step="0.1" value="0" inputmode="decimal"></label>
+                    </div></div>
+                </details>
+            </div>
+        </section>
+    </div>
+    <section class="dr-results" aria-labelledby="dr-results-heading">
+        <span class="dr-corner-mark dr-corner-mark--tl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--tr" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--bl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--br" aria-hidden="true">+</span>
+        <div class="dr-results-heading"><div class="dr-results-title-group"><span class="dr-stage-tag dr-tag-result">RESULT</span><h2 id="dr-results-heading">Attack outcomes &amp; HP</h2></div></div>
+        <p class="dr-validation-message" id="dr-validation-message" role="alert" hidden></p>
+        <div class="dr-result-cards" aria-live="polite" aria-atomic="true">
+            <article class="dr-result-card dr-normal-result-card">
+                <span class="dr-result-label" id="dr-normal-label">Normals</span>
+                <output class="dr-scenario-damage" id="dr-normal-result" aria-labelledby="dr-normal-label">—</output>
+                <span class="dr-result-note" id="dr-normal-damage-note">— Normal attacks · damage per hit.</span>
+                <div class="dr-hp-outcome">
+                    <div class="dr-hp-heading"><span>HP remaining</span><span class="dr-hp-reading"><output id="dr-normal-hp-remaining" aria-label="Normal scenario HP remaining">—</output><span>HP</span><span aria-hidden="true">·</span><output id="dr-normal-hp-percent" aria-label="Normal scenario HP remaining percentage">—</output><span>%</span></span></div>
+                    <div class="dr-hp-track" id="dr-normal-hp-track" role="progressbar" aria-label="Normal scenario HP remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Unavailable"><span class="dr-hp-fill"></span></div>
+                    <p class="dr-overkill-note" id="dr-normal-overkill" hidden>Overkill past 0 HP: <output>—</output> damage</p>
+                </div>
+            </article>
+            <article class="dr-result-card dr-super-result">
+                <span class="dr-result-label" id="dr-super-label">Supers</span>
+                <output class="dr-scenario-damage" id="dr-super-result" aria-labelledby="dr-super-label">—</output>
+                <span class="dr-result-note" id="dr-super-damage-note">One Super Attack · one hit.</span>
+                <div class="dr-hp-outcome">
+                    <div class="dr-hp-heading"><span>HP remaining</span><span class="dr-hp-reading"><output id="dr-super-hp-remaining" aria-label="Super scenario HP remaining">—</output><span>HP</span><span aria-hidden="true">·</span><output id="dr-super-hp-percent" aria-label="Super scenario HP remaining percentage">—</output><span>%</span></span></div>
+                    <div class="dr-hp-track" id="dr-super-hp-track" role="progressbar" aria-label="Super scenario HP remaining" aria-valuemin="0" aria-valuemax="100" aria-valuenow="0" aria-valuetext="Unavailable"><span class="dr-hp-fill"></span></div>
+                    <p class="dr-overkill-note" id="dr-super-overkill" hidden>Overkill past 0 HP: <output>—</output> damage</p>
+                </div>
+            </article>
+        </div>
+    </section>
+    <section class="dr-supporting-section" aria-labelledby="dr-supporting-heading">
+        <span class="dr-corner-mark dr-corner-mark--tl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--tr" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--bl" aria-hidden="true">+</span><span class="dr-corner-mark dr-corner-mark--br" aria-hidden="true">+</span>
+        <div class="dr-supporting-heading"><span class="dr-stage-tag">DETAILS</span><h2 id="dr-supporting-heading">Calculation details</h2></div>
+        <p id="dr-result-summary"></p>
+        <details class="dr-breakdown-details"><summary>Calculation breakdown - Normal &amp; Super</summary><div class="dr-breakdown-grid" id="dr-breakdown"></div><p class="dr-formula-note">Stages: enemy ATK stat increase &rarr; item/passive ATK Down &rarr; attack multiplier and SA ATK Down &rarr; critical hit and enemy damage increase &rarr; variance &rarr; damage reduction &rarr; class/type/guard &rarr; pre-turn in-game DEF as displayed &rarr; optional Phase 2 and Super Attack DEF raises &rarr; qualifying Domain damage increase.</p></details>
+        <p class="dr-estimate-note">Repeated Normals assume identical attack, variance, DEF, and DR per hit; stacking and per-hit procs are not modeled.</p>
+    </section>
+
+</div>
+        </section>
+
+    </main>
+
+    <script src="js/tool-sba-nav.js?v=20261008-abs-sidebar-v1"></script>
+    <script src="js/other-nav.js?v=20261016-profile-gate-v1"></script>
+    <script type="module" src="js/damage-received.js?v=20261010-damage-received-ui-v10"></script>
+    <script src="js/sidebar-streamers.js?v=20261008-sidebar-live-indicator-v1"></script>
+    <script src="js/sidebar-streamers-feed.js?v=20261007-sidebar-status-v1"></script>
+    <script src="js/abs-navigation.js?v=20261016-profile-ui-v1"></script>
+</body>
+</html>

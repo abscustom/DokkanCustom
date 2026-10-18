@@ -1,0 +1,15 @@
+/* A real PNG is the native image hit target; the live intrinsic layers remain
+   visible beneath it so animations, hover and the existing layout stay intact. */
+body.cards-layout-dokkan #cardGrid .card-icon img.dokkan-card-composite {
+    position: absolute !important;
+    display: block !important;
+    z-index: 20 !important;
+    opacity: 0 !important;
+    pointer-events: auto !important;
+    transform: none !important;
+    filter: none !important;
+    border: 0 !important;
+    border-radius: 0 !important;
+    max-width: none !important;
+    max-height: none !important;
+}

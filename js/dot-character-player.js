@@ -1,3 +1,4 @@
+import { resetHomeTheme, applyHomeTheme } from './home-theme.js?v=20261008-home-logo-palette-v2';
 /* Small decorative random dot-character player for the Home view. */
 (function mountHomeDotCharacter() {
     const SERVER = 'http://127.0.0.1:3137';
@@ -41,6 +42,14 @@
         const targetContext = target.getContext('2d');
         if (!sourceContext || !targetContext) return () => {};
 
+        // Keep the sharp scene in its original safe foreground box. Only the
+        // existing blurred echo gets a separate, CSS-controlled bleed layer.
+        const backdrop = document.createElement('canvas');
+        backdrop.className = 'dot-character-background-canvas';
+        backdrop.setAttribute('aria-hidden', 'true');
+        target.before(backdrop);
+        const backdropContext = backdrop.getContext('2d');
+
         let crop = null;
         let cropFitNudge = 1;
         let lastBoundsCheck = 0;
@@ -52,7 +61,6 @@
             let pixels;
             try { pixels = sourceContext.getImageData(0, 0, width, height).data; } catch { return; }
             let left = width, top = height, right = -1, bottom = -1;
-            const colorWeights = new Map();
             const opaqueRows = new Uint16Array(Math.ceil(height / 4));
             const opaqueColumns = new Uint16Array(Math.ceil(width / 4));
             // Sampling is enough to find this decorative sprite's occupied
@@ -76,50 +84,9 @@
                         opaqueColumns[x / stride] += 1;
                     }
 
-                    // Quantise vivid visible pixels into colour buckets. The
-                    // strongest bucket becomes the divider's live accent.
-                    const red = pixels[pixelIndex];
-                    const green = pixels[pixelIndex + 1];
-                    const blue = pixels[pixelIndex + 2];
-                    const highest = Math.max(red, green, blue);
-                    const lowest = Math.min(red, green, blue);
-                    const saturation = highest ? (highest - lowest) / highest : 0;
-                    if (alpha < 96 || saturation < 0.18 || highest < 58) continue;
-                    const bucketRed = Math.min(255, Math.round(red / 32) * 32);
-                    const bucketGreen = Math.min(255, Math.round(green / 32) * 32);
-                    const bucketBlue = Math.min(255, Math.round(blue / 32) * 32);
-                    const key = `${bucketRed},${bucketGreen},${bucketBlue}`;
-                    const weight = (alpha / 255) * saturation * (0.25 + highest / 255);
-                    colorWeights.set(key, (colorWeights.get(key) || 0) + weight);
                 }
             }
             if (right < left || bottom < top) return;
-            let accent = null;
-            let accentWeight = 0;
-            colorWeights.forEach((weight, key) => {
-                if (weight > accentWeight) {
-                    accent = key;
-                    accentWeight = weight;
-                }
-            });
-            if (accent) {
-                const accentValue = accent.replaceAll(',', ' ');
-                const [accentRed, accentGreen, accentBlue] = accent.split(',').map(Number);
-                const highest = Math.max(accentRed, accentGreen, accentBlue) / 255;
-                const lowest = Math.min(accentRed, accentGreen, accentBlue) / 255;
-                const range = highest - lowest;
-                let hue = 0;
-                if (range) {
-                    if (highest === accentRed / 255) hue = ((accentGreen - accentBlue) / 255 / range) % 6;
-                    else if (highest === accentGreen / 255) hue = (accentBlue - accentRed) / 255 / range + 2;
-                    else hue = (accentRed - accentGreen) / 255 / range + 4;
-                    hue = Math.round((hue * 60 + 360) % 360);
-                }
-                host.style.setProperty('--dot-lwf-accent-rgb', accentValue);
-                host.closest('.hub-showcase-divider')?.style.setProperty('--dot-lwf-accent-rgb', accentValue);
-                document.body.style.setProperty('--dot-lwf-accent-rgb', accentValue);
-                document.body.style.setProperty('--dot-lwf-accent-hue', `${hue}deg`);
-            }
             // Set the scene bounds once. Re-fitting them every few frames
             // made a perfectly normal animation appear to breathe or pulse
             // because its scale shifted with each moving effect particle.
@@ -171,11 +138,18 @@
                 target.width = outputWidth;
                 target.height = outputHeight;
             }
+            const backdropOutputWidth = Math.round(Math.max(1, backdrop.clientWidth) * scale);
+            const backdropOutputHeight = Math.round(Math.max(1, backdrop.clientHeight) * scale);
+            if (backdrop.width !== backdropOutputWidth || backdrop.height !== backdropOutputHeight) {
+                backdrop.width = backdropOutputWidth;
+                backdrop.height = backdropOutputHeight;
+            }
             if (!lastBoundsCheck || now - lastBoundsCheck > 700) {
                 refreshCropBounds();
                 lastBoundsCheck = now;
             }
             targetContext.clearRect(0, 0, outputWidth, outputHeight);
+            backdropContext?.clearRect(0, 0, backdropOutputWidth, backdropOutputHeight);
             if (crop?.width > 0 && crop?.height > 0) {
                 // Use one uniform scale factor.  Scaling X and Y separately
                 // made the pixel character look stretched; "contain" keeps
@@ -188,19 +162,21 @@
                 // a wide divider. Paint a soft, cover-fitted echo first so
                 // the scene reaches both edges without stretching or cropping
                 // the crisp character animation in the foreground.
-                const backdropScale = Math.max(outputWidth / crop.width, outputHeight / crop.height);
+                const backdropScale = Math.max(backdropOutputWidth / crop.width, backdropOutputHeight / crop.height);
                 const backdropWidth = crop.width * backdropScale;
                 const backdropHeight = crop.height * backdropScale;
-                targetContext.save();
-                targetContext.globalAlpha = 0.30;
-                targetContext.filter = `blur(${Math.max(8, Math.round(scale * 7))}px)`;
-                targetContext.imageSmoothingEnabled = true;
-                targetContext.drawImage(
-                    source, crop.x, crop.y, crop.width, crop.height,
-                    (outputWidth - backdropWidth) / 2, (outputHeight - backdropHeight) / 2,
-                    backdropWidth, backdropHeight
-                );
-                targetContext.restore();
+                if (backdropContext) {
+                    backdropContext.save();
+                    backdropContext.globalAlpha = 0.30;
+                    backdropContext.filter = `blur(${Math.max(8, Math.round(scale * 7))}px)`;
+                    backdropContext.imageSmoothingEnabled = true;
+                    backdropContext.drawImage(
+                        source, crop.x, crop.y, crop.width, crop.height,
+                        (backdropOutputWidth - backdropWidth) / 2, (backdropOutputHeight - backdropHeight) / 2,
+                        backdropWidth, backdropHeight
+                    );
+                    backdropContext.restore();
+                }
 
                 targetContext.imageSmoothingEnabled = false;
                 targetContext.drawImage(
@@ -271,6 +247,7 @@
         // the same canvas, because two animation loops can look like a page
         // refresh and needlessly compete for rendering time.
         if (host.dataset.dotCharacterMounted === 'true') return;
+        resetHomeTheme();
 
         try {
             const characters = await loadCharacters();
@@ -322,12 +299,15 @@
                     player.clear();
                     continue;
                 }
+                void applyHomeTheme(entry, files);
                 fitRenderedCharacter(canvas, outputCanvas, host);
                 host.dataset.dotCharacterMounted = 'true';
                 return;
             }
+            resetHomeTheme();
             host.hidden = true;
         } catch (error) {
+            resetHomeTheme();
             // Optional visual: Home remains clean when a local asset is absent.
             host.hidden = true;
             console.debug('Dot-character companion unavailable:', error);

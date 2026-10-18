@@ -5558,10 +5558,36 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
 /* Permanent Clean geometry. Important declarations in this named layer take
    precedence over legacy unlayered rules without escalating selector weight. */
 @layer abs-clean-presentation {
+    /* Clean owns its backdrop independently from the other card styles. */
+    body.theme-abs-clean {
+        --abs-clean-miniature-size: 36px;
+        background: #101112 !important;
+    }
+    body.theme-abs-clean #app {
+        background: #101112 !important;
+    }
+    /* Render at authored size; shared sidebars reserve their own widths. */
+    body.theme-abs-clean #top-content,
+    body.theme-abs-clean #top-content > .container-1220 {
+        zoom: 1 !important;
+    }
+    body.theme-abs-clean #top-content > .container-1220 {
+        container-type: inline-size;
+    }
+    body.theme-abs-clean #abs-clean-grid-circuit,
+    body.theme-abs-clean #stars-bg-video {
+        display: none !important;
+    }
+
     body.theme-abs-clean #layout-abs-clean {
         background: transparent !important;
         background-image: none !important;
     }
+    /* Reset legacy row/column longhands when responsive tracks change. */
+    body.theme-abs-clean #layout-abs-clean .abs-clean-presentation-leader { grid-area: leader !important; }
+    body.theme-abs-clean #layout-abs-clean .abs-clean-presentation-attacks { grid-area: attacks !important; }
+    body.theme-abs-clean #layout-abs-clean .abs-clean-presentation-passive { grid-area: passive !important; }
+    body.theme-abs-clean #layout-abs-clean .abs-side-col { grid-area: artwork !important; }
     body.theme-abs-clean #layout-abs-clean > .abs-top-header,
     body.theme-abs-clean #layout-abs-clean > .abs-top-header::before,
     body.theme-abs-clean #layout-abs-clean > .abs-top-header::after {
@@ -5570,7 +5596,7 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
         border: 0 !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-abs-clean-character-header-bar] {
-        grid-template-columns: 100px minmax(0, 1fr) minmax(170px, 250px) !important;
+        grid-template-columns: 100px minmax(0, 1fr) minmax(250px, 290px) !important;
         grid-template-areas: "portrait identity awakening" "portrait identity totals" !important;
         gap: 4px 10px !important;
         padding: 24px 0 8px !important;
@@ -5611,58 +5637,61 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
         overflow: visible !important;
         height: auto !important;
         min-height: 0 !important;
-        padding: 6px 2px !important;
+        padding: 6px 0 !important;
         box-sizing: border-box !important;
-        gap: 10px 8px !important;
+        gap: 6px 2px !important;
         scroll-padding-inline: 8px !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-abs-clean-portrait-stack] > [data-card-element="abs-transformations-container"][hidden] { display: none !important; }
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row:not(.abs-clean-current-form),
     body.theme-abs-clean #layout-abs-clean .abs-clean-awakening-portrait:not([hidden]) {
-        width: 40px !important;
-        min-width: 40px !important;
-        max-width: 40px !important;
-        height: 40px !important;
-        min-height: 40px !important;
-        max-height: 40px !important;
+        width: var(--abs-clean-miniature-size) !important;
+        min-width: var(--abs-clean-miniature-size) !important;
+        max-width: var(--abs-clean-miniature-size) !important;
+        height: var(--abs-clean-miniature-size) !important;
+        min-height: var(--abs-clean-miniature-size) !important;
+        max-height: var(--abs-clean-miniature-size) !important;
         aspect-ratio: 1 !important;
         border-radius: 50% !important;
-        flex: 0 0 40px !important;
-        padding: 2px !important;
-        border: 2px solid rgba(255,255,255,.8) !important;
-        outline: 1px solid var(--theme-border) !important;
-        outline-offset: 1px !important;
-        overflow: visible !important;
+        flex: 0 0 var(--abs-clean-miniature-size) !important;
+        padding: 0 !important;
+        border: 2px solid var(--theme-border, #a3a3a3) !important;
+        outline: none !important;
+        outline-offset: 2px !important;
+        overflow: hidden !important;
         box-shadow: 0 2px 4px #0008 !important;
         box-sizing: border-box !important;
+        background: transparent !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row .abs-composed-icon {
-        width: 30px !important;
-        min-width: 30px !important;
-        max-width: 30px !important;
-        height: 30px !important;
-        min-height: 30px !important;
-        max-height: 30px !important;
-        flex-basis: 30px !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
+        height: 100% !important;
+        min-height: 0 !important;
+        max-height: 100% !important;
+        flex-basis: 100% !important;
         border-radius: 50% !important;
         overflow: hidden !important;
-        background: #080d16 !important;
+        background: transparent !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row:not(.abs-clean-current-form) {
-        width: 34px !important;
-        min-width: 34px !important;
-        max-width: 34px !important;
-        height: 34px !important;
-        min-height: 34px !important;
-        max-height: 34px !important;
-        flex-basis: 34px !important;
-        padding: 2px !important;
+        width: var(--abs-clean-miniature-size) !important;
+        min-width: var(--abs-clean-miniature-size) !important;
+        max-width: var(--abs-clean-miniature-size) !important;
+        height: var(--abs-clean-miniature-size) !important;
+        min-height: var(--abs-clean-miniature-size) !important;
+        max-height: var(--abs-clean-miniature-size) !important;
+        flex-basis: var(--abs-clean-miniature-size) !important;
+        padding: 0 !important;
         display: grid !important;
         place-items: center !important;
-        border: 0 !important;
+        border: 2px solid var(--theme-border, #a3a3a3) !important;
         outline: none !important;
-        background: linear-gradient(145deg, #fff 0%, #eef3ff 20%, var(--theme-border) 72%, var(--theme-border) 100%) !important;
+        background: transparent !important;
         box-shadow: 0 2px 4px #0006 !important;
+        overflow: hidden !important;
+        box-sizing: border-box !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row::before,
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row::after {
@@ -6013,6 +6042,9 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
         align-items: center !important;
         height: auto !important;
         max-height: none !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: 100% !important;
         gap: 8px !important;
     }
     body.theme-abs-clean #layout-abs-clean [data-card-element="abs-clean-awakening-portraits"] {
@@ -6050,8 +6082,81 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
         body.theme-abs-clean #layout-abs-clean [data-abs-clean-header-awakening-group] { justify-content: center !important; }
         body.theme-abs-clean #layout-abs-clean [data-abs-clean-category-link-panel] > .abs-box > .abs-content { padding: 6px !important; }
     }
+    body.theme-abs-clean #layout-abs-clean #clean-abs-leader-skill {
+        transform: none !important;
+        width: 100% !important;
+        max-width: 100% !important;
+        text-align: center !important;
+    }
+    /* Readable component sizes without multiplying the whole interface. */
+    body.theme-abs-clean #layout-abs-clean :is(.abs-content, .abs-sa-clean-copy, .abs-passive-section-content) {
+        font-size: 13px !important;
+        line-height: 1.5 !important;
+    }
+    body.theme-abs-clean #layout-abs-clean :is(.abs-header, .abs-sa-type-pill, #clean-abs-leader-title) {
+        font-size: 11px !important;
+    }
+    body.theme-abs-clean #layout-abs-clean :is(.abs-sa-name-glow, #clean-abs-passive-name) {
+        font-size: 14px !important;
+    }
+    body.theme-abs-clean #layout-abs-clean .abs-passive-summary-item > span {
+        font-size: 10px !important;
+        letter-spacing: 0 !important;
+        white-space: nowrap !important;
+    }
+    body.theme-abs-clean #layout-abs-clean .abs-passive-summary-item > strong {
+        font-size: 12px !important;
+        white-space: nowrap !important;
+    }
+    body.theme-abs-clean #layout-abs-clean :is(.abs-sa-ki-pill, .abs-sa-damage-pill) {
+        font-size: 11px !important;
+    }
+    body.theme-abs-clean #layout-abs-clean [data-card-element="abs-clean-release-date"] {
+        font-size: 10px !important;
+    }
+    @container (max-width: 1150px) {
+        body.theme-abs-clean #layout-abs-clean .abs-grid-container {
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) !important;
+            grid-template-areas: "leader leader" "attacks artwork" "passive passive" !important;
+            gap: 20px 18px !important;
+        }
+    }
+    @container (max-width: 720px) {
+        body.theme-abs-clean #layout-abs-clean .abs-grid-container {
+            grid-template-columns: minmax(0, 1fr) !important;
+            grid-template-areas: "leader" "attacks" "artwork" "passive" !important;
+            gap: 20px !important;
+        }
+    }
+    @container (max-width: 960px) {
+        /* The existing floating official motion keeps a clear row above identity. */
+        body.card-viewer-page.theme-abs-clean #layout-abs-clean:has([data-card-element="abs-motion-box"]:is([data-motion-available="true"],[data-motion-available="loading"]):not([hidden]):not(.is-unavailable)) [data-abs-clean-character-header-bar] {
+            padding-top: 310px !important;
+        }
+        body.card-viewer-page.theme-abs-clean #layout-abs-clean .abs-side-col > [data-card-element="abs-motion-box"] {
+            top: calc(var(--viewer-motion-page-top, 0px) + 40px) !important;
+        }
+        body.theme-abs-clean #layout-abs-clean #clean-abs-char-name {
+            font-size: 20px !important;
+        }
+    }
+    @container (max-width: 640px) {
+        body.card-viewer-page.theme-abs-clean #layout-abs-clean:has([data-card-element="abs-motion-box"]:is([data-motion-available="true"],[data-motion-available="loading"]):not([hidden]):not(.is-unavailable)) [data-abs-clean-character-header-bar] {
+            padding-top: 244px !important;
+        }
+    }
     @media(prefers-reduced-motion:reduce) {
         body.theme-abs-clean #layout-abs-clean .abs-clean-name-overflow > .abs-clean-scrolling-text { animation: none !important; }
+    }
+
+    /* Keep selected miniatures distinguishable without adding an image inset. */
+    body.theme-abs-clean #layout-abs-clean [data-card-element="abs-transformations-container"] .abs-transform-row.is-active,
+    body.theme-abs-clean #layout-abs-clean .abs-clean-awakening-portrait[aria-current="true"],
+    body.theme-abs-clean #layout-abs-clean .abs-clean-awakening-portrait:focus-visible,
+    body.theme-abs-clean #layout-abs-clean .abs-transform-row:focus-within {
+        border-color: #fff !important;
+        outline: 1px solid var(--theme-border, #a3a3a3) !important;
+        outline-offset: 2px !important;
     }
 }
 @keyframes abs-clean-name-scroll {
@@ -6264,19 +6369,7 @@ body.theme-abs-clean #top-content #layout-abs-clean.abs-clean-presentation-activ
         display: none !important;
     }
 
-    @media (max-width: 1040px) {
-        body.theme-abs-clean #layout-abs-clean [data-abs-clean-character-header-bar] {
-            grid-template-columns: minmax(72px, 82px) minmax(0, 1fr) minmax(148px, 220px) !important;
-            grid-template-areas:
-                "portrait identity totals"
-                "stats awakening totals"
-                ". . forms" !important;
-            column-gap: 10px !important;
-            row-gap: 8px !important;
-        }
-    }
-
-    @media (max-width: 720px) {
+    @container (max-width: 720px) {
         body.theme-abs-clean #layout-abs-clean [data-abs-clean-character-header-bar] {
             grid-template-columns: 82px minmax(0, 1fr) !important;
             grid-template-areas:

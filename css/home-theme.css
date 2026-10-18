@@ -1,0 +1,56 @@
+/* C2: metadata tint stays inside Home; gameplay badges and card internals inherit no new colours. */
+body #hubHomeSection {
+    --abs-home-accent-rgb: 150,155,165;
+    --dot-lwf-accent-rgb: 150 155 165;
+    --dot-lwf-accent-hue: 220deg;
+    background:
+        radial-gradient(ellipse at 50% 0%, rgba(var(--abs-home-accent-rgb), .065), transparent 65%),
+        #0b0c0e !important;
+}
+
+body.theme-sba #hubHomeSection .hub-showcase-divider {
+    background: rgba(20,21,24,.82) !important;
+    border-color: rgba(var(--abs-home-accent-rgb), .22) !important;
+    box-shadow:
+        inset 0 12px 18px -16px rgba(var(--abs-home-accent-rgb), .3),
+        inset 0 -12px 18px -16px rgba(var(--abs-home-accent-rgb), .24) !important;
+}
+
+/* Neutral until metadata validates the current accepted animation's texture. */
+body.theme-sba #hubHomeSection .sba-pixel-divider-logo,
+body.theme-sba #hubHomeSection .sba-pixel-divider-logo.is-alt-home-logo {
+    filter: grayscale(1) drop-shadow(0 0 8px rgba(var(--abs-home-accent-rgb), .16)) !important;
+}
+
+/* Restore the original logo's sepia/hue treatment using the same source
+   palette as Home. The alternate mark keeps its existing size and mask. */
+body.theme-sba #hubHomeSection[data-home-palette-id]:not([data-home-palette-id=""]) .sba-pixel-divider-logo {
+    filter:
+        sepia(.92) saturate(2.05)
+        hue-rotate(calc(var(--dot-lwf-accent-hue) - 60deg))
+        contrast(1.08) brightness(.94)
+        drop-shadow(0 0 8px rgba(var(--abs-home-accent-rgb), .32))
+        drop-shadow(0 13px 17px rgba(0, 0, 0, .66))
+        drop-shadow(0 3px 4px rgba(0, 0, 0, .46)) !important;
+}
+
+body.theme-sba #hubHomeSection[data-home-palette-id]:not([data-home-palette-id=""]) .sba-pixel-divider-logo.is-alt-home-logo {
+    filter:
+        sepia(.92) saturate(2.05)
+        hue-rotate(calc(var(--dot-lwf-accent-hue) - 60deg))
+        contrast(1.08) brightness(.94) !important;
+}
+
+/* Home's release scroller keeps the left rail safe inset, but has no right
+   rail to reserve. Clear shared shell padding so viewport reaches page edge. */
+html body.abs-shell.theme-sba #hubHomeSection .dokkan-timeline-panel {
+    padding-right: 0 !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    #hubHomeSection,
+    #hubHomeSection .hub-showcase-divider,
+    #hubHomeSection .sba-pixel-divider-logo {
+        transition: none !important;
+    }
+}

@@ -1542,3 +1542,37 @@ body.theme-abs-style #layout-abs-style #abs-active-container .abs-damage-multipl
     box-sizing: border-box;
     width: 100% !important;
 }
+
+/* Mobile shell headers keep the existing portrait/title and badge images
+   in two rows instead of reserving the desktop's 350px badge column. */
+@media (max-width: 767px) {
+    body.abs-shell.theme-abs-style #layout-abs-style .abs-top-header {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 16px;
+        box-sizing: border-box;
+    }
+    body.abs-shell.theme-abs-style #layout-abs-style .abs-header-left {
+        width: 100%;
+        min-width: 0;
+        gap: 16px;
+    }
+    body.abs-shell.theme-abs-style #layout-abs-style #abs-composed-icon {
+        margin-right: 0 !important;
+    }
+    body.abs-shell.theme-abs-style #layout-abs-style .abs-header-text {
+        flex: 1 1 0;
+        min-width: 0;
+        overflow-wrap: anywhere;
+    }
+    body.abs-shell.theme-abs-style #layout-abs-style .abs-header-right {
+        width: 100%;
+        max-width: 100%;
+        flex-wrap: wrap;
+        gap: 12px;
+    }
+    body.abs-shell.theme-abs-style #layout-abs-style .abs-header-right img {
+        max-width: 100%;
+        object-fit: contain;
+    }
+}

@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Manage custom card form links and awakening stages.">
+    <title>ABS - Manager</title>
+    <link rel="icon" type="image/png" href="assets/navigation/sidebar/myp_dragon_radar.png">
+    <script src="js/favicon.js?v=20261014-manager-meta-v1" defer></script>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1">
+    <link rel="stylesheet" href="css/other-tools.css?v=20260929-other-tools-v2">
+    <link rel="stylesheet" href="css/other-tool-pages.css?v=20260929-other-pages-v4">
+    <link rel="stylesheet" href="css/ui-toast.css?v=20261008-abs-ui-v2">
+    <link rel="stylesheet" href="css/editor-ui.css?v=20261014-viewer-hover-edit-boundary-v1">
+    <link rel="stylesheet" href="css/card-admin.css?v=20261008-abs-ui-v2">
+    <link rel="stylesheet" href="css/manager.css?v=20261017-manager-content-pilot-v1">
+    <link rel="stylesheet" href="css/abs-navigation.css?v=20261014-manager-icon-v1">
+    <script src="js/manager-auth-config.js?v=20261016-manager-github-oauth-v1"></script>
+    <script src="js/manager-shell-state.js?v=20261016-manager-github-oauth-v1"></script>
+</head>
+<body class="other-tool-body theme-sba theme-abs-clean theme-abs-clean-dark abs-shell">
+    <div class="abs-mobile-shell">
+        <button type="button" class="abs-mobile-trigger" data-abs-drawer="abs-main-sidebar" aria-controls="abs-main-sidebar" aria-expanded="false" aria-label="Open navigation">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+        </button>
+        <a class="abs-mobile-brand" href="https://abscustom.github.io/index.html" aria-label="ABS — Home">
+            <img src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000">
+        </a>
+    </div>
+    <div id="abs-shell-backdrop" hidden></div>
+    <aside id="abs-main-sidebar" aria-label="Main navigation" data-abs-selector-anchor>
+        <div class="abs-sidebar-heading">
+            <a class="abs-sidebar-brand" href="https://abscustom.github.io/index.html" aria-label="ABS — Home">
+                <img id="nav-center-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="ABS" width="1000" height="1000" decoding="async">
+            </a>
+            <button type="button" class="abs-shell-collapse" data-abs-nav-collapse aria-controls="abs-main-sidebar" aria-expanded="true" aria-label="Collapse navigation" title="Collapse navigation">
+                <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M9 4v16m7-12-4 4 4 4"/></svg>
+            </button>
+        </div>
+        <div class="abs-sidebar-scroll">
+            <nav aria-label="Destinations">
+                <div class="hud-nav-group">
+                    <a href="https://abscustom.github.io/index.html?view=cards" class="hud-nav-link" aria-label="Cards" title="Cards"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="9" r="3" stroke="currentColor" stroke-width="2"/><path d="M6 20c.8-3 2.8-4.5 6-4.5s5.2 1.5 6 4.5" stroke="currentColor" stroke-width="2"/></svg><span>Cards</span></a>
+                    <a href="https://abscustom.github.io/card.html?viewer=1" class="hud-nav-link" aria-label="Viewer" title="Viewer"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M2 12s3.6-7 10-7 10 7 10 7-3.6 7-10 7-10-7-10-7Z" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2"/></svg><span>Viewer</span></a>
+                    <a href="https://abscustom.github.io/calculator.html" class="hud-nav-link" aria-label="Calculator" title="Calculator"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="2" stroke="currentColor" stroke-width="2"/><path d="M8 8h8M8 12h2m4 0h2M8 16h2m4 0h2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>Calculator</span></a>
+                    <a href="https://abscustom.github.io/editor.html" class="hud-nav-link" aria-label="Editor" title="Editor"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 16-.8 4.8L8 20l11.6-11.6a2.8 2.8 0 0 0-4-4Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="m13.8 6.2 4 4" stroke="currentColor" stroke-width="2"/></svg><span>Editor</span></a>
+                    <a href="https://abscustom.github.io/index.html?view=news" class="hud-nav-link" aria-label="News" title="News"><svg class="hud-nav-svg" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 4h16v15H6a2 2 0 0 1-2-2Zm0 12h16M8 8h8m-8 3h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg><span>News</span></a>
+                </div>
+            </nav>
+        </div>
+    </aside>
+    <main class="other-tool-main manager-page" id="manager-main" data-card-admin-inline aria-labelledby="manager-title">
+        <header class="other-tool-heading manager-heading cards-workspace-header">
+            <div class="manager-heading-copy cards-workspace-title">
+                <div>
+                    <div class="manager-title-row">
+                        <h2 class="hub-section-title" id="manager-title">Manager</h2>
+                        <span id="manager-content-mode" class="manager-content-mode" hidden>Database pilot</span>
+                    </div>
+                    <p class="hub-section-subtitle">Custom Card Tools</p>
+                </div>
+            </div>
+        </header>
+
+        <section id="card-admin-auth" class="manager-auth-panel" aria-label="Manager access">
+            <form id="card-admin-auth-form" class="card-admin-auth-row manager-auth-row" method="post" autocomplete="off">
+                <button type="submit" id="card-admin-github-signin" class="gui-preset-btn card-admin-load-btn">Sign in with GitHub</button>
+            </form>
+            <div id="card-admin-status" class="card-admin-status manager-status" role="status" aria-live="polite" hidden></div>
+        </section>
+
+        <div class="manager-workspace-content">
+            <div id="card-admin-session" class="manager-session-bar" role="status" aria-live="polite" hidden>
+                <p>Signed in to GitHub as <strong id="card-admin-account"></strong></p>
+                <button type="button" id="card-admin-signout" class="gui-preset-btn manager-signout-btn">Sign Out</button>
+            </div>
+
+            <div id="card-admin-tools" class="manager-tools" style="display: none;">
+            <section id="card-admin-link-section" class="card-admin-section manager-tool-section" aria-labelledby="card-admin-link-heading">
+                <header class="manager-section-heading">
+                    <div>
+                        <span class="other-tool-kicker">Card associations</span>
+                        <h2 id="card-admin-link-heading">Card Linker</h2>
+                <p>Saved associations stay visible across the workspace while you select different cards. Choose a first portrait, then a target, and use Link Selected Pair to stage that exact reciprocal link. Cards can belong to multiple links; the lines show each saved or staged pair without adding implied relationships. Start Another Pair to select a different pair, and use Apply Changes to save all staged links.</p>
+                    </div>
+                </header>
+                <div id="manager-coin-workspace" class="manager-coin-workspace" aria-label="Card form association workspace">
+                    <div class="manager-coin-controls">
+                        <div class="manager-coin-field">
+                            <label class="form-label" for="manager-coin-base">First card in pair</label>
+                            <select id="manager-coin-base" class="glass-form-control" aria-describedby="manager-coin-hint"></select>
+                        </div>
+                        <div class="manager-coin-field">
+                            <label class="form-label" for="manager-coin-search">Find a card in the workspace</label>
+                            <input id="manager-coin-search" class="glass-form-control" type="search" aria-controls="manager-coin-plane" placeholder="Search by name or folder..." autocomplete="off">
+                        </div>
+                    </div>
+
+                    <p id="manager-coin-hint" class="manager-coin-instructions">Selection uses a bright blue FIRST ring and a gold TARGET ring with role labels; green portrait rings mark linked cards. Choose a first portrait, then a target. Link Selected Pair stages that exact edge. Clear Target keeps the first card; Clear Both cancels the current pair. Cards may have multiple links, and all saved or staged connectors remain visible. Dragging an unlinked coin onto the first card stages a link; dropping a linked coin into the removal area stages an unlink. Selection and movement alone never change or save relationships; Apply Changes saves staged work.</p>
+
+                    <div id="manager-coin-plane" class="manager-coin-plane" role="group" aria-label="Movable custom card association workspace" aria-describedby="manager-coin-hint">
+                        <svg id="manager-coin-links" class="manager-coin-links" aria-hidden="true" focusable="false" preserveAspectRatio="none"></svg>
+                        <div id="manager-coin-unlink" class="manager-coin-dropzone" role="region" aria-label="Stage removal drop zone">
+                            <span class="manager-coin-dropzone-icon" aria-hidden="true">↘</span>
+                            <span>Drop a linked coin here to stage removal</span>
+                        </div>
+                    </div>
+
+                    <div class="manager-coin-actions" aria-label="Stage link changes">
+                        <div id="manager-coin-selection-panel" class="manager-coin-selection-panel">
+                            <div id="manager-coin-pair-summary" class="manager-coin-pair-summary" aria-label="Current pair selection">
+                                <div class="manager-coin-pair-value">
+                                    <span class="manager-coin-pair-label">First card:</span>
+                                    <strong id="manager-coin-first-name" class="manager-coin-pair-name">None selected</strong>
+                                </div>
+                                <span class="manager-coin-pair-arrow" aria-hidden="true">→</span>
+                                <div class="manager-coin-pair-value">
+                                    <span class="manager-coin-pair-label">Target:</span>
+                                    <strong id="manager-coin-target-name" class="manager-coin-pair-name">None selected</strong>
+                                </div>
+                            </div>
+                            <div id="manager-coin-selection-hint" class="manager-coin-selection-hint">
+                                <p id="manager-coin-next-step" class="manager-coin-next-step" role="status" aria-live="polite">Next: click a portrait to select the first card.</p>
+                                <p id="manager-coin-link-reason" class="manager-coin-link-reason">Link Selected Pair is disabled until a first card and a different target are selected.</p>
+                            </div>
+                        </div>
+                        <button type="button" id="manager-coin-link-selected" class="gui-preset-btn card-admin-link-btn" aria-describedby="manager-coin-selection-hint">Link Selected Pair</button>
+                        <button type="button" id="manager-coin-clear-pair" class="gui-preset-btn" aria-label="Clear target selection">Clear Target</button>
+                        <button type="button" id="manager-coin-new-pair" class="gui-preset-btn manager-coin-new-pair" aria-label="Clear both first-card and target selections">Clear Both</button>
+                        <button type="button" id="manager-coin-unlink-selected" class="gui-preset-btn card-admin-unlink-btn">Unlink Selected Form</button>
+                        <button type="button" id="manager-coin-unlink-all" class="gui-preset-btn manager-coin-clear-btn">Stage Removal of All Links</button>
+                    </div>
+
+                    <div class="manager-coin-review">
+                        <div class="manager-coin-review-info">
+                            <div id="manager-coin-status" class="manager-coin-status" role="status" aria-live="polite">Choose a first card and target to stage a pair.</div>
+                            <p id="manager-coin-summary" class="manager-coin-summary">Saved links: 0 · Additions staged: 0 · Removals staged: 0</p>
+                        </div>
+                        <div class="manager-coin-review-actions">
+                            <button type="button" id="manager-coin-undo" class="gui-preset-btn" disabled>Undo Last Change</button>
+                            <button type="button" id="manager-coin-revert" class="gui-preset-btn" disabled>Discard Staged Changes</button>
+                            <button type="button" id="manager-coin-apply" class="gui-preset-btn card-admin-link-btn" disabled>Apply Changes</button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <section id="card-admin-delete-section" class="card-admin-section card-admin-danger-section manager-tool-section" aria-labelledby="card-admin-delete-heading">
+                <header class="manager-section-heading">
+                    <div>
+                        <span class="other-tool-kicker">Card removal</span>
+                        <h2 id="card-admin-delete-heading">Card Deletion</h2>
+                        <p id="card-admin-delete-description">This permanently removes the selected card folder and clears its Manager-created form links. GitHub still checks that your account can make the change.</p>
+                    </div>
+                </header>
+                <label class="form-label" for="card-admin-delete-filter">Character</label>
+                <input type="hidden" id="card-admin-delete-select">
+                <input id="card-admin-delete-filter" class="glass-form-control" type="search" placeholder="Search characters to delete...">
+                <div id="card-admin-delete-picker" class="card-admin-delete-picker" role="listbox" aria-label="Choose a character to delete"></div>
+                <div id="card-admin-delete-preview" class="card-admin-preview card-admin-delete-preview"></div>
+                <label id="card-admin-delete-confirm-label" class="form-label mt-3" for="card-admin-delete-confirm">Type the folder name to confirm</label>
+                <input type="text" id="card-admin-delete-confirm" class="glass-form-control" autocomplete="off">
+                <button type="button" id="card-admin-delete-confirm-button" class="gui-preset-btn btn-danger card-admin-delete-btn">Delete From GitHub</button>
+            </section>
+            </div>
+        </div>
+    </main>
+    <script src="js/ui-toast.js?v=20261008-abs-ui-v1"></script>
+    <script src="js/published-card-guards.js?v=20260928-loader-guard-v1"></script>
+    <script src="js/card-content-config.js?v=20261017-card-content-config-v1"></script>
+    <script src="js/manager-auth-client.js?v=20261017-manager-content-pilot-v2"></script>
+    <script src="js/manager-card-transforms.js?v=20261016-manager-card-transforms-v1"></script>
+    <script src="js-editor/21-card-admin.js?v=20261017-manager-content-pilot-v1"></script>
+    <script src="js/manager-linker-coins.js?v=20261017-card-content-v1"></script>
+    <script src="js/other-nav.js?v=20261016-profile-gate-v1"></script>
+    <script src="js/abs-navigation.js?v=20261016-profile-ui-v1"></script>
+</body>
+</html>

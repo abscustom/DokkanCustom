@@ -1331,6 +1331,12 @@
     }
 
     async function updateViewerMotion(card) {
+        // Phantom owns a user-opened mini player. Rendering a card must not
+        // start a second or hidden player behind its normal portrait.
+        if (document.body?.classList.contains('theme-phantom') && !window.isPhantomBattleMotionOpen?.()) {
+            window.stopViewerMotion?.();
+            return;
+        }
         const canvas = getMotionElement('abs-motion-canvas');
         const box = getMotionElement('abs-motion-box');
         if (!canvas || !box) return;

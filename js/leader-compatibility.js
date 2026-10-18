@@ -32,6 +32,7 @@
         leaderSkillName: document.getElementById('lc-leader-skill-name'),
         leaderDescription: document.getElementById('lc-leader-description'),
         leaderNote: document.getElementById('lc-leader-note'),
+        workspaceTitle: document.querySelector?.('.lc-workspace-title') || null,
         resultsToolbar: document.getElementById('lc-results-toolbar'),
         resultsSection: document.getElementById('lc-results-section'),
         resultsSummary: document.getElementById('lc-results-summary'),
@@ -90,24 +91,48 @@
         };
     }
 
+    function customCardImageCandidates(card) {
+        if (card?.source !== 'custom' && card?.isCustom !== true) return [];
+        const cardUrl = String(card.cardUrl || '').trim();
+        return [card.thumbUrl, card.thumb, card.icon, card.image, card.cardArtImageUrl]
+            .filter((value) => typeof value === 'string' && value.trim())
+            .map((value) => {
+                let source = value.trim();
+                const dataUrlOffset = source.search(/data:image\//i);
+                if (dataUrlOffset > 0) source = source.slice(dataUrlOffset);
+                if (/(?:^|\/)(?:SSR|TUR|LR)_Icon\.png(?:[?#]|$)|(?:^|\/)default\.png(?:[?#]|$)|Card(?:%20| )Art(?:%20| )Template\.png/i.test(source)) return '';
+                if (/^(?:https?:)?\/\/|^(?:data:|blob:)/i.test(source)) return source;
+                try {
+                    const base = cardUrl ? `${cardUrl.replace(/\/+$/, '')}/` : document.baseURI;
+                    return new URL(source.replace(/^\.\//, ''), base).href;
+                } catch {
+                    return '';
+                }
+            })
+            .filter(Boolean);
+    }
+
     function safeImage(card, className, alt = '', circular = false) {
         const image = document.createElement('img');
         image.className = className;
         image.alt = alt;
         image.loading = 'lazy';
         image.decoding = 'async';
+        const customCandidates = customCardImageCandidates(card);
+        const customUrl = customCandidates[0] || '';
         const folderId = folderIdForCard(card.id);
         const parentFolderId = folderIdForCard(normalizedCardReferenceId(card.id));
-        const fallbackUrls = [folderId, parentFolderId]
+        const officialFallbackUrls = [folderId, parentFolderId]
             .filter((id, index, ids) => ids.indexOf(id) === index)
             .map((id) => `https://images.weserv.nl/?url=dokkaninfo.com/assets/japan/character/thumb/card_${id}_thumb/card_${id}_thumb.png`);
-        fallbackUrls.push('https://abscustom.github.io/assets/images/SSR_Icon.png', FALLBACK_PORTRAIT_URL);
         const thumbnailUrl = new URL(`assets/card-art/thumbnails/card_${folderId}_thumb/card_${folderId}_thumb.png`, document.baseURI).href;
-        if (circular) fallbackUrls.unshift(thumbnailUrl);
+        const fallbackUrls = customUrl
+            ? [...customCandidates.slice(1), FALLBACK_PORTRAIT_URL]
+            : [...(circular ? [thumbnailUrl] : []), ...officialFallbackUrls, 'https://abscustom.github.io/assets/images/SSR_Icon.png', FALLBACK_PORTRAIT_URL];
         let fallbackIndex = 0;
-        image.src = circular
+        image.src = customUrl || (circular
             ? new URL(`assets/card-art/cards/${folderId}/card_${folderId}_circle.png`, document.baseURI).href
-            : thumbnailUrl;
+            : thumbnailUrl);
         image.addEventListener('error', () => {
             const fallbackUrl = fallbackUrls[fallbackIndex++];
             if (fallbackUrl) {
@@ -119,6 +144,51 @@
             image.setAttribute('aria-hidden', 'true');
         });
         return image;
+    }
+
+    function cleanLeaderArtUrl(card) {
+        const explicitArt = [card?.characterArtUrl, card?.character_art_url, card?.charUrl, card?.char_url, card?.art_url]
+            .find((value) => typeof value === 'string' && value.trim());
+        if (explicitArt) {
+            const value = explicitArt.trim();
+            try {
+                const base = card.cardUrl ? new URL('./', card.cardUrl).href : document.baseURI;
+                return new URL(value, base).href;
+            } catch {
+                return '';
+            }
+        }
+
+        // The repo's official character layer is transparent art, unlike its card composite/thumb.
+        if (card?.source === 'custom' || card?.isCustom === true) return '';
+        const folderId = folderIdForCard(card?.id);
+        return new URL(`assets/card-art/cards/${folderId}/card_${folderId}_character.png`, document.baseURI).href;
+    }
+
+    function mountLeaderCharacterArt(card) {
+        const artUrl = cleanLeaderArtUrl(card);
+        const showUnavailable = () => {
+            elements.leaderPortrait.dataset.artSource = 'unavailable';
+            const fallback = document.createElement('span');
+            fallback.className = 'lc-art-unavailable';
+            fallback.setAttribute('aria-hidden', 'true');
+            fallback.textContent = 'CLEAN CHARACTER ART UNAVAILABLE';
+            elements.leaderPortrait.replaceChildren(fallback);
+        };
+        if (!artUrl) {
+            showUnavailable();
+            return;
+        }
+
+        const image = document.createElement('img');
+        image.className = 'lc-leader-character-art';
+        image.alt = '';
+        image.loading = 'eager';
+        image.decoding = 'async';
+        image.addEventListener('error', showUnavailable, { once: true });
+        image.src = artUrl;
+        elements.leaderPortrait.dataset.artSource = card?.source === 'custom' ? 'custom-character-art' : 'official-character-layer';
+        elements.leaderPortrait.replaceChildren(image);
     }
 
     function normalizeText(value) {
@@ -450,8 +520,10 @@
     }
 
     function setStatus(message, status = 'info') {
+        if (!elements.dataStatus) return;
         elements.dataStatus.textContent = message;
         elements.dataStatus.dataset.state = status;
+        elements.dataStatus.hidden = status !== 'error' && !message;
     }
 
     function leaderPickerStatModel(parsed) {
@@ -482,8 +554,109 @@
     }
 
     let activeLeaderPickerTooltip = null;
-    let leaderPickerTooltipListenersInstalled = false;
     let leaderPickerTooltipElement = null;
+
+    let tooltipPortalElement = null;
+    let tooltipViewportListenersInstalled = false;
+
+    function getLeaderTooltipPortal() {
+        if (tooltipPortalElement?.isConnected) return tooltipPortalElement;
+        tooltipPortalElement = document.getElementById('lc-leader-tooltip-portal');
+        if (tooltipPortalElement) return tooltipPortalElement;
+        if (typeof document.createElement !== 'function') return null;
+
+        const portal = document.createElement('div');
+        portal.id = 'lc-leader-tooltip-portal';
+        portal.className = 'lc-leader-tooltip-portal';
+        portal.setAttribute('role', 'presentation');
+        const mount = document.body || elements.page || document.documentElement;
+        mount?.appendChild?.(portal);
+        tooltipPortalElement = portal;
+        return portal;
+    }
+
+    function moveTooltipToPortal(tooltip) {
+        const portal = getLeaderTooltipPortal();
+        if (portal && tooltip && !portal.contains?.(tooltip)) portal.appendChild(tooltip);
+        return portal;
+    }
+
+    function returnTooltipTo(tooltip, owner) {
+        if (tooltip && owner && tooltip.parentElement !== owner) owner.appendChild(tooltip);
+    }
+
+    function activeTooltipViewport() {
+        const width = document.documentElement.clientWidth || window.innerWidth;
+        const height = document.documentElement.clientHeight || window.innerHeight;
+        let left = 8;
+        const sidebar = document.getElementById('abs-main-sidebar');
+        if (width > 900 && sidebar?.isConnected) {
+            const sidebarRect = sidebar.getBoundingClientRect();
+            const sidebarStyle = window.getComputedStyle?.(sidebar);
+            if (sidebarRect.width > 0 && sidebarStyle?.display !== 'none' && sidebarStyle?.visibility !== 'hidden') {
+                left = Math.max(left, sidebarRect.right + 12);
+            }
+        }
+        return { width, height, left, right: 8, top: 8, bottom: 8 };
+    }
+
+    function anchorIsVisibleWithinClipAncestors(anchor) {
+        if (!anchor?.getBoundingClientRect) return false;
+        const anchorRect = anchor.getBoundingClientRect();
+        for (let ancestor = anchor.parentElement; ancestor && ancestor !== document.body; ancestor = ancestor.parentElement) {
+            const style = window.getComputedStyle?.(ancestor);
+            if (!style) continue;
+            const clipsX = /^(?:auto|scroll|hidden|clip)$/.test(style.overflowX || style.overflow || '');
+            const clipsY = /^(?:auto|scroll|hidden|clip)$/.test(style.overflowY || style.overflow || '');
+            if (!clipsX && !clipsY) continue;
+            const clipRect = ancestor.getBoundingClientRect();
+            if (clipsX && (anchorRect.right <= clipRect.left || anchorRect.left >= clipRect.right)) return false;
+            if (clipsY && (anchorRect.bottom <= clipRect.top || anchorRect.top >= clipRect.bottom)) return false;
+        }
+        return true;
+    }
+
+    function updateAllActiveTooltipPositions() {
+        updateActiveTooltipPosition();
+        updateLeaderPickerTooltipPosition();
+    }
+
+    function handleTooltipOutsidePointerDown(event) {
+        const active = activeLeaderPickerTooltip;
+        if (!active || active.card.contains(event.target) || active.tooltip.contains(event.target)) return;
+        closeActiveLeaderPickerTooltip();
+    }
+
+    function handleTooltipEscape(event) {
+        if (event.key !== 'Escape' || !activeLeaderPickerTooltip) return;
+        event.preventDefault();
+        event.stopPropagation();
+        closeActiveLeaderPickerTooltip();
+    }
+
+    function installTooltipViewportListeners() {
+        if (tooltipViewportListenersInstalled || typeof window === 'undefined') return;
+        tooltipViewportListenersInstalled = true;
+        window.addEventListener('scroll', updateAllActiveTooltipPositions, true);
+        window.addEventListener('resize', updateAllActiveTooltipPositions);
+        window.addEventListener('abs-shell-layout-change', updateAllActiveTooltipPositions);
+        window.visualViewport?.addEventListener('scroll', updateAllActiveTooltipPositions);
+        window.visualViewport?.addEventListener('resize', updateAllActiveTooltipPositions);
+        document.addEventListener?.('pointerdown', handleTooltipOutsidePointerDown, true);
+        document.addEventListener?.('keydown', handleTooltipEscape, true);
+    }
+
+    function removeTooltipViewportListenersIfIdle() {
+        if (!tooltipViewportListenersInstalled || activeTooltip || activeLeaderPickerTooltip) return;
+        tooltipViewportListenersInstalled = false;
+        window.removeEventListener?.('scroll', updateAllActiveTooltipPositions, true);
+        window.removeEventListener?.('resize', updateAllActiveTooltipPositions);
+        window.removeEventListener?.('abs-shell-layout-change', updateAllActiveTooltipPositions);
+        window.visualViewport?.removeEventListener('scroll', updateAllActiveTooltipPositions);
+        window.visualViewport?.removeEventListener('resize', updateAllActiveTooltipPositions);
+        document.removeEventListener?.('pointerdown', handleTooltipOutsidePointerDown, true);
+        document.removeEventListener?.('keydown', handleTooltipEscape, true);
+    }
 
     function getLeaderPickerTooltip() {
         const pickerRoot = document.getElementById(PICKER_ID);
@@ -523,47 +696,37 @@
         active.infoButton.setAttribute('aria-label', active.closedLabel);
         active.tooltip.classList.remove('is-tooltip-visible');
         active.tooltip.setAttribute('aria-hidden', 'true');
+        returnTooltipTo(active.tooltip, document.getElementById(PICKER_ID));
+        removeTooltipViewportListenersIfIdle();
     }
 
     function updateLeaderPickerTooltipPosition() {
         const active = activeLeaderPickerTooltip;
         if (!active || !active.card.classList.contains('is-tooltip-open')) return;
         const pickerRoot = document.getElementById(PICKER_ID);
-        if (active.card.isConnected === false || pickerRoot?.hidden) {
+        if (active.card.isConnected === false || pickerRoot?.hidden || !anchorIsVisibleWithinClipAncestors(active.anchor)) {
             closeActiveLeaderPickerTooltip();
             return;
         }
 
         const anchorRect = active.anchor.getBoundingClientRect();
-        const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
-        const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
-        if (anchorRect.bottom < 0 || anchorRect.top > viewportHeight) {
+        const viewport = activeTooltipViewport();
+        if (anchorRect.bottom < viewport.top || anchorRect.top > viewport.height - viewport.bottom) {
             closeActiveLeaderPickerTooltip();
             return;
         }
 
+        moveTooltipToPortal(active.tooltip);
+        active.tooltip.style.maxWidth = `${Math.max(120, viewport.width - viewport.left - viewport.right)}px`;
+        active.tooltip.style.maxHeight = `${Math.max(100, viewport.height - viewport.top - viewport.bottom)}px`;
         active.tooltip.classList.add('is-tooltip-visible');
         active.tooltip.setAttribute('aria-hidden', 'false');
-        const position = computeTooltipPosition(anchorRect, active.tooltip.getBoundingClientRect(), {
-            width: viewportWidth,
-            height: viewportHeight
-        });
-        active.tooltip.style.left = `${position.viewportLeft}px`;
-        active.tooltip.style.top = `${position.viewportTop}px`;
+        const position = computeTooltipPosition(anchorRect, active.tooltip.getBoundingClientRect(), viewport);
+        active.tooltip.dataset.tooltipSide = position.side;
+        active.tooltip.style.left = `${position.left}px`;
+        active.tooltip.style.top = `${position.top}px`;
         active.tooltip.style.right = 'auto';
         active.tooltip.style.bottom = 'auto';
-    }
-
-    function installLeaderPickerTooltipListeners() {
-        if (leaderPickerTooltipListenersInstalled || typeof window === 'undefined') return;
-        leaderPickerTooltipListenersInstalled = true;
-        window.addEventListener('scroll', updateLeaderPickerTooltipPosition, true);
-        window.addEventListener('resize', updateLeaderPickerTooltipPosition);
-        window.addEventListener('pointerdown', (event) => {
-            const active = activeLeaderPickerTooltip;
-            if (!active || active.card.contains(event.target) || active.tooltip.contains(event.target)) return;
-            closeActiveLeaderPickerTooltip();
-        }, true);
     }
 
     function showLeaderPickerTooltip(card, anchor, infoButton, tooltip, content, pinned = false) {
@@ -588,7 +751,7 @@
         card.classList.toggle('is-tooltip-pinned', active.pinned);
         infoButton.setAttribute('aria-expanded', 'true');
         infoButton.setAttribute('aria-label', active.pinned ? infoButton.dataset.openLabel : infoButton.dataset.closedLabel);
-        installLeaderPickerTooltipListeners();
+        installTooltipViewportListeners();
         updateLeaderPickerTooltipPosition();
     }
 
@@ -755,25 +918,95 @@
         });
     }
 
+    function ensureLeaderPanelStructure() {
+        const summary = elements.selectedPanel?.querySelector?.('.lc-leader-summary');
+        const details = summary?.querySelector?.(':scope > div');
+        if (!summary || !details) return null;
+
+        details.classList.add('lc-leader-details');
+        details.prepend(elements.leaderType, elements.leaderName, elements.leaderSkillName);
+        elements.leaderType.classList.add('lc-leader-type');
+        elements.leaderType?.classList.remove('lc-visually-hidden');
+
+        let stats = details.querySelector('.lc-leader-stats');
+        if (!stats) {
+            stats = document.createElement('div');
+            stats.className = 'lc-leader-stats';
+            stats.setAttribute('role', 'group');
+            stats.setAttribute('aria-label', 'Leader skill base and additional percentages');
+            elements.leaderSkillName.after(stats);
+        }
+
+        let categories = details.querySelector('.lc-leader-categories');
+        if (!categories) {
+            categories = document.createElement('div');
+            categories.className = 'lc-leader-categories lc-match-reasons';
+        }
+        details.append(elements.leaderDescription, categories, elements.leaderNote);
+
+        return { summary, details, stats, categories };
+    }
+
+    function formatLeaderPercent(value) {
+        return `${Number(value) > 0 ? '+' : ''}${value}%`;
+    }
+
+    function renderLeaderStatSummary(container, parsed) {
+        container.replaceChildren();
+        leaderPickerStatModel(parsed).forEach(({ stat, baseValues, additional, additionalKind }) => {
+            const cell = document.createElement('div');
+            cell.className = `lc-leader-stat lc-leader-stat-${stat.toLocaleLowerCase()}`;
+            cell.setAttribute('aria-label', `${stat} leader skill percentage`);
+
+            const label = document.createElement('span');
+            label.className = 'lc-leader-stat-label';
+            label.textContent = stat;
+
+            const base = document.createElement('span');
+            base.className = `lc-leader-stat-value${baseValues.length ? '' : ' is-unavailable'}`;
+            base.textContent = baseValues.length
+                ? baseValues.map(formatLeaderPercent).join(' / ')
+                : 'Not parsed';
+            base.title = baseValues.length > 1
+                ? 'Base percentage varies across parsed leader-skill clauses.'
+                : 'Parsed base leader-skill percentage.';
+
+            const qualifier = document.createElement('span');
+            qualifier.className = 'lc-leader-stat-qualifier';
+            qualifier.textContent = baseValues.length > 1 ? 'BASE VARIES' : 'BASE';
+            cell.append(label, base, qualifier);
+
+            if (additional !== null) {
+                const extra = document.createElement('span');
+                extra.className = `lc-leader-stat-extra is-${additionalKind.replaceAll(' ', '-')}`;
+                const kindLabel = additionalKind === 'always'
+                    ? 'ALWAYS'
+                    : (additionalKind === 'conditional' ? 'CONDITIONAL' : 'UNRESOLVED');
+                extra.textContent = `${formatLeaderPercent(additional)} · ${kindLabel}`;
+                extra.title = parsed.additionalText || 'Additional leader-skill percentage.';
+                cell.appendChild(extra);
+            }
+
+            container.appendChild(cell);
+        });
+    }
+
     function createLeaderPanel(card, leader, parsed) {
         const type = typeInfo(card.element);
-        elements.leaderPortrait.replaceChildren(...createPortraitLayers(card));
+        const layout = ensureLeaderPanelStructure();
         elements.leaderPortrait.style.setProperty('--lc-type-color', type.color);
+        mountLeaderCharacterArt(card);
         elements.leaderType.textContent = type.label;
         elements.leaderType.style.setProperty('--lc-type-color', type.color);
         elements.leaderName.textContent = card.name || `Card ${card.id}`;
         elements.leaderSkillName.textContent = leader.name || 'Leader Skill';
         elements.leaderDescription.textContent = parsed.description || 'This card has no leader skill description in the local database.';
-        let categories = elements.selectedPanel.querySelector('.lc-leader-categories');
-        if (!categories) {
-            categories = document.createElement('div');
-            categories.className = 'lc-leader-categories lc-match-reasons';
-            elements.leaderDescription.after(categories);
-        }
+        const categories = layout?.categories || elements.selectedPanel.querySelector('.lc-leader-categories');
         categories.replaceChildren();
         appendCategoryChips(categories,
             [...new Set(parsed.baseRules.flatMap((rule) => rule.conditions.categories.map((category) => category.name)))],
             parsed.additionalConditions.categories.map((category) => category.name));
+        if (layout?.stats) renderLeaderStatSummary(layout.stats, parsed);
 
         if (!parsed.isSupported) {
             elements.leaderNote.textContent = 'The description is shown as stored, but its coverage conditions are not recognized, so compatible characters cannot be calculated for this skill yet.';
@@ -810,7 +1043,7 @@
         return `${result.card.name || ''} ${categoryNames}`.toLocaleLowerCase().includes(term);
     }
 
-    function createPortraitLayers(card) {
+    function createPortraitLayers(card, { leaderSlot = false } = {}) {
         const type = typeInfo(card.element);
         const rarity = Number(card.rarity) === 5 ? 'LR' : (Number(card.rarity) === 4 ? 'TUR' : 'SSR');
         const base = 'https://abscustom.github.io/assets/images/';
@@ -823,10 +1056,20 @@
             image.decoding = 'async';
             return image;
         };
+        const art = safeImage(card, 'lc-portrait-art', '');
+        if (leaderSlot) {
+            if (elements.page.dataset.cardPresentation !== 'dokkan') return [art];
+            return [
+                layer('lc-dokkan-frame', `frame_${type.type.toLowerCase()}.png`),
+                art,
+                layer('lc-dokkan-rarity', rarity === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarity}.png`),
+                layer('lc-dokkan-type', `${rarity === 'SSR' ? '' : type.cardClass + '_'}type_${type.type.toLowerCase()}.png`)
+            ];
+        }
         const circle = safeImage(card, 'lc-portrait-circle', '', true);
         return [
             layer('lc-dokkan-frame', `frame_${type.type.toLowerCase()}.png`),
-            safeImage(card, 'lc-portrait-art', ''),
+            art,
             circle,
             layer('lc-dokkan-rarity', rarity === 'SSR' ? 'rarity_ssr.png' : `rarity_${rarity}.png`),
             layer('lc-dokkan-type', `${rarity === 'SSR' ? '' : type.cardClass + '_'}type_${type.type.toLowerCase()}.png`)
@@ -846,64 +1089,70 @@
     }
 
     let activeTooltip = null;
-    let tooltipViewportListenersInstalled = false;
 
     function computeTooltipPosition(anchorRect, tooltipRect, viewport) {
         const gutter = 8;
-        const width = Math.min(tooltipRect.width || 0, Math.max(0, viewport.width - gutter * 2));
-        const height = Math.min(tooltipRect.height || 0, Math.max(0, viewport.height - gutter * 2));
-        const maxLeft = Math.max(gutter, viewport.width - width - gutter);
-        const maxTop = Math.max(gutter, viewport.height - height - gutter);
-        const viewportLeft = Math.max(gutter, Math.min(
-            anchorRect.left + (anchorRect.width - width) / 2,
-            maxLeft
-        ));
-        const aboveTop = anchorRect.top - height - gutter;
-        const belowTop = anchorRect.bottom + gutter;
-        const aboveFits = aboveTop >= gutter;
-        const belowFits = belowTop + height <= viewport.height - gutter;
-        const side = aboveFits ? 'above' : (belowFits ? 'below' : 'clamped');
-        const preferredTop = side === 'above' ? aboveTop : belowTop;
-        const viewportTop = Math.max(gutter, Math.min(preferredTop, maxTop));
+        const safeLeft = Math.max(gutter, viewport.left || 0);
+        const safeRight = Math.max(gutter, viewport.right || 0);
+        const safeTop = Math.max(gutter, viewport.top || 0);
+        const safeBottom = Math.max(gutter, viewport.bottom || 0);
+        const maxRight = Math.max(safeLeft, viewport.width - safeRight);
+        const maxBottom = Math.max(safeTop, viewport.height - safeBottom);
+        const width = Math.min(tooltipRect.width || 0, Math.max(0, maxRight - safeLeft));
+        const height = Math.min(tooltipRect.height || 0, Math.max(0, maxBottom - safeTop));
+        const maxLeft = Math.max(safeLeft, maxRight - width);
+        const maxTop = Math.max(safeTop, maxBottom - height);
+        const centeredLeft = anchorRect.left + (anchorRect.width - width) / 2;
+        const below = anchorRect.bottom + gutter;
+        const above = anchorRect.top - height - gutter;
+        const right = anchorRect.right + gutter;
+        const left = anchorRect.left - width - gutter;
+        const candidates = [
+            { side: 'below', left: centeredLeft, top: below },
+            { side: 'above', left: centeredLeft, top: above },
+            { side: 'right', left: right, top: anchorRect.top },
+            { side: 'left', left, top: anchorRect.top }
+        ];
+        const verticalFit = candidates.slice(0, 2).find((candidate) =>
+            candidate.top >= safeTop && candidate.top + height <= maxBottom
+        );
+        const sideFit = candidates.slice(2).find((candidate) => candidate.left >= safeLeft
+            && candidate.left + width <= maxRight
+            && candidate.top >= safeTop
+            && candidate.top + height <= maxBottom);
+        const position = verticalFit || sideFit || (anchorRect.top > viewport.height / 2 ? candidates[1] : candidates[0]);
+        const viewportLeft = Math.max(safeLeft, Math.min(position.left, maxLeft));
+        const viewportTop = Math.max(safeTop, Math.min(position.top, maxTop));
 
-        return {
-            left: viewportLeft - anchorRect.left,
-            top: viewportTop - anchorRect.top,
-            viewportLeft,
-            viewportTop,
-            side
-        };
+        return { left: viewportLeft, top: viewportTop, viewportLeft, viewportTop, side: position.side, width, height };
     }
 
     function updateActiveTooltipPosition() {
         if (!activeTooltip || !activeTooltip.isOpen()) return;
-        const { link, tooltip } = activeTooltip;
+        const { link, tooltip, hide } = activeTooltip;
+        if (link.isConnected === false) {
+            hide();
+            return;
+        }
         const anchorRect = link.getBoundingClientRect();
-        const viewportWidth = document.documentElement.clientWidth || window.innerWidth;
-        const viewportHeight = document.documentElement.clientHeight || window.innerHeight;
-        if (anchorRect.bottom < 0 || anchorRect.top > viewportHeight) {
-            tooltip.classList.remove('is-tooltip-visible');
-            link.classList.remove('is-tooltip-owner');
+        const viewport = activeTooltipViewport();
+        if (anchorRect.bottom < viewport.top || anchorRect.top > viewport.height - viewport.bottom
+            || !anchorIsVisibleWithinClipAncestors(link)) {
+            hide();
             return;
         }
 
-        const position = computeTooltipPosition(anchorRect, tooltip.getBoundingClientRect(), {
-            width: viewportWidth,
-            height: viewportHeight
-        });
+        moveTooltipToPortal(tooltip);
+        tooltip.style.maxWidth = `${Math.max(120, viewport.width - viewport.left - viewport.right)}px`;
+        tooltip.style.maxHeight = `${Math.max(100, viewport.height - viewport.top - viewport.bottom)}px`;
+        const position = computeTooltipPosition(anchorRect, tooltip.getBoundingClientRect(), viewport);
         tooltip.style.left = `${position.left}px`;
         tooltip.style.top = `${position.top}px`;
         tooltip.style.right = 'auto';
         tooltip.style.bottom = 'auto';
+        tooltip.dataset.tooltipSide = position.side;
         tooltip.classList.add('is-tooltip-visible');
         link.classList.add('is-tooltip-owner');
-    }
-
-    function installTooltipViewportListeners() {
-        if (tooltipViewportListenersInstalled || typeof window === 'undefined') return;
-        tooltipViewportListenersInstalled = true;
-        window.addEventListener('scroll', updateActiveTooltipPosition, true);
-        window.addEventListener('resize', updateActiveTooltipPosition);
     }
 
     function setCardPresentation(presentation, persist = true) {
@@ -940,6 +1189,7 @@
         tooltip.className = 'lc-unit-tooltip';
         tooltip.id = `lc-unit-tooltip-${card.id}`;
         tooltip.setAttribute('role', 'tooltip');
+        tooltip.setAttribute('aria-hidden', 'true');
         link.setAttribute('aria-describedby', tooltip.id);
         const name = document.createElement('span');
         name.className = 'lc-unit-name';
@@ -977,13 +1227,18 @@
         const isOpen = () => (pointerInside || focused) && !dismissed;
         const hideTooltip = () => {
             tooltip.classList.remove('is-tooltip-visible');
+            tooltip.setAttribute('aria-hidden', 'true');
             link.classList.remove('is-tooltip-owner');
+            tooltip.removeAttribute?.('data-tooltip-side');
+            returnTooltipTo(tooltip, link);
             if (activeTooltip?.link === link) activeTooltip = null;
+            removeTooltipViewportListenersIfIdle();
         };
         const showTooltip = () => {
             if (dismissed) return;
             installTooltipViewportListeners();
-            activeTooltip = { link, tooltip, isOpen };
+            activeTooltip = { link, tooltip, isOpen, hide: hideTooltip };
+            tooltip.setAttribute('aria-hidden', 'false');
             updateActiveTooltipPosition();
         };
         link.addEventListener('pointerenter', (event) => {
@@ -1022,6 +1277,7 @@
 
     function renderUnits(reset = true) {
         if (reset) state.visibleCount = PAGE_SIZE;
+        if (activeTooltip) activeTooltip.hide();
         const term = normalizeText(state.unitSearch).toLocaleLowerCase();
         const filtered = state.results.filter((result) => {
             if (state.matchFilter === 'full' && !result.full) return false;
@@ -1129,7 +1385,9 @@
                 .sort((first, second) => compareNewestRelease(first.card, second.card));
 
             if (!state.leaderCards.length) throw new Error('No cards with leader skill data were found.');
-            setStatus(`${state.leaderCards.length.toLocaleString()} latest, highest-rarity leader cards ready. Search by character or leader skill.`);
+            // The card menu-style search and selected-leader picker provide the page's controls;
+            // a readiness sentence here duplicated that UI and pushed the workspace downward.
+            setStatus('');
 
             const requestedLeaderId = new URLSearchParams(window.location.search).get('leader');
             const initialLeader = resolveInitialLeader(requestedLeaderId, getStoredLeaderId());
@@ -1145,7 +1403,37 @@
     }
 
     function bindControls() {
-        elements.pickerOpen.addEventListener('click', () => openLeaderPicker());
+        // The transparent portrait is the selected leader's one change trigger. The legacy
+        // duplicate button is removed from this page's live DOM; the empty-state fallback stays.
+        elements.pickerOpen?.remove();
+        elements.leaderPortrait.setAttribute('aria-label', 'Change leader');
+        elements.leaderPortrait.setAttribute('aria-haspopup', 'dialog');
+        elements.leaderPortrait.setAttribute('aria-controls', PICKER_ID);
+
+        if (elements.workspaceTitle && elements.page && typeof elements.page.insertBefore === 'function'
+            && (elements.workspaceTitle.parentElement !== elements.page || elements.page.firstElementChild !== elements.workspaceTitle)) {
+            // Keep one page-level title before the leader area; the results header then contains controls only.
+            elements.page.insertBefore(elements.workspaceTitle, elements.page.firstChild);
+        }
+        const presentationToggle = elements.presentationButtons[0]?.closest('.lc-presentation-toggle');
+        const controlsGroup = elements.resultsToolbar?.querySelector?.('.lc-results-controls');
+        const toolbarControls = document.createElement('div');
+        toolbarControls.className = 'lc-results-controls';
+        toolbarControls.setAttribute('role', 'group');
+        toolbarControls.setAttribute('aria-label', 'Leader and result controls');
+        if (elements.resultsToolbar?.prepend && !controlsGroup) {
+            elements.resultsToolbar.prepend(toolbarControls);
+        }
+        const liveControls = controlsGroup || toolbarControls;
+        const filterGroup = elements.resultsToolbar?.querySelector?.('.lc-filter-group')
+            || document.querySelector?.('.lc-filter-group');
+        if (elements.resultsToolbar?.prepend && elements.unitSearch) {
+            elements.resultsToolbar.prepend(elements.unitSearch);
+        }
+        if (liveControls?.append) {
+            if (presentationToggle) liveControls.append(presentationToggle);
+            if (filterGroup) liveControls.append(filterGroup);
+        }
         elements.pickerOpenFallback.addEventListener('click', () => openLeaderPicker());
         elements.leaderPortrait.addEventListener('click', () => openLeaderPicker());
         elements.presentationButtons.forEach((button) => {

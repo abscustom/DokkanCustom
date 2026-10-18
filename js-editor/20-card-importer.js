@@ -223,6 +223,9 @@ function getOfficialParentFolderId(card) {
  * Fetch custom cards from ABS GitHub repository with caching
  */
 async function fetchCustomCardsList() {
+    if (window.CardContent?.enabled()) {
+        return (await window.CardContent.listCards()).map(window.CardContent.toCatalogCard);
+    }
     const cached = localStorage.getItem('hub_cached_custom_only');
     let customCards = [];
     if (cached) {
@@ -255,6 +258,7 @@ async function fetchCustomCardsList() {
         }
 
         const freshCards = [];
+        let observedUnavailableCard = false;
         for (const folder of cardFolders) {
             try {
                 const folderName = folder.name;
@@ -269,6 +273,10 @@ async function fetchCustomCardsList() {
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
                 let cardJson = null;
+                if (['archived', 'draft'].includes(doc.querySelector('meta[name="abs-card-state"]')?.content)) {
+                    observedUnavailableCard = true;
+                    continue;
+                }
                 const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
                 if (cardDataEl) {
                     try { cardJson = JSON.parse(cardDataEl.textContent); } catch (e) {}
@@ -327,7 +335,7 @@ async function fetchCustomCardsList() {
             } catch (e) {}
         }
 
-        if (freshCards.length > 0) {
+        if (freshCards.length > 0 || observedUnavailableCard) {
             try { localStorage.setItem('hub_cached_custom_only', JSON.stringify(freshCards)); } catch(e) {}
             return freshCards;
         }
@@ -495,14 +503,25 @@ window.openCharacterImporterModal = async function() {
     const modal = document.getElementById('character-importer-modal');
     if (!modal) return;
 
-    modal.style.display = 'flex';
+    const api = window.DokkanUnitPicker;
+    if (api?.enhance) {
+        api.enhance(modal, { title: 'Import Character', searchLabel: 'Search characters by name, title, or ID' });
+        api.openEnhanced(modal.id);
+    } else modal.style.display = 'flex';
     const grid = document.getElementById('importerGrid');
     if (grid && allImporterCards.length === 0) {
         grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; color: #38bdf8; font-weight: 800; text-align: center;"><svg class="spinner-svg" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" style="display:inline-block; vertical-align:-3px; margin-right:6px; animation: spin 1s linear infinite;"><circle cx="12" cy="12" r="10" stroke-opacity="0.25"></circle><path d="M12 2a10 10 0 0 1 10 10" stroke-linecap="round"></path></svg>Ingesting Dokkan Database...</div>`;
     }
 
-    if (!isImporterDbLoaded) {
-        await initImporterDatabase();
+    try {
+        if (!isImporterDbLoaded) await initImporterDatabase();
+    } catch (error) {
+        if (grid) {
+            const message = document.createElement('p');message.className = 'lc-unit-picker-empty';message.setAttribute('role','alert');
+            message.textContent = 'Character data could not be loaded. Close and reopen the importer to try again.';
+            grid.replaceChildren(message);
+        }
+        return;
     }
     window.filterImporterCards();
 };
@@ -515,7 +534,7 @@ window.closeCharacterImporterModal = function(e) {
         return;
     }
     const modal = document.getElementById('character-importer-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal && !window.DokkanUnitPicker?.close?.(modal.id)) modal.style.display = 'none';
 };
 
 window.closeImporterVariantModal = function(e) {
@@ -523,7 +542,7 @@ window.closeImporterVariantModal = function(e) {
         return;
     }
     const modal = document.getElementById('importer-variant-modal');
-    if (modal) modal.style.display = 'none';
+    if (modal && !window.DokkanUnitPicker?.close?.(modal.id)) modal.style.display = 'none';
 };
 
 /**
@@ -656,8 +675,12 @@ window.currentEditorArtMode = window.PUBLISHED_EDITOR_ART_MODE || window.current
 /**
  * Toggle between Static/Simple art and FX/Animated layered art
  */
-window.switchEditorArtMode = function(mode) {
+window.switchEditorArtMode = function(mode, options = {}) {
     const activePresentationRoot = window.getCardLayoutRoot?.();
+    const isPhantomTheme = document.body.classList.contains('theme-phantom') || activePresentationRoot?.dataset?.cardLayout === 'phantom';
+    const phantomRoot = window.getCardLayoutRoot?.('phantom');
+    if (isPhantomTheme && phantomRoot?.dataset?.phantomArtChoice !== 'animated') mode = 'static';
+    const shouldRemember = options?.remember ?? !isPhantomTheme;
     const isDokkanInfoLayout = activePresentationRoot?.dataset?.cardLayout === 'dokkaninfo';
     const isAbsCleanTheme = activePresentationRoot
         ? activePresentationRoot.dataset?.cardLayout === 'abs-clean'
@@ -728,11 +751,11 @@ window.switchEditorArtMode = function(mode) {
     const hasStatic = hasFlatStatic || hasLayerStatic;
 
     let resolvedMode = mode === 'static' ? 'static' : 'animated';
-    if (resolvedMode === 'static' && !hasStatic && hasAnimated) resolvedMode = 'animated';
+    if (resolvedMode === 'static' && !hasStatic && hasAnimated && !isPhantomTheme) resolvedMode = 'animated';
     if (resolvedMode === 'animated' && !hasAnimated && hasStatic) resolvedMode = 'static';
     if (!hasStatic && !hasAnimated) resolvedMode = 'static';
     const isAnim = resolvedMode === 'animated';
-    window.currentEditorArtMode = resolvedMode;
+    if (shouldRemember) window.currentEditorArtMode = resolvedMode;
     window.syncAbsCleanCategoryArtModeButtons?.(resolvedMode);
 
     if (toggleBar) {
@@ -793,6 +816,7 @@ window.switchEditorArtMode = function(mode) {
     }
 
     const infoMode = window.refreshInfoArtPreference ? window.refreshInfoArtPreference() : 'static';
+    window.syncPhantomMotionPlayback?.(resolvedMode);
     return { hasStatic, hasAnimated, mode: resolvedMode, infoMode };
 };
 
@@ -976,7 +1000,10 @@ window.openVariantSelectionModal = function(cardItem) {
     }
 
     optionsCont.innerHTML = html;
-    modal.style.display = 'flex';
+    if (window.DokkanUnitPicker?.enhance) {
+        window.DokkanUnitPicker.enhance(modal, {title: titleEl?.textContent || 'Import Options'});
+        window.DokkanUnitPicker.openEnhanced(modal.id);
+    } else modal.style.display = 'flex';
 };
 
 /**
@@ -1927,6 +1954,32 @@ window.renderCustomEditorSkillsInDokkanInfo = function(infoRoot = null) {
 
 window.executeCustomCardImport = async function(cardItem) {
     if (!cardItem) return;
+
+    if (cardItem.contentSource === 'database') {
+        // Fetch and sanitize before changing the current editor. Never fall back to stale files.
+        const card = await window.CardContent.getCard(cardItem.id);
+        const project = window.CardContent.toProject(card);
+        const previous = window.getProjectDataObject?.();
+        const previousCard = window.currentContentCard;
+        try {
+            window.clearEditorForCleanImport?.();
+            window.loadProjectData(project, card.assetBase, true);
+            window.CardContentRenderer.bindEditorControls?.(document.getElementById('sidebar-sections-area'));
+            window.currentContentCard = card;
+            window.currentCardSource = 'custom';
+            window.currentCustomCardAssetBaseUrl = card.assetBase;
+            window.editorPartnerCardId = card.id;
+            const folder = document.getElementById('upload-folder-id');
+            if (folder) folder.value = card.id;
+            window.renderCustomEditorSkillsInDokkanInfo?.();
+            window.syncToAbsLayout?.();
+        } catch (error) {
+            if (previous) window.loadProjectData(previous, '', true);
+            window.currentContentCard = previousCard;
+            throw error;
+        }
+        return;
+    }
 
     const previousState = {
         project: window.getProjectDataObject?.() || null,

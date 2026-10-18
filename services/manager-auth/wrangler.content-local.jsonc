@@ -1,0 +1,24 @@
+// Local card-content development only. Keep this separate from the production
+// deploy config until a real content database is provisioned and approved.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "abs-manager-auth-content-local",
+  "main": "src/worker.mjs",
+  "compatibility_date": "2026-10-16",
+  "compatibility_flags": ["nodejs_compat"],
+  "workers_dev": true,
+  "assets": { "directory": "./public", "binding": "ASSETS", "run_worker_first": true },
+  "vars": {
+    "MANAGER_ORIGIN": "https://abs-manager-auth.trashullu.workers.dev",
+    "GITHUB_CLIENT_ID": "Iv23li6k5Jp0Nx4C8c5c",
+    "GITHUB_REPOSITORY_ID": "1144608552",
+    "ADMIN_USER_IDS": "257864199",
+    "DELETE_USER_IDS": "257864199"
+  },
+  "d1_databases": [
+    { "binding": "DB", "database_name": "abs-manager-sessions", "database_id": "11a072e9-9f6f-4bf1-bfa6-cb89bf4bccd6", "migrations_dir": "migrations" },
+    { "binding": "CONTENT_DB", "database_name": "abs-card-content-local", "database_id": "00000000-0000-4000-8000-000000000001", "migrations_dir": "content-migrations" }
+  ],
+  "durable_objects": { "bindings": [{ "name": "MANAGER_SERVICE", "class_name": "ManagerService" }] },
+  "migrations": [{ "tag": "v1-manager-service", "new_sqlite_classes": ["ManagerService"] }]
+}

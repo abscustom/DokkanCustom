@@ -1,23 +1,6 @@
 /* ========================================================================== 
-   ABS.CLEAN Viewer card picker
+   Shared viewer selector result cards
    ========================================================================== */
-
-/* The Viewer is a persistent workspace, so its dock stays available instead
-   of waiting for the page-bottom proximity state used by other pages. */
-:where(body.card-viewer-page, body.is-published.viewer-picker-open, body.is-published:has(#viewer-card-picker.is-open)) .apple-hud-wrapper .hud-nav-group,
-:where(body.card-viewer-page, body.is-published.viewer-picker-open, body.is-published:has(#viewer-card-picker.is-open)) .apple-hud-wrapper:hover .hud-nav-group,
-:where(body.card-viewer-page, body.is-published.viewer-picker-open, body.is-published:has(#viewer-card-picker.is-open)) .apple-hud-wrapper:focus-within .hud-nav-group {
-    position: fixed !important;
-    top: auto !important;
-    right: auto !important;
-    bottom: 16px !important;
-    left: 50% !important;
-    z-index: 10051 !important;
-    opacity: 1 !important;
-    pointer-events: auto !important;
-    visibility: visible !important;
-    transform: translateX(-50%) translateY(0) !important;
-}
 
 /* Viewer is a clickable picker, not just a page label. Keep the cue visible
    and make the open state immediately recognizable in the navbar. */
@@ -69,130 +52,6 @@
 
 :where(body.card-viewer-page, body.is-published) .hud-nav-group #nav-btn-viewer[aria-expanded="true"] .viewer-nav-cue {
     transform: rotate(180deg);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker {
-    --viewer-picker-accent: #e2e8f0;
-    position: fixed;
-    left: 50%;
-    bottom: calc(16px + 58px + 10px);
-    z-index: 10060;
-    width: min(760px, calc(100vw - 24px));
-    max-height: min(70vh, 620px);
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 0;
-    background:
-        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(180deg, rgba(8, 14, 26, 0.94) 0%, rgba(4, 7, 14, 0.98) 100%);
-    background-size: 24px 24px, 24px 24px, auto;
-    box-shadow:
-        0 16px 36px rgba(0, 0, 0, 0.75),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2);
-    backdrop-filter: blur(24px) saturate(140%);
-    -webkit-backdrop-filter: blur(24px) saturate(140%);
-    color: #e2e8f0;
-    opacity: 0;
-    pointer-events: none;
-    visibility: visible;
-    transform: translate(-50%, 12px) scale(0.97);
-    transform-origin: bottom center;
-    transition: opacity 320ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
-    will-change: opacity, transform;
-}
-
-/* Subtle ABS.CLEAN circuit grid behind the picker content. */
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker::before {
-    content: "";
-    position: absolute;
-    top: 0;
-    right: 8px;
-    left: 8px;
-    height: 1px;
-    border-radius: 0;
-    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.32), transparent);
-    opacity: 1;
-    pointer-events: none;
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker::after {
-    content: "";
-    position: absolute;
-    left: var(--viewer-picker-arrow-left, 50%);
-    bottom: -8px;
-    width: 14px;
-    height: 14px;
-    border-right: 1px solid rgba(255, 255, 255, 0.22);
-    border-bottom: 1px solid rgba(255, 255, 255, 0.22);
-    background: #080e1a;
-    transform: translateX(-50%) rotate(45deg);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker.is-open {
-    opacity: 1;
-    pointer-events: auto;
-    transform: translate(-50%, 0) scale(1);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker.is-closing {
-    opacity: 0;
-    pointer-events: none;
-    transform: translate(-50%, 12px) scale(0.97);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-search {
-    position: relative;
-    z-index: 1;
-    display: flex;
-    align-items: center;
-    gap: 8px;
-    margin: 12px 14px 10px;
-    padding: 9px 11px;
-    border: 1px solid rgba(255, 255, 255, 0.22);
-    border-radius: 0;
-    background: rgba(2, 6, 23, 0.58);
-    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.12), 0 0 12px rgba(2, 8, 18, 0.22);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-search:focus-within {
-    border-color: rgba(255, 255, 255, 0.42);
-    box-shadow: 0 0 12px rgba(255, 255, 255, 0.08), inset 0 1px 0 rgba(255, 255, 255, 0.16);
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-search svg {
-    flex: 0 0 16px;
-    width: 16px;
-    height: 16px;
-    color: #cbd5e1;
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-search input {
-    width: 100%;
-    min-width: 0;
-    border: 0;
-    outline: 0;
-    background: transparent;
-    color: #f8fafc;
-    font: inherit;
-    font-size: 12px;
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-search input::placeholder {
-    color: #94a3b8;
-}
-
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-results {
-    position: relative;
-    z-index: 1;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 8px;
-    max-height: min(50vh, 440px);
-    margin: 0 14px 14px;
-    overflow-y: auto;
-    padding: 2px 3px 6px;
-    scrollbar-color: color-mix(in srgb, var(--viewer-picker-accent) 70%, transparent) transparent;
-    scrollbar-width: thin;
 }
 
 :where(body.card-viewer-page, body.is-published) .viewer-card-picker-result {
@@ -273,35 +132,13 @@
     white-space: nowrap;
 }
 
-:where(body.card-viewer-page, body.is-published) .viewer-card-picker-empty {
-    grid-column: 1 / -1;
-    padding: 22px 10px;
-    color: #94a3b8;
-    font-size: 11px;
-    text-align: center;
+/* The active picker is the shared unit-picker dialog. Keep its transform
+   origin on the Viewer trigger and make its exit panel non-interactive. */
+#viewer-card-picker[data-picker-presentation="abs-viewer"][data-picker-origin="viewer"] .calc-unit-picker-dialog {
+    transform-origin: var(--abs-picker-origin-x, 0px) var(--abs-picker-origin-y, 50%) !important;
+    will-change: transform, opacity;
 }
 
-@media (max-width: 760px) {
-    :where(body.card-viewer-page, body.is-published) .viewer-card-picker-results {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-    }
-}
-
-@media (max-width: 560px) {
-    :where(body.card-viewer-page, body.is-published) .viewer-card-picker {
-        bottom: calc(16px + 58px + 8px);
-        width: calc(100vw - 16px);
-        border-radius: 0;
-    }
-
-    :where(body.card-viewer-page, body.is-published) .viewer-card-picker-results {
-        grid-template-columns: minmax(0, 1fr);
-        max-height: 48vh;
-        margin-inline: 10px;
-    }
-
-    :where(body.card-viewer-page, body.is-published) .viewer-card-picker-search {
-        margin-inline: 10px;
-    }
-
+#viewer-card-picker[data-picker-presentation="abs-viewer"][data-picker-closing="true"] {
+    pointer-events: none !important;
 }

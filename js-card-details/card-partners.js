@@ -1741,56 +1741,28 @@ function openAbsCleanPartnerBrowser(scores, trigger) {
         return `<button type="button" class="abs-clean-partner-browser-card" data-type="${type}" data-card-url="card.html?id=${encodeURIComponent(pCard.id)}" aria-label="Open ${esc(name)}"><span class="abs-clean-partner-browser-art"><img src="${esc(portraitSrc)}" data-abs-fallback-src="${esc(portraitFallback)}" alt="${esc(name)}" loading="lazy"></span><span class="abs-clean-partner-browser-copy"><strong>${esc(name)}</strong><span class="abs-clean-partner-browser-meta"><span class="is-rarity is-${rarity.toLowerCase()}">${rarity}</span><span class="is-type">${type.toUpperCase()}</span><span class="abs-clean-partner-browser-links">${sharedCount} link${sharedCount === 1 ? '' : 's'}</span></span>${stats}</span></button>`;
     };
 
-    const modal = document.createElement('div');
-    modal.id = 'abs-clean-partner-browser';
-    modal.className = 'abs-clean-partner-browser';
-    modal.setAttribute('role', 'dialog');
-    modal.setAttribute('aria-modal', 'true');
-    modal.setAttribute('aria-label', 'link partners');
-    modal.innerHTML = `<section class="abs-clean-partner-browser-panel"><header><div class="abs-clean-partner-browser-heading"><span class="abs-clean-partner-browser-kicker">link partners</span><span class="abs-clean-partner-browser-total">${partnerScores.length}</span></div></header><label class="abs-clean-partner-browser-search"><span class="abs-clean-partner-browser-search-label">Search</span><input type="search" class="abs-clean-partner-browser-search-input" placeholder="Search partners or shared links" autocomplete="off"></label><div class="abs-clean-partner-browser-list"></div><div class="abs-clean-partner-browser-empty" hidden>No matching link partners.</div></section>`;
-
-    const list = modal.querySelector('.abs-clean-partner-browser-list');
-    const empty = modal.querySelector('.abs-clean-partner-browser-empty');
-    const searchInput = modal.querySelector('.abs-clean-partner-browser-search-input');
-    const normalizeSearch = value => String(value ?? '').trim().toLocaleLowerCase();
-    const getSearchValues = score => [
-        score?.card?.name || '',
-        ...(Array.isArray(score?.sharedLinks) ? score.sharedLinks : [])
-    ].map(normalizeSearch).filter(Boolean);
-    const renderPartnerCards = query => {
-        const needle = normalizeSearch(query);
-        const visibleScores = partnerScores
-            .filter(score => !needle || getSearchValues(score).some(value => value.includes(needle)))
-            .slice(0, maxBrowserPartners);
-        list.innerHTML = visibleScores.map(buildPartnerCard).join('');
-        attachAbsCleanPartnerPortraitFallbacks(list);
-        empty.hidden = visibleScores.length > 0;
-        empty.textContent = needle ? 'No matching link partners.' : 'No link partners found.';
-    };
-    renderPartnerCards('');
-
-    const close = () => {
-        document.removeEventListener('keydown', onKeyDown);
-        trigger?.setAttribute('aria-expanded', 'false');
-        modal.remove();
-    };
-    const onKeyDown = event => {
-        if (event.key === 'Escape') close();
-    };
-    modal._absCleanClose = close;
-    modal.addEventListener('pointerdown', event => {
-        if (event.target === modal) close();
+    if (!window.DokkanUnitPicker) return;
+    trigger?.focus();
+    const root = window.DokkanUnitPicker.open({
+        id: 'abs-clean-partner-browser',
+        dialogClass: 'abs-shared-partner-dialog',
+        title: 'Select Link Partner',
+        searchPlaceholder: 'Search partners or shared links…',
+        pageSize: maxBrowserPartners,
+        items: partnerScores,
+        getSearchText: score => [score?.card?.name || '', ...(Array.isArray(score?.sharedLinks) ? score.sharedLinks : [])].join(' '),
+        renderItem: score => {
+            const holder = document.createElement('div');
+            holder.innerHTML = buildPartnerCard(score);
+            attachAbsCleanPartnerPortraitFallbacks(holder);
+            return holder.firstElementChild;
+        },
+        onSelect: score => window.location.assign(`card.html?id=${encodeURIComponent(score.card.id)}`),
+        onClose: () => trigger?.setAttribute('aria-expanded', 'false'),
+        emptyMessage: 'No matching link partners.'
     });
-    searchInput.addEventListener('input', () => renderPartnerCards(searchInput.value));
-    list.addEventListener('click', event => {
-        const card = event.target.closest('.abs-clean-partner-browser-card');
-        const url = card?.dataset?.cardUrl;
-        if (url) window.location.assign(url);
-    });
-    document.body.appendChild(modal);
-    document.addEventListener('keydown', onKeyDown);
-    requestAnimationFrame(() => modal.classList.add('is-open'));
-    searchInput.focus();
+    root._absCleanClose = () => window.DokkanUnitPicker.close(root.id);
+    trigger?.setAttribute('aria-expanded', 'true');
 }
 
 /* ===========================================================================

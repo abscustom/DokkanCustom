@@ -3810,9 +3810,11 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
     transition: background-color 180ms ease, box-shadow 180ms ease, outline-color 180ms ease;
 }
 
-#card-passive-container [id^="card-sec-"]:hover,
-[data-card-element="abs-passive-container"] .abs-passive-section-title:hover,
-[data-card-element="abs-passive-container"] .abs-passive-list:hover {
+/* Passive edit-hover tint belongs to editing surfaces, never character viewers.
+   The viewer context is shared by official and published custom cards. */
+body:not(.card-viewer-page) #card-passive-container [id^="card-sec-"]:hover,
+body:not(.card-viewer-page) [data-card-element="abs-passive-container"] .abs-passive-section-title:hover,
+body:not(.card-viewer-page) [data-card-element="abs-passive-container"] .abs-passive-list:hover {
     background-color: rgba(56, 189, 248, 0.045) !important;
 }
 
@@ -3863,6 +3865,16 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
     .active-skill-edit-selected {
         animation: none !important;
     }
+}
+
+#editor-history-dialog :is(.gui-preset-btn, [data-history-restore]) {
+    min-height: 42px !important;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .16)) !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, .06) !important;
+    color: var(--abs-shell-text, #f0f1f3) !important;
+    backdrop-filter: blur(10px) !important;
+    -webkit-backdrop-filter: blur(10px) !important;
 }
 
 #card-passive-container.passive-header-edit-selected,
@@ -5364,13 +5376,16 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
 .editor-history-dialog {
     width: min(720px, calc(100vw - 24px));
     max-width: calc(100vw - 24px);
-    max-height: min(82dvh, 760px);
+    max-height: min(calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)), 760px);
     padding: 0;
     overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, .28);
-    color: #f4f4f5;
-    background: #18181b;
-    box-shadow: 0 24px 80px rgba(0, 0, 0, .6);
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12));
+    border-radius: var(--abs-shell-radius, 16px);
+    color: var(--abs-shell-text, #f0f1f3);
+    background: var(--abs-shell-panel, rgba(29, 30, 33, .92));
+    box-shadow: 0 24px 64px rgba(0, 0, 0, .5);
+    backdrop-filter: blur(18px) saturate(118%);
+    -webkit-backdrop-filter: blur(18px) saturate(118%);
 }
 
 .editor-history-dialog::backdrop {
@@ -5393,7 +5408,8 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
     justify-content: space-between;
     gap: 12px;
     padding: 14px 16px;
-    border-bottom: 1px solid rgba(255, 255, 255, .16);
+    border-bottom: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12));
+    background: rgba(255, 255, 255, .025);
 }
 
 .editor-history-header h2 {
@@ -5425,7 +5441,8 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
     align-items: center;
     gap: 12px;
     padding: 10px;
-    border: 1px solid rgba(255, 255, 255, .16);
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12));
+    border-radius: 10px;
     background: rgba(255, 255, 255, .04);
 }
 
@@ -5451,7 +5468,7 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
 
 .editor-history-footer {
     justify-content: flex-end;
-    border-top: 1px solid rgba(255, 255, 255, .16);
+    border-top: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12));
     border-bottom: 0;
 }
 
@@ -5574,4 +5591,110 @@ body.theme-abs-clean:not(.is-published) [data-card-element="abs-passive-containe
     width: 100%;
     margin-top: 6px;
     white-space: normal;
+}
+
+/* Shared app-dialog surfaces. Keep selectors limited to app controls, away from card content. */
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) {
+    z-index: 2000 !important;
+    overflow-y: auto !important;
+    overscroll-behavior: contain;
+    padding: max(12px, env(safe-area-inset-top)) 12px max(12px, env(safe-area-inset-bottom)) !important;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-panel {
+    box-sizing: border-box;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    overflow-y: auto !important;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12)) !important;
+    border-radius: var(--abs-shell-radius, 16px) !important;
+    color: var(--abs-shell-text, #f0f1f3) !important;
+    background: var(--abs-shell-panel, rgba(29, 30, 33, .92)) !important;
+    background-image: none !important;
+    box-shadow: 0 20px 56px rgba(0, 0, 0, .48), inset 0 1px 0 rgba(255, 255, 255, .12) !important;
+    backdrop-filter: blur(18px) saturate(118%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(118%) !important;
+}
+
+#glass-upload-modal .clean-modal-panel {
+    width: min(440px, calc(100vw - 24px)) !important;
+    max-width: 440px !important;
+}
+
+#glass-quicksave-modal .clean-modal-panel {
+    width: min(400px, calc(100vw - 24px)) !important;
+    max-width: 400px !important;
+}
+
+#glass-admin-unlock-modal .clean-modal-panel {
+    width: min(380px, calc(100vw - 24px)) !important;
+    max-width: 380px !important;
+}
+
+#card-admin-modal .card-admin-dialog {
+    width: min(960px, calc(100vw - 24px)) !important;
+    max-width: 960px !important;
+    max-height: calc(100dvh - 24px - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    margin: auto !important;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-header {
+    justify-content: flex-start;
+    padding: 14px 56px 14px 18px;
+    border-bottom-color: var(--abs-shell-border, rgba(255, 255, 255, .12)) !important;
+    border-radius: var(--abs-shell-radius, 16px) var(--abs-shell-radius, 16px) 0 0;
+    background: rgba(255, 255, 255, .035) !important;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-title {
+    color: var(--abs-shell-text, #f0f1f3) !important;
+    letter-spacing: .06em;
+    text-align: left;
+    text-shadow: none;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-close {
+    right: 12px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px !important;
+    border-color: var(--abs-shell-border, rgba(255, 255, 255, .12)) !important;
+    background: rgba(255, 255, 255, .06) !important;
+    color: var(--abs-shell-muted, #a4a7ae);
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-close:focus-visible,
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) :is(input, select, textarea, button):focus-visible {
+    outline: 2px solid var(--abs-shell-text, #f0f1f3) !important;
+    outline-offset: 2px;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) :is(.clean-input, .glass-form-control, input[type="text"], input[type="password"], input[type="search"], select, textarea) {
+    min-height: 40px;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .16)) !important;
+    border-radius: 10px !important;
+    background: rgba(8, 9, 11, .58) !important;
+    color: var(--abs-shell-text, #f0f1f3) !important;
+}
+
+:is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal) .clean-modal-actions .gui-preset-btn {
+    min-height: 42px;
+    border-radius: 10px !important;
+}
+
+@media (max-width: 520px) {
+    :is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal) .clean-modal-body {
+        padding: 16px;
+    }
+
+    :is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal) .clean-modal-actions {
+        flex-wrap: wrap;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    :is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal),
+    :is(#glass-upload-modal, #glass-quicksave-modal, #glass-admin-unlock-modal, #card-admin-modal) .clean-modal-panel {
+        animation: none !important;
+        transition: none !important;
+    }
 }

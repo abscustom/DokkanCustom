@@ -1717,207 +1717,445 @@ function renderPassiveIconsStrip(passiveText, card = null) {
 }
 
 function getAbsCleanPassiveTotals(rawText) {
-    const totals = {
-        atk: 0,
-        def: 0,
-        damageReduction: 0,
-        evasion: 0,
-        critical: 0
-    };
-    const explicit = new Set();
-    const chanceMaximums = { evasion: 0, critical: 0 };
-    const source = String(rawText ?? '')
+    const totals = { atk: 0, def: 0, damageReduction: 0, evasion: 0, critical: 0 };
+    const effects = [];
+    const cleaned = String(rawText ?? '')
+        .replace(/<strong\b[^>]*>([\s\S]*?)<\/strong>/gi, (_, heading) => '\n*' + heading + '*\n')
         .replace(/<br\s*\/?>/gi, '\n')
-        .replace(/<[^>]*>/g, ' ')
+        .replace(/<li\b[^>]*>/gi, '\n- ')
+        .replace(/<\/li>/gi, '\n')
+        .replace(/\{passiveImg:once\}/gi, ' once ')
+        .replace(/\{passiveImg:forever\}/gi, ' forever ')
+        .replace(/\{passiveImg:stun\}/gi, ' stun ')
+        .replace(/\{passiveImg:seal\}/gi, ' seal ')
         .replace(/\{[^}]*\}/g, ' ')
+        .replace(/<[^>]*>/g, ' ')
         .replace(/\u00a0/g, ' ');
-    const lines = source.split(/\r?\n/)
-        .map(line => line.replace(/\s+/g, ' ').trim())
-        .filter(Boolean);
 
-    const rateKeys = new Set(['damageReduction', 'evasion', 'critical']);
-    const add = (key, value, markExplicit = true) => {
-        const numericValue = Number.parseFloat(String(value).replace(/,/g, ''));
-        if (!Number.isFinite(numericValue) || numericValue < 0) return;
-        totals[key] += numericValue;
-        if (markExplicit) explicit.add(key);
-    };
-
-    const targetsFor = (context) => {
-        const lower = String(context || '').toLowerCase();
-        const targets = [];
-        if (/\batk\b/.test(lower)) targets.push('atk');
-        if (/\bdef\b/.test(lower)) targets.push('def');
-        if (
-            /damage\s+reduction(?:\s+rate)?/.test(lower) ||
-            /reduces?\s+(?:damage|damage\s+received)/.test(lower) ||
-            /damage\s+(?:received|taken)\s+(?:is\s+)?(?:reduced|decreased)/.test(lower) ||
-            /(?:receives?|takes?)\s+.*?\bless\s+damage\b/.test(lower)
-        ) {
-            targets.push('damageReduction');
+    const rawLines = cleaned.split(/\r?\n/).map(line => line.trim()).filter(Boolean);
+    const lines = [];
+    let openHeading = '';
+    rawLines.forEach(rawLine => {
+        if (openHeading) {
+            openHeading += ' ' + rawLine;
+            if (rawLine.includes('*')) {
+                lines.push(openHeading);
+                openHeading = '';
+            }
+            return;
         }
-        if (/evad|dodg/.test(lower)) targets.push('evasion');
-        if (/\bcritical\b|\bcrit\b/.test(lower)) targets.push('critical');
-        return targets;
-    };
-
-    const contextBefore = (line, index) => {
-        const prefix = line.slice(0, index);
-        const delimiters = [...prefix.matchAll(/[,;]|\b(?:and|plus|also|or|as well as)\b/gi)];
-        const last = delimiters[delimiters.length - 1];
-        return last ? prefix.slice(last.index + last[0].length) : prefix;
-    };
-
-    const contextAfter = (line, index) => {
-        const suffix = line.slice(index);
-        const nextDelimiter = suffix.search(/[,;]|\b(?:and|plus|also|or|as well as)\b/i);
-        return nextDelimiter >= 0 ? suffix.slice(0, nextDelimiter) : suffix;
-    };
-
-    const addTargets = (line, match, targets, lastAddByKey) => {
-        const numericValue = Number.parseFloat(String(match[1]).replace(/,/g, ''));
-        if (!Number.isFinite(numericValue) || numericValue < 0 || !targets.length) return;
-
-        // “ATK 10% (up to 50%)” describes a 50% maximum, not 10% + 50%.
-        // Replace only the immediately preceding value for the same stat on
-        // this line; independent clauses remain additive.
-        const isUpperBound = /\bup\s+to\s*$/i.test(line.slice(0, match.index).trim());
-        targets.forEach(key => {
-            if (isUpperBound) {
-                const previous = lastAddByKey.get(key);
-                if (previous && match.index - previous.index <= 120) totals[key] -= previous.value;
-            }
-            add(key, numericValue);
-            lastAddByKey.set(key, { index: match.index, value: numericValue });
-        });
-    };
-
-    const percentPattern = /([+-]?\d+(?:,\d{3})*(?:\.\d+)?)\s*%/g;
-    lines.forEach(line => {
-        const matches = [...line.matchAll(percentPattern)];
-        let previousTargets = [];
-        const lastAddByKey = new Map();
-        matches.forEach(match => {
-            const before = contextBefore(line, match.index);
-            const after = contextAfter(line, match.index + match[0].length);
-            let targets = targetsFor(before);
-
-            // “50% chance to evade” puts the target after the percentage. Only
-            // special rates use this suffix form so condition percentages such
-            // as “HP is 50% or less, ATK 200%” cannot become ATK 50%.
-            targetsFor(after)
-                .filter(key => rateKeys.has(key))
-                .forEach(key => {
-                    if (!targets.includes(key)) targets.push(key);
-                });
-
-            // When one percentage follows a coordinated list, that one value
-            // belongs to each listed special rate: “critical, evasion & damage
-            // reduction rate 25%”. Do not apply this broad rule to a line with
-            // multiple percentages, where each clause has its own value.
-            if (matches.length === 1) {
-                targetsFor(line).filter(key => rateKeys.has(key)).forEach(key => {
-                    if (!targets.includes(key)) targets.push(key);
-                });
-            }
-
-            // Preserve the previous target for abbreviated clauses such as
-            // “ATK & DEF +15% and an additional +10%”.
-            if (!targets.length && /additional|another|further|more/i.test(before)) {
-                targets = previousTargets.slice();
-            }
-
-            addTargets(line, match, targets, lastAddByKey);
-            if (targets.length) previousTargets = targets;
-        });
+        if (rawLine.startsWith('*') && !rawLine.slice(1).includes('*')) {
+            openHeading = rawLine;
+            return;
+        }
+        lines.push(rawLine);
     });
+    if (openHeading) lines.push(openHeading);
 
-    const chanceValue = (line, key) => {
-        const lower = line.toLowerCase();
-        if (key === 'critical') {
-            if (/all\s+attacks?\s+(?:become|are)\s+critical|performs?\s+(?:a\s+)?critical\s+hit/.test(lower)) return 100;
-            if (!/critical|crit/.test(lower)) return 0;
+    const logicalLines = [];
+    lines.forEach(rawLine => {
+        const isBullet = /^\s*-\s*/.test(rawLine);
+        const line = rawLine.replace(/^\s*-\s*/, '').replace(/\s+/g, ' ').trim();
+        if (!line) return;
+        const isHeading = /^\*[\s\S]*\*$/.test(line);
+        const previousIsHeading = /^\*[\s\S]*\*$/.test(logicalLines[logicalLines.length - 1] || '');
+        if (/^(?:for\s+\d+\s+turns?|temporarily|until\b)/i.test(line) && logicalLines.length) {
+            logicalLines[logicalLines.length - 1] += ' ' + line;
+        } else if (!isBullet && !isHeading && logicalLines.length && !previousIsHeading) {
+            logicalLines[logicalLines.length - 1] += ' ' + line;
         } else {
-            if (/guaranteed\s+to\s+(?:evade|dodge)|evades?\s+(?:the\s+)?enemy/.test(lower)) return 100;
-            if (!/evad|dodg/.test(lower)) return 0;
+            logicalLines.push(line);
         }
-        if (/great\s+chance/.test(lower)) return 70;
-        if (/high\s+chance/.test(lower)) return 50;
-        if (/medium\s+chance/.test(lower)) return 30;
-        if (/low\s+chance/.test(lower)) return 20;
-        if (/rare\s+chance/.test(lower)) return 10;
-        return /\bchance\b/.test(lower) ? 30 : 0;
-    };
-
-    // Chance-based effects are alternatives, not percentages to multiply or
-    // blindly add once for every repeated phrase. Keep the strongest chance
-    // descriptor and let explicit numeric rates remain additive below.
-    lines.forEach(line => {
-        chanceMaximums.critical = Math.max(chanceMaximums.critical, chanceValue(line, 'critical'));
-        chanceMaximums.evasion = Math.max(chanceMaximums.evasion, chanceValue(line, 'evasion'));
     });
-    // An explicit numeric rate is authoritative. A plain “chance” phrase is
-    // only a fallback when that stat has no numeric percentage of its own.
-    totals.critical = Math.min(100, explicit.has('critical')
-        ? totals.critical
-        : Math.max(totals.critical, chanceMaximums.critical));
-    totals.evasion = Math.min(100, explicit.has('evasion')
-        ? totals.evasion
-        : Math.max(totals.evasion, chanceMaximums.evasion));
-    totals.damageReduction = Math.min(100, totals.damageReduction);
 
+    const statPatterns = [
+        { stat: 'damageReduction', pattern: /damage\s+reduction(?:\s+rate)?|reduces?\s+(?:damage|damage\s+received)|damage\s+(?:received|taken)\s+(?:is\s+)?(?:reduced|decreased)/gi },
+        { stat: 'evasion', pattern: /\bevasion\b|\bevad(?:e|es|ing)\b|\bdodg(?:e|es|ing)\b/gi },
+        { stat: 'critical', pattern: /\bcritical(?:\s+hit)?\b|\bcrit\b/gi },
+        { stat: 'atk', pattern: /\batk\b/gi },
+        { stat: 'def', pattern: /\bdef\b/gi }
+    ];
+    const percentagePattern = /([+-]?\d+(?:,\d{3})*(?:\.\d+)?)\s*(?:%|\bpercent\b)/gi;
+    const chanceMap = { great: 70, high: 50, medium: 30 };
+    let heading = '';
+    let headingSectionId = 0;
+
+    function statCues(text) {
+        const found = [];
+        statPatterns.forEach(({ stat, pattern }) => {
+            for (const match of text.matchAll(pattern)) {
+                found.push({ stat, index: match.index, end: match.index + match[0].length });
+            }
+        });
+        return found.sort((a, b) => a.index - b.index);
+    }
+
+    function chanceInfo(text) {
+        const match = String(text || '').match(/\b(?:(great|high|medium|low|rare)\s+)?chance\b/i);
+        if (!match) return null;
+        const descriptor = match[1] ? match[1].toLowerCase() : '';
+        return {
+            value: Object.prototype.hasOwnProperty.call(chanceMap, descriptor) ? chanceMap[descriptor] : null,
+            basis: Object.prototype.hasOwnProperty.call(chanceMap, descriptor) ? 'descriptor-map' : null,
+            label: descriptor ? descriptor[0].toUpperCase() + descriptor.slice(1) + ' chance' : 'Chance'
+        };
+    }
+
+    function capText(text) {
+        const match = String(text || '').match(/\bup\s+to\s+[+-]?\d+(?:,\d{3})*(?:\.\d+)?\s*%?/i);
+        return match ? match[0].replace(/\s+/g, ' ').trim() : null;
+    }
+
+    function durationText(text) {
+        const match = String(text || '').match(/\bfor\s+\d+\s+turns?\b|\btemporarily\b|\buntil\s+[^.;]+/i);
+        return match ? match[0].replace(/\s+/g, ' ').trim() : null;
+    }
+
+    function isBaseHeading(value) {
+        return /^(?:basic\s+effect(?:s|\(s\))?)$/i.test(String(value || '').trim());
+    }
+
+    function targetFor(line) {
+        const lower = line.toLowerCase();
+        const targetsAllies = /\b(?:for|to)\s+(?:all\s+)?allies\b|\ball\s+allies\b|\ballies['’]/.test(lower);
+        if (targetsAllies && /\bself\s+excluded\b/.test(lower)) return 'allies-except-self';
+        if (targetsAllies) return 'allies';
+        if (/\ball\s+enemies\b|\b(?:attacked\s+)?enemy['’]s\s+(?:atk|def)\b|\ball\s+enemies['’]\s+(?:atk|def)\b/.test(lower)) return 'enemy';
+        if (/\b(?:all|other|remaining)\s+characters?\b|\beveryone\b/.test(lower)) return 'unknown';
+        return 'self';
+    }
+
+    function inlineCondition(line) {
+        const match = String(line || '').match(/\b(?:when|if|while|upon|after|before|at the start|for every|per)\b[\s\S]*$/i);
+        return match ? match[0].replace(/\s+/g, ' ').trim() : '';
+    }
+
+    function makeEffect(stat, numericValue, line, activeHeading, info, sectionId) {
+        const context = [activeHeading, line].filter(Boolean).join(' ');
+        const target = targetFor(line);
+        const duration = durationText(line) || durationText(activeHeading);
+        const cap = capText(line) || capText(activeHeading);
+        const inline = inlineCondition(line);
+        const headerCondition = activeHeading && !isBaseHeading(activeHeading) ? activeHeading : '';
+        const conditionParts = [...new Set([headerCondition, inline].filter(Boolean))];
+        const condition = conditionParts.join(' · ') || null;
+        const stackMatch = context.match(/\b(?:for every|per each|per\s+["'][^"']+["']|for each|each turn|every attack|once)\b[^.;]*/i);
+        const stacking = stackMatch ? stackMatch[0].replace(/\s+/g, ' ').trim() : (cap ? 'Capped or stacking effect' : null);
+        const timedOrStacked = Boolean(duration || cap || stacking);
+        const conditional = Boolean(condition);
+        const chance = info || chanceInfo(context);
+        const isChanceStat = stat === 'evasion' || stat === 'critical';
+        const clearlyGuaranteed = stat === 'critical'
+            ? /guaranteed[^.]*critical|performs?\s+(?:a\s+)?critical\s+hit|all\s+attacks?\s+(?:become|are)\s+critical/i.test(line)
+            : stat === 'evasion'
+                ? /guaranteed\s+to\s+(?:evade|dodge)|evades?\s+(?:the\s+)?enemy/i.test(line)
+                : false;
+        let value = numericValue;
+        let probability = null;
+        let probabilityBasis = null;
+        let chanceLabel = chance ? chance.label : null;
+        let certainty = 'guaranteed';
+
+        if (isChanceStat) {
+            if (numericValue !== null) {
+                value = numericValue;
+                probability = numericValue;
+                probabilityBasis = 'explicit';
+                certainty = 'chance';
+            } else if (chance) {
+                value = chance.value;
+                probability = chance.value;
+                probabilityBasis = chance.basis;
+                certainty = 'chance';
+            } else if (clearlyGuaranteed) {
+                value = 100;
+                certainty = 'guaranteed';
+                chanceLabel = null;
+            } else {
+                return null;
+            }
+        } else if ((stat === 'atk' || stat === 'def') && chance &&
+            /\bchance\b[\s\S]{0,50}\b(?:atk|def)\b|\b(?:atk|def)\b[\s\S]{0,50}\bchance\b/i.test(line)) {
+            probability = chance.value;
+            probabilityBasis = chance.basis;
+            certainty = 'guaranteed';
+        } else if (chance) {
+            chanceLabel = chance.label;
+        }
+
+        const separateTriggerProbability = stat !== 'evasion' && stat !== 'critical' && probability !== null;
+        const unconditionalSelf = target === 'self' && !conditional && !timedOrStacked &&
+            !separateTriggerProbability;
+        return {
+            stat,
+            value,
+            probability,
+            probabilityBasis,
+            chanceLabel,
+            certainty,
+            target,
+            condition,
+            timing: activeHeading && !isBaseHeading(activeHeading) ? activeHeading : null,
+            duration,
+            stacking,
+            cap,
+            sourceText: line,
+            sectionId,
+            unconditionalSelf,
+            includedInScalar: unconditionalSelf && value !== null
+        };
+    }
+
+    logicalLines.forEach(line => {
+        const headingMatch = line.match(/^\*([\s\S]+)\*$/);
+        if (headingMatch) {
+            heading = headingMatch[1].replace(/\s+/g, ' ').trim();
+            headingSectionId += 1;
+            return;
+        }
+
+        const matches = [...line.matchAll(percentagePattern)];
+        let previousPercentEnd = 0;
+        matches.forEach(match => {
+            const index = match.index;
+            const value = Number.parseFloat(match[1].replace(/,/g, ''));
+            if (!Number.isFinite(value) || value < 0) {
+                previousPercentEnd = index + match[0].length;
+                return;
+            }
+
+            let segmentStart = Math.max(previousPercentEnd, line.lastIndexOf(';', index - 1) + 1, line.lastIndexOf(',', index - 1) + 1);
+            const prefix = line.slice(segmentStart, index);
+            const conditionStarts = [...prefix.matchAll(/\b(?:when|if|while|after|before|upon)\b/gi)];
+            if (conditionStarts.length) segmentStart += conditionStarts[conditionStarts.length - 1].index + conditionStarts[conditionStarts.length - 1][0].length;
+            let candidates = statCues(line).filter(cue => cue.index >= segmentStart && cue.end <= index && index - cue.end <= 55);
+            const activeTargetCues = candidates.filter(cue => !/\b(?:when|if|while|after|before|upon)\b/i.test(line.slice(cue.end, index)));
+            candidates = activeTargetCues;
+            const healthIndex = Math.max(line.toLowerCase().lastIndexOf('hp', index), line.toLowerCase().lastIndexOf('health', index));
+            const latestCueStart = candidates.reduce((latest, cue) => Math.max(latest, cue.index), -1);
+            const suffixEnd = matches.find(next => next.index > index)?.index ?? line.length;
+            const suffix = line.slice(index + match[0].length, suffixEnd);
+            if (healthIndex >= 0 && healthIndex > latestCueStart && /\b(?:or more|or less|at least|at most|above|below)\b/i.test(suffix)) {
+                candidates = [];
+            }
+
+            let targetStats = [...new Set(candidates.map(cue => cue.stat))];
+            if (!targetStats.length && /^\s*(?:chance\b|to\b|of\b)/i.test(suffix)) {
+                targetStats = [...new Set(statCues(suffix).filter(cue =>
+                    ['damageReduction', 'evasion', 'critical'].includes(cue.stat)
+                ).map(cue => cue.stat))];
+            }
+
+            const chanceContext = line.slice(Math.max(segmentStart, index - 85), index + match[0].length);
+            const chance = chanceInfo(chanceContext) ||
+                (/^\s*(?:chance\b|to\b|of\b)/i.test(suffix) ? chanceInfo(suffix) : null);
+            targetStats.forEach(stat => {
+                const effect = makeEffect(stat, value, line, heading, chance, headingSectionId);
+                if (effect) effects.push(effect);
+            });
+            previousPercentEnd = index + match[0].length;
+        });
+
+        const lower = line.toLowerCase();
+        if (!matches.length && /\bcritical\b|\bcrit\b/.test(lower)) {
+            const effect = makeEffect('critical', null, line, heading, chanceInfo(line), headingSectionId);
+            if (effect) effects.push(effect);
+        } else if (!matches.length && /\b(?:evade|evades|evading|dodge|dodges|dodging)\b/.test(lower)) {
+            const effect = makeEffect('evasion', null, line, heading, chanceInfo(line), headingSectionId);
+            if (effect) effects.push(effect);
+        }
+    });
+
+    const scalarKeys = ['atk', 'def', 'damageReduction', 'evasion', 'critical'];
+    const byStat = {};
+    scalarKeys.forEach(stat => {
+        const sources = effects.filter(effect => effect.stat === stat && effect.unconditionalSelf);
+        const candidates = sources.filter(effect => effect.value !== null && effect.value !== undefined &&
+            Number.isFinite(Number(effect.value)));
+        const unknownSources = sources.filter(effect => effect.value === null || effect.value === undefined ||
+            !Number.isFinite(Number(effect.value)));
+        let status = sources.length ? 'exact' : 'no-unconditional-source';
+
+        if (stat === 'critical') {
+            if (unknownSources.length) {
+                totals[stat] = null;
+                status = 'unknown-source-rate';
+                candidates.forEach(effect => { effect.includedInScalar = false; });
+            } else {
+                const rawTotal = candidates.reduce((total, effect) => total + Number(effect.value), 0);
+                totals[stat] = Math.min(100, rawTotal);
+                if (rawTotal > 100) status = 'capped';
+                candidates.forEach(effect => { effect.includedInScalar = true; });
+            }
+        } else if (stat === 'evasion') {
+            if (unknownSources.length) {
+                totals[stat] = null;
+                status = 'unknown-source-rate';
+                candidates.forEach(effect => { effect.includedInScalar = false; });
+            } else if (candidates.length === 1) {
+                totals[stat] = Number(candidates[0].value);
+                candidates[0].includedInScalar = true;
+            } else if (candidates.length > 1) {
+                totals[stat] = null;
+                status = 'multiple-chance-sources';
+                candidates.forEach(effect => { effect.includedInScalar = false; });
+            } else {
+                totals[stat] = 0;
+            }
+        } else {
+            const rawTotal = candidates.reduce((total, effect) => total + Number(effect.value), 0);
+            totals[stat] = rawTotal;
+            if (stat === 'damageReduction' && rawTotal > 100) {
+                totals[stat] = 100;
+                status = 'capped';
+            }
+            candidates.forEach(effect => { effect.includedInScalar = true; });
+        }
+
+        byStat[stat] = {
+            status,
+            sourceCount: sources.length,
+            numericSourceCount: candidates.length,
+            unknownSourceCount: unknownSources.length
+        };
+    });
+    totals.aggregation = {
+        state: 'unconditional-self-baseline',
+        byStat
+    };
+    totals.effects = effects;
     return totals;
 }
-
 // Read the editor's effect text instead of parsing the rendered card markup.
 // This prevents summary totals from counting decorative headers, hidden copies,
 // or duplicated DOM fragments created while switching card themes.
 window.getAbsCleanPassiveSource = function() {
     const sidebar = document.getElementById('sidebar-sections-area');
-    const editorBodies = Array.from(sidebar?.querySelectorAll('textarea[id^="input-sec-"]') || [])
-        .map(textarea => String(textarea.value || textarea.textContent || textarea.getAttribute('value') || '').trim())
-        .filter(value => value && !/^-\s*new effect\.\.\.$/i.test(value));
-    if (editorBodies.length) return editorBodies.join('\n');
+    const editorSections = Array.from(sidebar?.querySelectorAll('textarea[id^="input-sec-"]') || [])
+        .map(textarea => {
+            const value = String(textarea.value || textarea.textContent || textarea.getAttribute('value') || '').trim();
+            if (!value || /^-\s*new effect\.\.\.$/i.test(value)) return '';
+            const sectionId = String(textarea.id || '').match(/input-sec-(\d+)$/)?.[1];
+            const header = sectionId
+                ? String(document.getElementById('input-sec-hdr-' + sectionId)?.value || '').trim()
+                : '';
+            return [header ? '*' + header + '*' : '', value].filter(Boolean).join('\n');
+        })
+        .filter(Boolean);
+    if (editorSections.length) return editorSections.join('\n');
 
+    const getPassiveContainer = id => window.getCardLayoutElement
+        ? window.getCardLayoutElement(id)
+        : document.getElementById(id);
     const listText = container => Array.from(container?.querySelectorAll('li') || [])
         .map(item => String(item.textContent || '').replace(/\s+/g, ' ').trim())
         .filter(Boolean);
-    const renderedItems = listText((window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-container') : document.getElementById('abs-passive-container')));
-    if (renderedItems.length) return renderedItems.join('\n');
+    const sectionText = container => Array.from(container?.querySelectorAll('[id^="card-sec-"]') || [])
+        .map(section => {
+            const header = String(section.querySelector('strong[id^="card-header-text-"]')?.textContent || '').replace(/\s+/g, ' ').trim();
+            const items = listText(section);
+            if (!items.length) return '';
+            return [header ? '*' + header + '*' : '', ...items.map(item => '- ' + item)].filter(Boolean).join('\n');
+        })
+        .filter(Boolean)
+        .join('\n');
 
-    const legacyItems = listText(document.getElementById('card-passive-container'));
-    if (legacyItems.length) return legacyItems.join('\n');
+    const rendered = getPassiveContainer('abs-passive-container');
+    const renderedSections = sectionText(rendered);
+    if (renderedSections) return renderedSections;
+    const renderedItems = listText(rendered);
+    if (renderedItems.length) return renderedItems.map(item => '- ' + item).join('\n');
 
-    return (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-container') : document.getElementById('abs-passive-container'))?.innerText ||
-        document.getElementById('card-passive-container')?.innerText || '';
+    const legacy = document.getElementById('card-passive-container');
+    const legacySections = sectionText(legacy);
+    if (legacySections) return legacySections;
+    const legacyItems = listText(legacy);
+    if (legacyItems.length) return legacyItems.map(item => '- ' + item).join('\n');
+
+    return rendered?.innerText || legacy?.innerText || '';
 };
-
 function renderAbsCleanPassiveSummary(rawText) {
     const text = String(rawText ?? '').trim();
     if (!text) return '';
 
     const totals = getAbsCleanPassiveTotals(text);
     const items = [
-        ['ATK', totals.atk, true],
-        ['DEF', totals.def, true],
-        ['DMG RED', totals.damageReduction, false],
-        ['DODGE', totals.evasion, false],
-        ['CRIT', totals.critical, false]
+        ['ATK', 'atk', true],
+        ['DEF', 'def', true],
+        ['DMG RED', 'damageReduction', false],
+        ['DODGE', 'evasion', false],
+        ['CRIT', 'critical', false]
     ];
+    const statNames = {
+        atk: 'ATK',
+        def: 'DEF',
+        damageReduction: 'Damage reduction',
+        evasion: 'Dodge',
+        critical: 'Critical hit'
+    };
+    const targetNames = {
+        self: 'Self',
+        allies: 'Allies',
+        'allies-except-self': 'Allies (self excluded)',
+        enemy: 'Enemies'
+    };
+    const escapeAttribute = value => String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/"/g, '&quot;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/\n/g, '&#10;');
 
-    return `
-        <div class="abs-passive-summary-grid">
-            ${items.map(([label, value, signed]) => `
-                <div class="abs-passive-summary-item" data-stat="${label.toLowerCase().replace(/\s+/g, '-')}">
-                    <span>${label}</span>
-                    <strong>${signed ? '+' : ''}${Math.round(value)}%</strong>
-                </div>
-            `).join('')}
-        </div>
-    `;
+    return '<div class="abs-passive-summary-grid">' + items.map(([label, key, signed]) => {
+        const rawValue = totals[key];
+        const hasScalarValue = rawValue !== null && rawValue !== undefined && Number.isFinite(Number(rawValue));
+        const value = hasScalarValue ? Number(rawValue) : null;
+        const effects = (totals.effects || []).filter(effect => effect.stat === key);
+        const hasExtra = effects.some(effect => !effect.includedInScalar);
+        const unresolvedSources = effects.filter(effect => effect.unconditionalSelf);
+        const unresolvedSourceValues = unresolvedSources.map(effect => {
+            const numericValue = effect.value;
+            if (numericValue !== null && numericValue !== undefined && Number.isFinite(Number(numericValue))) {
+                const numericLabel = Math.round(Number(numericValue)) + '%';
+                return signed && Number(numericValue) > 0 ? '+' + numericLabel : numericLabel;
+            }
+            return effect.chanceLabel || 'rate unavailable';
+        });
+        const details = effects.map(effect => {
+            const parts = [statNames[effect.stat] + ': ' + (effect.value === null ? 'rate not specified' : effect.value + '%')];
+            if (effect.target && effect.target !== 'self') parts.push('Target: ' + (targetNames[effect.target] || effect.target));
+            if (effect.condition) parts.push('Condition: ' + effect.condition);
+            if (effect.timing && effect.timing !== effect.condition) parts.push('Timing: ' + effect.timing);
+            if (effect.duration) parts.push('Duration: ' + effect.duration);
+            if (effect.stacking) parts.push('Stacking: ' + effect.stacking);
+            if (effect.cap) parts.push('Cap: ' + effect.cap);
+            if (effect.chanceLabel && (effect.probability === null ||
+                (effect.stat !== 'evasion' && effect.stat !== 'critical'))) {
+                parts.push('Chance: ' + effect.chanceLabel +
+                    (effect.probability === null ? ' (numeric rate unavailable)' : ' (' + effect.probability + '%)'));
+            }
+            if (effect.probability !== null && effect.stat !== 'evasion' && effect.stat !== 'critical') {
+                parts.push('Trigger chance: ' + effect.probability + '%');
+            }
+            if (effect.sourceText) parts.push('Passive text: ' + effect.sourceText);
+            return parts.join(' · ');
+        });
+        const tooltip = details.join('\n');
+        const amountText = hasScalarValue
+            ? (signed && value > 0 ? '+' : '') + Math.round(value) + '%'
+            : unresolvedSourceValues.join(' · ') || 'See details';
+        return '<div class="abs-passive-summary-item" data-stat="' + label.toLowerCase().replace(/\s+/g, '-') +
+            '"' + (tooltip ? ' data-tooltip="' + escapeAttribute(tooltip) + '"' : '') +
+            (tooltip ? ' aria-label="' + escapeAttribute(label + ': ' + tooltip) + '"' : '') + '>' +
+            '<span>' + label + '</span><strong>' + amountText +
+            (hasExtra ? '*' : '') + '</strong></div>';
+    }).join('') + '</div>';
 }
-
 window.syncAbsCleanPassiveSummary = function(rawText = null) {
+    if (document.body?.classList.contains('theme-phantom')) {
+        window.syncPhantomPassiveSummary?.(rawText);
+        return;
+    }
     if (!document.body?.classList.contains('theme-abs-clean')) return;
     const summary = (window.getCardLayoutElement ? window.getCardLayoutElement('abs-passive-summary') : document.getElementById('abs-passive-summary'));
     if (!summary) return;

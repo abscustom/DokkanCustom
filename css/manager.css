@@ -1,0 +1,1185 @@
+body.other-tool-body .manager-page {
+    width: min(1180px, calc(100% - 40px));
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: clamp(22px, 3.2vw, 42px) 0 142px;
+    box-sizing: border-box;
+}
+
+body.other-tool-body .manager-heading {
+    display: flex;
+    justify-content: center;
+    min-height: 48px;
+    margin: 0 0 18px;
+    padding: 16px 24px 14px;
+    border: 0;
+    border-bottom: 1px solid var(--abs-shell-border, var(--other-line));
+    background: transparent;
+    box-shadow: none;
+    text-align: center;
+}
+
+.manager-heading-copy {
+    display: flex;
+    align-items: center;
+    justify-content: center !important;
+    width: 100%;
+    min-height: 48px;
+    min-width: 0;
+    margin: 0 !important;
+    text-align: center;
+}
+
+body.other-tool-body .manager-heading .hub-section-title {
+    margin: 0 !important;
+    color: #f7f9ff;
+    font-size: clamp(17px, 1.7vw, 22px) !important;
+    font-weight: 900;
+    letter-spacing: .12em !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+}
+
+.manager-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.manager-content-mode {
+    display: inline-flex;
+    align-items: center;
+    min-height: 20px;
+    padding: 2px 8px;
+    border: 1px solid rgba(122, 202, 255, .46);
+    border-radius: 999px;
+    background: rgba(30, 111, 163, .16);
+    color: #bce6ff;
+    font-size: 9px;
+    font-weight: 850;
+    letter-spacing: .1em;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.manager-content-mode[hidden] {
+    display: none !important;
+}
+
+body.other-tool-body .manager-heading .hub-section-subtitle {
+    max-width: 100%;
+    margin: 0 !important;
+    overflow: hidden;
+    color: rgba(210, 222, 246, .66) !important;
+    font-size: 10px !important;
+    font-weight: 700 !important;
+    letter-spacing: .08em !important;
+    line-height: 1.2 !important;
+    text-overflow: ellipsis;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.manager-auth-panel {
+    display: block;
+    width: min(520px, 100%);
+    margin: 0 auto 16px;
+    padding: 12px clamp(12px, 2vw, 18px);
+    box-sizing: border-box;
+}
+
+.manager-auth-panel[hidden],
+.manager-session-bar[hidden] {
+    display: none !important;
+}
+
+.manager-section-heading h2 {
+    margin: 5px 0 0;
+    color: #f7f9ff;
+    font-size: clamp(18px, 2.2vw, 24px);
+    font-weight: 850;
+    letter-spacing: -0.02em;
+}
+
+.manager-section-heading p {
+    max-width: 76ch;
+    margin: 9px 0 0;
+    color: var(--other-muted, rgba(219, 232, 250, 0.68));
+    font-size: 13px;
+    line-height: 1.6;
+}
+
+.manager-auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin: 0;
+}
+
+.manager-auth-row .card-admin-load-btn {
+    min-height: 42px;
+    min-width: 180px;
+    white-space: nowrap;
+}
+
+.manager-status[hidden] {
+    display: none !important;
+}
+
+.manager-session-bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 18px 0 10px;
+    padding: 11px 14px;
+    border: 1px solid var(--other-line);
+    border-radius: 5px;
+    background: rgba(12, 21, 35, 0.68);
+}
+
+.manager-session-bar p {
+    min-width: 0;
+    margin: 0;
+    color: var(--other-muted, rgba(219, 232, 250, 0.68));
+    font-size: 13px;
+    overflow-wrap: anywhere;
+}
+
+.manager-session-bar strong {
+    color: #f3f7ff;
+}
+
+.manager-signout-btn {
+    flex: 0 0 auto;
+}
+
+.manager-status {
+    margin: 14px 0 18px;
+}
+
+.manager-tools {
+    width: 100%;
+}
+
+.manager-tool-section {
+    margin: 0;
+    padding: clamp(16px, 2.5vw, 24px);
+    scroll-margin-top: 24px;
+}
+
+.manager-tool-section + .manager-tool-section {
+    margin-top: 18px;
+}
+
+.manager-tool-section:focus {
+    outline: 2px solid rgba(135, 190, 255, 0.68);
+    outline-offset: 3px;
+}
+
+.manager-section-heading {
+    margin-bottom: 18px;
+}
+
+.manager-section-heading .other-tool-kicker,
+.manager-auth-copy .other-tool-kicker {
+    display: block;
+}
+
+.manager-picker-column {
+    min-width: 0;
+}
+
+.manager-picker-column > .form-label {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.manager-tool-section .card-admin-actions {
+    margin-top: 18px;
+}
+
+.manager-tool-section .card-admin-delete-btn {
+    max-width: 320px;
+}
+
+.manager-coin-controls {
+    display: grid;
+    grid-template-columns: minmax(0, .8fr) minmax(0, 1.2fr);
+    gap: 14px;
+    margin-bottom: 10px;
+}
+
+.manager-coin-field {
+    min-width: 0;
+}
+
+.manager-coin-field > .form-label {
+    display: block;
+    margin-bottom: 7px;
+}
+
+.manager-coin-instructions {
+    margin: 0 0 11px;
+    color: var(--other-muted, rgba(219, 232, 250, .68));
+    font-size: 12px;
+    line-height: 1.55;
+}
+
+.manager-coin-plane {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    height: clamp(480px, 58vh, 680px);
+    min-height: 480px;
+    overflow: visible;
+    border: 1px solid rgba(183, 207, 244, .2);
+    border-radius: 14px;
+    background-color: rgba(5, 12, 23, .78);
+    background-image:
+        radial-gradient(circle, rgba(157, 190, 235, .19) 1px, transparent 1.4px),
+        radial-gradient(ellipse at 50% 44%, rgba(48, 85, 137, .2), transparent 72%);
+    background-position: 9px 9px, center;
+    background-size: 24px 24px, 100% 100%;
+    box-shadow: inset 0 0 35px rgba(0, 0, 0, .18);
+}
+
+.manager-coin-links {
+    position: absolute;
+    z-index: 0;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    pointer-events: none;
+}
+
+.manager-coin-links line,
+.manager-coin-links path {
+    fill: none;
+    stroke: rgba(153, 195, 255, .88);
+    stroke-width: 3;
+    stroke-linecap: round;
+    vector-effect: non-scaling-stroke;
+    filter: drop-shadow(0 0 3px rgba(81, 153, 255, .32));
+}
+
+.manager-coin-links .is-staged,
+.manager-coin-links .is-pending,
+.manager-coin-links [data-pending="true"] {
+    stroke: #ffd675;
+    stroke-dasharray: 5 6;
+}
+
+.manager-coin-links .is-removing,
+.manager-coin-links .is-pending-remove,
+.manager-coin-links [data-pending-action="remove"] {
+    stroke: #ff929a;
+    stroke-dasharray: 5 5;
+}
+
+.manager-coin-links line:not(.is-active),
+.manager-coin-links path:not(.is-active) {
+    opacity: .72;
+}
+
+.manager-coin-links .is-active {
+    stroke-width: 4;
+    opacity: 1;
+    filter: drop-shadow(0 0 5px rgba(220, 239, 255, .72));
+}
+
+.manager-coin-group-label {
+    position: absolute;
+    z-index: 1;
+    padding: 4px 8px;
+    border: 1px solid rgba(158, 189, 231, .18);
+    border-radius: 999px;
+    background: rgba(8, 15, 26, .76);
+    color: rgba(204, 221, 247, .68);
+    font-size: 9px;
+    font-weight: 800;
+    letter-spacing: .08em;
+    line-height: 1;
+    text-transform: uppercase;
+    pointer-events: none;
+}
+
+.manager-coin {
+    position: absolute;
+    display: grid;
+    justify-items: center;
+    align-content: start;
+    gap: 7px;
+    z-index: 1;
+    width: 92px;
+    min-height: 116px;
+    margin: 0;
+    padding: 5px 2px 7px;
+    border: 1px solid transparent;
+    border-radius: 12px;
+    background: transparent;
+    color: #eaf1ff;
+    font: inherit;
+    text-align: center;
+    cursor: grab;
+    transform: translate(-50%, -50%);
+    touch-action: none;
+    user-select: none;
+    -webkit-user-select: none;
+    transition: background-color 120ms ease, border-color 120ms ease, transform 120ms ease;
+}
+
+.manager-coin[hidden] { display: none !important; }
+
+.manager-coin:hover,
+.manager-coin.is-selected {
+    border-color: rgba(155, 197, 255, .45);
+    background: rgba(112, 163, 235, .1);
+}
+
+.manager-coin.is-target {
+    border-color: #ffd675;
+    background: rgba(255, 214, 117, .12);
+    box-shadow: 0 0 0 2px rgba(255, 214, 117, .18);
+}
+
+.manager-coin[data-coin-role="base"] {
+    z-index: 3;
+    border-color: rgba(143, 198, 255, .55);
+    background: rgba(87, 151, 229, .14);
+}
+
+.manager-coin[data-coin-role="linked"] {
+    border-color: rgba(131, 215, 178, .38);
+}
+
+.manager-coin[data-coin-role="pending-remove"] {
+    border-color: rgba(255, 146, 154, .62);
+}
+
+.manager-coin[data-coin-role="available"] {
+    border-color: rgba(183, 207, 244, .14);
+    opacity: .78;
+}
+
+.manager-coin.is-connected:not([data-coin-role="base"]) {
+    border-color: rgba(131, 215, 178, .42);
+    opacity: 1;
+}
+
+.manager-coin.is-target.is-connected {
+    border-color: #ffd675;
+    background: rgba(255, 214, 117, .12);
+    box-shadow: 0 0 0 2px rgba(255, 214, 117, .18);
+}
+
+.manager-coin[data-coin-role="connected"] .manager-coin-portrait,
+.manager-coin.is-connected:not([data-coin-role="base"]) .manager-coin-portrait {
+    border-color: #83d7b2;
+}
+
+.manager-coin[data-connection-count]:not([data-connection-count="0"])::before {
+    position: absolute;
+    top: -3px;
+    left: -4px;
+    z-index: 2;
+    display: grid;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 4px;
+    place-items: center;
+    border: 1px solid rgba(131, 215, 178, .62);
+    border-radius: 999px;
+    background: #16382e;
+    color: #d7fff0;
+    content: attr(data-connection-count);
+    font-size: 9px;
+    font-weight: 900;
+    line-height: 1;
+}
+
+.manager-coin:focus-visible {
+    outline: 3px solid #fff;
+    outline-offset: 3px;
+}
+
+.manager-coin:active { cursor: grabbing; }
+
+.manager-coin-portrait {
+    display: grid;
+    place-items: center;
+    width: 72px;
+    height: 72px;
+    overflow: hidden;
+    border: 3px solid rgba(166, 191, 228, .66);
+    border-radius: 50%;
+    background: radial-gradient(circle at 34% 25%, rgba(179, 212, 255, .24), rgba(16, 28, 48, .96) 70%);
+    box-shadow: inset 0 0 0 2px rgba(5, 11, 20, .7), 0 5px 14px rgba(0, 0, 0, .32);
+}
+
+.manager-coin[data-coin-role="base"] .manager-coin-portrait {
+    border-color: #8fc6ff;
+    box-shadow: inset 0 0 0 2px rgba(5, 11, 20, .7), 0 0 0 3px rgba(93, 169, 255, .16), 0 5px 14px rgba(0, 0, 0, .32);
+}
+
+.manager-coin[data-coin-role="linked"] .manager-coin-portrait {
+    border-color: #83d7b2;
+}
+
+.manager-coin.is-target .manager-coin-portrait {
+    border-color: #ffd675;
+    box-shadow: inset 0 0 0 2px rgba(5, 11, 20, .7), 0 0 0 4px rgba(255, 214, 117, .2), 0 0 20px rgba(255, 214, 117, .34);
+}
+
+.manager-coin[data-coin-role="pending-remove"] .manager-coin-portrait {
+    border-color: #ff929a;
+}
+
+.manager-coin-portrait img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: center;
+    pointer-events: none;
+}
+
+.manager-coin-portrait img[hidden] { display: none !important; }
+
+/* Open linking plane: only the circular portraits carry selection decoration. */
+#card-admin-link-section {
+    background: transparent;
+    border: 0;
+    box-shadow: none;
+    padding-inline: 0;
+}
+#manager-coin-plane {
+    background: transparent;
+    border: 0;
+    border-radius: 0;
+    box-shadow: none;
+}
+#manager-coin-plane .manager-coin {
+    min-height: 88px;
+    padding: 3px;
+    border: 0;
+    border-radius: 50%;
+    background: transparent;
+    box-shadow: none;
+}
+#manager-coin-plane .manager-coin-portrait {
+    width: 82px;
+    height: 82px;
+    overflow: hidden;
+    border-radius: 50%;
+}
+#manager-coin-plane .manager-coin-portrait img {
+    transform: scale(1.4);
+    transform-origin: center;
+}
+#manager-coin-plane .manager-coin-name { display: none; }
+#manager-coin-plane .manager-coin:hover .manager-coin-portrait {
+    filter: brightness(1.12);
+}
+
+.manager-coin-ghost {
+    min-height:88px !important;
+    padding:3px !important;
+    border:0 !important;
+    border-radius:50% !important;
+    background:transparent !important;
+    box-shadow:none !important;
+}
+.manager-coin-ghost .manager-coin-name,
+.manager-coin-ghost .manager-coin-selection-label { display:none !important; }
+.manager-coin-ghost .manager-coin-portrait {
+    width:82px !important;
+    height:82px !important;
+    overflow:hidden;
+    border-radius:50%;
+}
+.manager-coin-ghost .manager-coin-portrait img { transform:scale(1.4); }
+#manager-coin-plane .manager-coin.is-link-hover::after { display:none; }
+#manager-coin-plane .manager-coin.is-drop-target { transform:translate(-50%, -50%); }
+.manager-link-progress {
+    position:absolute;
+    top:calc(100% + 9px);
+    left:10%;
+    width:80%;
+    height:7px;
+    overflow:hidden;
+    pointer-events:none;
+    border:1px solid rgba(177,242,212,.4);
+    border-radius:999px;
+    background:rgba(10,22,19,.92);
+    box-shadow:0 2px 7px rgba(0,0,0,.35);
+}
+.manager-link-progress > span {
+    display:block;
+    width:100%;
+    height:100%;
+    border-radius:inherit;
+    background:linear-gradient(90deg,#42b98b,#a8f2cd);
+    transform-origin:left;
+    animation:manager-link-hold 3s linear forwards;
+}
+@keyframes manager-link-hold { from { transform:scaleX(0); } to { transform:scaleX(1); } }
+
+/* Keep geometry stable so connector endpoints stay attached during feedback. */
+#manager-coin-plane .manager-coin-portrait {
+    transition: border-color 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+}
+#manager-coin-plane .manager-coin-portrait img {
+    transition: opacity 180ms ease, filter 180ms ease;
+}
+#manager-coin-plane .manager-coin.is-link-hover .manager-coin-portrait {
+    animation:manager-link-breathe 1s ease-in-out infinite alternate;
+}
+.manager-link-progress { animation:manager-progress-enter 160ms ease-out both; }
+.manager-coin-links .is-staged { animation:manager-link-flow 1.4s linear infinite; }
+.manager-coin-links .is-removing { animation:manager-link-flow 1.8s linear infinite reverse; }
+.manager-coin-ghost { animation:manager-drag-enter 120ms ease-out both; }
+@keyframes manager-link-breathe {
+    from { filter:brightness(1); }
+    to { filter:brightness(1.2); }
+}
+@keyframes manager-link-flow { to { stroke-dashoffset:-22; } }
+@keyframes manager-progress-enter { from { opacity:0; translate:0 -3px; } to { opacity:1; translate:0 0; } }
+@keyframes manager-drag-enter { from { opacity:.55; } to { opacity:1; } }
+@media (prefers-reduced-motion:reduce) {
+    #manager-coin-plane .manager-coin-portrait,
+    #manager-coin-plane .manager-coin-portrait img { transition:none; }
+    #manager-coin-plane .manager-coin.is-link-hover .manager-coin-portrait,
+    .manager-link-progress,
+    .manager-coin-links .is-staged,
+    .manager-coin-links .is-removing,
+    .manager-coin-ghost { animation:none; }
+}
+.manager-coin-name {
+    display: -webkit-box;
+    max-width: 100%;
+    overflow: hidden;
+    color: inherit;
+    font-size: 10px;
+    font-weight: 700;
+    line-height: 1.25;
+    overflow-wrap: anywhere;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+}
+
+.manager-coin.is-pending::after {
+    position: absolute;
+    top: -3px;
+    right: -4px;
+    z-index: 1;
+    padding: 3px 5px;
+    border: 1px solid rgba(255, 224, 153, .55);
+    border-radius: 999px;
+    background: #4a3515;
+    color: #ffe3a4;
+    content: "LINK STAGED";
+    font-size: 7px;
+    font-weight: 900;
+    letter-spacing: .04em;
+}
+
+.manager-coin.is-pending[data-pending-action="mixed"]::after {
+    content: "CHANGES STAGED";
+}
+
+.manager-coin.is-pending[data-pending-action="remove"]::after,
+.manager-coin.is-pending[data-coin-role="pending-remove"]::after {
+    border-color: rgba(255, 146, 154, .62);
+    background: #4b2026;
+    color: #ffdadd;
+    content: "UNLINK STAGED";
+}
+
+.manager-coin.is-pending .manager-coin-portrait {
+    border-style: dashed;
+    border-color: #ffd675;
+}
+
+.manager-coin[data-selection-role="first"],
+.manager-coin[data-coin-role="base"] {
+    z-index: 6;
+    border: 2px solid #61d9ff;
+    background: rgba(54, 185, 235, .2);
+    box-shadow: 0 0 0 3px rgba(69, 210, 255, .42), 0 0 18px rgba(40, 190, 255, .55);
+}
+
+.manager-coin[data-selection-role="target"] {
+    z-index: 7;
+    border: 2px solid #ffe15b;
+    background: rgba(255, 209, 58, .2);
+    box-shadow: 0 0 0 3px rgba(255, 216, 68, .48), 0 0 20px rgba(255, 195, 34, .58);
+}
+
+.manager-coin[data-selection-role="first"] .manager-coin-portrait,
+.manager-coin[data-coin-role="base"] .manager-coin-portrait {
+    border-color: #61d9ff;
+    box-shadow: inset 0 0 0 2px rgba(5, 11, 20, .7), 0 0 0 4px rgba(69, 210, 255, .48), 0 0 18px rgba(40, 190, 255, .62);
+}
+
+.manager-coin[data-selection-role="target"] .manager-coin-portrait {
+    border-color: #ffe15b;
+    box-shadow: inset 0 0 0 2px rgba(5, 11, 20, .7), 0 0 0 4px rgba(255, 216, 68, .52), 0 0 20px rgba(255, 195, 34, .64);
+}
+
+.manager-coin-selection-label {
+    position: absolute;
+    bottom: -8px;
+    left: 50%;
+    z-index: 6;
+    padding: 3px 7px;
+    transform: translateX(-50%);
+    border: 1px solid #e7fbff;
+    border-radius: 999px;
+    background: #123b53;
+    color: #eafcff;
+    font-size: 8px;
+    font-weight: 950;
+    letter-spacing: .06em;
+    line-height: 1;
+    white-space: nowrap;
+    pointer-events: none;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, .72);
+}
+
+.manager-coin[data-selection-role="target"] .manager-coin-selection-label {
+    border-color: #fff2ae;
+    background: #523c05;
+    color: #fff8dc;
+}
+
+.manager-coin.is-drop-target { transform: translate(-50%, -50%) scale(1.08); }
+
+.manager-coin.is-drop-target .manager-coin-portrait,
+.manager-coin-portrait.is-drop-target {
+    border-color: #fff;
+    box-shadow: 0 0 0 5px rgba(131, 203, 255, .34), 0 0 22px rgba(95, 184, 255, .55);
+}
+
+.manager-coin-dropzone {
+    position: absolute;
+    z-index: 4;
+    inset-inline-start: 50%;
+    bottom: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: min(380px, calc(100% - 24px));
+    min-height: 48px;
+    margin: 0;
+    padding: 8px 12px;
+    border: 1px dashed rgba(255, 147, 156, .5);
+    border-radius: 10px;
+    background: rgba(111, 35, 45, .12);
+    color: #ffc0c4;
+    font-size: 12px;
+    font-weight: 750;
+    text-align: center;
+    transform: translateX(-50%);
+    transition: border-color 120ms ease, background-color 120ms ease, box-shadow 120ms ease;
+}
+
+.manager-coin-dropzone.is-drop-target {
+    border-color: #ffb8bc;
+    background: rgba(146, 42, 54, .35);
+    box-shadow: 0 0 0 3px rgba(255, 145, 153, .18);
+}
+
+.manager-coin-dropzone-icon {
+    flex: 0 0 auto;
+    font-size: 20px;
+    line-height: 1;
+}
+
+.manager-coin-ghost {
+    width: 92px;
+    transform: translate(-50%, -50%);
+}
+
+.manager-coin-ghost .manager-coin-portrait {
+    width: 72px;
+    height: 72px;
+}
+
+.manager-coin-workspace.is-dragging,
+.manager-coin-workspace.is-dragging *,
+.manager-coin-plane.is-dragging,
+.manager-coin-plane.is-dragging * {
+    cursor: grabbing !important;
+}
+
+.manager-coin-actions,
+.manager-coin-review-actions {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 9px;
+}
+
+.manager-coin-actions {
+    margin-top: 15px;
+}
+
+.manager-coin-actions button,
+.manager-coin-review-actions button {
+    min-height: 38px;
+}
+
+.manager-coin-actions button:disabled,
+.manager-coin-review-actions button:disabled {
+    opacity: .48;
+    cursor: not-allowed;
+}
+
+.manager-coin-clear-btn {
+    border-color: rgba(255, 155, 163, .34) !important;
+    color: #ffc2c7 !important;
+}
+
+.manager-coin-new-pair {
+    border-color: rgba(166, 191, 228, .35) !important;
+    color: #d9e6fb !important;
+}
+
+.manager-coin-selection-panel {
+    display: grid;
+    flex: 1 1 100%;
+    gap: 8px;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid rgba(151, 190, 241, .3);
+    border-radius: 12px;
+    background: linear-gradient(120deg, rgba(10, 26, 42, .92), rgba(15, 23, 37, .9));
+}
+
+.manager-coin-pair-summary {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr);
+    align-items: stretch;
+    gap: 9px;
+}
+
+.manager-coin-pair-value {
+    display: grid;
+    align-content: center;
+    gap: 4px;
+    min-width: 0;
+    padding: 7px 10px;
+    border: 1px solid rgba(176, 201, 237, .28);
+    border-radius: 9px;
+    background: rgba(5, 11, 20, .68);
+}
+
+.manager-coin-pair-label {
+    color: #b6cbe8;
+    font-size: 9px;
+    font-weight: 900;
+    letter-spacing: .08em;
+    line-height: 1.2;
+    text-transform: uppercase;
+}
+
+.manager-coin-pair-name {
+    overflow: hidden;
+    color: #fff;
+    font-size: 12px;
+    font-weight: 850;
+    line-height: 1.25;
+    text-overflow: ellipsis;
+    overflow-wrap: anywhere;
+}
+
+.manager-coin-pair-arrow {
+    display: grid;
+    align-self: center;
+    place-items: center;
+    color: #dceeff;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+#manager-coin-selection-panel[data-step="first"] .manager-coin-pair-value:first-child {
+    border-color: #61d9ff;
+    box-shadow: inset 0 0 0 1px rgba(97, 217, 255, .3), 0 0 0 2px rgba(97, 217, 255, .16);
+}
+
+#manager-coin-selection-panel[data-step="target"] .manager-coin-pair-value:last-child,
+#manager-coin-selection-panel[data-step="link"] .manager-coin-pair-value:last-child,
+#manager-coin-selection-panel[data-step="staged"] .manager-coin-pair-value:last-child {
+    border-color: #ffe15b;
+    box-shadow: inset 0 0 0 1px rgba(255, 225, 91, .34), 0 0 0 2px rgba(255, 225, 91, .2);
+}
+
+#manager-coin-selection-panel[data-step="already-linked"] .manager-coin-pair-value:last-child {
+    border-color: #83d7b2;
+    box-shadow: inset 0 0 0 1px rgba(131, 215, 178, .28);
+}
+
+.manager-coin-selection-hint {
+    display: grid;
+    gap: 3px;
+}
+
+.manager-coin-next-step {
+    margin: 0;
+    padding: 5px 8px;
+    border-left: 3px solid #61d9ff;
+    border-radius: 0 6px 6px 0;
+    background: rgba(33, 144, 188, .14);
+    color: #e2f8ff;
+    font-size: 11px;
+    font-weight: 850;
+    line-height: 1.35;
+}
+
+#manager-coin-selection-panel[data-step="link"] .manager-coin-next-step,
+#manager-coin-selection-panel[data-step="staged"] .manager-coin-next-step {
+    border-left-color: #ffe15b;
+    background: rgba(255, 205, 52, .13);
+    color: #fff5c4;
+}
+
+#manager-coin-selection-panel[data-step="already-linked"] .manager-coin-next-step {
+    border-left-color: #83d7b2;
+    background: rgba(86, 177, 139, .12);
+    color: #e3fff3;
+}
+
+.manager-coin-link-reason {
+    margin: 0;
+    color: rgba(220, 233, 252, .8);
+    font-size: 10px;
+    line-height: 1.4;
+}
+
+#manager-coin-link-selected:not(:disabled),
+#manager-coin-unlink-selected:not(:disabled) {
+    outline: 2px solid rgba(97, 217, 255, .82);
+    outline-offset: 2px;
+    box-shadow: 0 0 15px rgba(50, 184, 235, .3);
+}
+
+.manager-coin-review {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 16px;
+    padding-top: 15px;
+    border-top: 1px solid rgba(183, 207, 244, .15);
+}
+
+.manager-coin-review-info {
+    display: grid;
+    min-width: 0;
+    gap: 4px;
+}
+
+.manager-coin-status {
+    min-width: 0;
+    color: rgba(220, 233, 252, .78);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+.manager-coin-summary {
+    margin: 0;
+    color: rgba(191, 211, 240, .6);
+    font-size: 10px;
+    line-height: 1.35;
+    font-variant-numeric: tabular-nums;
+}
+
+.manager-coin-review-actions {
+    flex: 0 0 auto;
+    justify-content: flex-end;
+}
+
+@media (max-width: 760px) {
+    body.other-tool-body .manager-page {
+        width: calc(100% - 20px);
+        padding-top: 18px;
+    }
+
+    body.other-tool-body .manager-heading {
+        min-height: 48px;
+        margin-bottom: 16px;
+        padding: 16px 12px 14px;
+    }
+
+    .manager-auth-panel {
+        width: min(100%, 520px);
+        padding: 10px;
+    }
+
+    .manager-session-bar {
+        align-items: flex-start;
+    }
+
+    .manager-tool-section + .manager-tool-section {
+        margin-top: 12px;
+    }
+
+    .manager-coin-controls {
+        grid-template-columns: minmax(0, 1fr);
+    }
+
+    .manager-coin-plane {
+        height: clamp(560px, 72vh, 780px);
+        min-height: 560px;
+    }
+
+    .manager-coin-review {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .manager-coin-review-actions {
+        justify-content: stretch;
+    }
+
+    .manager-coin-review-actions button,
+    .manager-coin-actions button {
+        flex: 1 1 180px;
+    }
+
+    .manager-tool-section .card-admin-delete-btn {
+        max-width: none;
+    }
+}
+
+@media (max-width: 520px) {
+    body.other-tool-body .manager-heading .hub-section-title {
+        font-size: 16px !important;
+    }
+
+    body.other-tool-body .manager-heading .hub-section-subtitle {
+        font-size: 8px !important;
+    }
+
+    .manager-session-bar {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .manager-session-bar .manager-signout-btn {
+        width: 100%;
+    }
+
+    .manager-auth-row {
+        display: flex;
+        justify-content: center;
+    }
+
+    .manager-auth-row .card-admin-load-btn {
+        width: min(100%, 280px);
+    }
+}
+
+/* Manager's sign-in surface follows Support Memory's full-bleed shell. */
+html body.abs-shell:has(#manager-main) {
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    container-type: inline-size;
+    --manager-safe-left: calc(100vw - 100cqw - var(--abs-shell-gap, 16px));
+    --manager-top-clearance: 0px;
+}
+
+html body.abs-shell:has(#manager-main) #manager-main {
+    display: flex !important;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100vw !important;
+    max-width: none !important;
+    min-width: 0;
+    min-height: calc(100dvh - var(--manager-top-clearance));
+    margin: 0 0 0 calc(-1 * var(--manager-safe-left)) !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    background: var(--abs-shell-panel, rgba(29, 30, 33, .88)) !important;
+}
+
+html body.abs-shell:has(#manager-main) #manager-main > .manager-heading {
+    display: flex !important;
+    flex: 0 0 auto;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    min-height: 0;
+    margin: 0 !important;
+    padding: 16px 24px 14px calc(var(--manager-safe-left) + 24px) !important;
+    border: 0;
+    border-bottom: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .12));
+    border-radius: 0;
+    background: transparent;
+    box-shadow: none;
+    text-align: center;
+}
+
+html body.abs-shell:has(#manager-main) #manager-main > #card-admin-auth.manager-auth-panel {
+    flex: 1 0 auto;
+    box-sizing: border-box;
+    width: 100%;
+    max-width: none;
+    min-width: 0;
+    margin: 0 !important;
+    padding: 30px 24px 32px calc(var(--manager-safe-left) + 24px) !important;
+    border: 0;
+    border-bottom: 1px solid rgba(255, 255, 255, .2);
+    border-radius: 0;
+    background: var(--abs-shell-panel, rgba(29, 30, 33, .88));
+    box-shadow:
+        inset 0 18px 42px rgba(0, 0, 0, .58),
+        inset 0 -18px 42px rgba(0, 0, 0, .58),
+        inset 0 1px 0 rgba(255, 255, 255, .14),
+        0 16px 40px rgba(0, 0, 0, .5);
+    backdrop-filter: blur(16px) saturate(130%);
+    -webkit-backdrop-filter: blur(16px) saturate(130%);
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    width: min(520px, 100%);
+    margin: 0 auto;
+}
+
+html body.abs-shell:has(#manager-main) #card-admin-auth > .manager-status {
+    box-sizing: border-box;
+    width: min(520px, 100%);
+    min-height: 38px;
+    margin: 14px auto 0;
+    padding: 9px 12px;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .16));
+    border-radius: 10px;
+    background: rgba(8, 9, 11, .4);
+    color: var(--abs-shell-text, #f0f1f3);
+    font-size: 12px;
+    line-height: 1.45;
+}
+
+html body.abs-shell:has(#manager-main) #card-admin-auth > .manager-status.is-error {
+    border-color: rgba(255, 142, 142, .64);
+    background: rgba(74, 23, 23, .24);
+    color: #ffd4d1;
+}
+
+html body.abs-shell:has(#manager-main) #card-admin-auth > .manager-status.is-success {
+    border-color: rgba(143, 218, 177, .52);
+    color: #dff8e8;
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn {
+    flex: 0 0 auto;
+    min-width: 180px;
+    min-height: 42px;
+    padding: 9px 16px !important;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, .18)) !important;
+    border-radius: 10px !important;
+    background: rgba(255, 255, 255, .055) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .1), 0 3px 8px rgba(0, 0, 0, .2) !important;
+    color: var(--abs-shell-text, #f0f1f3) !important;
+    font-size: 10.5px !important;
+    letter-spacing: .04em;
+    backdrop-filter: blur(8px) saturate(115%) !important;
+    -webkit-backdrop-filter: blur(8px) saturate(115%) !important;
+    transition: background-color 120ms ease, border-color 120ms ease, box-shadow 120ms ease, transform 120ms ease !important;
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn:hover:not(:disabled) {
+    border-color: rgba(255, 255, 255, .42) !important;
+    background: rgba(255, 255, 255, .12) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .14), 0 5px 12px rgba(0, 0, 0, .28) !important;
+    color: #fff !important;
+    transform: translateY(-1px) !important;
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn:focus-visible {
+    border-color: rgba(255, 255, 255, .58) !important;
+    outline: 2px solid var(--abs-shell-text, #f0f1f3);
+    outline-offset: 2px;
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn:active:not(:disabled) {
+    transform: translateY(0) !important;
+}
+
+html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn:disabled {
+    cursor: not-allowed !important;
+    opacity: .58;
+    transform: none !important;
+}
+
+html body.abs-shell:has(#manager-main) .manager-workspace-content {
+    display: none;
+    flex: 0 0 auto;
+    flex-direction: column;
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
+    padding: 16px 24px 32px calc(var(--manager-safe-left) + 24px);
+}
+
+html body.abs-shell:has(#manager-main #card-admin-session:not([hidden])) .manager-workspace-content {
+    display: flex;
+}
+
+html body.abs-shell:has(#manager-main #card-admin-auth[hidden]) .manager-workspace-content {
+    flex: 1 0 auto;
+}
+
+html body.abs-shell:has(#manager-main) .manager-workspace-content > :is(.manager-session-bar, .manager-tools) {
+    box-sizing: border-box;
+    width: 100%;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+html body.abs-shell:has(#manager-main) .manager-workspace-content > .manager-session-bar {
+    margin-top: 0;
+}
+
+@media (max-width: 900px) {
+    html body.abs-shell:has(#manager-main) {
+        padding-top: 72px !important;
+        --manager-top-clearance: 72px;
+    }
+
+    html body.abs-shell:has(#manager-main) #manager-main > .manager-heading {
+        padding: 12px 16px 12px !important;
+    }
+
+    html body.abs-shell:has(#manager-main) #manager-main > #card-admin-auth.manager-auth-panel {
+        padding: 24px 16px 28px !important;
+    }
+
+    html body.abs-shell:has(#manager-main) .manager-auth-row {
+        display: flex;
+        justify-content: center;
+        gap: 10px;
+    }
+
+    html body.abs-shell:has(#manager-main) .manager-auth-row .card-admin-load-btn {
+        width: min(100%, 280px);
+    }
+
+    html body.abs-shell:has(#manager-main) .manager-workspace-content {
+        padding: 16px 16px 24px;
+    }
+}

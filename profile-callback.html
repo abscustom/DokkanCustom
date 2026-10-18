@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <meta name="referrer" content="no-referrer">
+    <title>Connecting your ABS profile</title>
+    <script>
+        window.__ABS_PROFILE_CALLBACK_FRAGMENT__ = location.hash;
+        window.__ABS_PROFILE_CALLBACK_SCRUBBED__ = false;
+        try {
+            history.replaceState(history.state, '', `${location.pathname}${location.search}`);
+            window.__ABS_PROFILE_CALLBACK_SCRUBBED__ = true;
+        } catch {
+            window.__ABS_PROFILE_CALLBACK_FRAGMENT__ = '';
+            location.hash = '';
+        }
+    </script>
+    <link rel="stylesheet" href="css/abs-profile.css?v=20261016-profile-v1">
+    <script src="js/abs-profile-config.js?v=20261016-profile-v1"></script>
+    <script src="js/abs-profile-callback.js?v=20261016-profile-expiry-v2" defer></script>
+    <style>
+        :root { color-scheme:dark; font-family:system-ui,-apple-system,"Segoe UI",sans-serif; background:#101113; color:#f0f1f3; }
+        body { display:grid; min-height:100vh; min-height:100dvh; place-items:center; margin:0; padding:24px; box-sizing:border-box; }
+        main { width:min(100%,440px); padding:26px; border:1px solid rgba(255,255,255,.12); border-radius:18px; background:rgba(29,30,33,.94); box-shadow:0 18px 50px rgba(0,0,0,.35); }
+        h1 { margin:0 0 10px; font-size:20px; }
+        p { margin:0; color:#b6b8be; line-height:1.55; }
+        #profile-callback-error { margin-top:14px; color:#ffb5b5; }
+        #profile-callback-return { display:inline-flex; margin-top:18px; padding:9px 13px; border:1px solid rgba(255,255,255,.16); border-radius:10px; color:#f0f1f3; text-decoration:none; }
+        #profile-callback-return[hidden], #profile-callback-error[hidden] { display:none; }
+    </style>
+</head>
+<body>
+    <main aria-labelledby="profile-callback-title">
+        <h1 id="profile-callback-title">Connecting your profile</h1>
+        <p id="profile-callback-message" role="status" aria-live="polite">Verifying your sign-in with ABS…</p>
+        <p id="profile-callback-error" role="alert" hidden></p>
+        <a id="profile-callback-return" href="index.html" hidden>Return to ABS</a>
+    </main>
+</body>
+</html>

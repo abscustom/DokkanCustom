@@ -1,0 +1,148 @@
+/* Shared, server-verified account control for the ABS navigation shell. */
+#abs-main-sidebar .abs-profile-area {
+    position:relative;
+    flex:none;
+    padding-top:8px;
+    border-top:1px solid var(--abs-shell-border,rgba(255,255,255,.12));
+}
+#abs-main-sidebar .abs-profile-trigger {
+    display:flex;
+    align-items:center;
+    gap:12px;
+    width:100%;
+    min-height:44px;
+    padding:7px 10px;
+    border:1px solid transparent;
+    border-radius:12px;
+    background:transparent;
+    color:var(--abs-shell-text,#f0f1f3);
+    font:inherit;
+    text-align:left;
+    cursor:pointer;
+}
+#abs-main-sidebar .abs-profile-trigger:hover,
+#abs-main-sidebar .abs-profile-trigger[aria-expanded="true"] {
+    border-color:var(--abs-shell-border,rgba(255,255,255,.12));
+    background:rgba(255,255,255,.065);
+}
+#abs-main-sidebar .abs-profile-trigger:focus-visible,
+#abs-main-sidebar .abs-profile-panel button:focus-visible,
+#abs-main-sidebar .abs-profile-panel a:focus-visible {
+    outline:2px solid #9dc9ff;
+    outline-offset:2px;
+}
+#abs-main-sidebar .abs-profile-avatar,
+#abs-main-sidebar .abs-profile-avatar-fallback {
+    display:grid;
+    flex:0 0 30px;
+    width:30px;
+    height:30px;
+    place-items:center;
+    border-radius:50%;
+    background:rgba(157,201,255,.18);
+    color:#d6e8ff;
+    font-size:12px;
+    font-weight:750;
+    object-fit:cover;
+}
+#abs-main-sidebar .abs-profile-avatar[hidden],
+#abs-main-sidebar .abs-profile-avatar-fallback[hidden] {
+    display:none !important;
+}
+#abs-main-sidebar .abs-profile-trigger-label {
+    min-width:0;
+    overflow:hidden;
+    color:inherit;
+    font-size:13px;
+    font-weight:650;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+#abs-main-sidebar .abs-profile-panel {
+    box-sizing:border-box;
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    min-width:260px;
+    padding:16px;
+    border:1px solid rgba(255,255,255,.14);
+    border-radius:16px;
+    background:rgba(23,24,27,.98);
+    box-shadow:0 18px 50px rgba(0,0,0,.42);
+    color:var(--abs-shell-text,#f0f1f3);
+    backdrop-filter:blur(16px);
+}
+#abs-main-sidebar .abs-profile-panel[hidden] { display:none !important; }
+#abs-main-sidebar .abs-profile-identity { display:flex; align-items:center; gap:12px; min-width:0; }
+#abs-main-sidebar .abs-profile-identity-copy { min-width:0; flex:1; }
+#abs-main-sidebar .abs-profile-display-name {
+    overflow:hidden;
+    font-size:14px;
+    font-weight:700;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+#abs-main-sidebar .abs-profile-login {
+    overflow:hidden;
+    margin-top:2px;
+    color:var(--abs-shell-muted,#a4a7ae);
+    font-size:12px;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+}
+#abs-main-sidebar .abs-profile-badge {
+    display:inline-flex;
+    align-self:flex-start;
+    align-items:center;
+    min-height:21px;
+    padding:1px 9px;
+    border:1px solid rgba(151,190,255,.25);
+    border-radius:999px;
+    background:rgba(87,132,224,.15);
+    color:#d6e7ff;
+    font-size:11px;
+    font-weight:700;
+}
+#abs-main-sidebar .abs-profile-badge[data-role="admin"] {
+    border-color:rgba(248,202,104,.32);
+    background:rgba(210,153,49,.15);
+    color:#ffe3a3;
+}
+#abs-main-sidebar .abs-profile-message {
+    margin:0;
+    color:var(--abs-shell-muted,#a4a7ae);
+    font-size:12px;
+    line-height:1.45;
+}
+#abs-main-sidebar .abs-profile-actions { display:grid; gap:7px; }
+#abs-main-sidebar .abs-profile-action {
+    display:flex;
+    align-items:center;
+    justify-content:flex-start;
+    width:100%;
+    min-height:38px;
+    padding:8px 10px;
+    border:1px solid rgba(255,255,255,.12);
+    border-radius:10px;
+    background:rgba(255,255,255,.055);
+    color:var(--abs-shell-text,#f0f1f3);
+    font:inherit;
+    font-size:13px;
+    font-weight:650;
+    text-align:left;
+    text-decoration:none;
+    cursor:pointer;
+}
+#abs-main-sidebar .abs-profile-action:hover { background:rgba(255,255,255,.11); }
+#abs-main-sidebar .abs-profile-action:disabled { opacity:.55; cursor:wait; }
+#abs-main-sidebar .abs-profile-action[hidden] { display:none !important; }
+#abs-main-sidebar .abs-profile-message[data-error="true"] { color:#ffb5b5; }
+@media (max-width:900px) {
+    #abs-main-sidebar.abs-drawer-open .abs-profile-trigger { gap:12px; }
+    #abs-main-sidebar.abs-drawer-open .abs-profile-trigger-label { display:block; }
+}
+@media (prefers-reduced-motion:reduce) {
+    #abs-main-sidebar .abs-profile-trigger,
+    #abs-main-sidebar .abs-profile-panel,
+    #abs-main-sidebar .abs-profile-action { transition:none !important; }
+}

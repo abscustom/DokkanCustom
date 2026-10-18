@@ -1,0 +1,258 @@
+#abs-sidebar-twitch {
+    width: 100%;
+    min-width: 0;
+    container-name: absSidebarTwitch;
+    container-type: inline-size;
+}
+
+.abs-sidebar-twitch {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+    overflow: visible;
+    color: var(--abs-shell-text, #f0f1f3);
+    font: inherit;
+}
+
+.abs-sidebar-twitch__heading {
+    margin: 8px 7px 2px;
+    max-height: 16px;
+    color: var(--abs-shell-muted, #a4a7ae);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    line-height: 1.3;
+    opacity: 1;
+    text-transform: uppercase;
+    transition:max-height 200ms ease,margin 180ms ease,opacity 140ms ease,visibility 0s !important;
+}
+
+.abs-sidebar-twitch__list {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    overflow: visible;
+    list-style: none;
+}
+
+.abs-sidebar-twitch__item {
+    position: relative;
+    min-width: 0;
+    overflow: visible;
+}
+
+.abs-sidebar-twitch__link {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content:flex-start;
+    gap: 9px;
+    min-width: 0;
+    min-height: 42px;
+    box-sizing:border-box;
+    padding: 4px 7px 4px 9px;
+    border: 1px solid transparent;
+    border-radius: 11px;
+    color: var(--abs-shell-text, #f0f1f3);
+    text-decoration: none;
+    transition:background-color 140ms ease,border-color 140ms ease,gap 220ms cubic-bezier(.2,.8,.2,1) !important;
+}
+
+.abs-sidebar-twitch__link:hover {
+    border-color: var(--abs-shell-border, rgba(255, 255, 255, 0.12));
+    background: rgba(255, 255, 255, 0.055);
+}
+
+.abs-sidebar-twitch__link:focus-visible {
+    outline: 2px solid var(--abs-shell-text, #f0f1f3);
+    outline-offset: 2px;
+}
+
+.abs-sidebar-twitch__avatar {
+    position: relative;
+    display: inline-flex;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.13);
+    border-radius: 9px;
+    background: var(--abs-sidebar-twitch-fallback, #4c586d);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    text-transform: uppercase;
+}
+
+.abs-sidebar-twitch__avatar::after {
+    position: absolute;
+    right: 1px;
+    bottom: 1px;
+    width: 8px;
+    height: 8px;
+    border: 2px solid rgba(29, 30, 33, 0.96);
+    border-radius: 50%;
+    background: #9297a1;
+    content: '';
+}
+
+.abs-sidebar-twitch__avatar[data-status='live']::after {
+    background: #48dd80;
+    outline: 1px solid rgba(126, 255, 173, 0.72);
+    outline-offset: 1px;
+    box-shadow: 0 0 7px rgba(72, 221, 128, 0.52);
+}
+
+.abs-sidebar-twitch__avatar[data-status='offline']::after {
+    background: #858a94;
+}
+
+.abs-sidebar-twitch__avatar[data-status='checking']::after {
+    background: #d0a44b;
+}
+
+.abs-sidebar-twitch__avatar[data-status='error']::after {
+    background: #d88745;
+}
+
+.abs-sidebar-twitch__avatar[data-status='not-applicable']::after {
+    display: none;
+}
+
+.abs-sidebar-twitch__image {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.abs-sidebar-twitch__avatar.has-image .abs-sidebar-twitch__fallback {
+    visibility: hidden;
+}
+
+.abs-sidebar-twitch__copy {
+    display: flex;
+    flex: 0 1 auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    min-width: 0;
+    max-width:170px;
+    opacity:1;
+    visibility:visible;
+    transform:none;
+    text-align:left;
+    transition:max-width 220ms cubic-bezier(.2,.8,.2,1),opacity 150ms ease 60ms,
+        transform 180ms cubic-bezier(.2,.8,.2,1) 40ms,visibility 0s !important;
+}
+
+.abs-sidebar-twitch__name {
+    overflow: hidden;
+    color: var(--abs-shell-text, #f0f1f3);
+    font-size: 12px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align:left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.abs-sidebar-twitch__status {
+    overflow: hidden;
+    color: var(--abs-shell-muted, #a4a7ae);
+    font-size: 10px;
+    font-weight: 600;
+    line-height: 1.2;
+    text-align:left;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.abs-sidebar-twitch__status[data-status='live'] {
+    color: #ff8797;
+}
+
+.abs-sidebar-twitch__status[data-status='offline'] {
+    color: #9297a1;
+}
+
+.abs-sidebar-twitch__status[data-status='checking'] {
+    color: #e0c17e;
+}
+
+.abs-sidebar-twitch__status[data-status='error'] {
+    color: #efaa70;
+}
+
+.abs-sidebar-twitch__status[data-status='not-applicable'] {
+    color: #b8a8ed;
+}
+
+@container absSidebarTwitch (max-width: 132px) {
+    .abs-sidebar-twitch__heading {
+        max-height:0;
+        margin-block:0;
+        opacity:0;
+        visibility:hidden;
+        transition:max-height 180ms ease,margin 180ms ease,opacity 120ms ease,visibility 0s linear 140ms !important;
+    }
+
+    .abs-sidebar-twitch__link {
+        justify-content:flex-start;
+        gap:0;
+        padding-inline:9px 7px;
+    }
+
+    .abs-sidebar-twitch__avatar {
+        flex-basis: 36px;
+        width: 36px;
+        height: 36px;
+    }
+
+    .abs-sidebar-twitch__copy {
+        max-width:0;
+        opacity:0;
+        visibility:hidden;
+        transform:translateX(-6px);
+        pointer-events:none;
+        transition:max-width 180ms cubic-bezier(.2,.8,.2,1),opacity 110ms ease,transform 150ms ease,
+            visibility 0s linear 150ms !important;
+    }
+}
+
+.abs-sidebar-twitch-tooltip {
+    position: fixed;
+    z-index: 1201;
+    display: block;
+    width: max-content;
+    max-width: min(280px, calc(100vw - 16px));
+    padding: 7px 10px;
+    border: 1px solid var(--abs-shell-border, rgba(255, 255, 255, 0.12));
+    border-radius: 9px;
+    background: rgba(29, 30, 33, 0.97);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.36);
+    color: var(--abs-shell-text, #f0f1f3);
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.35;
+    pointer-events: none;
+    white-space: normal;
+}
+
+.abs-sidebar-twitch-tooltip[hidden] {
+    display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .abs-sidebar-twitch__link,.abs-sidebar-twitch__heading,.abs-sidebar-twitch__copy {
+        transition:none !important;
+    }
+}

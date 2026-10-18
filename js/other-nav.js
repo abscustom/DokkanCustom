@@ -1,230 +1,138 @@
 (() => {
     'use strict';
 
-    const MENU_ID = 'sba-other-destinations-menu';
     const ROUTES = [
-        { href: 'leader-compatibility.html', label: 'Leader Compatibility' },
-        { href: 'support-memory.html', label: 'Support Memory' }
+        { id: 'support-memory', href: 'support-memory.html', label: 'Support Memory', icon: '<path d="M12 21s-7-4.35-9.33-8.2C.35 9.05 2.2 5 6.2 5c2.3 0 3.9 1.3 5.8 3.5C13.9 6.3 15.5 5 17.8 5c4 0 5.85 4.05 3.53 7.8C19 16.65 12 21 12 21Z"/>' },
+        { id: 'leader-compatibility', href: 'leader-compatibility.html', label: 'Leader Compatibility', icon: '<circle cx="12" cy="7" r="3"/><path d="M5 21v-2a4 4 0 0 1 4-4h6a4 4 0 0 1 4 4v2M4 8H2m20 0h-2M5 12l-2 1m18-1 2 1"/>' },
+        { id: 'damage-received', href: 'damage-received.html', label: 'Damage Received', icon: '<path d="M12 3 5 6v5c0 4.7 2.8 8 7 10 4.2-2 7-5.3 7-10V6l-7-3Z"/><path d="M12 7v7m0 3h.01"/>' },
+        { id: 'manager', href: 'manager.html', label: 'Manager', icon: '<circle cx="12" cy="12" r="8"/><path d="M12 8v8m-4-4h8"/>' }
     ];
+    const ROUTE_ATTRIBUTE = 'data-abs-main-destination';
+    const normalizePath = pathname => pathname.replace(/\/+$/, '').toLowerCase() || '/';
+    const scriptUrl = document.currentScript?.src || new URL('js/other-nav.js', document.baseURI).href;
 
-    const normalizePath = (pathname) => pathname.replace(/\/+$/, '').toLowerCase() || '/';
-
-    function ensureStylesheet() {
-        if (document.querySelector('link[data-other-nav-styles]')) return;
-        const currentScript = document.currentScript;
-        const scriptUrl = currentScript?.src || new URL('js/other-nav.js', document.baseURI).href;
-        const link = document.createElement('link');
-        link.rel = 'stylesheet';
-        link.href = new URL('../css/other-nav.css?v=20260929-other-menu-v2', scriptUrl).href;
-        link.dataset.otherNavStyles = 'true';
-        document.head.appendChild(link);
+    function baseUrl() {
+        const sharedBase = window.absNavigation?.getBaseUrl?.();
+        if (sharedBase) return new URL(sharedBase);
+        const config = window.MANAGER_AUTH_CONFIG || {};
+        try {
+            const managerOrigins = [config.workerOrigin, config.localWorkerOrigin].filter(value => typeof value === 'string').map(value => {
+                try { return new URL(value).origin; } catch { return ''; }
+            }).filter(Boolean);
+            if (managerOrigins.includes(location.origin)) {
+                const pages = new URL(config.pagesOrigin);
+                if (pages.protocol === 'https:' && pages.pathname === '/') return new URL(config.siteBasePath || '/DokkanCustom/', pages.origin);
+            }
+        } catch {}
+        return new URL('../', scriptUrl);
     }
 
-    function createMenu() {
-        let menu = document.getElementById(MENU_ID);
-        if (menu) return menu;
+    function makeDestination(route) {
+        const link = document.createElement('a');
+        link.id = `nav-link-${route.id}`;
+        link.className = 'hud-nav-link sba-main-destination';
+        link.dataset.absMainDestination = route.id;
+        link.href = new URL(route.href, baseUrl()).href;
+        link.setAttribute('aria-label', route.label);
+        link.title = route.label;
 
-        menu = document.createElement('div');
-        menu.id = MENU_ID;
-        menu.className = 'sba-other-destinations-menu';
-        menu.setAttribute('role', 'menu');
-        menu.setAttribute('aria-label', 'Other destinations');
-        menu.hidden = true;
+        const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        icon.setAttribute('class', 'hud-nav-svg');
+        icon.setAttribute('viewBox', '0 0 24 24');
+        icon.setAttribute('fill', 'none');
+        icon.setAttribute('stroke', 'currentColor');
+        icon.setAttribute('stroke-width', '2');
+        icon.setAttribute('stroke-linecap', 'round');
+        icon.setAttribute('stroke-linejoin', 'round');
+        icon.setAttribute('aria-hidden', 'true');
+        icon.innerHTML = route.icon;
 
-        ROUTES.forEach(({ href, label }) => {
-            const link = document.createElement('a');
-            link.className = 'sba-other-destination';
-            link.href = new URL(href, document.baseURI).href;
-            link.setAttribute('role', 'menuitem');
-            link.textContent = label;
-            menu.appendChild(link);
-        });
-
-        // The menu is portaled to the body so nav overflow and narrow-screen
-        // horizontal scrolling cannot clip it.
-        menu.addEventListener('pointermove', (event) => {
-            event.stopPropagation();
-            window.revealToolSbaNav?.();
-        });
-        document.body.appendChild(menu);
-        return menu;
+        const label = document.createElement('span');
+        label.textContent = route.label;
+        link.append(icon, label);
+        return link;
     }
 
-    function setCurrentDestination(menu, buttons) {
-        const currentPath = normalizePath(window.location.pathname);
-        let hasActiveDestination = false;
-
-        menu.querySelectorAll('.sba-other-destination').forEach((link) => {
-            const isCurrent = normalizePath(new URL(link.href, document.baseURI).pathname) === currentPath;
-            if (isCurrent) {
-                link.setAttribute('aria-current', 'page');
-                link.classList.add('is-current');
-                hasActiveDestination = true;
-            } else {
-                link.removeAttribute('aria-current');
-                link.classList.remove('is-current');
-            }
+    function removeRetiredOther(group) {
+        let changed = false;
+        group.querySelectorAll(':scope > .sba-other-nav-button').forEach(button => {
+            button.remove();
+            changed = true;
         });
-
-        buttons.forEach((button) => button.classList.toggle('active', hasActiveDestination));
-    }
-
-    function positionMenu(menu, button) {
-        const bounds = button.getBoundingClientRect();
-        const viewportPadding = 8;
-        const viewportWidth = document.documentElement.clientWidth;
-        const viewportHeight = window.innerHeight;
-        const menuWidth = Math.min(280, Math.max(220, viewportWidth - viewportPadding * 2));
-        menu.style.width = `${menuWidth}px`;
-        menu.style.maxHeight = `${Math.max(96, viewportHeight - viewportPadding * 2)}px`;
-
-        const menuHeight = menu.getBoundingClientRect().height;
-        const centeredLeft = bounds.left + (bounds.width / 2) - (menuWidth / 2);
-        const left = Math.max(viewportPadding, Math.min(centeredLeft, viewportWidth - menuWidth - viewportPadding));
-        const aboveTop = bounds.top - menuHeight - 10;
-        const top = Math.max(viewportPadding, aboveTop);
-
-        menu.style.left = `${left}px`;
-        menu.style.top = `${top}px`;
-    }
-
-    function installOtherMenus() {
-        ensureStylesheet();
-
-        const navGroups = Array.from(document.querySelectorAll('.hud-nav-group'))
-            .filter((group) => !group.classList.contains('editor-top-hud-group'));
-        if (!navGroups.length) return;
-
-        const menu = createMenu();
-        const buttons = [];
-
-        const closeMenu = ({ restoreFocus = false } = {}) => {
-            if (menu.hidden) return;
-            const previousButton = menu.__activeTrigger;
-            menu.hidden = true;
-            menu.__activeTrigger = null;
-            previousButton?.setAttribute('aria-expanded', 'false');
-            document.body.classList.remove('sba-other-menu-open');
-            if (restoreFocus) previousButton?.focus();
-        };
-
-        const openMenu = (button, focusLast = false) => {
-            if (menu.__activeTrigger && menu.__activeTrigger !== button) {
-                menu.__activeTrigger.setAttribute('aria-expanded', 'false');
-            }
-            menu.__activeTrigger = button;
-            button.setAttribute('aria-expanded', 'true');
-            menu.hidden = false;
-            document.body.classList.add('sba-other-menu-open');
-            positionMenu(menu, button);
-            if (focusLast || button.dataset.focusMenu === 'last') {
-                menu.querySelector('.sba-other-destination:last-child')?.focus();
-            } else if (button.dataset.focusMenu === 'first') {
-                menu.querySelector('.sba-other-destination:first-child')?.focus();
-            }
-            button.dataset.focusMenu = '';
-        };
-
-        navGroups.forEach((group) => {
-            let button = group.querySelector(':scope > .sba-other-nav-button');
-            if (!button) {
-                button = document.createElement('button');
-                button.type = 'button';
-                button.className = 'hud-nav-link sba-other-nav-button';
-                button.setAttribute('aria-label', 'Other destinations');
-                button.setAttribute('aria-haspopup', 'menu');
-                button.setAttribute('aria-controls', MENU_ID);
-                button.setAttribute('aria-expanded', 'false');
-                button.title = 'Other destinations';
-
-                const icon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
-                icon.setAttribute('class', 'hud-nav-svg');
-                icon.setAttribute('viewBox', '0 0 24 24');
-                icon.setAttribute('fill', 'none');
-                icon.setAttribute('aria-hidden', 'true');
-                icon.innerHTML = '<circle cx="5" cy="12" r="1.5" fill="currentColor"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><circle cx="19" cy="12" r="1.5" fill="currentColor"/>';
-                button.append(icon);
-
-                const label = document.createElement('span');
-                label.textContent = 'Other';
-                button.append(label);
-
-                const settings = group.querySelector(':scope > .sba-side-settings-button, :scope > [aria-label="Settings"]');
-                group.insertBefore(button, settings || null);
-            }
-
-            if (!button.dataset.otherNavBound) {
-                button.dataset.otherNavBound = 'true';
-                button.addEventListener('click', () => {
-                    if (!menu.hidden && menu.__activeTrigger === button) closeMenu();
-                    else openMenu(button);
-                });
-                button.addEventListener('keydown', (event) => {
-                    if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                        event.preventDefault();
-                        button.dataset.focusMenu = event.key === 'ArrowUp' ? 'last' : 'first';
-                        openMenu(button, event.key === 'ArrowUp');
-                    }
-                });
-                buttons.push(button);
-            } else {
-                buttons.push(button);
-            }
-        });
-
-        setCurrentDestination(menu, buttons);
-
-        if (!menu.dataset.otherNavEventsBound) {
-            menu.dataset.otherNavEventsBound = 'true';
-            document.addEventListener('pointerdown', (event) => {
-                const activeButton = menu.__activeTrigger;
-                if (!menu.hidden && !menu.contains(event.target) && !activeButton?.contains(event.target)) {
-                    closeMenu();
-                }
-            }, true);
-
-            document.addEventListener('focusin', (event) => {
-                const activeButton = menu.__activeTrigger;
-                if (!menu.hidden && !menu.contains(event.target) && !activeButton?.contains(event.target)) {
-                    closeMenu();
-                }
-            });
-
-            document.addEventListener('keydown', (event) => {
-                if (menu.hidden) return;
-                const items = Array.from(menu.querySelectorAll('.sba-other-destination'));
-                const index = items.indexOf(document.activeElement);
-
-                // The trigger handles the key that opens the menu. Do not also
-                // advance from the document handler during that same event.
-                if (event.target === menu.__activeTrigger && (event.key === 'ArrowDown' || event.key === 'ArrowUp')) return;
-
-                if (event.key === 'Escape') {
-                    event.preventDefault();
-                    closeMenu({ restoreFocus: true });
-                } else if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
-                    event.preventDefault();
-                    const delta = event.key === 'ArrowDown' ? 1 : -1;
-                    const next = index < 0 ? (delta > 0 ? 0 : items.length - 1) : (index + delta + items.length) % items.length;
-                    items[next]?.focus();
-                } else if (event.key === 'Home') {
-                    event.preventDefault();
-                    items[0]?.focus();
-                } else if (event.key === 'End') {
-                    event.preventDefault();
-                    items.at(-1)?.focus();
-                }
-            });
-
-            window.addEventListener('resize', () => {
-                if (!menu.hidden && menu.__activeTrigger) positionMenu(menu, menu.__activeTrigger);
-            }, { passive: true });
+        const menu = document.getElementById('sba-other-destinations-menu');
+        if (menu) {
+            menu.remove();
+            changed = true;
         }
+        document.querySelectorAll('link[data-other-nav-styles]').forEach(link => {
+            link.remove();
+            changed = true;
+        });
+        document.body.classList.remove('sba-other-menu-open');
+        return changed;
+    }
+
+    function syncCurrentDestination(group) {
+        const currentPath = normalizePath(window.location.pathname);
+        group.querySelectorAll(`:scope > [${ROUTE_ATTRIBUTE}]`).forEach(link => {
+            const isCurrent = normalizePath(new URL(link.href, baseUrl()).pathname) === currentPath;
+            link.classList.toggle('active', isCurrent);
+            if (isCurrent) link.setAttribute('aria-current', 'page');
+            else link.removeAttribute('aria-current');
+        });
+    }
+
+    function managerIsAvailable() {
+        const current = window.absProfile?.getState?.();
+        return current?.status === 'signed-in'
+            && current.profile?.role === 'admin'
+            && current.managerAccess?.status === 'ready';
+    }
+
+    function installDirectDestinations() {
+        const groups = Array.from(document.querySelectorAll('.hud-nav-group'))
+            .filter(group => !group.classList.contains('editor-top-hud-group'));
+        let changed = false;
+
+        groups.forEach(group => {
+            changed = removeRetiredOther(group) || changed;
+            const settings = group.querySelector(':scope > .sba-side-settings-button, :scope > [aria-label="Settings"]');
+            let anchor = settings || null;
+            const routes = ROUTES.filter(route => route.id !== 'manager' || managerIsAvailable());
+            group.querySelectorAll(`:scope > [${ROUTE_ATTRIBUTE}="manager"]`).forEach(link => {
+                if (!managerIsAvailable()) {
+                    link.remove();
+                    changed = true;
+                }
+            });
+            [...routes].reverse().forEach(route => {
+                let link = group.querySelector(`:scope > [${ROUTE_ATTRIBUTE}="${route.id}"]`);
+                if (!link) {
+                    link = makeDestination(route);
+                    changed = true;
+                }
+                link.href = new URL(route.href, baseUrl()).href;
+                link.setAttribute('aria-label', route.label);
+                link.title = route.label;
+                const label = link.querySelector(':scope > span');
+                if (label) label.textContent = route.label;
+                if (link.parentElement !== group || link.nextElementSibling !== anchor) group.insertBefore(link, anchor);
+                anchor = link;
+            });
+            syncCurrentDestination(group);
+        });
+
+        if (changed) window.absNavigation?.refresh();
+    }
+
+    function start() {
+        installDirectDestinations();
     }
 
     if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', installOtherMenus, { once: true });
+        document.addEventListener('DOMContentLoaded', start, { once: true });
     } else {
-        installOtherMenus();
+        start();
     }
+    window.addEventListener('abs-profile-change', installDirectDestinations);
 })();

@@ -1,0 +1,842 @@
+/* ABS shared shell; card-specific artwork, frames and skills remain untouched. */
+:root {
+    --abs-nav-expanded:224px; --abs-nav-collapsed:72px; --abs-nav-width:var(--abs-nav-collapsed);
+    --abs-nav-reserved-width:var(--abs-nav-collapsed);
+    --abs-nav-motion:300ms cubic-bezier(.2,.8,.2,1);
+    --abs-context-expanded:224px; --abs-context-collapsed:72px; --abs-context-width:0px; --abs-context-rail-width:0px;
+    --abs-shell-gap:16px; --abs-shell-content-width:calc(100vw - var(--abs-nav-reserved-width) - var(--abs-context-width) - 2 * var(--abs-shell-gap));
+    --abs-shell-panel:rgba(29,30,33,.88); --abs-shell-border:rgba(255,255,255,.12); --abs-shell-radius:16px;
+    --abs-shell-text:#f0f1f3; --abs-shell-muted:#a4a7ae; --abs-home-accent-rgb:150,155,165;
+}
+:root[data-abs-nav-collapsed="true"] { --abs-nav-width:var(--abs-nav-collapsed); }
+:root[data-abs-nav-collapsed="false"] { --abs-nav-width:var(--abs-nav-expanded); }
+:root[data-abs-nav-pinned="true"] { --abs-nav-reserved-width:var(--abs-nav-expanded); }
+html:has(body.abs-context-page) { --abs-context-width:var(--abs-context-expanded); }
+html[data-abs-context-collapsed="true"]:has(body.abs-context-page) { --abs-context-width:var(--abs-context-collapsed); }
+html:has(body.abs-shell) { background:#101113 !important; }
+body.abs-shell {
+    box-sizing:border-box !important; min-height:100dvh; width:100% !important;
+    padding:20px calc(var(--abs-context-width) + var(--abs-shell-gap)) 24px calc(var(--abs-nav-reserved-width) + var(--abs-shell-gap)) !important;
+    background:#101113 !important; background-image:none !important; animation:none !important;
+    color:var(--abs-shell-text); overflow-x:clip;
+}
+body.abs-shell::before, body.abs-shell::after { background-image:none !important; }
+body.abs-shell .glass-overlay { display:none !important; }
+#abs-main-sidebar, #abs-context-sidebar {
+    position:fixed !important; inset:8px auto 8px 8px !important; z-index:1000 !important;
+    width:calc(var(--abs-nav-width) - 16px) !important; height:auto !important;
+    display:flex !important; flex-direction:column !important; gap:12px; padding:10px 8px !important;
+    overflow:visible !important; background:var(--abs-shell-panel) !important;
+    border:1px solid var(--abs-shell-border) !important; border-radius:var(--abs-shell-radius) !important;
+    box-shadow:0 12px 32px rgba(0,0,0,.22) !important; backdrop-filter:blur(12px); color:var(--abs-shell-text);
+    transform:none !important; opacity:1 !important; pointer-events:auto !important;
+}
+#abs-context-sidebar { inset:8px 8px 8px auto !important; width:calc(var(--abs-context-width) - 16px) !important; }
+.abs-sidebar-heading { display:flex; align-items:center; min-height:50px; gap:8px; padding:0 2px 10px; border-bottom:1px solid var(--abs-shell-border); }
+.abs-sidebar-brand { display:flex; flex:1; min-width:0; align-items:center; text-decoration:none; color:var(--abs-shell-text); }
+.abs-sidebar-brand img { width:100%; max-width:124px; height:48px; object-fit:contain; object-position:left center; }
+.abs-shell-collapse { border:1px solid var(--abs-shell-border); border-radius:8px; background:rgba(255,255,255,.04); color:var(--abs-shell-muted); width:28px; height:30px; flex:0 0 28px; padding:4px; }
+.abs-shell-collapse svg { width:100%; height:100%; fill:none; stroke:currentColor; stroke-width:1.6; }
+.abs-context-title { font-size:14px; font-weight:650; margin:0; flex:1; }
+.abs-sidebar-scroll { min-height:0; flex:1; overflow-y:auto; overflow-x:hidden; scrollbar-width:thin; overscroll-behavior:contain; }
+body.abs-shell #abs-main-sidebar .hud-nav-group, body.abs-shell #abs-context-sidebar .hud-nav-group {
+    position:static !important; inset:auto !important; display:flex !important; flex-direction:column !important;
+    align-items:stretch !important; justify-content:flex-start !important; gap:6px !important;
+    width:100% !important; min-width:0 !important; max-width:none !important; height:auto !important; max-height:none !important;
+    margin:0 !important; padding:0 !important; overflow:visible !important; border:0 !important; border-radius:0 !important;
+    background:transparent !important; background-image:none !important; box-shadow:none !important; filter:none !important; backdrop-filter:none !important;
+    transform:none !important; opacity:1 !important; pointer-events:auto !important; isolation:auto !important;
+}
+body.abs-shell #abs-main-sidebar .hud-nav-group::before, body.abs-shell #abs-main-sidebar .hud-nav-group::after,
+body.abs-shell #abs-context-sidebar .hud-nav-group::before, body.abs-shell #abs-context-sidebar .hud-nav-group::after,
+body.abs-shell #abs-main-sidebar .hud-nav-link::before, body.abs-shell #abs-main-sidebar .hud-nav-link::after,
+body.abs-shell #abs-context-sidebar .hud-nav-link::before, body.abs-shell #abs-context-sidebar .hud-nav-link::after { display:none !important; }
+body.abs-shell #abs-main-sidebar .hud-nav-link, body.abs-shell #abs-context-sidebar .hud-nav-link {
+    --abs-icon-rgb:147,151,160;
+    position:relative !important; display:flex !important; flex-direction:row !important; align-items:center !important; justify-content:flex-start !important;
+    flex:0 0 auto !important; gap:12px !important; width:100% !important; min-width:0 !important; max-width:none !important;
+    height:auto !important; min-height:42px !important; padding:7px 8px !important; margin:0 !important;
+    background:transparent !important; border:1px solid transparent !important; border-radius:9px !important;
+    box-shadow:none !important; filter:none !important; backdrop-filter:none !important; transform:none !important;
+    color:var(--abs-shell-text) !important; font:500 14px/1.3 system-ui,sans-serif !important; letter-spacing:0 !important;
+    text-transform:none !important; text-decoration:none !important; white-space:normal !important; opacity:1 !important;
+    pointer-events:auto !important; overflow:visible !important;
+}
+body.abs-shell #abs-main-sidebar .hud-nav-link:hover, body.abs-shell #abs-context-sidebar .hud-nav-link:hover,
+body.abs-shell #abs-main-sidebar .hud-nav-link.active, body.abs-shell #abs-context-sidebar .hud-nav-link.active { background:rgba(255,255,255,.065) !important; border-color:var(--abs-shell-border) !important; }
+body.abs-shell #abs-main-sidebar .hud-nav-link svg, body.abs-shell #abs-context-sidebar .hud-nav-link svg {
+    flex:0 0 28px !important; width:28px !important; height:28px !important; padding:5px; border-radius:6px;
+    background:rgba(var(--abs-icon-rgb),.2) !important; color:rgb(var(--abs-icon-rgb)) !important; filter:none !important;
+}
+body.abs-shell #abs-main-sidebar .hud-nav-link > img.abs-nav-icon,
+body.abs-shell #abs-context-sidebar .hud-nav-link > img.abs-nav-icon {
+    display:block !important; flex:0 0 28px !important; width:28px !important; min-width:28px !important; max-width:28px !important;
+    height:28px !important; min-height:28px !important; max-height:28px !important; padding:0 !important; margin:0 !important;
+    object-fit:contain !important; object-position:center !important; background:transparent !important; border:0 !important;
+    border-radius:0 !important; filter:none !important;
+}
+/* Enlarge the existing 28px slots and center each PNG's measured visible art. */
+body.abs-shell #abs-main-sidebar .hud-nav-link[data-abs-main-destination="leader-compatibility"] > img.abs-nav-icon {
+    transform:translateX(-.24px) scale(1.142857) !important; transform-origin:center center !important;
+}
+body.abs-shell #abs-main-sidebar .hud-nav-link[data-abs-main-destination="damage-received"] > img.abs-nav-icon {
+    transform:translateX(.72px) scale(1.285714) !important; transform-origin:center center !important;
+}
+body.abs-shell #abs-main-sidebar .hud-nav-link span, body.abs-shell #abs-context-sidebar .hud-nav-link span { display:block !important; width:auto !important; font:inherit !important; color:inherit !important; text-shadow:none !important; white-space:normal !important; }
+body.abs-shell #abs-main-sidebar .hud-dropdown-wrap { width:100%; position:relative; }
+body.abs-shell #abs-main-sidebar .hud-dropdown-menu { position:absolute !important; left:calc(100% + 12px) !important; right:auto !important; top:0 !important; bottom:auto !important; width:220px !important; max-height:calc(100dvh - 24px); overflow:auto; z-index:1200; background:#232427 !important; border-radius:12px !important; transform:none !important; }
+body.abs-shell #abs-context-sidebar .top-hud-divider { width:100% !important; height:1px !important; min-height:1px; background:var(--abs-shell-border) !important; margin:6px 0 !important; }
+body.abs-shell #abs-context-sidebar .editor-top-hud-group { flex-wrap:nowrap !important; }
+:root[data-abs-nav-collapsed="true"] .abs-sidebar-heading { flex-wrap:wrap; justify-content:center; gap:2px; }
+:root[data-abs-nav-collapsed="true"] .abs-sidebar-brand { flex:auto; justify-content:center; }
+:root[data-abs-nav-collapsed="true"] .abs-sidebar-brand img { position:relative; left:1px; height:32px; width:38px; object-position:center; }
+:root[data-abs-nav-collapsed="true"] body.abs-shell #abs-main-sidebar .hud-nav-link { justify-content:center !important; padding:7px 3px !important; }
+:root[data-abs-nav-collapsed="true"] body.abs-shell #abs-main-sidebar .hud-nav-link > span,
+:root[data-abs-context-collapsed="true"] body.abs-shell #abs-context-sidebar .hud-nav-link > span,
+:root[data-abs-context-collapsed="true"] .abs-context-title { display:none !important; }
+:root[data-abs-context-collapsed="true"] #abs-context-sidebar .abs-sidebar-heading { justify-content:center; }
+:root[data-abs-context-collapsed="true"] body.abs-shell #abs-context-sidebar .hud-nav-link { justify-content:center !important; padding:7px 0 !important; }
+body.abs-shell :is(.abs-sidebar-brand,.abs-shell-collapse,.abs-mobile-trigger,.hud-nav-link):focus-visible { outline:2px solid #a8c5ed !important; outline-offset:2px; }
+#abs-sidebar-twitch { margin-top:16px; padding-top:12px; border-top:1px solid var(--abs-shell-border); }
+#abs-shell-backdrop { position:fixed; inset:0; z-index:990; background:rgba(0,0,0,.55); backdrop-filter:blur(3px); }
+#abs-shell-backdrop[hidden] { display:none; }
+.abs-mobile-shell { display:none; }
+body.abs-shell #settingsDrawer { border-radius:var(--abs-shell-radius) !important; background:rgba(28,29,32,.97) !important; background-image:none !important; border:1px solid var(--abs-shell-border) !important; z-index:1200 !important; overflow-y:auto !important; transform:none !important; }
+body.abs-shell #settingsDrawer::before,body.abs-shell #settingsDrawer::after { background-image:none !important; }
+body.abs-shell #settingsOverlay { z-index:1100 !important; }
+body.abs-shell :is(.hub-main-content,.other-tool-main,#top-content,#app) { max-width:100% !important; margin-left:auto !important; margin-right:auto !important; }
+body.abs-shell .other-tool-main { width:100% !important; margin-top:0 !important; padding-top:0 !important; }
+body.abs-shell .main-content { margin-left:0 !important; }
+body.abs-shell #top-content { padding-top:0 !important; }
+@media(max-width:900px) {
+    :root { --abs-nav-width:0px !important; --abs-nav-reserved-width:0px !important; --abs-context-width:0px !important; --abs-shell-gap:12px; }
+    body.abs-shell { padding:72px 12px 20px !important; }
+    .abs-mobile-shell { position:fixed; top:10px; left:12px; right:12px; z-index:980; display:flex; align-items:center; gap:10px; height:46px; padding:4px 8px; border:1px solid var(--abs-shell-border); border-radius:12px; background:rgba(29,30,33,.96); }
+    .abs-mobile-brand { flex:1; height:36px; display:flex; justify-content:center; }
+    .abs-mobile-brand img { height:100%; width:70px; object-fit:contain; }
+    .abs-mobile-trigger { width:36px; height:36px; padding:6px; color:var(--abs-shell-text); border:1px solid var(--abs-shell-border); border-radius:8px; background:rgba(255,255,255,.04); }
+    .abs-mobile-trigger svg { height:100%; width:100%; fill:none; stroke:currentColor; stroke-width:1.8; }
+    #abs-main-sidebar,#abs-context-sidebar { width:min(280px,calc(100vw - 48px)) !important; visibility:hidden; pointer-events:none !important; }
+    #abs-main-sidebar.abs-drawer-open,#abs-context-sidebar.abs-drawer-open { visibility:visible; pointer-events:auto !important; }
+    body.abs-shell-drawer-open { overflow:hidden !important; }
+    :root[data-abs-nav-collapsed="true"] .abs-sidebar-heading { flex-wrap:nowrap; justify-content:initial; }
+    :root[data-abs-nav-collapsed="true"] .abs-sidebar-brand { justify-content:initial; }
+    :root[data-abs-nav-collapsed="true"] .abs-sidebar-brand img { width:100%; max-width:124px; height:48px; object-position:left; }
+    :root[data-abs-nav-collapsed="true"] body.abs-shell #abs-main-sidebar .hud-nav-link > span,
+    :root[data-abs-context-collapsed="true"] body.abs-shell #abs-context-sidebar .hud-nav-link > span,
+    :root[data-abs-context-collapsed="true"] .abs-context-title { display:block !important; }
+    :root[data-abs-nav-collapsed="true"] body.abs-shell #abs-main-sidebar .hud-nav-link,
+    :root[data-abs-context-collapsed="true"] body.abs-shell #abs-context-sidebar .hud-nav-link { justify-content:flex-start !important; padding:7px 8px !important; }
+    body.abs-shell #abs-main-sidebar .hud-dropdown-menu { position:static !important; width:100% !important; }
+}
+@media(prefers-reduced-motion:reduce) { #abs-main-sidebar,#abs-context-sidebar,#abs-shell-backdrop { transition:none !important; } }
+body.abs-shell #abs-context-sidebar #editor-top-bar {
+    position:static !important; inset:auto !important; width:100% !important; height:auto !important;
+    margin:0 !important; padding:0 !important; transform:none !important; opacity:1 !important; pointer-events:auto !important;
+    background:transparent !important; border:0 !important; box-shadow:none !important;
+}
+body.abs-shell.is-published:not(.admin-mode-active) #abs-context-sidebar,
+body.abs-shell.is-published:not(.admin-mode-active) [data-abs-drawer="abs-context-sidebar"] { display:none !important; }
+html:has(body.abs-shell.is-published:not(.admin-mode-active)) { --abs-context-width:0px !important; }
+/* Live sidebar visibility must follow its drawer, not retired mobile dock rules. */
+body.abs-shell #abs-main-sidebar .hud-nav-group,
+body.abs-shell #abs-context-sidebar .hud-nav-group,
+body.abs-shell #abs-main-sidebar .hud-nav-link,
+body.abs-shell #abs-context-sidebar .hud-nav-link { visibility:inherit !important; }
+body.abs-shell #abs-context-sidebar #editor-top-bar .hud-nav-group.editor-top-hud-group {
+    background:transparent !important; background-image:none !important; border:0 !important; box-shadow:none !important;
+    backdrop-filter:none !important; filter:none !important;
+}
+/* Home and Cards formerly deliberately escaped their parent's width. */
+body.abs-shell.theme-sba .hub-main-content,
+body.abs-shell.theme-sba #hubHomeSection,
+body.abs-shell.theme-sba #hubCardsSection,
+body.abs-shell.theme-sba #hubNewsSection,
+body.abs-shell.theme-sba .cards-grid-surface {
+    box-sizing:border-box !important; width:100% !important; min-width:0 !important; max-width:100% !important;
+    margin-left:0 !important; margin-right:0 !important; left:auto !important; right:auto !important; transform:none !important;
+}
+body.abs-shell.theme-sba #cardGrid { width:100% !important; min-width:0 !important; max-width:100% !important; }
+/* Exact Home/Cards container handoff: eliminate legacy viewport breakout. */
+body.abs-shell #hubMain.hub-main-container {
+    width:100% !important; min-width:0 !important; max-width:100% !important;
+    margin:12px 0 24px !important; padding:0 !important; box-sizing:border-box !important;
+}
+/* The former fixed Cards ticker is gone; release its reserved top strip. */
+body.abs-shell #hubCardsSection { padding-top:0 !important; }
+body.abs-shell #hubCardsSection :is(.cards-workspace-panel,.cards-grid-surface),
+body.abs-shell #hubHomeSection :is(.sba-pixel-logo-band,.hub-showcase-divider,.hub-home-top-grid,.sba-showcase-panel) {
+    box-sizing:border-box !important; width:100% !important; min-width:0 !important; max-width:100% !important;
+    margin-left:0 !important; margin-right:0 !important; left:auto !important; right:auto !important; transform:none !important;
+}
+body.abs-shell #hubCardsSection :is(.cards-workspace-panel,.cards-grid-surface) {
+    background:var(--abs-shell-panel) !important; background-image:none !important; border-radius:var(--abs-shell-radius) !important;
+    border-color:var(--abs-shell-border) !important;
+}
+body.abs-shell #hubCardsSection :is(.cards-workspace-panel,.cards-grid-surface)::before,
+body.abs-shell #hubCardsSection :is(.cards-workspace-panel,.cards-grid-surface)::after { background-image:none !important; }
+/* Visibility changes never wait for retired dock transitions. */
+body.abs-shell #abs-main-sidebar .hud-nav-group,
+body.abs-shell #abs-context-sidebar .hud-nav-group,
+body.abs-shell #abs-main-sidebar .hud-nav-link,
+body.abs-shell #abs-context-sidebar .hud-nav-link { transition:background-color 120ms ease,border-color 120ms ease !important; }
+#abs-main-sidebar,#abs-context-sidebar { box-sizing:border-box !important; }
+body.abs-shell #hubHomeSection .sba-showcase-section,
+body.abs-shell #hubHomeSection #homeCardGrid.sba-showcase-carousel {
+    width:100% !important; min-width:0 !important; max-width:100% !important;
+    margin-left:0 !important; margin-right:0 !important; left:auto !important; right:auto !important; transform:none !important;
+}
+/* Scoped shared menu and full-label treatment beats prior theme-specific rules. */
+html body.abs-shell #settingsDrawer,
+html body.abs-shell #settingsDrawer.hub-settings-panel,
+html body.abs-shell #settingsDrawer.sba-settings-popover {
+    background:rgba(28,29,32,.97) !important; background-image:none !important;
+    border:1px solid var(--abs-shell-border) !important; border-radius:var(--abs-shell-radius) !important;
+    box-shadow:0 16px 48px rgba(0,0,0,.4) !important;
+}
+html body.abs-shell #settingsDrawer .fx-mode-btn { border-radius:9px !important; }
+html body.abs-shell #settingsDrawer { transition:opacity 160ms ease !important; }
+html body.abs-shell.hub-cards-active #cardsAdvancedFilterBtn { display:inline-flex !important; }
+@media (prefers-reduced-motion:reduce) { html body.abs-shell #settingsDrawer { transition:none !important; } }
+html body.abs-shell #abs-main-sidebar .hud-nav-link > span,
+html body.abs-shell #abs-context-sidebar .hud-nav-link > span { max-width:none !important; overflow:visible !important; text-overflow:clip !important; }
+html body.abs-shell.theme-sba #hubHomeSection .hub-showcase-divider { width:100% !important; min-width:0 !important; max-width:100% !important; margin-left:0 !important; margin-right:0 !important; }
+/* Root owns vertical scrolling. The body must not scroll horizontally to focused cards. */
+html:has(body.abs-shell) { overflow-x:clip !important; overflow-y:auto !important; }
+html body.abs-shell { height:auto !important; overflow-x:clip !important; overflow-y:visible !important; }
+html.abs-page-loading body.abs-shell,html body.abs-shell.abs-shell-drawer-open { overflow:hidden !important; }
+html body.abs-shell #hubCardsSection .cards-workspace-actions { max-width:100% !important; min-width:0 !important; flex-wrap:wrap !important; }
+html body.abs-shell #hubCardsSection .cards-workspace-header {
+    box-sizing:border-box !important; width:100% !important; min-width:0 !important; max-width:100% !important;
+    margin-left:0 !important; margin-right:0 !important; left:auto !important; right:auto !important; transform:none !important;
+    background:var(--abs-shell-panel) !important; background-image:none !important; border-radius:var(--abs-shell-radius) !important;
+}
+html body.abs-shell #abs-main-sidebar .hud-nav-link > span,
+html body.abs-shell #abs-context-sidebar .hud-nav-link > span { text-transform:none !important; letter-spacing:0 !important; }
+#abs-navigation-tooltip { position:fixed; z-index:1500; max-width:min(260px,calc(100vw - 16px)); padding:8px 12px; border:1px solid var(--abs-shell-border); border-radius:9px; background:#27282c; color:var(--abs-shell-text); box-shadow:0 8px 24px rgba(0,0,0,.3); font:500 13px/1.4 system-ui,sans-serif; pointer-events:none; }
+#abs-navigation-tooltip[hidden] { display:none; }
+:root[data-abs-nav-collapsed="false"] body.abs-shell #abs-main-sidebar .hud-nav-link > .viewer-nav-label-wrap {
+    display:flex !important; flex:1 1 auto !important; min-width:0; max-width:none !important; overflow:visible !important;
+    align-items:center; justify-content:space-between !important; flex-wrap:nowrap !important; gap:8px;
+}
+html body.abs-shell #abs-main-sidebar .hud-nav-link .viewer-nav-cue {
+    width:12px !important; height:12px !important; padding:0 !important; margin-left:auto !important; background:none !important;
+    flex:0 0 12px !important; transform:rotate(90deg) !important; transform-origin:center center !important;
+}
+@media(max-width:900px) {
+    /* The mobile drawer restores labels while the shared nav remains collapsed. */
+    :root[data-abs-nav-collapsed="true"] body.abs-shell #abs-main-sidebar .hud-nav-link > .viewer-nav-label-wrap {
+        display:flex !important; flex:1 1 auto !important; min-width:0; max-width:none !important; overflow:visible !important;
+        align-items:center; justify-content:space-between !important; flex-wrap:nowrap !important; gap:8px;
+    }
+}
+
+/* Step-two main rail: compact before the controller starts, then reserve the
+   same width as the visible rail in each state. The editor rail stays inset. */
+#abs-main-sidebar {
+    inset:0 auto 0 0 !important;
+    border-radius:0 var(--abs-shell-radius) var(--abs-shell-radius) 0 !important;
+}
+@media (min-width:901px) {
+    body.abs-shell { transition:padding-left var(--abs-nav-motion) !important; }
+    #abs-main-sidebar {
+        width:var(--abs-nav-width) !important;
+        transition:width var(--abs-nav-motion) !important;
+    }
+}
+
+@media (min-width:901px) {
+    body.abs-shell #app.theme-abs-style #top-content .container-1220,
+    body.abs-shell #app.theme-abs-style #layout-abs-style {
+        width:min(93vw,calc(100vw - var(--abs-nav-reserved-width) - var(--abs-context-width,0px) - var(--abs-shell-gap) - var(--abs-shell-gap) - 4px)) !important;
+        max-width:calc(100vw - var(--abs-nav-reserved-width) - var(--abs-context-width,0px) - var(--abs-shell-gap) - var(--abs-shell-gap) - 4px) !important;
+        box-sizing:border-box !important;
+        transition:width var(--abs-nav-motion),max-width var(--abs-nav-motion) !important;
+    }
+}
+
+/* The SBA theme flips its hub logo globally. Keep all shared-shell brand marks
+   upright without changing their image sources or the underlying theme rules. */
+body.abs-shell #abs-main-sidebar .abs-sidebar-brand img,
+body.abs-shell .abs-mobile-shell .abs-mobile-brand img,
+body.abs-shell .sba-settings-brand .nav-center-link img { transform:none !important; }
+
+/* Main rail header and style controls. Keep the logo anchored while its scale
+   and the existing route-specific selector reveal together. */
+#abs-main-sidebar .abs-sidebar-heading {
+    flex-wrap:nowrap; justify-content:flex-start; gap:5px; padding:0 2px 10px 9px;
+}
+#abs-main-sidebar .abs-sidebar-brand { flex:0 0 48px; width:48px; justify-content:flex-start; }
+#abs-main-sidebar .abs-sidebar-brand img {
+    flex:0 0 auto; width:38px !important; max-width:48px !important; height:32px !important; object-position:left center !important;
+    transition:width 240ms cubic-bezier(.2,.8,.2,1),height 240ms cubic-bezier(.2,.8,.2,1),object-position 240ms ease !important;
+}
+.abs-sidebar-style-slot {
+    display:flex; flex:0 0 0; width:0; max-width:0; min-width:0; align-items:center; justify-content:flex-end;
+    overflow:hidden; opacity:0; visibility:hidden; transform:translateX(-6px); pointer-events:none;
+    transition:max-width 240ms cubic-bezier(.2,.8,.2,1),flex-basis 240ms cubic-bezier(.2,.8,.2,1),
+        opacity 150ms ease,transform 220ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 240ms !important;
+}
+:root[data-abs-nav-collapsed="false"] #abs-main-sidebar .abs-sidebar-style-slot:not([hidden]) {
+    flex:0 1 148px; width:auto; max-width:148px; opacity:1; visibility:visible; transform:none; pointer-events:auto;
+    transition:max-width 260ms cubic-bezier(.2,.8,.2,1),flex-basis 260ms cubic-bezier(.2,.8,.2,1),
+        opacity 180ms ease 70ms,transform 220ms cubic-bezier(.2,.8,.2,1) 50ms,visibility 0s !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot[hidden] { display:none !important; }
+:root[data-abs-nav-collapsed="false"] #abs-main-sidebar .abs-sidebar-brand img {
+    width:48px !important; max-width:48px !important; height:42px !important; object-position:left center !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot .hud-theme-stack {
+    display:flex !important; align-items:center !important; gap:3px !important;
+    width:auto !important; min-width:0 !important; max-width:100%; padding:2px !important;
+    background:rgba(0,0,0,.28) !important; border:1px solid var(--abs-shell-border) !important;
+    border-radius:9px !important; box-shadow:none !important; backdrop-filter:none !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot .hud-theme-stack:has(> .abs-hud-theme-btn:nth-child(4)) {
+    display:grid !important; grid-template-columns:repeat(2,44px) !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot .abs-hud-theme-btn {
+    display:inline-flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
+    flex:0 0 44px !important; min-width:44px !important; width:44px !important; min-height:44px !important; height:44px !important;
+    padding:2px !important; gap:2px !important; border-radius:7px !important;
+    font-size:9px !important; line-height:1.05 !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot .hud-btn-logo { max-height:20px !important; max-width:30px !important; }
+#abs-main-sidebar .abs-sidebar-style-slot .hud-btn-indicator { max-width:40px; overflow:hidden; font-size:8.5px !important; line-height:1.05 !important; letter-spacing:0 !important; white-space:nowrap; text-overflow:ellipsis; }
+#abs-main-sidebar .abs-sidebar-style-slot .cards-layout-switcher {
+    display:flex !important; align-items:center !important; justify-content:flex-end !important; gap:3px !important;
+    width:auto !important; min-width:0 !important; max-width:100%; margin:0 !important;
+    font-size:9px !important; line-height:1.1 !important; letter-spacing:0 !important; text-transform:none !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot .cards-layout-switcher > span { flex:0 0 auto; margin:0 2px 0 0 !important; }
+#abs-main-sidebar .abs-sidebar-style-slot .cards-layout-option {
+    flex:0 0 44px !important; min-width:44px !important; width:44px !important; min-height:44px !important; height:44px !important;
+    padding:3px !important; border-radius:8px !important; font-size:8.5px !important; line-height:1 !important; letter-spacing:0 !important;
+}
+#abs-main-sidebar .abs-sidebar-style-slot :is(.cards-layout-option,.abs-hud-theme-btn):focus-visible {
+    outline:2px solid #a8c5ed !important; outline-offset:-2px;
+}
+
+/* Default compact appearance also applies before data attributes are set. The
+   icon stays at one x-position; only label width, gap and opacity move. */
+:root:not([data-abs-nav-collapsed="false"]) #abs-main-sidebar .abs-sidebar-brand { flex-basis:38px; width:38px; }
+:root:not([data-abs-nav-collapsed="false"]) #abs-main-sidebar .abs-sidebar-brand img {
+    width:38px !important; max-width:38px !important; height:32px !important; object-position:left center !important;
+}
+:root[data-abs-nav-collapsed="false"] body.abs-shell #abs-main-sidebar .hud-nav-link {
+    box-sizing:border-box !important; justify-content:flex-start !important; gap:12px !important;
+    padding:7px 8px 7px 14px !important;
+    transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,gap 240ms cubic-bezier(.2,.8,.2,1) !important;
+}
+:root[data-abs-nav-collapsed="false"] body.abs-shell #abs-main-sidebar .hud-nav-link > span {
+    display:block !important; box-sizing:border-box; flex:0 1 auto; min-width:0 !important; max-width:160px !important;
+    overflow:hidden !important; text-overflow:clip !important; white-space:nowrap !important;
+    opacity:1; visibility:visible; transform:none; pointer-events:auto;
+    transition:max-width 260ms cubic-bezier(.2,.8,.2,1),opacity 180ms ease 70ms,
+        transform 220ms cubic-bezier(.2,.8,.2,1) 50ms,visibility 0s !important;
+}
+:root:not([data-abs-nav-collapsed="false"]) body.abs-shell #abs-main-sidebar .hud-nav-link {
+    box-sizing:border-box !important; justify-content:flex-start !important; gap:0 !important;
+    padding:7px 8px 7px 14px !important;
+    transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,gap 240ms cubic-bezier(.2,.8,.2,1) !important;
+}
+:root:not([data-abs-nav-collapsed="false"]) body.abs-shell #abs-main-sidebar .hud-nav-link > span {
+    display:block !important; box-sizing:border-box; flex:0 1 auto; min-width:0 !important; max-width:0 !important;
+    overflow:hidden !important; text-overflow:clip !important; white-space:nowrap !important;
+    opacity:0; visibility:hidden; transform:translateX(-6px); pointer-events:none;
+    transition:max-width 220ms cubic-bezier(.2,.8,.2,1),opacity 120ms ease,transform 180ms cubic-bezier(.2,.8,.2,1),
+        visibility 0s linear 180ms !important;
+}
+/* Footer pin shares the former collapse control, with a visible label only
+   when there is room for it. aria-pressed exposes the pinned state to sighted users. */
+#abs-main-sidebar .abs-sidebar-footer {
+    flex:0 0 auto; margin-top:auto; padding-top:8px; border-top:1px solid var(--abs-shell-border);
+}
+#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin] {
+    display:flex !important; align-items:center; justify-content:flex-start; gap:12px;
+    flex:0 0 auto !important;
+    width:100% !important; min-width:0; min-height:42px; height:auto !important; padding:6px 8px 6px 14px !important;
+    border:1px solid transparent !important; border-radius:9px !important;
+    background:transparent !important; color:var(--abs-shell-muted) !important;
+    cursor:pointer; text-align:left;
+    transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,gap 240ms cubic-bezier(.2,.8,.2,1) !important;
+}
+#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin] svg {
+    flex:0 0 20px; width:20px !important; height:20px !important; fill:none; stroke:currentColor; stroke-width:1.7;
+}
+#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin]:hover,
+#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin][aria-pressed="true"] {
+    border-color:var(--abs-shell-border) !important; background:rgba(255,255,255,.065) !important;
+    color:var(--abs-shell-text) !important;
+}
+#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin]:focus-visible {
+    outline:2px solid #a8c5ed !important; outline-offset:2px;
+}
+#abs-main-sidebar .abs-nav-pin-label {
+    display:block; min-width:0; max-width:124px; overflow:hidden; white-space:nowrap; font:500 13px/1.3 system-ui,sans-serif;
+    opacity:1; visibility:visible; transform:none;
+    transition:max-width 240ms cubic-bezier(.2,.8,.2,1),opacity 170ms ease 70ms,
+        transform 200ms cubic-bezier(.2,.8,.2,1) 50ms,visibility 0s !important;
+}
+:root:not([data-abs-nav-collapsed="false"]) #abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin] {
+    justify-content:flex-start; gap:0; padding:6px 8px 6px 14px !important;
+}
+:root:not([data-abs-nav-collapsed="false"]) #abs-main-sidebar .abs-nav-pin-label {
+    max-width:0; opacity:0; visibility:hidden; transform:translateX(-6px); pointer-events:none;
+    transition:max-width 200ms cubic-bezier(.2,.8,.2,1),opacity 120ms ease,transform 160ms cubic-bezier(.2,.8,.2,1),
+        visibility 0s linear 160ms !important;
+}
+
+@media (max-width:900px) {
+    #abs-main-sidebar.abs-drawer-open .abs-sidebar-heading {
+        flex-wrap:nowrap; justify-content:space-between; gap:8px;
+    }
+    #abs-main-sidebar.abs-drawer-open .abs-sidebar-brand { flex:0 0 48px; width:48px; justify-content:flex-start; }
+    #abs-main-sidebar.abs-drawer-open .abs-sidebar-brand img {
+        width:48px !important; max-width:48px !important; height:42px !important; object-position:left center !important;
+    }
+    #abs-main-sidebar.abs-drawer-open .abs-sidebar-style-slot:not([hidden]) {
+        display:flex !important; flex:0 1 148px; width:auto; max-width:148px; opacity:1; visibility:visible;
+        transform:none; pointer-events:auto; transition:none !important;
+    }
+    #abs-main-sidebar.abs-drawer-open .hud-nav-link > span {
+        display:block !important; max-width:none !important; overflow:visible !important; text-overflow:clip !important;
+        opacity:1; visibility:visible; transform:none; pointer-events:auto; transition:none !important;
+    }
+    #abs-main-sidebar.abs-drawer-open .hud-nav-link { gap:12px !important; }
+    #abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin] { display:none !important; }
+    #abs-main-sidebar:not(.abs-drawer-open),#abs-main-sidebar:not(.abs-drawer-open) *,
+    #abs-context-sidebar:not(.abs-drawer-open),#abs-context-sidebar:not(.abs-drawer-open) * { visibility:hidden !important; }
+}
+@media (prefers-reduced-motion:reduce) {
+    body.abs-shell,#abs-main-sidebar,#abs-main-sidebar .abs-sidebar-brand img,
+    #abs-main-sidebar .abs-sidebar-style-slot,#abs-main-sidebar .hud-nav-link,
+    #abs-main-sidebar .hud-nav-link > span,#abs-main-sidebar .abs-sidebar-footer [data-abs-nav-pin],
+    #abs-main-sidebar .abs-nav-pin-label { transition:none !important; }
+}
+
+/* Editor context rail mirrors the main rail, but opens from the viewport's
+   right edge. Hover/focus expands over the page; only an explicit pin reserves
+   the full width. */
+@media (min-width:901px) {
+    html:has(body.abs-context-page) {
+        --abs-context-width:var(--abs-context-collapsed);
+        --abs-context-rail-width:var(--abs-context-collapsed);
+    }
+    html[data-abs-context-pinned="true"]:has(body.abs-context-page) {
+        --abs-context-width:var(--abs-context-expanded);
+        --abs-context-rail-width:var(--abs-context-expanded);
+    }
+    body.abs-shell { transition:padding-left var(--abs-nav-motion),padding-right var(--abs-nav-motion) !important; }
+    #abs-context-sidebar {
+        inset:8px 0 8px auto !important;
+        width:var(--abs-context-collapsed) !important;
+        border-radius:var(--abs-shell-radius) 0 0 var(--abs-shell-radius) !important;
+        transition:width var(--abs-nav-motion) !important;
+    }
+    #abs-context-sidebar .abs-context-close { display:none !important; }
+    #abs-context-sidebar:is(:hover,:focus-within),
+    html[data-abs-context-pinned="true"] #abs-context-sidebar,
+    html[data-abs-context-panel-open="true"] #abs-context-sidebar {
+        width:var(--abs-context-expanded) !important;
+    }
+
+    #abs-context-sidebar .abs-sidebar-heading {
+        flex-direction:row-reverse;
+        justify-content:center;
+        gap:0;
+        padding:0 0 10px;
+        transition:gap var(--abs-nav-motion),padding var(--abs-nav-motion) !important;
+    }
+    :root body.abs-shell #abs-context-sidebar:is(:hover,:focus-within) .abs-sidebar-heading,
+    html:root[data-abs-context-pinned="true"] body.abs-shell #abs-context-sidebar .abs-sidebar-heading,
+    html:root[data-abs-context-panel-open="true"] body.abs-shell #abs-context-sidebar .abs-sidebar-heading {
+        justify-content:flex-start;
+        gap:8px;
+    }
+    #abs-context-sidebar .abs-context-title {
+        display:block !important;
+        flex:0 1 auto;
+        min-width:0;
+        max-width:0;
+        overflow:hidden;
+        white-space:nowrap;
+        text-align:right;
+        opacity:0;
+        visibility:hidden;
+        transform:translateX(6px);
+        transition:max-width 220ms cubic-bezier(.2,.8,.2,1),opacity 120ms ease,
+            transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 180ms !important;
+    }
+    #abs-context-sidebar .hud-nav-link {
+        flex-direction:row-reverse !important;
+        justify-content:center !important;
+        gap:0 !important;
+        padding:7px 8px !important;
+        text-align:right;
+        transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,gap 240ms cubic-bezier(.2,.8,.2,1) !important;
+    }
+    html body.abs-shell #abs-context-sidebar .hud-nav-link > span {
+        display:block !important;
+        box-sizing:border-box;
+        flex:0 1 auto;
+        min-width:0 !important;
+        max-width:0 !important;
+        overflow:hidden !important;
+        text-overflow:clip !important;
+        white-space:nowrap !important;
+        opacity:0;
+        visibility:hidden;
+        transform:translateX(6px);
+        pointer-events:none;
+        transition:max-width 220ms cubic-bezier(.2,.8,.2,1),opacity 120ms ease,
+            transform 180ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 180ms !important;
+    }
+    #abs-context-sidebar:is(:hover,:focus-within) .abs-context-title,
+    html[data-abs-context-pinned="true"] #abs-context-sidebar .abs-context-title,
+    html[data-abs-context-panel-open="true"] #abs-context-sidebar .abs-context-title {
+        max-width:150px;
+        opacity:1 !important;
+        visibility:visible !important;
+        transform:none !important;
+        transition:max-width 240ms cubic-bezier(.2,.8,.2,1),opacity 170ms ease 50ms,
+            transform 200ms cubic-bezier(.2,.8,.2,1) 30ms,visibility 0s !important;
+    }
+    :root body.abs-shell #abs-context-sidebar:is(:hover,:focus-within) .hud-nav-link,
+    html:root[data-abs-context-pinned="true"] body.abs-shell #abs-context-sidebar .hud-nav-link,
+    html:root[data-abs-context-panel-open="true"] body.abs-shell #abs-context-sidebar .hud-nav-link {
+        justify-content:flex-start !important;
+        gap:12px !important;
+        padding:7px 14px 7px 8px !important;
+    }
+    :root body.abs-shell #abs-context-sidebar:is(:hover,:focus-within) .hud-nav-link > span,
+    html:root[data-abs-context-pinned="true"] body.abs-shell #abs-context-sidebar .hud-nav-link > span,
+    html:root[data-abs-context-panel-open="true"] body.abs-shell #abs-context-sidebar .hud-nav-link > span {
+        max-width:150px !important;
+        opacity:1 !important;
+        visibility:visible !important;
+        transform:none !important;
+        pointer-events:auto !important;
+        transition:max-width 240ms cubic-bezier(.2,.8,.2,1),opacity 170ms ease 50ms,
+            transform 200ms cubic-bezier(.2,.8,.2,1) 30ms,visibility 0s !important;
+    }
+
+    #abs-context-sidebar .abs-context-footer {
+        flex:0 0 auto;
+        margin-top:auto;
+        padding-top:8px;
+        border-top:1px solid var(--abs-shell-border);
+    }
+    #abs-context-sidebar .abs-context-footer [data-abs-context-pin] {
+        display:flex !important;
+        flex-direction:row-reverse;
+        align-items:center;
+        justify-content:flex-start;
+        gap:0;
+        flex:0 0 auto !important;
+        width:100% !important;
+        min-width:0;
+        min-height:42px;
+        height:auto !important;
+        padding:6px 8px !important;
+        border:1px solid transparent !important;
+        border-radius:9px !important;
+        background:transparent !important;
+        color:var(--abs-shell-muted) !important;
+        cursor:pointer;
+        transition:background-color 120ms ease,border-color 120ms ease,color 120ms ease,gap 240ms cubic-bezier(.2,.8,.2,1) !important;
+    }
+    #abs-context-sidebar .abs-context-footer [data-abs-context-pin] svg {
+        flex:0 0 20px !important;
+        width:20px !important;
+        height:20px !important;
+        padding:0 !important;
+        border-radius:0 !important;
+        background:transparent !important;
+        color:currentColor !important;
+        fill:none !important;
+        stroke:currentColor !important;
+        stroke-width:1.6 !important;
+        stroke-linecap:round;
+        stroke-linejoin:round;
+    }
+    #abs-context-sidebar .abs-context-footer [data-abs-context-pin]:hover,
+    #abs-context-sidebar .abs-context-footer [data-abs-context-pin][aria-pressed="true"] {
+        border-color:var(--abs-shell-border) !important;
+        background:rgba(255,255,255,.065) !important;
+        color:var(--abs-shell-text) !important;
+    }
+    #abs-context-sidebar .abs-context-pin-label {
+        display:block;
+        min-width:0;
+        max-width:0;
+        overflow:hidden;
+        white-space:nowrap;
+        text-align:right;
+        font:500 13px/1.3 system-ui,sans-serif;
+        opacity:0;
+        visibility:hidden;
+        transform:translateX(6px);
+        pointer-events:none;
+        transition:max-width 200ms cubic-bezier(.2,.8,.2,1),opacity 120ms ease,
+            transform 160ms cubic-bezier(.2,.8,.2,1),visibility 0s linear 160ms !important;
+    }
+    :root body.abs-shell #abs-context-sidebar:is(:hover,:focus-within) .abs-context-footer [data-abs-context-pin],
+    html:root[data-abs-context-pinned="true"] body.abs-shell #abs-context-sidebar .abs-context-footer [data-abs-context-pin],
+    html:root[data-abs-context-panel-open="true"] body.abs-shell #abs-context-sidebar .abs-context-footer [data-abs-context-pin] {
+        gap:12px;
+        padding:6px 8px 6px 14px !important;
+    }
+    :root body.abs-shell #abs-context-sidebar:is(:hover,:focus-within) .abs-context-pin-label,
+    html:root[data-abs-context-pinned="true"] body.abs-shell #abs-context-sidebar .abs-context-pin-label,
+    html:root[data-abs-context-panel-open="true"] body.abs-shell #abs-context-sidebar .abs-context-pin-label {
+        max-width:124px;
+        opacity:1 !important;
+        visibility:visible !important;
+        transform:none !important;
+        pointer-events:auto !important;
+        transition:max-width 240ms cubic-bezier(.2,.8,.2,1),opacity 170ms ease 70ms,
+            transform 200ms cubic-bezier(.2,.8,.2,1) 50ms,visibility 0s !important;
+    }
+    #abs-context-sidebar .hud-dropdown-wrap { position:relative; width:100%; }
+    #abs-context-sidebar .hud-dropdown-menu {
+        position:absolute !important;
+        left:auto !important;
+        right:calc(100% + 12px) !important;
+        top:0 !important;
+        width:min(220px,calc(100vw - 16px)) !important;
+        max-height:calc(100dvh - 24px) !important;
+        overflow:auto !important;
+        z-index:1200 !important;
+    }
+}
+
+@media (max-width:900px) {
+    #abs-context-sidebar {
+        inset:0 0 0 auto !important;
+        width:min(280px,calc(100vw - 48px)) !important;
+        border-radius:var(--abs-shell-radius) 0 0 var(--abs-shell-radius) !important;
+    }
+    #abs-context-sidebar .abs-sidebar-heading {
+        flex-direction:row;
+        justify-content:space-between;
+        gap:8px;
+        padding:0 2px 10px;
+    }
+    #abs-context-sidebar .abs-context-title { text-align:left; }
+    #abs-context-sidebar .abs-context-close {
+        display:flex !important;
+        flex:0 0 36px;
+        align-items:center;
+        justify-content:center;
+        width:36px;
+        height:36px;
+        padding:7px;
+        border:1px solid var(--abs-shell-border);
+        border-radius:9px;
+        background:rgba(255,255,255,.04);
+        color:var(--abs-shell-muted);
+        cursor:pointer;
+        margin-left:auto;
+    }
+    #abs-context-sidebar .abs-context-close:hover,
+    #abs-context-sidebar .abs-context-close:focus-visible {
+        background:rgba(255,255,255,.09);
+        color:var(--abs-shell-text);
+    }
+    #abs-context-sidebar .abs-context-close svg {
+        display:block; width:100%; height:100%; fill:none; stroke:currentColor;
+        stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round;
+    }
+    #abs-context-sidebar .abs-context-title {
+        flex:1 1 auto;
+        max-width:none;
+        overflow:visible;
+        opacity:1;
+        visibility:visible;
+        transform:none;
+    }
+    #abs-context-sidebar .hud-nav-link {
+        flex-direction:row-reverse !important;
+        justify-content:flex-start !important;
+        gap:12px !important;
+        padding:7px 8px !important;
+    }
+    html body.abs-shell #abs-context-sidebar .hud-nav-link > span {
+        display:block !important;
+        max-width:none !important;
+        overflow:visible !important;
+        opacity:1;
+        visibility:visible;
+        transform:none;
+        pointer-events:auto;
+        transition:none !important;
+    }
+    #abs-context-sidebar .abs-context-footer { display:none !important; }
+}
+
+@media (prefers-reduced-motion:reduce) {
+    body.abs-shell,
+    #abs-context-sidebar,
+    #abs-context-sidebar .abs-sidebar-heading,
+    #abs-context-sidebar .abs-context-title,
+    #abs-context-sidebar .hud-nav-link,
+    #abs-context-sidebar .hud-nav-link > span,
+    #abs-context-sidebar .abs-context-footer [data-abs-context-pin],
+    #abs-context-sidebar .abs-context-pin-label { transition:none !important; }
+}
+
+/* Home backgrounds paint to the viewport; its live foreground keeps the
+   shared content reservation. Percentage offsets follow the actual animated
+   content width, so pinning cannot expose a temporary edge gap. */
+html body.abs-shell #hubHomeSection { position:relative; isolation:isolate; }
+html body.abs-shell #hubHomeSection::before {
+    content:''; position:fixed; inset:0; z-index:-1;
+    background:inherit; pointer-events:none;
+}
+html body.abs-shell #hubHomeSection .hub-showcase-divider {
+    position:relative !important; overflow:visible !important; background:transparent !important;
+}
+html body.abs-shell #hubHomeSection .hub-showcase-divider::before {
+    content:''; display:block !important; position:absolute; top:0; bottom:0;
+    left:calc(100% - 100vw + var(--abs-shell-gap)); width:100vw;
+    background:rgba(20,21,24,.82); pointer-events:none; z-index:0;
+}
+html body.abs-shell #hubHomeSection .dot-character-home-player { overflow:visible; }
+html body.abs-shell #hubHomeSection .dot-character-background-canvas {
+    position:absolute; top:0; left:calc(100% - 100vw + var(--abs-shell-gap));
+    display:block; width:100vw !important; height:100% !important;
+    max-width:none !important; max-height:none !important;
+    z-index:0; pointer-events:none;
+}
+html body.abs-shell #hubHomeSection .dot-character-home-canvas { z-index:1; }
+html body.abs-shell #hubHomeSection #homeCardGrid.sba-showcase-carousel {
+    overflow:hidden !important; background:transparent !important; isolation:isolate;
+}
+html body.abs-shell #hubHomeSection .abs-showcase-stage {
+    position:relative; display:flow-root; width:100%; min-width:0;
+}
+html body.abs-shell #hubHomeSection .abs-showcase-stage > #homeCardGrid { z-index:1; }
+html body.abs-shell #hubHomeSection .sba-showcase-ambience {
+    left:calc(100% - 100vw + var(--abs-shell-gap)); right:auto; width:100vw;
+    bottom:34px; background:rgba(7,12,29,.54);
+}
+@media (max-width:900px) {
+    /* The tool stylesheet's two-class reset must not cover the fixed bar. */
+    html body.abs-shell.editor-tool-page { padding-top:72px !important; }
+}
+@media (max-width:760px) {
+    /* This original mobile band has a 1px border on each side. */
+    html body.abs-shell #hubHomeSection .hub-showcase-divider::before {
+        left:calc(100% - 100vw + var(--abs-shell-gap) + 1px);
+    }
+}
+
+/* Home's section frames share the viewport; their live foreground keeps the
+   measured content column. Container units follow animated body padding. */
+html body.abs-shell:has(#hubHomeSection:not([style*="display: none"])) { padding-top:0 !important; }
+html body.abs-shell:has(#hubHomeSection:not([style*="display: none"])) #hubMain { margin-top:0 !important; }
+html body.abs-shell.theme-sba #hubHomeSection.hub-home-view {
+    padding-top:0 !important; container-type:inline-size;
+    --abs-home-safe-left:calc(100vw - 100cqw - var(--abs-shell-gap));
+    --abs-home-carousel-gap:42px;
+}
+html body.abs-shell.theme-sba #hubHomeSection.hub-home-view :is(.sba-pixel-logo-band,.hub-showcase-divider,.sba-showcase-section,.dokkan-timeline-panel) {
+    box-sizing:border-box !important; width:100vw !important; max-width:none !important;
+    margin-left:calc(100% - 100vw + var(--abs-shell-gap)) !important;
+    margin-right:0 !important;
+}
+/* Fit the original logo artwork at the top instead of retaining a blank strip. */
+html body.abs-shell #hubHomeSection .sba-pixel-logo-band {
+    height:auto !important; padding-top:0;
+    padding-left:var(--abs-home-safe-left); padding-right:var(--abs-shell-gap);
+    z-index:5;
+}
+html body.abs-shell #hubHomeSection .sba-pixel-logo-band:has(.is-alt-home-logo) { padding-top:13px; }
+html body.abs-shell #hubHomeSection .dot-character-home-player {
+    left:var(--abs-home-safe-left); right:auto; width:100cqw;
+}
+html body.abs-shell #hubHomeSection .hub-showcase-divider::before { left:0; width:100%; }
+html body.abs-shell #hubHomeSection .sba-showcase-anchor {
+    width:100cqw !important; margin-left:var(--abs-home-safe-left) !important;
+}
+html body.abs-shell #hubHomeSection .abs-showcase-stage { width:100vw; }
+html body.abs-shell #hubHomeSection #homeCardGrid.sba-showcase-carousel {
+    width:100cqw !important; max-width:none !important;
+    margin-left:var(--abs-home-safe-left) !important;
+    border-color:transparent !important; box-shadow:none !important;
+}
+/* Move the original outer frame/shadows to the viewport-sized stage while
+   retaining the carousel's border thickness, clipping and card coordinates. */
+html body.abs-shell #hubHomeSection .abs-showcase-stage::before {
+    content:''; position:absolute; top:0; left:0; right:0;
+    bottom:var(--abs-home-carousel-gap); box-sizing:border-box;
+    border-top:1px solid rgba(255,255,255,.17); border-bottom:1px solid rgba(255,255,255,.17);
+    box-shadow:inset 0 18px 34px rgba(0,0,0,.28),inset 0 -18px 28px rgba(0,0,0,.25),inset 0 1px 0 rgba(255,255,255,.16);
+    z-index:2; pointer-events:none;
+}
+html body.abs-shell #hubHomeSection .sba-showcase-ambience {
+    left:0; width:100%; bottom:var(--abs-home-carousel-gap);
+}
+html body.abs-shell #hubHomeSection .dokkan-timeline-panel {
+    padding-left:calc(var(--abs-home-safe-left) + clamp(14px,4vw,64px)) !important;
+    padding-right:calc(var(--abs-shell-gap) + clamp(14px,4vw,64px)) !important;
+}
+@media (min-width:761px) {
+    html body.abs-shell #hubHomeSection .dokkan-timeline-panel .timeline-panel-header {
+        left:calc(var(--abs-home-safe-left) + clamp(14px,4vw,64px)) !important;
+        right:calc(var(--abs-shell-gap) + clamp(14px,4vw,64px)) !important;
+    }
+}
+@media (max-width:900px) {
+    html body.abs-shell.theme-sba #hubHomeSection.hub-home-view { --abs-home-carousel-gap:34px; }
+    /* Content clears the existing fixed 56px bar; its section starts at y0. */
+    html body.abs-shell #hubHomeSection .sba-pixel-logo-band { padding-top:56px; }
+    html body.abs-shell #hubHomeSection .sba-pixel-logo-band:has(.is-alt-home-logo) { padding-top:77px; }
+}
+@media (max-width:760px) {
+    html body.abs-shell #hubHomeSection .hub-showcase-divider::before { left:-1px; width:100vw; }
+    html body.abs-shell #hubHomeSection .dot-character-home-player { left:calc(var(--abs-home-safe-left) - 1px); }
+}
+
+/* News uses the same viewport-sized shell as Cards without changing other views. */
+html body.abs-shell.hub-news-active {
+    padding-top:0 !important;
+    padding-bottom:0 !important;
+    container-type:inline-size;
+    --news-safe-left:calc(100vw - 100cqw - var(--abs-shell-gap, 16px));
+    --news-top-clearance:0px;
+}
+html body.abs-shell.hub-news-active #hubMain.hub-main-container {
+    width:100% !important;
+    min-width:0 !important;
+    max-width:100% !important;
+    margin:0 !important;
+    padding:0 !important;
+}
+html body.abs-shell.hub-news-active section#hubNewsSection.hub-news-view {
+    display:flex !important;
+    flex-direction:column;
+    box-sizing:border-box !important;
+    width:100vw !important;
+    max-width:none !important;
+    min-height:calc(100dvh - var(--news-top-clearance));
+    margin:0 0 0 calc(-1 * var(--news-safe-left)) !important;
+    padding:0 !important;
+    border-radius:0 !important;
+    background:var(--abs-shell-panel) !important;
+}
+@media (max-width:900px) {
+    html body.abs-shell.hub-news-active {
+        padding-top:72px !important;
+        --news-top-clearance:72px;
+    }
+}
+
+/* Support Memory is viewport-wide and keeps the compact reservation during
+   hover/focus; only the pinned root variable expands the page reservation. */
+html body.abs-shell:has(#support-memory-page) #support-memory-page {
+    max-width:none !important;
+    margin-left:calc(-1 * var(--sm-safe-left)) !important;
+    margin-right:0 !important;
+}

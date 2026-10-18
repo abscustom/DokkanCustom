@@ -19,6 +19,13 @@ html, body {
     background: #0b0f19 !important;
 }
 
+/* Carry the native Info canvas through the shell's viewport gutters.
+   Navigation reservations and all card/container geometry remain separate. */
+html:has(body.abs-shell.theme-dokkaninfo),
+body.abs-shell.theme-dokkaninfo {
+    background: #0b0f19 !important;
+}
+
 /* Info skill targets sit inside padded Bootstrap columns; cancel that gutter
    so attacks align with the other full-width Dokkan Info sections. */
 #layout-dokkaninfo #sa-insert-spot,

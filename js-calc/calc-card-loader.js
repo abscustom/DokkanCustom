@@ -745,6 +745,9 @@ function getCustomCardClassFromDoc(doc, htmlText) {
 }
 
 async function loadCustomCardsForCalculator() {
+    if (window.CardContent?.enabled()) {
+        return (await window.CardContent.listCards()).map(window.CardContent.toCatalogCard);
+    }
     const cachedCustom = localStorage.getItem('hub_cached_custom_only');
     let customCardsArray = [];
     if (cachedCustom) {
@@ -777,6 +780,7 @@ async function loadCustomCardsForCalculator() {
         }
 
         const customCards = [];
+        let observedUnavailableCard = false;
         for (const folder of cardFolders) {
             try {
                 const folderName = folder.name;
@@ -791,6 +795,10 @@ async function loadCustomCardsForCalculator() {
                 const doc = new DOMParser().parseFromString(htmlText, 'text/html');
 
                 let cardJson = null;
+                if (['archived', 'draft'].includes(doc.querySelector('meta[name="abs-card-state"]')?.content)) {
+                    observedUnavailableCard = true;
+                    continue;
+                }
                 const cardDataEl = doc.querySelector('#card-data, #dokkan-project-data');
                 if (cardDataEl) {
                     try { cardJson = JSON.parse(cardDataEl.textContent); } catch (e) {}
@@ -842,7 +850,7 @@ async function loadCustomCardsForCalculator() {
             } catch (e) {}
         }
 
-        if (customCards.length > 0) {
+        if (customCards.length > 0 || observedUnavailableCard) {
             try { localStorage.setItem('hub_cached_custom_only', JSON.stringify(customCards)); } catch(e) {}
             return customCards;
         }
@@ -852,21 +860,62 @@ async function loadCustomCardsForCalculator() {
     }
 }
 
-function openUnitPickerModal() {
+const CALCULATOR_UNIT_PICKER_OPTIONS = Object.freeze({
+    title: 'Select Unit',
+    searchLabel: 'Search units',
+    presentation: 'abs-calculator',
+    origin: '#abs-main-sidebar .hud-nav-link[aria-label="Calculator"] .abs-nav-icon'
+});
+
+function getCalculatorUnitPicker() {
     const modal = document.getElementById('unitPickerModal');
-    if (modal) {
-        modal.style.display = 'flex';
-        if (allPickerCards.length === 0) {
-            initUnitPickerDatabase().then(() => renderPickerGrid());
-        } else {
-            renderPickerGrid();
-        }
+    const api = window.DokkanUnitPicker;
+    if (modal && typeof api?.enhance === 'function') api.enhance(modal, CALCULATOR_UNIT_PICKER_OPTIONS);
+    return { modal, api };
+}
+
+function openUnitPickerModal() {
+    const { modal, api } = getCalculatorUnitPicker();
+    if (!modal) return;
+
+    if (typeof api?.openEnhanced === 'function') api.openEnhanced(modal.id, CALCULATOR_UNIT_PICKER_OPTIONS);
+    else modal.style.display = 'flex';
+
+    if (allPickerCards.length === 0) {
+        initUnitPickerDatabase().then(() => renderPickerGrid());
+    } else {
+        renderPickerGrid();
     }
 }
 
-function closeUnitPickerModal() {
+function closeUnitPickerModal(event) {
     const modal = document.getElementById('unitPickerModal');
-    if (modal) modal.style.display = 'none';
+    if (!modal) return;
+
+    const reason = event?.target === modal ? 'backdrop' : 'dismiss';
+    const closed = window.DokkanUnitPicker?.close?.(modal.id, { reason });
+    if (!closed) modal.style.display = 'none';
+}
+
+function openCalculatorUnitPickerOnEntry(required) {
+    const { modal, api } = getCalculatorUnitPicker();
+    if (!modal || typeof api?.openOnEntry !== 'function') return false;
+
+    const config = { id: modal.id, ...CALCULATOR_UNIT_PICKER_OPTIONS };
+    const opened = api.openOnEntry(config, {
+        key: 'calculator-primary-unit',
+        required,
+        hasValidSelection: () => {
+            const meta = window.currentLoadedCardMeta;
+            const selectedId = meta?.cardItemMeta?.id ?? meta?.cardId;
+            return selectedId != null && String(selectedId).trim() !== '';
+        },
+        // Calculator Draft mode edits a selected card; it has no unitless draft state.
+        intentionalDraft: false
+    });
+
+    if (opened) renderPickerGrid();
+    return Boolean(opened);
 }
 
 function setPickerSource(src) {
@@ -921,32 +970,36 @@ function renderPickerGrid() {
         const fallbackUrls = isCustom && media
             ? media.escapeHtml(JSON.stringify((c.thumbFallbacks || []).map(url => media.resolveCustomMediaUrl(url, c.cardUrl)).filter(Boolean)))
             : '';
-        const accessibleName = `${c.name || 'Unknown unit'}, ${c.rarity || 'unknown rarity'}, ${typeKeyForCard(c.type)}${c.isTransformed ? ', transformed form' : ''}${isCustom ? ', custom card' : ''}`;
+        const awakeningState = c.isSeza ? 'Super Extreme Z-Awakened' : (c.isEza ? 'Extreme Z-Awakened' : '');
+        const accessibleStates = [
+            awakeningState,
+            c.isTransformed ? 'transformed form' : '',
+            isCustom ? 'custom card' : ''
+        ].filter(Boolean).join(', ');
+        const accessibleName = `${c.name || 'Unknown unit'}, ${c.rarity || 'unknown rarity'}, ${typeKeyForCard(c.type)}${accessibleStates ? `, ${accessibleStates}` : ''}`;
         const safeAccessibleName = media ? media.escapeHtml(accessibleName) : accessibleName.replace(/[&<>"']/g, '');
         const tooltipText = `${c.name || 'Unknown unit'} · ${c.rarity || 'unknown rarity'} · ${typeKeyForCard(c.type)}`;
         const safeTooltipText = media ? media.escapeHtml(tooltipText) : tooltipText.replace(/[&<>"']/g, '');
         const frameSrc = `${CALC_ASSET_URL}frame_${c.type || 'agl'}.png`;
 
-        // Top-Left Purple Form Badge
-        const transBadge = c.isTransformed ? `<span style="position: absolute; top: -3px; left: -3px; background: linear-gradient(135deg, #a855f7 0%, #7e22ce 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">FORM</span>` : '';
-        
-        // Bottom-Left Cyan Custom Badge
-        const customBadge = c.source === 'custom' ? `<span style="position: absolute; bottom: -3px; left: -3px; background: linear-gradient(135deg, #0ea5e9 0%, #0369a1 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.6); letter-spacing: 0.4px;">CUSTOM</span>` : '';
-
-        // Top-Right SEZA / EZA Badge
-        const sezaBadge = c.isSeza ? `<span style="position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #f43f5e 0%, #e11d48 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">SEZA</span>` : (c.isEza ? `<span style="position: absolute; top: -3px; right: -3px; background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%); color: #fff; font-size: 6.5px; font-weight: 900; padding: 1px 3.5px; border-radius: 4px; z-index: 10; box-shadow: 0 1px 3px rgba(0,0,0,0.5);">EZA</span>` : '');
+        const pickerStates = [];
+        if (isCustom) pickerStates.push(['custom', 'CUSTOM']);
+        if (c.isSeza) pickerStates.push(['seza', 'SEZA']);
+        else if (c.isEza) pickerStates.push(['eza', 'EZA']);
+        if (c.isTransformed) pickerStates.push(['form', 'FORM']);
+        const stateBadges = pickerStates.length
+            ? `<span class="picker-state-badges" aria-hidden="true">${pickerStates.map(([state, label]) => `<span class="picker-state-badge" data-state="${state}">${label}</span>`).join('')}</span>`
+            : '';
 
         const typeKey = (c.type || 'agl').toLowerCase();
         const typeClass = `picker-type-${typeKey}`;
 
         return `
-        <button type="button" class="picker-unit-card ${typeClass}" data-type="${typeKey}" aria-label="${safeAccessibleName}" data-picker-tooltip="${safeTooltipText}" onclick="selectUnitFromPicker(${i})">
+        <button type="button" class="picker-unit-card ${typeClass}" data-type="${typeKey}" data-source="${isCustom ? 'custom' : 'official'}" data-is-transformed="${Boolean(c.isTransformed)}" data-is-eza="${Boolean(c.isEza)}" data-is-seza="${Boolean(c.isSeza)}" aria-label="${safeAccessibleName}" data-picker-tooltip="${safeTooltipText}" onclick="selectUnitFromPicker(${i})">
             <div class="picker-thumb-wrapper">
-                ${transBadge}
-                ${customBadge}
-                ${sezaBadge}
                 <img class="picker-frame" src="${frameSrc}" loading="lazy" alt="" aria-hidden="true">
                 <img class="picker-thumb${isCustom ? ' is-fallback-thumb' : ''}" src="${media ? media.escapeHtml(circleUrl) : circleUrl}" ${isCustom ? `data-picker-fallbacks="${fallbackUrls}"` : ''} loading="lazy" alt="" aria-hidden="true" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}', ${isCustom})">
+                ${stateBadges}
             </div>
         </button>`;
     }).join('\n');
@@ -1078,6 +1131,7 @@ async function loadPickerCardIntoCalculator(cardItem, forcedMode = null) {
 // (custom). Resolve it after the picker database is ready and load it directly.
 window.loadCalculatorCardFromUrl = async function() {
     const params = new URLSearchParams(window.location.search);
+    const linkedCardRequested = Boolean(params.get('custom') || params.get('card') || params.get('id'));
     const customPath = String(params.get('custom') || '').trim().replace(/^\/+|\/+$/g, '');
     const officialId = String(params.get('card') || params.get('id') || '').trim();
     const requestedMode = String(params.get('mode') || '').toLowerCase();
@@ -1113,7 +1167,11 @@ window.loadCalculatorCardFromUrl = async function() {
         }
     }
 
-    if (cardItem) await loadPickerCardIntoCalculator(cardItem, forcedMode);
+    try {
+        if (cardItem) await loadPickerCardIntoCalculator(cardItem, forcedMode);
+    } finally {
+        openCalculatorUnitPickerOnEntry(!linkedCardRequested);
+    }
 };
 
 function extractLinkBuffsFromDB(linkName, linkItem = null, targetLevel = (window.currentLinkLevel || 10)) {
@@ -1845,16 +1903,26 @@ window.openFormPickerModal = function() {
         </button>`;
     }).join('\n');
 
-    modal.style.display = 'flex';
+    const pickerOptions = {
+        title: 'Select Transformation Form',
+        closeLabel: 'Close transformation form picker'
+    };
+    const picker = window.DokkanUnitPicker;
+    if (typeof picker?.openEnhanced === 'function') picker.openEnhanced(modal.id, pickerOptions);
+    else modal.style.display = 'flex';
 };
 
-window.closeFormPickerModal = function() {
+window.closeFormPickerModal = function(event, options = {}) {
     const modal = document.getElementById('calc-form-picker-modal');
-    if (modal) modal.style.display = 'none';
+    if (!modal) return;
+
+    const reason = options.reason || (event?.target === modal ? 'backdrop' : 'dismiss');
+    const closed = window.DokkanUnitPicker?.close?.(modal.id, { ...options, reason });
+    if (!closed) modal.style.display = 'none';
 };
 
 window.selectFormFromPicker = function(formCardId) {
-    window.closeFormPickerModal();
+    window.closeFormPickerModal(null, { restoreFocus: false, reason: 'select' });
     if (!window.currentFamilyForms) return;
     const target = window.currentFamilyForms.find(f => parseInt(f.id, 10) === parseInt(formCardId, 10));
     if (target) {
@@ -1866,6 +1934,9 @@ window.selectFormFromPicker = function(formCardId) {
    CUSTOM CARD LOADER
    ========================================================================== */
 async function loadCustomCardDocIntoCalculator(cardItem) {
+    if (cardItem.contentSource === 'database') {
+        cardItem = await window.CardContent.calculatorCard(cardItem);
+    }
     const initialActionBox = document.getElementById('calc-initial-action-box');
     if (initialActionBox) initialActionBox.style.display = 'none';
 
@@ -2066,6 +2137,21 @@ async function loadCustomCardDocIntoCalculator(cardItem) {
         const tempDiv = document.createElement('div');
         if (cardData.activeBlocksHTML?.length) {
             tempDiv.innerHTML = cardData.activeBlocksHTML.join('');
+        } else if (cardData.inputs?.['input-active-name'] && cardItem.contentSource === 'database') {
+            const block = document.createElement('div');
+            block.className = 'active-block';
+            for (const [className, value] of [
+                ['active-type-label', cardData.inputs['input-active-type'] || 'Active Skill'],
+                ['active-display-name', cardData.inputs['input-active-name']],
+                ['active-display-condition', cardData.inputs['input-active-conditions'] || ''],
+                ['active-display-effect', cardData.inputs['input-active-effect'] || '']
+            ]) {
+                const line = document.createElement('span');
+                line.className = className;
+                line.textContent = value;
+                block.append(line);
+            }
+            tempDiv.append(block);
         } else if (cardData.inputs?.['input-active-name']) {
             tempDiv.innerHTML = `<div class="active-block"><span class="active-type-label">${cardData.inputs['input-active-type'] || 'Active Skill'}</span><b class="active-display-name">${cardData.inputs['input-active-name']}</b><div class="active-display-condition">${cardData.inputs['input-active-conditions'] || ''}</div><div class="active-display-effect">${cardData.inputs['input-active-effect'] || ''}</div></div>`;
         }

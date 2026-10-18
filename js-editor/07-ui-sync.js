@@ -342,6 +342,9 @@ window.updateIdentity = function() {
 
     const rawDesc = descEl ? descEl.value : (document.getElementById("char-description")?.textContent || "");
     const name = nameEl ? nameEl.value : (document.getElementById("char-name")?.textContent || "");
+    if (window.IS_PUBLISHED === true && document.body.classList.contains('is-published')) {
+        document.title = String(name || '').trim();
+    }
     const leaderRaw = leaderEl ? leaderEl.value : (document.getElementById("leader-skill")?.innerText || "");
 
     const cleanTitle = rawDesc.replace(/[\[\]]/g, '').trim();
