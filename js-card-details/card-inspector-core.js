@@ -237,6 +237,14 @@ function findVerifiedTransformationParentId(transformRecord) {
     }
 
     const transform = DB.cards.find((card) => parseInt(card.id, 10) === transformId) || transformRecord;
+    // The exporter resolves this field from verified transformation relations.
+    // Fusion names need not overlap their Goku/Vegeta parent's name.
+    const exportedParentId = normalizeViewerCardId(transform?.transform_parent_id || 0);
+    if (exportedParentId > 0 && exportedParentId < 4000000
+        && DB.cards.some(candidate => Number(candidate.id) === exportedParentId)) {
+        VERIFIED_TRANSFORM_PARENT_CACHE.set(transformId, exportedParentId);
+        return exportedParentId;
+    }
     const transformTokens = getTransformationNameTokens(transform);
     const transformLeadId = Number(transform?.lead_id || transform?.leader_skill_set_id || 0);
     const transformGrowth = Number(transform?.optimal_awakening_grow_type || 0);
