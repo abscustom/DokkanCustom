@@ -429,7 +429,7 @@ body.abs-shell .sba-settings-brand .nav-center-link img { transform:none !import
     }
     body.abs-shell { transition:padding-left var(--abs-nav-motion),padding-right var(--abs-nav-motion) !important; }
     #abs-context-sidebar {
-        inset:8px 0 8px auto !important;
+        inset:0 0 0 auto !important;
         width:var(--abs-context-collapsed) !important;
         border-radius:var(--abs-shell-radius) 0 0 var(--abs-shell-radius) !important;
         transition:width var(--abs-nav-motion) !important;

@@ -241,7 +241,7 @@
 <!-- TOP AUTO-REVEALING DOCK TRIGGER & BAR -->
 
 
-<aside id="abs-context-sidebar" aria-label="Editor actions"><div class="abs-sidebar-heading"><h2 class="abs-context-title">Editor actions</h2><button type="button" class="abs-shell-collapse" data-abs-context-collapse aria-controls="abs-context-sidebar" aria-expanded="true" aria-label="Collapse editor actions" title="Collapse editor actions"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16m-7-12 4 4-4 4"/></svg></button></div><div class="abs-sidebar-scroll"><header id="editor-top-bar" class="editor-top-hud-bar" role="toolbar" aria-label="Editor Action Bar">
+<aside id="abs-context-sidebar" aria-label="Editor actions"><div class="abs-sidebar-heading"><h2 class="abs-context-title">Editor actions</h2><button type="button" class="abs-shell-collapse abs-context-close" data-abs-context-collapse aria-controls="abs-context-sidebar" aria-label="Close editor actions" title="Close editor actions"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16m-7-12 4 4-4 4"/></svg></button></div><div class="abs-sidebar-scroll"><header id="editor-top-bar" class="editor-top-hud-bar" role="toolbar" aria-label="Editor Action Bar">
     <div class="hud-nav-group editor-top-hud-group">
         <!-- CREATION ACTIONS -->
         <button type="button" class="hud-nav-link top-hud-btn" onclick="window.addSuperAttackSection()" aria-label="Super Attack" title="Add Super Attack">
@@ -329,7 +329,14 @@
         </button>
 
     </div>
-</header></div></aside>
+</header></div>
+    <div class="abs-context-footer">
+        <button type="button" class="abs-context-pin" data-abs-context-pin aria-controls="abs-context-sidebar" aria-pressed="false" aria-label="Pin editor actions" title="Pin editor actions">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="4" width="18" height="16" rx="3"/><path d="M15 4v16m-7-12 4 4-4 4"/></svg>
+            <span class="abs-context-pin-label">Pin editor actions</span>
+        </button>
+    </div>
+</aside>
 
 
 <!-- LEGACY HIDDEN STORE (Preserves compatibility for cache, parser, import/export) -->

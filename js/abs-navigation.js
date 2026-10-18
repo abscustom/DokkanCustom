@@ -47,11 +47,8 @@
     const layoutChange = () => window.dispatchEvent(new CustomEvent('abs-shell-layout-change', { detail: { mobile: mobile.matches, drawer: activeDrawer?.id || null } }));
 
     function relatedContextPanelOpen() {
-        const bodyOpen = document.body.classList.contains('editor-sidebar-open') || document.body.classList.contains('quick-edit-open');
-        const gui = document.getElementById('context-gui');
-        const guiOpen = Boolean(gui && !gui.hidden && getComputedStyle(gui).display !== 'none' && gui.getClientRects().length);
-        const history = document.getElementById('editor-history-dialog');
-        return Boolean(contextPanelRequest || bodyOpen || guiOpen || history?.open);
+        // Floating editors do not own the action rail's expanded state.
+        return Boolean(contextPanelRequest);
     }
 
     function syncContextRail() {
