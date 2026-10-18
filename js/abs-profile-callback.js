@@ -129,7 +129,8 @@
             sessionStorage.removeItem(FLOW_KEY);
             if (!sameSecret(callback.nonce, flow.nonce)) throw new Error('The sign-in response did not match this tab. Start again from ABS.');
             const payload = await exchange(callback.ticket, flow.verifier, callback.nonce);
-            sessionStorage.setItem(TOKEN_KEY, payload.token);
+            localStorage.setItem(TOKEN_KEY, payload.token);
+            sessionStorage.removeItem(TOKEN_KEY);
             status.textContent = 'Profile connected. Returning to ABS…';
             location.replace(returnTo);
         } catch (error) {

@@ -61,6 +61,8 @@
             const key = `__abs_profile_probe_${Date.now()}`;
             sessionStorage.setItem(key, '1');
             sessionStorage.removeItem(key);
+            localStorage.setItem(key, '1');
+            localStorage.removeItem(key);
             storageAvailable = true;
         } catch {
             storageAvailable = false;
@@ -69,15 +71,29 @@
     }
 
     function safeStorageGet(key) {
-        try { return sessionStorage.getItem(key); } catch { return null; }
+        try {
+            if (key !== TOKEN_KEY) return sessionStorage.getItem(key);
+            // Preserve a sign-in from before shared storage was introduced.
+            const token = localStorage.getItem(key) || sessionStorage.getItem(key);
+            if (token) localStorage.setItem(key, token);
+            sessionStorage.removeItem(key);
+            return token;
+        } catch { return null; }
     }
 
     function safeStorageSet(key, value) {
-        try { sessionStorage.setItem(key, value); return true; } catch { return false; }
+        try {
+            (key === TOKEN_KEY ? localStorage : sessionStorage).setItem(key, value);
+            if (key === TOKEN_KEY) sessionStorage.removeItem(key);
+            return true;
+        } catch { return false; }
     }
 
     function safeStorageRemove(key) {
-        try { sessionStorage.removeItem(key); } catch {}
+        try {
+            sessionStorage.removeItem(key);
+            if (key === TOKEN_KEY) localStorage.removeItem(key);
+        } catch {}
     }
 
     function snapshot() {
@@ -651,6 +667,18 @@
     }
 
     window.absProfile = Object.freeze({getState:snapshot,signIn,signOut});
+    window.addEventListener('storage', event => {
+        if (!isManagerHost && (event.key === TOKEN_KEY || event.key === null)) {
+            // Do not resurrect a legacy tab-local handle after another tab signs out.
+            try { sessionStorage.removeItem(TOKEN_KEY); } catch {}
+            void verifySiteHandle();
+        }
+    });
+    window.addEventListener('pageshow', event => {
+        if (!event.persisted) return;
+        if (isManagerHost) void initializeManagerHost();
+        else void verifySiteHandle();
+    });
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', () => { void start(); }, {once:true});
     else void start();
 })();
