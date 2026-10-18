@@ -1,2 +1,27 @@
 # Local Chrome debugging profile; never ship browser cache or session data.
 /.chrome-dot-debug/
+
+# Local editor and agent configuration (kept on this computer).
+/.vscode/
+/.claude/
+/.agents/
+/.codex/
+/.codexrules.txt
+/.prettierrc
+/AGENTS.md
+/CLAUDE.md
+/commit.txt
+
+# Local reports, recovery exports, and temporary previews.
+/docs/abs-refresh/
+/docs/atk-calculator-audit-2026-09-30.md
+/tools/previews/
+/tools/.phantom-*.mjs
+/tools/.codex-*.mjs
+
+# Generated development state and caches.
+/.wrangler/
+/.gitnexus/
+**/node_modules/
+**/__pycache__/
+*.pyc
