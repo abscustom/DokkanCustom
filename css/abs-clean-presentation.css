@@ -1,3 +1,36 @@
+/* Compact partner cards share the available width without overflowing their
+   portrait column. Keep these rules in the existing precedence layer. */
+@layer abs-clean-presentation {
+    body.theme-abs-clean #layout-abs-clean #clean-abs-partners-container {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(min(100%, 240px), 1fr)) !important;
+        gap: 8px !important;
+        align-items: stretch !important;
+    }
+    body.theme-abs-clean #layout-abs-clean #clean-abs-partners-container .partner-card-wrapper {
+        grid-template-columns: 70px minmax(0, 1fr) !important;
+        gap: 10px !important;
+        padding: 8px !important;
+        min-width: 0 !important;
+        height: auto !important;
+        align-items: center !important;
+    }
+    body.theme-abs-clean #layout-abs-clean #clean-abs-partners-container .abs-clean-partner-card-name {
+        white-space: normal !important;
+        overflow-wrap: anywhere !important;
+        font-size: 13px !important;
+        line-height: 1.35 !important;
+    }
+    body.theme-abs-clean #layout-abs-clean #clean-abs-partners-container .partner-stat-pill {
+        font-size: 11px !important;
+        padding: 3px 5px !important;
+    }
+    body.theme-abs-clean #layout-abs-clean #clean-abs-partners-container .partner-card-wrapper:focus-visible {
+        outline: 2px solid currentColor !important;
+        outline-offset: 2px !important;
+    }
+}
+
 /* Permanent ABS.Clean presentation layout. Loaded by the editor and card viewer
    only; all selectors require the ABS.Clean theme. */
 
@@ -5566,13 +5599,17 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     body.theme-abs-clean #app {
         background: #101112 !important;
     }
-    /* Render at authored size; shared sidebars reserve their own widths. */
+    /* Keep shell controls at their authored size; scale only Clean content. */
     body.theme-abs-clean #top-content,
     body.theme-abs-clean #top-content > .container-1220 {
         zoom: 1 !important;
     }
     body.theme-abs-clean #top-content > .container-1220 {
         container-type: inline-size;
+        zoom: .8 !important;
+        width: 125% !important;
+        max-width: none !important;
+        box-sizing: border-box !important;
     }
     body.theme-abs-clean #abs-clean-grid-circuit,
     body.theme-abs-clean #stars-bg-video {
