@@ -2446,11 +2446,9 @@ body.theme-sba #admin-quick-save-btn {
 /* ======================================================================= */
 /* PUBLISHED UPLOAD LOCK                                                   */
 /*
-   Uploaded pages keep the editor runtime so the owner can unlock it with
-   Ctrl/Cmd+Shift+A plus the admin password, but they render as published
-   viewers until that happens. The high-specificity selectors intentionally
-   win over the theme/nav hover rules above, so moving to the top or bottom
-   edge cannot reveal editor chrome while locked.
+   Published pages keep the editor runtime, but render as read-only viewers
+   until a verified administrator chooses Edit card from the Profile menu.
+   These selectors ensure edge hover cannot reveal editor chrome while locked.
 */
 body.is-published:not(.admin-mode-active) #editor-top-bar,
 body.is-published:not(.admin-mode-active) #editor-top-bar-trigger,

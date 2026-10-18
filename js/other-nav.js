@@ -98,12 +98,10 @@
             changed = removeRetiredOther(group) || changed;
             const settings = group.querySelector(':scope > .sba-side-settings-button, :scope > [aria-label="Settings"]');
             let anchor = settings || null;
-            const routes = ROUTES.filter(route => route.id !== 'manager' || managerIsAvailable());
+            const routes = ROUTES.filter(route => route.id !== 'manager');
             group.querySelectorAll(`:scope > [${ROUTE_ATTRIBUTE}="manager"]`).forEach(link => {
-                if (!managerIsAvailable()) {
-                    link.remove();
-                    changed = true;
-                }
+                link.remove();
+                changed = true;
             });
             [...routes].reverse().forEach(route => {
                 let link = group.querySelector(`:scope > [${ROUTE_ATTRIBUTE}="${route.id}"]`);

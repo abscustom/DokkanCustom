@@ -146,7 +146,7 @@ document.addEventListener("DOMContentLoaded", async function() {
             window.scheduleEditorLwfHydration?.();
         }, 200);
 
-        console.log("Card loaded in Published View. Press Ctrl+Shift+A to unlock Admin Mode.");
+        console.log("Card loaded in Published View.");
     }
 
     const idsToUpdateIdentity = ["nameInput", "descInput", "dateInput", "leaderInput"];

@@ -16,8 +16,10 @@
     let panel = null;
     let trigger = null;
     let signInButton = null;
+    let passwordButton = null;
     let signOutButton = null;
     let managerLink = null;
+    let editCardButton = null;
     let messageNode = null;
     let displayNode = null;
     let loginNode = null;
@@ -119,6 +121,16 @@
         return button;
     }
 
+    function canEditCurrentCard() {
+        return Boolean(state.status === 'signed-in'
+            && state.profile?.role === 'admin'
+            && state.managerAccess?.status === 'ready'
+            && window.IS_PUBLISHED === true
+            && window.PUBLISHED_CARD_SOURCE === 'custom'
+            && window.currentContentCard?.id
+            && typeof window.unlockAdminMode === 'function');
+    }
+
     function mount() {
         const sidebar = document.getElementById('abs-main-sidebar');
         if (!sidebar) return false;
@@ -199,19 +211,35 @@
         managerLink.className = 'abs-profile-action abs-profile-manager-link';
         managerLink.href = new URL('manager.html', siteBase()).href;
         managerLink.textContent = 'Manager';
+        const managerIcon = document.createElement('img');
+        managerIcon.src = new URL('assets/navigation/sidebar/myp_dragon_radar.png',
+            new URL('../', document.currentScript?.src || new URL('js/abs-profile.js', siteBase()))).href;
+        managerIcon.alt = '';
+        managerIcon.width = 24;
+        managerIcon.height = 24;
+        managerIcon.className = 'abs-profile-manager-icon';
+        managerLink.prepend(managerIcon);
         managerLink.hidden = true;
+        editCardButton = makeButton('Edit card', 'abs-profile-edit');
+        editCardButton.hidden = true;
         signInButton = makeButton('Sign in with GitHub', 'abs-profile-signin');
+        passwordButton = makeButton('Sign in as absadmin', 'abs-profile-password-signin');
         signOutButton = makeButton('Sign out', 'abs-profile-signout');
         signOutButton.hidden = true;
-        actions.append(managerLink, signInButton, signOutButton);
+        actions.append(editCardButton, managerLink, signInButton, passwordButton, signOutButton);
         panel.append(identity, badgeNode, message, actions);
         area.append(trigger, panel);
         const footer = sidebar.querySelector('.abs-sidebar-footer');
         if (footer) sidebar.insertBefore(area, footer);
         else sidebar.append(area);
 
-        trigger.addEventListener('click', () => setPanelOpen(panel.hidden));
+        trigger.addEventListener('click', () => { render(); setPanelOpen(panel.hidden); });
+        editCardButton.addEventListener('click', () => {
+            if (!canEditCurrentCard()) return;
+            if (window.unlockAdminMode() === true) setPanelOpen(false);
+        });
         signInButton.addEventListener('click', () => { void signIn(); });
+        passwordButton.addEventListener('click', signInWithPassword);
         signOutButton.addEventListener('click', () => { void signOut(); });
         panel.addEventListener('keydown', event => {
             if (event.key === 'Escape') {
@@ -226,12 +254,15 @@
         window.addEventListener('resize', positionPanel, {passive:true});
         window.addEventListener('scroll', positionPanel, {passive:true, capture:true});
         window.addEventListener('abs-shell-layout-change', positionPanel);
+        window.addEventListener('abs-admin-mode-change', render);
+        window.addEventListener('abs-card-content-ready', render);
         return true;
     }
 
     function setPanelOpen(open, restoreFocus = false) {
         if (!panel || !trigger) return;
         panel.hidden = !open;
+        window.dispatchEvent(new CustomEvent('abs-profile-panel-change', { detail: { open: Boolean(open) } }));
         trigger.setAttribute('aria-expanded', String(open));
         if (open) {
             positionPanel();
@@ -282,6 +313,7 @@
     }
 
     async function requestProfile(path, token, method = 'GET', body = undefined) {
+        if (typeof token === 'string' && token.startsWith('lp_')) path = path.replace('/profile/', '/profile/password/');
         if (!profileWorkerOrigin || !allowedOrigins.has(location.origin)) throw new Error('Profile is unavailable on this origin.');
         const url = new URL(path, profileWorkerOrigin);
         if (url.origin !== profileWorkerOrigin || url.pathname !== path) throw new Error('Invalid profile API route.');
@@ -307,8 +339,8 @@
         triggerLabel.textContent = label;
         trigger.setAttribute('aria-label', authenticated ? `Profile: ${profile.login}` : state.status === 'guest' ? 'Sign in or view profile' : 'Profile');
         trigger.title = authenticated ? `${profile.displayName || profile.login} (@${profile.login})` : label;
-        displayNode.textContent = profile ? (profile.displayName || profile.login) : 'Your ABS profile';
-        loginNode.textContent = profile ? `@${profile.login}` : (state.status === 'guest' ? 'Sign in to connect your GitHub account' : '');
+        displayNode.textContent = profile ? (profile.displayName || profile.login) : 'Signed out';
+        loginNode.textContent = profile ? `@${profile.login}` : 'Choose an account to sign in';
         badgeNode.hidden = !profile;
         badgeNode.dataset.role = profile?.role || '';
         badgeNode.textContent = profile?.role === 'admin' ? 'Admin' : 'Member';
@@ -328,10 +360,14 @@
             avatarNode.src = avatar;
             avatarNode.onerror = () => { avatarNode.hidden = true; avatarFallback.hidden = false; };
         } else avatarNode.removeAttribute('src');
+        editCardButton.hidden = !canEditCurrentCard();
+        editCardButton.textContent = window.ADMIN_MODE ? 'Finish editing' : 'Edit card';
+        editCardButton.setAttribute('aria-pressed', String(Boolean(window.ADMIN_MODE && canEditCurrentCard())));
         managerLink.hidden = !(authenticated && profile.role === 'admin' && state.managerAccess?.status === 'ready');
         signInButton.hidden = authenticated || state.status === 'checking' || state.status === 'signing-in' || state.status === 'signing-out'
             || !storageAvailable || (!isManagerHost && !allowedOrigins.has(location.origin));
-        signInButton.textContent = isManagerHost ? 'Sign in to Manager' : 'Sign in with GitHub';
+        signInButton.textContent = 'Sign in with GitHub';
+        passwordButton.hidden = signInButton.hidden;
         signInButton.disabled = state.status === 'signing-in';
         signOutButton.hidden = !authenticated || isManagerHost;
         if (isManagerHost && authenticated) {
@@ -425,6 +461,29 @@
     function callbackKind() {
         if (location.origin === pagesOrigin) return 'project';
         return location.pathname.toLowerCase().startsWith(siteBasePath.toLowerCase()) ? 'project' : 'root';
+    }
+
+    function signInWithPassword() {
+        if (!checkStorage() || !profileWorkerOrigin || (!isManagerHost && !allowedOrigins.has(location.origin))) {
+            setUnavailable('Sign-in is unavailable on this page.');
+            return;
+        }
+        const nonce = randomToken();
+        const url = new URL('/password-signin.html', profileWorkerOrigin);
+        url.search = new URLSearchParams({ origin: location.origin, nonce }).toString();
+        const popup = window.open(url.href, '_blank', 'popup,width=460,height=480');
+        if (!popup) { setUnavailable('Allow the sign-in window, then try again.'); return; }
+        const timeout = setTimeout(cleanup, 300000);
+        function cleanup() { clearTimeout(timeout); window.removeEventListener('message', receive); }
+        function receive(event) {
+            if (event.origin !== profileWorkerOrigin || event.source !== popup || event.data?.nonce !== nonce
+                || event.data.type !== 'abs-password-signed-in' || !/^lp_[A-Za-z0-9_-]{43}$/.test(event.data.token || '')) return;
+            cleanup();
+            if (isManagerHost) { location.reload(); return; }
+            if (!safeStorageSet(TOKEN_KEY, event.data.token)) { setUnavailable('Could not save your sign-in session.'); return; }
+            void verifySiteHandle();
+        }
+        window.addEventListener('message', receive);
     }
 
     async function signIn() {

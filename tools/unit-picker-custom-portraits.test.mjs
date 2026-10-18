@@ -82,7 +82,7 @@ test('calculator and editor pickers share the media resolver and accessible port
     assert.match(editorHtml, /js\/unit-picker-tooltips\.js/);
     assert.match(calcHtml, /css\/unit-picker\.css/);
     assert.match(editorHtml, /css\/unit-picker\.css/);
-    assert.match(pickerCss, /clip-path:\s*circle\(50% at 50% 50%\)/);
+    assert.match(pickerCss, /clip-path:\s*circle\(31\.5% at 50% 50%\)/);
     assert.match(pickerCss, /\.picker-thumb\s*\{\s*top:\s*0[\s\S]*?width:\s*100%/);
     assert.match(pickerCss, /\.picker-name,[\s\S]*?\.picker-sub\s*\{\s*display:\s*none/);
 });

@@ -238,31 +238,6 @@
     </div>
 </div>
 
-<!-- ADMIN UNLOCK MODAL -->
-<div id="glass-admin-unlock-modal" class="clean-modal-backdrop" style="display: none;" onclick="closeAdminUnlockModal()">
-    <div class="clean-modal-panel" style="max-width: 380px;" onclick="event.stopPropagation()">
-        <div class="clean-modal-header">
-            <span class="clean-modal-title" style="color: #f87171;">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="currentColor" style="display:inline-block;vertical-align:-2px;margin-right:6px;"><path d="M18 8h-1V6c0-2.76-2.24-5-5-5S7 3.24 7 6v2H6c-1.1 0-2 .9-2 2v10c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V10c0-1.1-.9-2-2-2zm-6 9c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2zm3.1-9H8.9V6c0-1.71 1.39-3.1 3.1-3.1 1.71 0 3.1 1.39 3.1 3.1v2z"/></svg>
-                UNLOCK ADMIN MODE
-            </span>
-            <button type="button" class="clean-modal-close" onclick="closeAdminUnlockModal()">×</button>
-        </div>
-        <div class="clean-modal-body">
-            <p class="clean-modal-desc">Enter administrator password to enable live on-page editing.</p>
-            <div class="clean-input-group">
-                <label class="clean-label">Password</label>
-                <input type="password" id="admin-unlock-pass" class="clean-input" placeholder="Password..." oninput="checkAdminUnlockValidity()" onkeydown="if(event.key === 'Enter') { document.getElementById('confirm-admin-unlock-btn').click(); }">
-            </div>
-            <div class="clean-modal-divider"></div>
-            <div class="clean-modal-actions">
-                <button type="button" class="gui-preset-btn btn-danger" onclick="closeAdminUnlockModal()">Cancel</button>
-                <button type="button" id="confirm-admin-unlock-btn" class="gui-preset-btn clean-btn-red" onclick="executeAdminUnlock()" disabled>Unlock</button>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!-- TOP AUTO-REVEALING DOCK TRIGGER & BAR -->
 
 

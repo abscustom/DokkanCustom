@@ -417,7 +417,7 @@
         initPromise = (async () => {
             if (localPreview && new URLSearchParams(location.search).get('preview') === '1') {
                 const thumb = '/abscustom/Custom%20Cards/9071718/images/asset-5c792d971cb75ad3f4aa31a21cd3caeb804269ff0e3178e071b91e78e301c776.png';
-                const cards = ['SSR example','TUR example','LR example','Alternate form','Unlinked example','Second example'].map((name,index) => {
+                const cards = ['SSR example','TUR example','LR example','Unlinked example','Second example'].map((name,index) => {
                     const slug = `preview-${index}`;
                     return {
                         id: slug, slug, revision: 1, status: 'published', name, title: 'Local design sample', type: 'phy', thumb,

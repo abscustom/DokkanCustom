@@ -7,6 +7,8 @@ const managerServiceRoot = path.resolve(repositoryRoot, 'services', 'manager-aut
 const publicDirectory = path.resolve(managerServiceRoot, 'public');
 const managerAssets = [
     'manager.html',
+    'password-signin.html',
+    'js/password-signin.js',
     'card-publisher.html',
     'js/card-content-publisher.js',
     'js/card-content-config.js',

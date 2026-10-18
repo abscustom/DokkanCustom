@@ -2,10 +2,13 @@ import { Failure, configuration, profileConfiguration, requireOrigin, body, json
 import { start, callback, profileStart, profileCallback, profileExchange, profileMe, profileLogout, PROFILE_SITE_ORIGINS, session, authorize, logout, createGitHub } from './auth.mjs';
 import { snapshot, publicCards, linkChanges, deleteChanges, commit } from './cards.mjs';
 import { contentAdminMethod, handleContentAdmin, handlePublicContent, isPublicContentPath } from './content-api.mjs';
+import { handlePasswordAuth } from './password-auth.mjs';
 
 export async function handle(request, env) {
   const url = new URL(request.url), path = url.pathname;
   if (isPublicContentPath(path)) return handlePublicContent(request, env);
+  const passwordResponse = await handlePasswordAuth(request, env);
+  if (passwordResponse) return passwordResponse;
   if (path.startsWith('/profile/')) {
     profileConfiguration(env);
     if (request.method === 'GET' && path === '/profile/start') return profileStart(request,env);
@@ -100,7 +103,7 @@ export const service = {
         const code = known && /^PROFILE_[A-Z0-9_]+$/.test(error.code || '') ? error.code : 'PROFILE_UNAVAILABLE';
         return secure(new Response(JSON.stringify({error:{code,message:known ? error.message : 'Profile service is temporarily unavailable.'}}),{status,headers:profileHeaders}));
       }
-      if (new URL(request.url).pathname.startsWith('/auth/')) {
+      if (new URL(request.url).pathname.startsWith('/auth/') && new URL(request.url).pathname !== '/auth/password') {
         // Only fixed codes cross this boundary. Never render exception messages,
         // callback query values, provider descriptions, or request headers.
         const githubStages = ['GITHUB_ACCOUNT','GITHUB_REPOSITORY','GITHUB_APP_INSTALLATIONS','GITHUB_APP_INSTALLATION_REPOSITORIES'];

@@ -4,7 +4,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 const rootSource = fs.readFileSync(new URL('../js-card-details/card-layout-roots.js', import.meta.url), 'utf8');
-const themeSource = fs.readFileSync(new URL('../js-editor/17-theme.js', import.meta.url), 'utf8');
+const themeSource = fs.readFileSync(new URL('../js-editor/17-theme.js', import.meta.url), 'utf8').replace(/\r\n/g, '\n');
 
 class FakeClassList {
   constructor() { this.values = new Set(); }
@@ -142,7 +142,7 @@ function createRuntime() {
 
   body.appendChild(styleRoot);
   body.appendChild(infoRoot);
-  const buttons = ['theme-btn-info', 'theme-btn-abs', 'theme-btn-sba'].map(id => new FakeElement(id, 'button'));
+  const buttons = ['theme-btn-info', 'theme-btn-abs', 'theme-btn-sba', 'theme-btn-phantom'].map(id => new FakeElement(id, 'button'));
   buttons.forEach(button => body.appendChild(button));
   const app = new FakeElement('app');
   body.appendChild(app);
@@ -207,13 +207,19 @@ test('theme aliases resolve to independent layout roots with unique IDs', () => 
   const runtime = createRuntime();
   const { window, document, styleRoot, infoRoot } = runtime;
   const cleanRoot = window.getCardLayoutRoot('sba');
+  const phantomRoot = window.getCardLayoutRoot('phantom');
 
   assert.equal(window.normalizeCardPresentationTheme('abs.clean'), 'abs-clean');
   assert.equal(window.normalizeCardPresentationTheme('abs-style'), 'abs-style');
   assert.equal(window.normalizeCardPresentationTheme('dokkan.info'), 'dokkaninfo');
+  assert.equal(window.normalizeCardPresentationTheme('phantom'), 'phantom');
   assert.equal(window.getCardLayoutRoot('abs-clean'), cleanRoot);
+  assert.equal(window.getCardLayoutRoot('phantom'), phantomRoot);
   assert.notEqual(cleanRoot, styleRoot);
+  assert.notEqual(phantomRoot, styleRoot);
+  assert.notEqual(phantomRoot, cleanRoot);
   assert.equal(window.getCardLayoutElement('abs-sa-container', cleanRoot)?.id, 'clean-abs-sa-container');
+  assert.equal(window.getCardLayoutElement('abs-sa-container', phantomRoot)?.id, 'phantom-abs-sa-container');
   assert.equal(window.getCardLayoutElement('abs-sa-container', styleRoot)?.id, 'abs-sa-container');
   assert.equal(window.getCardLayoutElement('abs-sa-container', infoRoot)?.id, 'sa-insert-spot');
   assert.ok(infoRoot.classList.contains('card-layout-root-info'));
@@ -236,12 +242,12 @@ test('theme switching keeps shared card state while selecting each root', () => 
   assert.ok(start >= 0 && end > start, 'theme switch function is present');
   vm.runInContext(`${themeSource.slice(start, end + 3)};`, context);
 
-  for (const theme of ['sba', 'abs-style', 'dokkan.info', 'abs-clean']) {
+  for (const theme of ['sba', 'abs-style', 'dokkan.info', 'abs-clean', 'phantom']) {
     window.switchCardTheme(theme);
     const normalized = window.normalizeCardPresentationTheme(theme);
     assert.equal(document.documentElement.dataset.activeCardLayout, normalized);
     assert.equal(window.getCardLayoutRoot(), window.getCardLayoutRoot(normalized));
-    const roots = [window.getCardLayoutRoot('abs-clean'), styleRoot, infoRoot];
+    const roots = [window.getCardLayoutRoot('abs-clean'), window.getCardLayoutRoot('phantom'), styleRoot, infoRoot];
     assert.equal(roots.filter(root => !root.hidden).length, 1, 'only the selected presentation root is visible');
     assert.equal(JSON.stringify(cardState), stateBefore);
   }
@@ -266,6 +272,6 @@ test('ABS preview updaters leave Dokkan Info insertion points to native renderer
     const next = themeSource.indexOf('\nwindow.', start + 1);
     assert.ok(start >= 0 && next > start, `${functionName} is present`);
     const body = themeSource.slice(start, next);
-    assert.match(body, /window\.getCardLayoutRoot\?\.\(\)\?\.dataset\?\.cardLayout === 'dokkaninfo'\) return/);
+    assert.match(body, /window\.getCardLayoutRoot\?\.\(\)\?\.dataset\?\.cardLayout === 'dokkaninfo'\)\s*\{\s*return window\.renderEditorSkillsInDokkanInfo/);
   }
 });

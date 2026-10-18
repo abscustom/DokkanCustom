@@ -110,7 +110,7 @@
     }
 
     function syncMainExpansion() {
-        const panelOpen = Boolean(activePopover);
+        const panelOpen = Boolean(activePopover) || Boolean(document.querySelector('#abs-profile-panel:not([hidden])'));
         document.documentElement.dataset.absNavPinned = String(mainPinned);
         document.querySelector('[data-abs-nav-pin]')?.setAttribute('aria-pressed', String(mainPinned));
         const label = document.querySelector('.abs-nav-pin-label');
@@ -164,7 +164,7 @@
     function loadProfileAssets() {
         if (profileAssetsPromise) return profileAssetsPromise;
         const loadStyles = () => new Promise((resolve, reject) => {
-            const href = new URL('css/abs-profile.css?v=20261016-profile-v1', assetBase).href;
+            const href = new URL('css/abs-profile.css?v=20261018-profile-edit-v1', assetBase).href;
             let link = [...document.querySelectorAll('link[rel~="stylesheet"]')].find(item => {
                 try { return new URL(item.href, document.baseURI).pathname.endsWith('/css/abs-profile.css'); }
                 catch { return false; }
@@ -186,7 +186,7 @@
             if (existing?.dataset.loaded === 'true') { resolve(); return; }
             const scriptNode = existing || document.createElement('script');
             scriptNode.async = false;
-            scriptNode.src = new URL(`js/${file}?v=20261016-profile-v1`, assetBase).href;
+            scriptNode.src = new URL(`js/${file}?v=20261018-profile-edit-v1`, assetBase).href;
             scriptNode.dataset.absProfileAsset = marker;
             scriptNode.addEventListener('load', () => { scriptNode.dataset.loaded = 'true'; resolve(); }, {once:true});
             scriptNode.addEventListener('error', () => reject(new Error(`Profile ${file} could not be loaded.`)), {once:true});
@@ -399,6 +399,7 @@
         syncMainExpansion();
         sidebar.addEventListener('pointerenter', () => { pointerInside = true; syncMainExpansion(); });
         sidebar.addEventListener('pointerleave', () => { pointerInside = false; syncMainExpansion(); });
+        window.addEventListener('abs-profile-panel-change', syncMainExpansion);
         sidebar.addEventListener('transitionend', event => {
             if (event.target === sidebar && event.propertyName === 'width') positionOpenPanels();
         });

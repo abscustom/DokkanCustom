@@ -230,7 +230,10 @@ body.theme-phantom #phantom-battle-motion-panel #abs-motion-box.phantom-motion-p
     overflow: hidden !important;
 }
 body.theme-phantom #phantom-battle-motion-panel #abs-motion-box.phantom-motion-player[hidden],
-body.theme-phantom .phantom-motion-retry[hidden] { display: none !important; }
+body.theme-phantom .phantom-motion-retry[hidden],
+body.theme-phantom .phantom-battle-motion-button[hidden],
+body.theme-phantom [data-card-element="abs-clean-badge-tag"][hidden],
+body.theme-phantom #abs-clean-badge-tag[hidden] { display: none !important; }
 body.theme-phantom #phantom-battle-motion-panel #abs-motion-box.phantom-motion-player :is(.abs-motion-header, .abs-motion-note, .abs-motion-status) { display: none !important; }
 body.theme-phantom #phantom-battle-motion-panel #abs-motion-box.phantom-motion-player :is(.abs-motion-content, .abs-motion-viewport) {
     display: flex !important;

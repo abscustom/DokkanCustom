@@ -5,7 +5,7 @@ import '../js/published-card-guards.js';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-const bootstrapperVersion = '20260928-custom-no-motion-v1';
+const bootstrapperVersion = '20261001-logo-ring-v3';
 
 const customCardsDir = 'C:\\Users\\Ruffy\\Documents\\GitHub\\abscustom\\Custom Cards';
 
@@ -84,7 +84,7 @@ for (const folder of cardFolders) {
 
     <!-- Match card.html at first paint. The dynamic bootstrapper adds the
          rest of the viewer stylesheet set after this loader is already live. -->
-    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20260916-zoom-blur-fade-v10">
+    <link rel="stylesheet" href="https://abscustom.github.io/DokkanCustom/css/loading-screen.css?v=20261001-logo-ring-v3">
 
     <script id="card-data" type="application/json">
 ${JSON.stringify(cardData, null, 2)}
@@ -128,10 +128,29 @@ ${globalThis.buildPublishedLoaderWatchdogScript()}
         <div class="abs-loader-art" aria-hidden="true"></div>
         <div class="abs-loader-stage">
             <img class="abs-loader-logo" src="https://abscustom.github.io/assets/images/abs_logo.png" alt="abs.clean logo" loading="eager" decoding="async">
-            <div class="abs-loader-percent" id="abs-loader-percent" aria-live="polite">Loading...</div>
-            <div class="abs-loader-sub" aria-hidden="true">custom card</div>
+            <div class="abs-loader-status">Loading…</div>
         </div>
     </div>
+    <script id="abs-loader-restore">
+    (function() {
+        try {
+            var source = sessionStorage.getItem('abs_loading_transition_art');
+            var screen = document.getElementById('abs-loading-screen');
+            var art = screen && screen.querySelector('.abs-loader-art');
+            if (!source || !art || art.firstElementChild) return;
+            var image = new Image();
+            image.alt = '';
+            image.decoding = 'sync';
+            image.fetchPriority = 'low';
+            image.src = source;
+            art.appendChild(image);
+            var backdrop = screen.querySelector('.abs-loader-art-backdrop');
+            if (backdrop) backdrop.appendChild(image.cloneNode(true));
+            screen.classList.toggle('is-cutin', source.toLowerCase().includes('_cutin'));
+            screen.classList.toggle('is-character', source.toLowerCase().includes('_character'));
+        } catch {}
+    })();
+    </script>
 </body>
 </html>`;
 

@@ -104,7 +104,6 @@
             base = slug;
             candidate = '';
             pairStarted = true;
-            el('base').value = slug;
             render();
             say(`${card(slug).name} selected as the first card. Choose a target portrait; Clear Both starts a fresh pair.`);
 
@@ -121,7 +120,6 @@
                 base = slug;
                 candidate = '';
                 pairStarted = true;
-                el('base').value = slug;
                 render();
                 say(`${card(slug).name} selected as the first card. Choose another portrait as the target.`);
                 return true;
@@ -129,13 +127,11 @@
 
             if (slug === base) {
                 targets.clear();
-                if (candidate) {
-                    candidate = '';
-                    render();
-                    say(`${card(base).name} remains the first card. The target selection was cleared.`);
-                } else {
-                    say(`${card(base).name} is the first card. Choose another portrait as the target.`);
-                }
+                base = '';
+                candidate = '';
+                pairStarted = false;
+                render();
+                say('First card cleared. Choose a card to start a new pair. Saved and staged connections remain visible.');
                 return true;
             }
 
@@ -351,7 +347,6 @@
         }
 
         function actions() {
-            el('base').disabled = applying;
             el('apply').disabled = applying || !pending();
             el('undo').disabled = applying || !history.length;
             el('revert').disabled = applying || !pending();
@@ -404,13 +399,38 @@
             }
             const setSelectionText = (id, value) => { if (el(id)) el(id).textContent = value; };
             setSelectionText('first-name', first?.name || 'Not selected');
-            setSelectionText('target-name', target?.name || 'Not selected');
             setSelectionText('next-step', nextStep);
             setSelectionText('link-reason', linkReason);
             if (el('pair-summary')) el('pair-summary').dataset.selectionState = selectionState;
             if (el('selection-panel')) el('selection-panel').dataset.step = ({ empty: 'first', 'first-only': 'target', staged: 'staged', ready: 'link', restore: 'link', 'already-linked': 'already-linked', 'already-staged': 'staged', saving: 'applying' })[selectionState];
             el('first-name')?.setAttribute('data-empty', String(!first));
-            el('target-name')?.setAttribute('data-empty', String(!target));
+            const targetList = el('target-list');
+            if (targetList) {
+                const targetSlugs = [...targets];
+                if (!targetSlugs.length && candidate) targetSlugs.push(candidate);
+                const selectedTargets = targetSlugs.map(slug => card(slug)).filter(Boolean);
+                const targetCards = selectedTargets.length ? selectedTargets : [null];
+                targetList.replaceChildren(...targetCards.map((targetCard, index) => {
+                    const targetBox = document.createElement('div');
+                    targetBox.className = 'manager-coin-pair-value manager-coin-pair-target';
+                    targetBox.setAttribute('role', 'listitem');
+                    targetBox.dataset.targetState = targetCard
+                        ? wanted(base, targetCard.slug) ? 'linked' : 'ready'
+                        : 'empty';
+
+                    const label = document.createElement('span');
+                    label.className = 'manager-coin-pair-label';
+                    label.textContent = `Target ${index + 1}`;
+
+                    const name = document.createElement('strong');
+                    name.className = 'manager-coin-pair-name';
+                    name.textContent = targetCard?.name || 'Not selected';
+                    name.dataset.empty = String(!targetCard);
+                    targetBox.append(label, name);
+                    return targetBox;
+                }));
+                targetList.dataset.targetCount = String(selectedTargets.length);
+            }
             el('link-selected').textContent = linkLabel;
             el('link-selected').setAttribute('aria-describedby', 'manager-coin-selection-hint');
             root.setAttribute('aria-busy', String(applying));
@@ -418,7 +438,6 @@
                 el('link-selected').disabled = applying || ![...targets].some(slug => !wanted(base, slug));
                 el('unlink-selected').disabled = applying || ![...targets].some(slug => wanted(base, slug));
                 el('link-selected').textContent = `Link ${targets.size} Selected Form${targets.size === 1 ? '' : 's'}`;
-                setSelectionText('target-name', `${targets.size} selected`);
                 setSelectionText('next-step', 'Click more coins to toggle targets. Link/Unlink stages direct links to the first card; Apply saves them.');
             }
         }
@@ -447,16 +466,6 @@
                 plane.append(node);
             }
 
-            const placeholder = document.createElement('option');
-            placeholder.value = '';
-            placeholder.textContent = 'Choose first card';
-            el('base').replaceChildren(placeholder, ...cards.map(item => {
-                const option = document.createElement('option');
-                option.value = item.slug;
-                option.textContent = `${item.name} — ${item.slug}`;
-                return option;
-            }));
-            el('base').value = pairStarted ? base : '';
             actions();
             requestAnimationFrame(renderLines);
             if (focusedSlug) plane.querySelector(`[data-coin-slug="${CSS.escape(focusedSlug)}"]:not([hidden])`)?.focus({ preventScroll: true });
@@ -734,7 +743,6 @@
             }
         });
 
-        el('base').addEventListener('change', () => selectMain(el('base').value));
         el('search').addEventListener('input', render);
         el('new-pair')?.addEventListener('click', resetPair);
         function stageTargets(value) {

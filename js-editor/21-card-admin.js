@@ -265,9 +265,13 @@
             container.innerHTML = '<span>No card selected.</span>';
             return;
         }
+        const thumbnail = `<img src="${escapeHtml(card.thumb)}" alt="${escapeHtml(card.name)}">`;
+        const portrait = containerId === 'card-admin-delete-preview'
+            ? `<span class="card-admin-preview-portrait">${thumbnail}</span>`
+            : thumbnail;
         container.innerHTML = `
             <div class="card-admin-preview-item">
-                <img src="${escapeHtml(card.thumb)}" alt="${escapeHtml(card.name)}">
+                ${portrait}
                 <div>
                     <strong>${escapeHtml(card.name)}</strong>
                     <span>${escapeHtml(card.slug)}</span>
@@ -309,7 +313,7 @@
 
         picker.innerHTML = state.cards.map(card => `
             <button type="button" class="card-admin-delete-choice ${card.slug === selectedSlug ? 'is-selected' : ''}" data-card-admin-delete="${escapeHtml(card.slug)}" onclick="window.selectCardAdminDeleteCard(this.dataset.cardAdminDelete)" role="option" aria-selected="${card.slug === selectedSlug}">
-                <img src="${escapeHtml(card.thumb)}" alt="" onerror="this.src='https://abscustom.github.io/assets/images/default.png'">
+                <span class="card-admin-delete-choice-portrait"><img src="${escapeHtml(card.thumb)}" alt="" onerror="this.src='https://abscustom.github.io/assets/images/default.png'"></span>
                 <span class="card-admin-delete-choice-name" title="${escapeHtml(card.name)}">${escapeHtml(card.name)}</span>
                 <span class="card-admin-delete-choice-slug">${escapeHtml(card.slug)}</span>
             </button>`).join('');

@@ -993,7 +993,7 @@
         const row = root?.querySelector('[data-phantom-slot="art-controls"]');
         const bar = getElement(root, 'abs-art-toggle-bar');
         if (!row) return;
-        row.hidden = !row.querySelector('.phantom-battle-motion-button') &&
+        row.hidden = !row.querySelector('.phantom-battle-motion-button:not([hidden])') &&
             (!bar || bar.getAttribute('aria-hidden') === 'true' || getComputedStyle(bar).display === 'none');
         syncArtToggleState(root);
         const awakeningBar = getElement(root, 'abs-eza-toggle-bar');
@@ -1904,6 +1904,7 @@
         const status = loading ? 'loading' : available ? 'ready'
             : !box || !window.updateViewerMotion || box.dataset.motionState === 'unavailable' ? 'unavailable' : 'idle';
         const button = state.motionButton;
+        button.hidden = status === 'unavailable';
         button.dataset.motionState = status;
         button.setAttribute('aria-pressed', String(state.motionPanelOpen));
         button.setAttribute('aria-expanded', String(state.motionPanelOpen));
@@ -2369,7 +2370,14 @@
                 !effect?.target || effect.target === 'self' || effect.target === 'unknown');
             const separatedRates = knownUnscalarized.map(formatEffectRate);
             if (unknownUnscalarized) separatedRates.push('?');
-            const amountText = displayValue !== 0
+            // ATK/DEF show the arithmetic sum of listed self bonuses, not a
+            // battle multiplier. Preserve conditions and unknown values below.
+            const listedSelfBonuses = knownUnscalarized.filter(effect => effect.target === 'self');
+            const listedSum = displayValue + listedSelfBonuses.reduce((sum, effect) => sum + Number(effect.value), 0);
+            const showListedSum = signed && listedSelfBonuses.length > 0;
+            const amountText = showListedSum
+                ? `${listedSum > 0 ? '+' : ''}${Math.round(listedSum)}%${unknownUnscalarized ? ' + ?' : ''}*`
+                : displayValue !== 0
                 ? `${signed && displayValue > 0 ? '+' : ''}${Math.round(displayValue)}%${hasUnscalarizedEffects ? '*' : ''}`
                 : separatedRates.length
                     ? `${separatedRates.join(' · ')}*`
@@ -2382,6 +2390,10 @@
             item.append(name, amount);
 
             const accessibleDetails = statEffects.map(effectDetails).join('. ');
+            if (showListedSum) {
+                item.title = `Sum of listed self bonuses; conditions may not apply together. Not the final battle multiplier. ${accessibleDetails}`;
+                item.dataset.phantomTotalBasis = 'listed-self-bonuses';
+            }
             item.setAttribute('aria-label', accessibleDetails
                 ? `${label} passive total ${amountText}. ${accessibleDetails}`
                 : `${label} passive total ${amountText}`);

@@ -345,7 +345,7 @@
             : s === 'js-card-details/card-helpers.js'
                 ? cleanLayoutRuntimeVersion
             : s === 'js-card-details/card-layout-roots.js' ? '20261010-phantom-foundation-v7'
-            : s === 'js/abs-navigation.js' ? '20261016-profile-ui-v1'
+            : ['js/abs-navigation.js', 'js-editor/18-init.js', 'js-editor/19-click-to-edit.js'].includes(s) ? '20261018-profile-edit-v1'
             : s === 'js-editor/07-ui-sync.js' ? '20261010-viewer-character-title-v1'
             : s === 'js-editor/17-theme.js' ? '20261010-phantom-foundation-v7'
             : s === 'js/sidebar-streamers.js' ? '20261008-sidebar-live-indicator-v1'
@@ -447,7 +447,9 @@
         window.scheduleEditorLwfHydration?.();
     }, 150);
 
-    console.log('[Custom Bootstrapper] Dynamic card loaded successfully! Press Ctrl+Shift+A to unlock Admin Mode.');
+    console.log(databaseCard
+        ? '[Custom Bootstrapper] Signed-in administrators can choose Edit card from the Profile menu.'
+        : '[Custom Bootstrapper] Dynamic card loaded successfully.');
 })().catch((error) => {
     console.error('[Custom Bootstrapper] Card startup failed:', error);
     window.dispatchEvent(new CustomEvent('abs-card-bootstrap-error', {

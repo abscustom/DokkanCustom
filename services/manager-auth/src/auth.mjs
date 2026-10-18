@@ -303,7 +303,10 @@ export async function profileCallback(request, env) {
 
     const headers = new Headers({ Location: profileReturnUrl(row, { ticket: rawTicket, nonce: row.nonce }), 'Cache-Control': 'no-store', 'Referrer-Policy': 'no-referrer' });
     headers.append('Set-Cookie', cookie(cookieName, '', 0));
-    if (managerSession) headers.append('Set-Cookie', managerSession.cookie);
+    if (managerSession) {
+      headers.append('Set-Cookie', managerSession.cookie);
+      headers.append('Set-Cookie', cookie('__Host-abs_password', '', 0));
+    }
     return new Response(null, { status: 303, headers });
   } catch {
     return profileCallbackRedirect(row, cookieName, { error: 'PROFILE_SIGN_IN_FAILED', nonce: row.nonce });
@@ -438,6 +441,7 @@ export async function callback(request, env) {
   }
   const headers = new Headers({ Location: '/manager.html', 'Cache-Control': 'no-store' });
   headers.append('Set-Cookie', cookie(OAUTH_COOKIE, '', 0)); headers.append('Set-Cookie', managerSession.cookie);
+  headers.append('Set-Cookie', cookie('__Host-abs_password', '', 0));
   return new Response(null, { status: 303, headers });
 }
 

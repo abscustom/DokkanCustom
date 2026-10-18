@@ -3,7 +3,7 @@ import fs from 'node:fs';
 import vm from 'node:vm';
 
 // Exercise the production JSON linker without making GitHub requests.
-const source = fs.readFileSync(new URL('../js-editor/21-card-admin.js', import.meta.url), 'utf8');
+const source = fs.readFileSync(new URL('../js/manager-card-transforms.js', import.meta.url), 'utf8');
 const normalize = source.slice(source.indexOf('    function normalizeCardIdentityText('), source.indexOf('    function normalizeCardIdentityTokens('));
 const linker = source.slice(source.indexOf('    function updateLinkedFormsData('), source.indexOf('    function updateLinkedHtml('));
 const context = vm.createContext({ URL, SITE_ROOT: 'https://abscustom.github.io/' });

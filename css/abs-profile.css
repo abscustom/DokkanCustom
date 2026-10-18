@@ -59,6 +59,8 @@
     white-space:nowrap;
 }
 #abs-main-sidebar .abs-profile-panel {
+    text-align:left;
+    align-items:stretch;
     box-sizing:border-box;
     display:flex;
     flex-direction:column;
@@ -75,6 +77,8 @@
 #abs-main-sidebar .abs-profile-panel[hidden] { display:none !important; }
 #abs-main-sidebar .abs-profile-identity { display:flex; align-items:center; gap:12px; min-width:0; }
 #abs-main-sidebar .abs-profile-identity-copy { min-width:0; flex:1; }
+#abs-main-sidebar .abs-profile-identity-copy,
+#abs-main-sidebar .abs-profile-message { text-align:left; }
 #abs-main-sidebar .abs-profile-display-name {
     overflow:hidden;
     font-size:14px;
@@ -134,6 +138,8 @@
     cursor:pointer;
 }
 #abs-main-sidebar .abs-profile-action:hover { background:rgba(255,255,255,.11); }
+#abs-main-sidebar .abs-profile-manager-link { gap:10px; }
+#abs-main-sidebar .abs-profile-manager-icon { flex:none; width:24px; height:24px; object-fit:contain; }
 #abs-main-sidebar .abs-profile-action:disabled { opacity:.55; cursor:wait; }
 #abs-main-sidebar .abs-profile-action[hidden] { display:none !important; }
 #abs-main-sidebar .abs-profile-message[data-error="true"] { color:#ffb5b5; }
@@ -146,3 +152,9 @@
     #abs-main-sidebar .abs-profile-panel,
     #abs-main-sidebar .abs-profile-action { transition:none !important; }
 }
+.abs-password-page { margin:0; padding:32px; background:#17181b; color:#f0f1f3; font:16px system-ui; }
+.abs-password-page main { max-width:360px; margin:auto; text-align:left; }
+.abs-password-page form { display:grid; gap:12px; }
+.abs-password-page input,.abs-password-page button { box-sizing:border-box; width:100%; min-height:44px; padding:10px; border:1px solid #61656c; border-radius:8px; background:#24262b; color:inherit; font:inherit; }
+.abs-password-page button { cursor:pointer; background:#334a70; }
+.abs-password-page input:focus-visible,.abs-password-page button:focus-visible { outline:2px solid #9dc9ff; outline-offset:2px; }

@@ -566,8 +566,8 @@ function syncPublishedEditorLockUi() {
         if (contextGui) contextGui.style.display = 'none';
         window.clearCardGlow?.();
     } else if (window.IS_PUBLISHED) {
-        // The controls stay hidden until the password is accepted, then the
-        // normal editor affordances become available again.
+        // The controls stay hidden until a signed-in administrator opens the
+        // edit action from the Profile menu.
         topBar?.classList.add('is-revealed');
         window.revealToolSbaNav?.();
     }
@@ -575,17 +575,56 @@ function syncPublishedEditorLockUi() {
 
 window.syncPublishedEditorLockUi = syncPublishedEditorLockUi;
 
-window.unlockAdminMode = function() {
-    if (window.ADMIN_MODE) {
-        window.ADMIN_MODE = false;
-        document.body.classList.remove('admin-mode-active');
-        document.body.classList.remove('quick-edit-open');
-        const sidebar = document.getElementById('editor');
-        const toggleBtn = document.getElementById('toggleBtn');
-        const quickSaveBtn = document.getElementById('admin-quick-save-btn');
-        const quickEditBtn = document.getElementById('topbar-quick-edit-btn');
-        const uploadDockBtn = document.getElementById('topbar-upload-dock-wrap');
+function hasVerifiedAdminProfile() {
+    const profile = window.absProfile?.getState?.();
+    return Boolean(profile?.status === 'signed-in'
+        && profile.profile?.role === 'admin'
+        && profile.managerAccess?.status === 'ready');
+}
 
+function canEditPublishedCustomCard() {
+    return Boolean(window.IS_PUBLISHED === true
+        && window.PUBLISHED_CARD_SOURCE === 'custom'
+        && window.currentContentCard?.id);
+}
+
+function setAdminMode(active) {
+    const next = Boolean(active);
+    const body = document.body;
+    if (!body) return false;
+    if (next && window.IS_PUBLISHED && (!canEditPublishedCustomCard() || !hasVerifiedAdminProfile())) return false;
+    if (Boolean(window.ADMIN_MODE) === next) return true;
+
+    window.ADMIN_MODE = next;
+    body.classList.toggle('admin-mode-active', next);
+
+    const sidebar = document.getElementById('editor');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const quickSaveBtn = document.getElementById('admin-quick-save-btn');
+    const quickEditBtn = document.getElementById('topbar-quick-edit-btn');
+    const uploadDockBtn = document.getElementById('topbar-upload-dock-wrap');
+
+    if (next) {
+        window.startEditorAutosave?.();
+        syncPublishedEditorLockUi();
+
+        if (window.ensureAdminActionsDock) window.ensureAdminActionsDock();
+        else window.ensurePublishedCustomCardRuntime?.();
+
+        if (sidebar) sidebar.style.display = 'block';
+        if (toggleBtn) toggleBtn.style.display = 'flex';
+        if (quickSaveBtn) {
+            const canQuickSave = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
+            quickSaveBtn.style.setProperty('display', canQuickSave ? 'flex' : 'none', 'important');
+        }
+        if (uploadDockBtn) uploadDockBtn.style.setProperty('display', 'inline-block', 'important');
+        if (quickEditBtn) quickEditBtn.style.setProperty('display', window.IS_PUBLISHED ? 'inline-flex' : 'none', 'important');
+
+        ensureGUIContainerExists();
+        makeGUIDraggable();
+        window.syncToAbsLayout?.();
+    } else {
+        body.classList.remove('quick-edit-open');
         if (window.IS_PUBLISHED) {
             if (sidebar) sidebar.style.display = 'none';
             if (toggleBtn) toggleBtn.style.display = 'none';
@@ -594,72 +633,53 @@ window.unlockAdminMode = function() {
             window.stopEditorAutosave?.();
         }
         if (quickSaveBtn) quickSaveBtn.style.setProperty('display', 'none', 'important');
-
         syncPublishedEditorLockUi();
-        window.clearCardGlow();
-        alert("🔒 Admin Mode Deactivated.");
-        return;
+        window.clearCardGlow?.();
     }
 
-    const _adminModal = document.getElementById('glass-admin-unlock-modal');
-    if (_adminModal) { _adminModal.classList.remove('is-closing'); _adminModal.style.display = 'flex'; }
-    document.getElementById('admin-unlock-pass').value = '';
-    document.getElementById('confirm-admin-unlock-btn').disabled = true;
-    setTimeout(() => document.getElementById('admin-unlock-pass').focus(), 100);
+    window.dispatchEvent(new CustomEvent('abs-admin-mode-change', {detail:{active:next}}));
+    return true;
+}
+
+window.unlockAdminMode = function() {
+    if (window.ADMIN_MODE) return setAdminMode(false);
+    if (window.IS_PUBLISHED) return setAdminMode(true);
+
+    const adminModal = document.getElementById('glass-admin-unlock-modal');
+    if (adminModal) {
+        adminModal.classList.remove('is-closing');
+        adminModal.style.display = 'flex';
+        const passwordInput = document.getElementById('admin-unlock-pass');
+        const confirmButton = document.getElementById('confirm-admin-unlock-btn');
+        if (passwordInput) passwordInput.value = '';
+        if (confirmButton) confirmButton.disabled = true;
+        setTimeout(() => passwordInput?.focus(), 100);
+        return false;
+    }
+    return setAdminMode(true);
 };
 
 window.closeAdminUnlockModal = function() {
-    window.fadeOutModal ? window.fadeOutModal('glass-admin-unlock-modal') : (document.getElementById('glass-admin-unlock-modal').style.display = 'none');
+    const modal = document.getElementById('glass-admin-unlock-modal');
+    if (!modal) return;
+    if (window.fadeOutModal) window.fadeOutModal('glass-admin-unlock-modal');
+    else modal.style.display = 'none';
 };
 
 window.checkAdminUnlockValidity = function() {
-    const pass = document.getElementById('admin-unlock-pass').value;
+    const pass = document.getElementById('admin-unlock-pass')?.value || '';
     const btn = document.getElementById('confirm-admin-unlock-btn');
-    btn.disabled = (pass !== "spiderman");
+    if (btn) btn.disabled = (pass !== "spiderman");
 };
 
 window.executeAdminUnlock = function() {
+    if (window.IS_PUBLISHED && (!canEditPublishedCustomCard() || !hasVerifiedAdminProfile())) return false;
     window.closeAdminUnlockModal();
-    window.ADMIN_MODE = true;
-    document.body.classList.add('admin-mode-active');
-
-    window.startEditorAutosave?.();
-    syncPublishedEditorLockUi();
-
-    if (window.ensureAdminActionsDock) {
-        window.ensureAdminActionsDock();
-    } else if (window.ensurePublishedCustomCardRuntime) {
-        window.ensurePublishedCustomCardRuntime();
-    }
-
-    const sidebar = document.getElementById('editor');
-    const toggleBtn = document.getElementById('toggleBtn');
-    const quickSaveBtn = document.getElementById('admin-quick-save-btn');
-    const quickEditBtn = document.getElementById('topbar-quick-edit-btn');
-    const uploadDockBtn = document.getElementById('topbar-upload-dock-wrap');
-
-    if (sidebar) sidebar.style.display = 'block';
-    if (toggleBtn) toggleBtn.style.display = 'flex';
-    if (quickSaveBtn) {
-        const canQuickSave = Boolean(window.IS_PUBLISHED && window.PUBLISHED_CARD_SOURCE !== 'official');
-        quickSaveBtn.style.setProperty('display', canQuickSave ? 'flex' : 'none', 'important');
-    }
-    if (uploadDockBtn) uploadDockBtn.style.setProperty('display', 'inline-block', 'important');
-    if (quickEditBtn) {
-        quickEditBtn.style.setProperty('display', window.IS_PUBLISHED ? 'inline-flex' : 'none', 'important');
-    }
-
-    ensureGUIContainerExists();
-    makeGUIDraggable();
-
-    if (window.syncToAbsLayout) window.syncToAbsLayout();
+    return setAdminMode(true);
 };
 
-document.addEventListener('keydown', function(e) {
-    if ((e.ctrlKey || e.metaKey) && e.shiftKey && (e.key === 'A' || e.key === 'a')) {
-        e.preventDefault();
-        window.unlockAdminMode();
-    }
+window.addEventListener('abs-profile-change', () => {
+    if (window.ADMIN_MODE && window.IS_PUBLISHED && !hasVerifiedAdminProfile()) setAdminMode(false);
 });
 
 // Click-to-Edit Route Handler
