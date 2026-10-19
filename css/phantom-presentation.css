@@ -2810,6 +2810,14 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
     50% { background-position: 100% 80%, 0% 20%; }
 }
 
+/* Passive and Super Attack retain their original neutral panel treatment. */
+body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-passive-skill-box"],
+body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-sa-container"] > .abs-box {
+    background: rgba(255, 255, 255, 0.026) !important;
+    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.16) !important;
+    animation: none !important;
+}
+
 @media (prefers-reduced-motion: reduce) {
     body.theme-phantom #layout-phantom *,
     body.theme-phantom #layout-phantom *::before,
