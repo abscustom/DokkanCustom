@@ -903,7 +903,7 @@ body.theme-phantom #layout-phantom .abs-art-dock-wrapper .abs-art-box::after {
     box-sizing: border-box;
 }
 
-body.theme-phantom #layout-phantom[data-phantom-awakening-fx="eza"] .abs-art-dock-wrapper .abs-art-box::before {
+body.theme-phantom #layout-phantom:is([data-phantom-awakening-fx="eza"], [data-phantom-awakening-fx="seza"]) .abs-art-dock-wrapper .abs-art-box::before {
     background:
         radial-gradient(circle at 50% 50%, rgba(250, 204, 21, 0.09), transparent 72%),
         color-mix(in srgb, var(--phantom-type-accent) 8%, transparent);
@@ -911,7 +911,7 @@ body.theme-phantom #layout-phantom[data-phantom-awakening-fx="eza"] .abs-art-doc
         0 0 20px rgba(250, 204, 21, 0.16);
 }
 
-body.theme-phantom #layout-phantom[data-phantom-awakening-fx="eza"] .abs-art-dock-wrapper .abs-art-box::after {
+body.theme-phantom #layout-phantom:is([data-phantom-awakening-fx="eza"], [data-phantom-awakening-fx="seza"]) .abs-art-dock-wrapper .abs-art-box::after {
     border-color: rgba(250, 204, 21, 0.78);
     box-shadow: 0 0 12px rgba(250, 204, 21, 0.34), inset 0 0 8px rgba(250, 204, 21, 0.12);
     opacity: 0.76;
@@ -958,19 +958,21 @@ body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-do
 }
 
 body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-dock-wrapper .abs-art-box > .phantom-seza-rings::before {
-    width: min(88%, 300px);
-    border: 2px solid #a855f7;
-    box-shadow: 0 0 9px rgba(168, 85, 247, 0.3);
-    opacity: 0.8;
-    animation: phantom-seza-purple-ring-pulse 5s ease-in-out infinite;
+    width: min(94%, 320px);
+    border: 0;
+    background: conic-gradient(from 35deg, #d966ff, #a93cff, #ff8b24, #ffbd59, #d966ff);
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 2px));
+    opacity: 1;
+    animation: phantom-seza-gradient-ring-pulse 4.6s ease-in-out infinite;
 }
 
 body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-dock-wrapper .abs-art-box > .phantom-seza-rings::after {
-    width: min(94%, 320px);
-    border: 2px solid #f59e0b;
-    box-shadow: 0 0 11px rgba(245, 158, 11, 0.3);
-    opacity: 0.82;
-    animation: phantom-seza-orange-ring-pulse 5.6s ease-in-out infinite;
+    content: none;
+}
+
+@keyframes phantom-seza-gradient-ring-pulse {
+    0%, 100% { opacity: 0.78; }
+    50% { opacity: 1; }
 }
 
 body.theme-phantom #layout-phantom[data-phantom-awakening-motion-paused="true"] .abs-art-dock-wrapper .abs-art-box::after,
