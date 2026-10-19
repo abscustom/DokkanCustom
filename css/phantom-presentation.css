@@ -307,9 +307,7 @@ body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-car
     border: 1px solid rgba(255, 255, 255, 0.095) !important;
     border-left: 1px solid rgba(255, 255, 255, 0.095) !important;
     border-radius: 9px !important;
-    background:
-        radial-gradient(ellipse at 12% 8%, color-mix(in srgb, var(--phantom-type-color) 16%, transparent), transparent 65%),
-        linear-gradient(138deg, #101218 4%, color-mix(in srgb, var(--phantom-type-color) 7%, #111318) 53%, #0c0e12 100%) !important;
+    background: rgba(255, 255, 255, 0.026) !important;
     box-shadow: 0 9px 22px rgba(0, 0, 0, 0.16) !important;
     box-sizing: border-box !important;
 }
@@ -413,11 +411,15 @@ body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > :is(
 }
 
 body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-sa-container"] > .abs-box > .abs-header :is(.abs-sa-icon-left, .abs-sa-icon-name) {
-    width: 20px !important;
-    height: 20px !important;
-    min-width: 20px !important;
-    min-height: 20px !important;
+    width: 16px !important;
+    height: 16px !important;
+    min-width: 16px !important;
+    min-height: 16px !important;
     align-self: flex-start !important;
+}
+
+body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-sa-container"] > .abs-box > .abs-header .abs-sa-header-title {
+    gap: 4px !important;
 }
 
 body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > :is(
@@ -2209,7 +2211,6 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
     border-top: 1px solid rgba(255, 255, 255, 0.07) !important;
 }
 
-body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] > .abs-header,
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-categories-box"] > .abs-header {
     position: absolute !important;
     width: 1px !important;
@@ -2221,6 +2222,17 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
     clip-path: inset(50%) !important;
     white-space: nowrap !important;
     border: 0 !important;
+}
+
+body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] > .abs-header {
+    position: static !important;
+    margin: 0 0 6px !important;
+    padding: 0 !important;
+    background: transparent !important;
+    border: 0 !important;
+    color: #a4a7ae !important;
+    font-size: 11px !important;
+    text-shadow: none !important;
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] > .abs-content {
@@ -2785,37 +2797,6 @@ body.theme-phantom #layout-phantom .abs-art-dock-wrapper.active-selected-glow {
     body.theme-phantom #layout-phantom .abs-side-col > [data-card-element="abs-transformations-box"] {
         grid-column: 1 / -1 !important;
     }
-}
-
-/* Keep the moving type tint local, with only a soft halo beyond each panel. */
-body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"],
-body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-passive-skill-box"],
-body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > :is([data-card-element="abs-sa-container"], [data-card-element="abs-active-container"], [data-card-element="abs-field-container"], [data-card-element="abs-standby-container"], [data-card-element="abs-finish-container"]) > .abs-box {
-    background:
-        radial-gradient(ellipse at 12% 8%, color-mix(in srgb, var(--phantom-type-color) 18%, transparent), transparent 65%),
-        linear-gradient(138deg, #101218 4%, color-mix(in srgb, var(--phantom-type-color) 9%, #111318) 53%, #0c0e12 100%) !important;
-    background-size: 180% 180%, 150% 150% !important;
-    background-repeat: no-repeat !important;
-    box-shadow: 0 0 16px 2px color-mix(in srgb, var(--phantom-type-color) 15%, transparent), 0 9px 22px rgba(0, 0, 0, .16) !important;
-    animation: phantom-panel-gradient-drift 24s ease-in-out infinite !important;
-}
-
-body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] {
-    padding: 12px 14px !important;
-    border-radius: 9px !important;
-}
-
-@keyframes phantom-panel-gradient-drift {
-    0%, 100% { background-position: 0% 0%, 100% 100%; }
-    50% { background-position: 100% 80%, 0% 20%; }
-}
-
-/* Passive and Super Attack retain their original neutral panel treatment. */
-body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-passive-skill-box"],
-body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-sa-container"] > .abs-box {
-    background: rgba(255, 255, 255, 0.026) !important;
-    box-shadow: 0 9px 22px rgba(0, 0, 0, 0.16) !important;
-    animation: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
