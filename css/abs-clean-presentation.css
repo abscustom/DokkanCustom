@@ -5607,7 +5607,9 @@ body.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-clean.theme-abs-c
     body.theme-abs-clean #top-content > .container-1220 {
         container-type: inline-size;
         zoom: .8 !important;
-        width: 125% !important;
+        /* Auto sizing accounts for CSS zoom and the shell's reserved rails. */
+        width: auto !important;
+        min-width: 0 !important;
         max-width: none !important;
         box-sizing: border-box !important;
     }
