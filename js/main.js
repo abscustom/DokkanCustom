@@ -2538,7 +2538,11 @@ async function loadOfficialDatabaseCards() {
 
 async function loadCustomCards() {
     if (window.CardContent?.enabled()) {
-        return (await window.CardContent.listCards()).map(window.CardContent.toCatalogCard);
+        return (await window.CardContent.listCards()).map(card => {
+            const catalogCard = window.CardContent.toCatalogCard(card);
+            // Home/Cards filters and badges use lowercase rarity keys.
+            return { ...catalogCard, rarity: catalogCard.rarity.toLowerCase() };
+        });
     }
     const cachedCustom = localStorage.getItem('hub_cached_custom_only');
     let customCardsArray = [];
