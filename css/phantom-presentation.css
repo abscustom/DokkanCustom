@@ -90,6 +90,7 @@ body.theme-phantom #layout-phantom .phantom-art-column {
 
 body.theme-phantom #layout-phantom .phantom-hero-portrait {
     position: relative !important;
+    top: -12px !important;
     display: flex !important;
     flex-direction: column !important;
     align-items: center !important;
@@ -2153,7 +2154,7 @@ body.theme-phantom #layout-phantom .phantom-priority-sections {
     min-width: 0 !important;
     padding: 18px 20px !important;
     margin: 0 0 20px !important;
-    border: 1px solid color-mix(in srgb, var(--phantom-type-accent) 18%, rgba(255, 255, 255, 0.09)) !important;
+    border: 1px solid rgba(255, 255, 255, 0.095) !important;
     border-radius: 9px !important;
     background: rgba(255, 255, 255, 0.027) !important;
     box-sizing: border-box !important;
@@ -2203,9 +2204,9 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] {
-    padding: 12px 14px !important;
-    border: 1px solid rgba(255, 255, 255, 0.095) !important;
-    border-radius: 9px !important;
+    padding: 0 !important;
+    border: 0 !important;
+    border-radius: 0 !important;
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-categories-box"] {
@@ -2363,7 +2364,7 @@ body.theme-phantom #layout-phantom .phantom-hero-facts > [data-card-element="abs
     max-width: 230px !important;
     margin: 0 !important;
     padding: 5px 12px !important;
-    border: 1.5px solid var(--phantom-type-color) !important;
+    border: 1px solid color-mix(in srgb, var(--phantom-type-color) 45%, transparent) !important;
     border-radius: 8px !important;
     color: #fff !important;
     background: linear-gradient(180deg, #1b2230 0%, #0e131d 100%) !important;
@@ -2802,8 +2803,8 @@ body.theme-phantom #layout-phantom .abs-art-dock-wrapper.active-selected-glow {
 }
 
 body.theme-phantom #layout-phantom [data-card-element="abs-link-skills-box"] .abs-link-badge {
-    border-color: var(--phantom-type-color) !important;
-    outline-color: var(--phantom-type-color) !important;
+    border-color: color-mix(in srgb, var(--phantom-type-color) 45%, transparent) !important;
+    outline-color: color-mix(in srgb, var(--phantom-type-color) 45%, transparent) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
