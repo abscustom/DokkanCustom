@@ -1817,8 +1817,8 @@ body.theme-phantom #layout-phantom .phantom-stats-chart-host {
     display: block !important;
     width: 100% !important;
     min-width: 0 !important;
-    order: -1 !important;
-    margin: 0 0 12px !important;
+    order: 0 !important;
+    margin: -8px 0 0 !important;
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
@@ -1878,7 +1878,7 @@ body.theme-phantom #layout-phantom .phantom-stats-circles-widget .abs-stat-cards
 
 body.theme-phantom #layout-phantom .phantom-stat-circles-chart {
     display: block !important;
-    width: min(100%, 320px) !important;
+    width: min(100%, 270px) !important;
     min-width: 0 !important;
     margin: 0 auto !important;
     padding: 0 !important;
@@ -2203,8 +2203,9 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] {
-    padding: 0 0 0 12px !important;
-    border-left: 0 !important;
+    padding: 12px 14px !important;
+    border: 1px solid rgba(255, 255, 255, 0.095) !important;
+    border-radius: 9px !important;
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-categories-box"] {
@@ -2362,7 +2363,7 @@ body.theme-phantom #layout-phantom .phantom-hero-facts > [data-card-element="abs
     max-width: 230px !important;
     margin: 0 !important;
     padding: 5px 12px !important;
-    border: 1.5px solid #facc15 !important;
+    border: 1.5px solid var(--phantom-type-color) !important;
     border-radius: 8px !important;
     color: #fff !important;
     background: linear-gradient(180deg, #1b2230 0%, #0e131d 100%) !important;
