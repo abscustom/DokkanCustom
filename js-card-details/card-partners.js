@@ -2,7 +2,7 @@
    absCustom - Linking Partners Calculation & Filtering Engine
    ========================================================================== */
 
-const ABS_CLEAN_PARTNER_PREVIEW_LIMIT = 5;
+const ABS_CLEAN_PARTNER_PREVIEW_LIMIT = 6;
 
 // Clean partner portraits must resolve from the partner card itself. The old
 // renderer asked the generic art resolver for a thumbnail first, which can
@@ -634,33 +634,42 @@ function getAbsCleanBackgroundAwarePipeColor(surface) {
 }
 
 function createAbsCleanShootingPoint(svg, motionPath, centerColor, partnerColor, phaseOffset = 0) {
+    const ns = 'http://www.w3.org/2000/svg';
+    const carrier = document.createElementNS(ns, 'g');
     const point = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
     point.setAttribute('class', 'abs-clean-link-fx-shooting-point');
     point.setAttribute('r', '4');
     point.setAttribute('aria-hidden', 'true');
-    svg.appendChild(point);
-    const cycleMs = 7200;
-    const render = timestamp => {
-        if (!point.isConnected || !motionPath.isConnected) return;
-        try {
-            const length = motionPath.getTotalLength();
-            const phase = ((timestamp + (phaseOffset * cycleMs)) % cycleMs) / cycleMs;
-            // A cosine loop never teleports back to its starting point. It
-            // feels like the continuously floating particles in the backdrop.
-            const travel = 0.5 - (0.5 * Math.cos(phase * Math.PI * 2));
-            const position = motionPath.getPointAtLength(length * (1 - travel));
-            const color = getAbsCleanMixedColor(centerColor, partnerColor, travel);
-            point.setAttribute('cx', position.x.toFixed(1));
-            point.setAttribute('cy', position.y.toFixed(1));
-            point.setAttribute('fill', color);
-            point.style.color = color;
-        } catch (error) {
-            // A detached or temporarily invalid SVG path simply resumes next
-            // time its selected partner rebuilds the link layer.
-        }
-        window.requestAnimationFrame(render);
-    };
-    window.requestAnimationFrame(render);
+    point.setAttribute('fill', centerColor);
+    carrier.appendChild(point);
+    svg.appendChild(carrier);
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        const position = motionPath.getPointAtLength(motionPath.getTotalLength() * phaseOffset);
+        carrier.setAttribute('transform', `translate(${position.x} ${position.y})`);
+        return point;
+    }
+    // Native SVG motion follows path updates without a separate JS loop or
+    // repeated geometry reads for every shared-link dot on every frame.
+    if (!motionPath.id) motionPath.id = `abs-link-motion-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    const motion = document.createElementNS(ns, 'animateMotion');
+    motion.setAttribute('dur', '7.2s');
+    motion.setAttribute('repeatCount', 'indefinite');
+    motion.setAttribute('begin', `${-phaseOffset * 7.2}s`);
+    motion.setAttribute('keyPoints', '1;0;1');
+    motion.setAttribute('keyTimes', '0;0.5;1');
+    motion.setAttribute('calcMode', 'spline');
+    motion.setAttribute('keySplines', '.42 0 .58 1;.42 0 .58 1');
+    const pathReference = document.createElementNS(ns, 'mpath');
+    pathReference.setAttribute('href', `#${motionPath.id}`);
+    motion.appendChild(pathReference);
+    carrier.appendChild(motion);
+    const color = document.createElementNS(ns, 'animate');
+    color.setAttribute('attributeName', 'fill');
+    color.setAttribute('values', `${centerColor};${partnerColor};${centerColor}`);
+    color.setAttribute('dur', '7.2s');
+    color.setAttribute('repeatCount', 'indefinite');
+    color.setAttribute('begin', `${-phaseOffset * 7.2}s`);
+    point.appendChild(color);
     return point;
 }
 
