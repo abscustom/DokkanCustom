@@ -29,6 +29,10 @@ body.theme-phantom #top-content > .container-1220 {
     background-image: none !important;
 }
 
+html body.theme-phantom::before {
+    content: none !important;
+}
+
 body.theme-phantom #layout-phantom {
     --phantom-type-color: rgb(150, 155, 165);
     --phantom-type-accent: color-mix(in srgb, var(--phantom-type-color) 72%, white);
@@ -38,7 +42,8 @@ body.theme-phantom #layout-phantom {
     padding: 10px clamp(14px, 2vw, 28px) 44px !important;
     box-sizing: border-box !important;
     color: #f1f3f7 !important;
-    background: #08090b !important;
+    background-color: transparent !important;
+    background-image: none !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif !important;
     zoom: 1 !important;
     transform: none !important;
@@ -302,7 +307,9 @@ body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-car
     border: 1px solid rgba(255, 255, 255, 0.095) !important;
     border-left: 1px solid rgba(255, 255, 255, 0.095) !important;
     border-radius: 9px !important;
-    background: rgba(255, 255, 255, 0.026) !important;
+    background:
+        radial-gradient(ellipse at 12% 8%, color-mix(in srgb, var(--phantom-type-color) 16%, transparent), transparent 65%),
+        linear-gradient(138deg, #101218 4%, color-mix(in srgb, var(--phantom-type-color) 7%, #111318) 53%, #0c0e12 100%) !important;
     box-shadow: 0 9px 22px rgba(0, 0, 0, 0.16) !important;
     box-sizing: border-box !important;
 }
