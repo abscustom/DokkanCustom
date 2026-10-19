@@ -80,9 +80,10 @@
     justify-content: center;
     width: 36px;
     height: 36px;
-    overflow: hidden;
-    border: 1px solid rgba(255, 255, 255, 0.13);
-    border-radius: 9px;
+    overflow: visible;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: none;
     background: var(--abs-sidebar-twitch-fallback, #4c586d);
     color: #fff;
     font-size: 14px;
@@ -93,6 +94,7 @@
 
 .abs-sidebar-twitch__avatar::after {
     position: absolute;
+    z-index: 1;
     right: 1px;
     bottom: 1px;
     width: 8px;
@@ -105,9 +107,21 @@
 
 .abs-sidebar-twitch__avatar[data-status='live']::after {
     background: #48dd80;
-    outline: 1px solid rgba(126, 255, 173, 0.72);
-    outline-offset: 1px;
-    box-shadow: 0 0 7px rgba(72, 221, 128, 0.52);
+    animation: abs-streamer-live-pulse 1.8s ease-in-out infinite;
+}
+
+@keyframes abs-streamer-live-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(72, 221, 128, .5); }
+    65% { box-shadow: 0 0 0 5px rgba(72, 221, 128, 0); }
+}
+
+.abs-sidebar-twitch__avatar[data-status='offline'] {
+    background: #626771;
+}
+
+.abs-sidebar-twitch__avatar[data-status='offline'] .abs-sidebar-twitch__image {
+    filter: grayscale(1);
+    opacity: .65;
 }
 
 .abs-sidebar-twitch__avatar[data-status='offline']::after {
@@ -132,6 +146,9 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    border: 0;
+    border-radius: 50%;
+    box-shadow: none;
 }
 
 .abs-sidebar-twitch__avatar.has-image .abs-sidebar-twitch__fallback {
@@ -252,6 +269,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+    .abs-sidebar-twitch__avatar[data-status='live']::after { animation: none; }
     .abs-sidebar-twitch__link,.abs-sidebar-twitch__heading,.abs-sidebar-twitch__copy {
         transition:none !important;
     }
