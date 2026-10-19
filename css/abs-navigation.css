@@ -14,7 +14,7 @@ body.abs-shell:has(#abs-style-dock) { padding-bottom:calc(100px + env(safe-area-
 }
 #abs-style-dock[hidden] { display:none !important; }
 @media (hover:hover) and (pointer:fine) {
-    #abs-style-dock { opacity:.15; transition:opacity 180ms ease; }
+    #abs-style-dock { opacity:0; transition:opacity 180ms ease; }
     #abs-style-dock:hover, #abs-style-dock:focus-within { opacity:1; }
 }
 @media (prefers-reduced-motion:reduce) {
