@@ -172,8 +172,9 @@
         entry.link.href = item.channelUrl;
         entry.link.dataset.status = item.status;
         entry.link.dataset.channel = item.handle.toLowerCase();
-        entry.link.dataset.tooltip = description;
-        entry.link.title = description;
+        entry.link.dataset.streamerTooltip = description;
+        entry.link.removeAttribute('data-tooltip');
+        entry.link.removeAttribute('title');
         entry.link.setAttribute(
             'aria-label',
             `Open ${item.displayName}'s ${item.platformName} channel. ${item.statusLabel}. Opens in a new tab.`,
@@ -247,7 +248,7 @@
             state.tooltip = tooltip;
         }
 
-        state.tooltip.textContent = link.dataset.tooltip || link.getAttribute('aria-label') || '';
+        state.tooltip.textContent = link.dataset.streamerTooltip || link.getAttribute('aria-label') || '';
         state.tooltip.hidden = false;
 
         const anchor = link.getBoundingClientRect();
