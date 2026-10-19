@@ -834,8 +834,9 @@
         const hasCharacter = !isThumbnailFallback && imageHasSource(charArt);
         const hasCompositeImage = imageHasSource(compositeArt);
         const hasThumbnail = imageHasSource(thumbnailArt);
+        const hasVideo = Boolean(videoArt && (videoArt.currentSrc || videoArt.getAttribute('src') || videoArt.querySelector('source')?.getAttribute('src')));
 
-        if (!hasCharacter && !hasCompositeImage && hasThumbnail && charArt) {
+        if (!hasCharacter && !hasCompositeImage && !hasVideo && hasThumbnail && charArt) {
             if (!isThumbnailFallback) {
                 charArt.dataset.phantomNativeCharacterSrc = charArt.getAttribute('src') || '';
                 charArt.dataset.phantomNativeCharacterFailed = charArt.dataset.failed || '';
@@ -859,7 +860,6 @@
 
         const showingThumbnailFallback = charArt?.dataset?.phantomThumbnailFallback === 'true';
         const showingCharacter = imageHasSource(charArt);
-        const hasVideo = Boolean(videoArt && (videoArt.currentSrc || videoArt.getAttribute('src') || videoArt.querySelector('source')?.getAttribute('src')));
         root.dataset.phantomCharacterArt = showingCharacter ? 'available' : 'unavailable';
         root.dataset.phantomArtSource = showingThumbnailFallback ? 'transparent-thumbnail'
             : hasCharacter ? 'transparent-character'
@@ -871,11 +871,18 @@
             const notes = {
                 'composite-image': 'Composite card art fallback',
                 'transparent-thumbnail': 'Character thumbnail fallback',
-                'video-only': 'Static card art unavailable · use Animation to play',
+                'video-only': '',
                 unavailable: 'Card art unavailable'
             };
             sourceNote.textContent = notes[root.dataset.phantomArtSource] || '';
             sourceNote.hidden = !sourceNote.textContent;
+        }
+        const videoOnly = root.dataset.phantomArtSource === 'video-only';
+        root.querySelectorAll('[data-card-element="art-toggle-static"], #art-toggle-static').forEach(button => {
+            button.hidden = videoOnly;
+        });
+        if (videoOnly && document.body?.classList.contains('theme-phantom') && root.dataset.phantomArtMode !== 'animated') {
+            syncArtMode(root);
         }
     }
 
@@ -2236,9 +2243,10 @@
                 root.dataset.phantomSavedArtPreference = preference;
                 root.dataset.phantomSavedArtMode = readThemeMode(lastObservedTheme, preference);
             }
+            if (root.dataset.phantomArtSource === 'video-only') root.dataset.phantomArtChoice = 'animated';
             const mode = root.dataset.phantomArtChoice === 'animated' ? 'animated' : 'static';
-            switcher?.(mode, { remember: false });
             root.dataset.phantomArtMode = mode;
+            switcher?.(mode, { remember: false });
             phantomModeSessionActive = true;
             lastObservedTheme = theme;
             syncPhantomMotionPlayback(mode);
