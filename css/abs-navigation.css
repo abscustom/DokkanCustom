@@ -13,6 +13,13 @@ body.abs-shell:has(#abs-style-dock) { padding-bottom:calc(100px + env(safe-area-
     backdrop-filter:blur(18px); box-shadow:0 8px 28px rgba(0,0,0,.35);
 }
 #abs-style-dock[hidden] { display:none !important; }
+@media (hover:hover) and (pointer:fine) {
+    #abs-style-dock { opacity:.15; transition:opacity 180ms ease; }
+    #abs-style-dock:hover, #abs-style-dock:focus-within { opacity:1; }
+}
+@media (prefers-reduced-motion:reduce) {
+    #abs-style-dock { transition:none; }
+}
 #abs-style-dock .hud-theme-stack {
     display:flex !important; flex-direction:row !important; gap:4px !important;
     width:auto !important; margin:0 !important; padding:0 !important;
