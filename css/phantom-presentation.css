@@ -932,9 +932,24 @@ body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-do
     position: absolute !important;
     z-index: 0 !important;
     inset: 0 !important;
-    display: block !important;
+    display: none !important;
     overflow: visible !important;
     pointer-events: none !important;
+}
+
+body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-dock-wrapper .abs-art-box::after {
+    border: 2px solid #ffe75a;
+    animation-name: phantom-seza-gold-ring-pulse;
+}
+
+body.theme-phantom #layout-phantom[data-phantom-awakening-fx="seza"] .abs-art-dock-wrapper .abs-art-box > :is([data-card-element="abs-art-char"], [data-card-element="abs-art-img"], [data-card-element="abs-art-video"]) {
+    filter: drop-shadow(0 0 5px rgba(255, 225, 60, .8))
+        drop-shadow(0 0 12px color-mix(in srgb, var(--phantom-type-color) 65%, #ffe34d)) !important;
+}
+
+@keyframes phantom-seza-gold-ring-pulse {
+    0%, 100% { opacity: .82; box-shadow: 0 0 18px rgba(255, 220, 45, .5), inset 0 0 10px rgba(255, 220, 45, .24); }
+    50% { opacity: 1; box-shadow: 0 0 30px rgba(255, 220, 45, .8), inset 0 0 16px rgba(255, 220, 45, .4); }
 }
 
 body.theme-phantom #layout-phantom:not([data-phantom-awakening-fx="seza"]) .abs-art-dock-wrapper .abs-art-box > .phantom-seza-rings {
