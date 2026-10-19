@@ -142,19 +142,22 @@
             const actions = document.querySelector('#hubCardsSection .cards-workspace-actions');
             if (actions) actions.insertBefore(cardsControl, actions.querySelector('.cards-reset-toolbar'));
         }
-        const control = sidebar.querySelector('.abs-sidebar-style-slot > :not(.cards-layout-switcher)') || document.querySelector('#settingsDrawer .hud-theme-stack');
+        const control = document.querySelector('#abs-style-dock .hud-theme-stack') || sidebar.querySelector('.abs-sidebar-style-slot > :not(.cards-layout-switcher)') || document.querySelector('#settingsDrawer .hud-theme-stack');
         if (!control) {
             const emptySlot = sidebar.querySelector('.abs-sidebar-style-slot');
             if (emptySlot) emptySlot.hidden = true;
             return;
         }
-        let slot = sidebar.querySelector('.abs-sidebar-style-slot');
+        let slot = document.getElementById('abs-style-dock');
         if (!slot) {
-            slot = document.createElement('div');
-            slot.className = 'abs-sidebar-style-slot';
-            sidebar.querySelector('.abs-sidebar-heading').append(slot);
+            slot = document.createElement('nav');
+            slot.id = 'abs-style-dock';
+            slot.setAttribute('aria-label', 'Page style');
+            document.body.append(slot);
         }
         if (control.parentElement !== slot) slot.append(control);
+        const oldSlot = sidebar.querySelector('.abs-sidebar-style-slot');
+        if (oldSlot) oldSlot.hidden = true;
         slot.hidden = false;
     }
 

@@ -1,4 +1,44 @@
 /* ABS shared shell; card-specific artwork, frames and skills remain untouched. */
+/* Reuse each page's available theme buttons in a viewport-level dock. */
+body.abs-shell:has(#abs-style-dock) { padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px)) !important; }
+#abs-style-dock {
+    position:fixed; z-index:990;
+    left:calc(var(--abs-nav-reserved-width) + 12px);
+    right:calc(var(--abs-context-width) + 12px);
+    bottom:calc(14px + env(safe-area-inset-bottom, 0px));
+    width:max-content; max-width:calc(100% - var(--abs-nav-reserved-width) - var(--abs-context-width) - 24px);
+    margin-inline:auto; padding:6px; box-sizing:border-box;
+    border:1px solid rgba(255,255,255,.16); border-radius:20px;
+    background:rgba(23,24,28,.94); color:#f0f1f3;
+    backdrop-filter:blur(18px); box-shadow:0 8px 28px rgba(0,0,0,.35);
+}
+#abs-style-dock[hidden] { display:none !important; }
+#abs-style-dock .hud-theme-stack {
+    display:flex !important; flex-direction:row !important; gap:4px !important;
+    width:auto !important; margin:0 !important; padding:0 !important;
+    background:none !important; border:0 !important; box-shadow:none !important;
+}
+#abs-style-dock .abs-hud-theme-btn {
+    display:flex !important; flex-direction:column !important; align-items:center !important; justify-content:center !important;
+    flex:1 1 0; min-width:0 !important; width:78px !important; height:52px !important;
+    gap:4px !important; padding:6px !important; margin:0 !important;
+    border:1px solid transparent !important; border-radius:14px !important;
+    background:transparent !important; color:#b9bdc7 !important; box-shadow:none !important;
+    cursor:pointer;
+}
+#abs-style-dock .abs-hud-theme-btn[hidden] { display:none !important; }
+#abs-style-dock .abs-hud-theme-btn:hover { background:rgba(255,255,255,.08) !important; }
+#abs-style-dock .abs-hud-theme-btn.active {
+    background:rgba(255,255,255,.13) !important; border-color:rgba(255,255,255,.24) !important; color:#fff !important;
+}
+#abs-style-dock .abs-hud-theme-btn:focus-visible { outline:2px solid #a5cfff !important; outline-offset:2px; }
+#abs-style-dock .hud-btn-logo { width:auto !important; height:21px !important; max-width:32px !important; object-fit:contain; }
+#abs-style-dock .hud-btn-indicator { font-size:10px !important; line-height:1.1 !important; letter-spacing:0 !important; white-space:nowrap; }
+@media (max-width:768px) {
+    #abs-style-dock { left:10px; right:10px; max-width:calc(100% - 20px); }
+    #abs-style-dock .abs-hud-theme-btn { width:68px !important; }
+}
+
 :root {
     --abs-nav-expanded:224px; --abs-nav-collapsed:72px; --abs-nav-width:var(--abs-nav-collapsed);
     --abs-nav-reserved-width:var(--abs-nav-collapsed);
