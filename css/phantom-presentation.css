@@ -415,7 +415,7 @@ body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-car
     height: 16px !important;
     min-width: 16px !important;
     min-height: 16px !important;
-    align-self: flex-start !important;
+    align-self: center !important;
 }
 
 body.theme-phantom #layout-phantom .abs-grid-container .abs-main-col > [data-card-element="abs-sa-container"] > .abs-box > .abs-header .abs-sa-header-title {
@@ -1817,7 +1817,8 @@ body.theme-phantom #layout-phantom .phantom-stats-chart-host {
     display: block !important;
     width: 100% !important;
     min-width: 0 !important;
-    margin: -16px 0 0 !important;
+    order: -1 !important;
+    margin: 0 0 12px !important;
     padding: 0 !important;
     border: 0 !important;
     background: transparent !important;
@@ -2203,7 +2204,7 @@ body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-eleme
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-leader-skill-box"] {
     padding: 0 0 0 12px !important;
-    border-left: 2px solid color-mix(in srgb, var(--phantom-type-accent) 48%, transparent) !important;
+    border-left: 0 !important;
 }
 
 body.theme-phantom #layout-phantom .phantom-priority-sections > [data-card-element="abs-categories-box"] {
@@ -2797,6 +2798,11 @@ body.theme-phantom #layout-phantom .abs-art-dock-wrapper.active-selected-glow {
     body.theme-phantom #layout-phantom .abs-side-col > [data-card-element="abs-transformations-box"] {
         grid-column: 1 / -1 !important;
     }
+}
+
+body.theme-phantom #layout-phantom [data-card-element="abs-link-skills-box"] .abs-link-badge {
+    border-color: var(--phantom-type-color) !important;
+    outline-color: var(--phantom-type-color) !important;
 }
 
 @media (prefers-reduced-motion: reduce) {
