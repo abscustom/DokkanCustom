@@ -265,7 +265,7 @@
         const image = safeWebUrl(card.thumb, card.assetBase ? requireAssetBase(card.assetBase) : currentAssetBase)
             || safeWebUrl(matchingBuiltin?.imageSrc, currentAssetBase)
             || DEFAULT_FORM_IMAGE;
-        const thumb = safeWebUrl(matchingBuiltin?.thumbSrc, currentAssetBase) || image;
+        const thumb = image;
         return {
             name: safeDisplayText(matchingBuiltin?.name || card.name || card.title, id),
             link: viewerHref(id, options),
@@ -282,6 +282,7 @@
         const builtins = Array.isArray(card.builtinForms) ? card.builtinForms : [];
         const linkedCards = Array.isArray(card.linkedCards) ? card.linkedCards : [];
         const linkedById = new Map();
+        const portraitCards = new Map([card, ...linkedCards, ...(card.formCards || [])].map(item => [String(item.id || item.slug), item]));
         linkedCards.forEach(linked => {
             const id = stableId(linked?.slug || linked?.id);
             if (!id || id === String(card.id)) throw new Error('This card has an invalid direct form relationship.');
@@ -303,6 +304,9 @@
             if (form.targetId) {
                 if (visibleTargetIds.has(form.targetId)) return;
                 form.link = viewerHref(form.targetId, options);
+                const target = portraitCards.get(form.targetId);
+                const portrait = target && safeWebUrl(target.thumb, target.assetBase || assetBase);
+                if (portrait) form.thumbSrc = portrait;
                 visibleTargetIds.add(form.targetId);
             }
             forms.push(form);

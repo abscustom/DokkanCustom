@@ -588,6 +588,66 @@ function canEditPublishedCustomCard() {
         && window.currentContentCard?.id);
 }
 
+let cardEditBaseline = null;
+let cardEditBaselineId = null;
+let finishAfterCardSave = false;
+
+window.getCardEditFingerprint = function(project = window.getProjectDataObject?.()) {
+    if (!project) return null;
+    const content = { ...project };
+    // Viewing preferences and allocation counters do not represent card edits.
+    delete content.themeStyle;
+    delete content.themeVariant;
+    delete content.counters;
+    return JSON.stringify(content);
+};
+
+document.addEventListener('card-content-saved', event => {
+    if (event.detail?.id !== window.currentContentCard?.id) return;
+    if (typeof event.detail.savedFingerprint !== 'string') return;
+    cardEditBaseline = event.detail.savedFingerprint;
+    if (finishAfterCardSave && window.getCardEditFingerprint() === cardEditBaseline) setAdminMode(false);
+    finishAfterCardSave = false;
+});
+
+function requestFinishCardEditing() {
+    if (!window.currentContentCard || cardEditBaseline === window.getCardEditFingerprint()) return setAdminMode(false);
+    let dialog = document.getElementById('finish-card-edit-dialog');
+    if (dialog?.open) return false;
+    if (dialog) dialog.remove();
+    dialog = document.createElement('dialog');
+    dialog.id = 'finish-card-edit-dialog';
+    dialog.setAttribute('aria-labelledby', 'finish-card-edit-title');
+    dialog.style.cssText = 'max-width:420px;width:calc(100% - 40px);padding:24px;border:1px solid #555;border-radius:14px;background:#202124;color:#fff;box-shadow:0 16px 60px #0009;';
+    dialog.innerHTML = '<h2 id="finish-card-edit-title" style="font-size:20px">Save your changes?</h2><p>This card has unsaved changes.</p><p role="alert" data-save-error hidden></p><div style="display:flex;flex-wrap:wrap;gap:10px"><button type="button" data-finish="save">Yes, save</button><button type="button" data-finish="leave">No, finish without saving</button><button type="button" data-finish="cancel">Keep editing</button></div>';
+    dialog.addEventListener('click', event => {
+        const choice = event.target.closest('[data-finish]')?.dataset.finish;
+        if (!choice) return;
+        if (choice === 'save') {
+            try {
+                if (typeof window.CardContent?.publishCurrent !== 'function') throw new Error('The publisher is unavailable. Please keep editing and retry.');
+                finishAfterCardSave = true;
+                window.CardContent.publishCurrent();
+            } catch (error) {
+                finishAfterCardSave = false;
+                const notice = dialog.querySelector('[data-save-error]');
+                notice.hidden = false;
+                notice.textContent = error.message;
+                return;
+            }
+        } else {
+            finishAfterCardSave = false;
+            if (choice === 'leave') setAdminMode(false);
+        }
+        dialog.close();
+    });
+    dialog.addEventListener('close', () => dialog.remove(), { once: true });
+    document.body.appendChild(dialog);
+    dialog.showModal();
+    dialog.querySelector('[data-finish="cancel"]').focus();
+    return false;
+}
+
 function setAdminMode(active) {
     const next = Boolean(active);
     const body = document.body;
@@ -623,6 +683,11 @@ function setAdminMode(active) {
         ensureGUIContainerExists();
         makeGUIDraggable();
         window.syncToAbsLayout?.();
+        if (window.currentContentCard && cardEditBaselineId !== window.currentContentCard.id) {
+            cardEditBaselineId = window.currentContentCard.id;
+            cardEditBaseline = window.getCardEditFingerprint();
+            finishAfterCardSave = false;
+        }
     } else {
         body.classList.remove('quick-edit-open');
         if (window.IS_PUBLISHED) {
@@ -642,7 +707,7 @@ function setAdminMode(active) {
 }
 
 window.unlockAdminMode = function() {
-    if (window.ADMIN_MODE) return setAdminMode(false);
+    if (window.ADMIN_MODE) return requestFinishCardEditing();
     if (window.IS_PUBLISHED) return setAdminMode(true);
 
     const adminModal = document.getElementById('glass-admin-unlock-modal');

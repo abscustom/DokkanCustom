@@ -90,7 +90,7 @@
         `${repoRoot}css/sba-bottom-nav.css`,
         `${repoRoot}css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1`,
         `${repoRoot}css/card-viewer-settings.css?v=${viewerSettingsVersion}`,
-        `${repoRoot}css/viewer-card-picker.css?v=20261012-viewer-picker-animation-v1`,
+        `${repoRoot}css/viewer-card-picker.css?v=20261023-portrait-grid-v1`,
         `${repoRoot}css/abs-navigation.css?v=20261017-editor-four-themes-v1`,
         `${repoRoot}css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1`,
         `${repoRoot}css/unit-picker.css?v=20261007-abs-selector-shell-v2`
@@ -158,17 +158,17 @@
         await loadScript(`${repoRoot}js/card-content-config.js?v=20261017-card-content-config-v1`);
     }
     if (!window.CardContent) {
-        await loadScript(`${repoRoot}js/card-content-client.js?v=20261017-card-content-client-v1`);
+        await loadScript(`${repoRoot}js/card-content-client.js?v=20261023-custom-viewer-v2`);
     }
     const isSharedDatabaseViewer = /(?:^|\/)custom-card\.html$/i.test(window.location.pathname)
         || viewerParams.get('content') === 'database'
         || window.CARD_CONTENT_CONFIG?.enabled === true;
     if (isSharedDatabaseViewer) {
         if (!window.CardContentRenderer) {
-            await loadScript(`${repoRoot}js/card-content-renderer.js?v=20261017-card-content-renderer-v1`);
+            await loadScript(`${repoRoot}js/card-content-renderer.js?v=20261023-custom-viewer-v2`);
         }
         if (!window.CardContent) {
-            await loadScript(`${repoRoot}js/card-content-client.js?v=20261017-card-content-client-v1`);
+            await loadScript(`${repoRoot}js/card-content-client.js?v=20261023-custom-viewer-v2`);
         }
         const requestedId = String(viewerParams.get('id') || '').trim();
         const requestedPath = String(viewerParams.get('path') || '').trim();
@@ -339,18 +339,20 @@
         const scriptVersion = s === 'js/published-card-guards.js'
             ? '20260928-loader-guard-v1'
             : s === 'js/card-content-renderer.js'
-                ? '20261017-card-content-renderer-v1'
+                ? '20261023-custom-viewer-v2'
             : s === 'js/other-nav.js'
                 ? '20261016-profile-gate-v1'
             : s === 'js-card-details/card-helpers.js'
                 ? cleanLayoutRuntimeVersion
             : s === 'js-card-details/card-layout-roots.js' ? '20261010-phantom-foundation-v7'
-            : ['js/abs-navigation.js', 'js-editor/18-init.js', 'js-editor/19-click-to-edit.js'].includes(s) ? '20261018-profile-edit-v1'
+            : s === 'js-editor/19-click-to-edit.js' ? '20261023-finish-edit-v1'
+            : ['js/abs-navigation.js', 'js-editor/18-init.js'].includes(s) ? '20261018-profile-edit-v1'
             : s === 'js-editor/07-ui-sync.js' ? '20261010-viewer-character-title-v1'
-            : s === 'js-editor/17-theme.js' ? '20261010-phantom-foundation-v7'
+            : s === 'js-editor/17-theme.js' ? '20261023-form-lightning-v1'
             : s === 'js/sidebar-streamers.js' ? '20261008-sidebar-live-indicator-v1'
             : s === 'js/sidebar-streamers-feed.js' ? '20261007-sidebar-status-v1'
-            : ['js-editor/12-export.js', 'js-editor/13-github.js', 'js-editor/20-card-importer.js', 'js-editor/21-card-admin.js', 'js-card-details/viewer-card-picker.js'].includes(s) ? '20261017-card-content-v1'
+            : s === 'js-card-details/viewer-card-picker.js' ? '20261023-portrait-grid-v1'
+            : ['js-editor/12-export.js', 'js-editor/13-github.js', 'js-editor/20-card-importer.js', 'js-editor/21-card-admin.js'].includes(s) ? '20261017-card-content-v1'
             : s === 'js/unit-picker.js' ? '20261012-viewer-picker-animation-v1'
             : s === 'js/custom-card-media.js' ? '20261008-shared-media-v1'
             : s === 'js/ui-toast.js' ? '20261008-abs-ui-v1'
@@ -437,6 +439,14 @@
 
     // 13. Compose the selected style before revealing essential card content.
     if (window.syncToAbsLayout) window.syncToAbsLayout();
+    // Match the regular viewer's character-specific browser tab identity.
+    const cardIcon = window.DokkanCustomCardMedia?.resolveCustomThumbnail(cardData, { cardUrl: cardFolderUrl, rarity: cardData.currentRarity }).primary
+        || databaseCard?.thumb;
+    if (cardIcon) {
+        let favicon = document.querySelector('link[rel~="icon"]');
+        if (!favicon) { favicon = document.createElement('link'); favicon.rel = 'icon'; document.head.appendChild(favicon); }
+        favicon.href = cardIcon;
+    }
     if (window.updateAbsStyleSuperAttacks) window.updateAbsStyleSuperAttacks();
     if (!window.absCardContentReady) {
         window.absCardContentReady = true;

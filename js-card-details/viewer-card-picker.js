@@ -265,6 +265,7 @@
     }
 
     function cardTypeLabel(card) {
+        if (card?.source === 'custom') return String(card.type || 'agl').toUpperCase();
         try {
             const fn = (typeof getCardClassAndType === 'function') ? getCardClassAndType : window.getCardClassAndType;
             if (typeof fn === 'function') {
@@ -276,6 +277,7 @@
     }
 
     function cardRarityLabel(card) {
+        if (card?.source === 'custom') return String(card.rarity || 'TUR').toUpperCase();
         try {
             const fn = (typeof getCardExactRarity === 'function') ? getCardExactRarity : window.getCardExactRarity;
             if (typeof fn === 'function') {
@@ -343,7 +345,14 @@
         button.className = 'viewer-card-picker-result';
         button.setAttribute('role', 'option');
         button.setAttribute('aria-selected', String(cardId(card) === currentId));
-        button.title = `View ${cardName(card)}`;
+        const type = cardTypeLabel(card);
+        const rarity = cardRarityLabel(card);
+        const mode = cardModeLabel(card);
+        button.title = `${cardName(card)} · ${rarity} · ${type} · ${mode} · ${cardReleaseLabel(card)} · #${cardId(card)}`;
+        button.setAttribute('aria-label', button.title);
+        button.dataset.type = type.toLowerCase();
+        const colors = {agl:'#58baff',teq:'#62cf86',int:'#b28aff',str:'#f66f7d',phy:'#f1bf59'};
+        button.style.setProperty('--viewer-picker-accent', colors[type.toLowerCase()] || '#a4a7ae');
         if (cardId(card) === currentId) button.classList.add('is-selected');
 
         const image = document.createElement('img');
@@ -378,7 +387,14 @@
 
         const meta = document.createElement('span');
         meta.className = 'viewer-card-picker-result-meta';
-        meta.textContent = `${cardTypeLabel(card)} · ${cardRarityLabel(card)} · ${cardModeLabel(card)} · #${cardId(card)}`;
+        meta.textContent = `${rarity} · ${type}${mode && mode.toLowerCase() !== 'base' ? ` · ${mode}` : ''}`;
+
+        if (card.source === 'custom') {
+            const badge = document.createElement('span');
+            badge.className = 'viewer-card-picker-source-badge';
+            badge.textContent = 'CUSTOM';
+            button.append(badge);
+        }
 
         copy.append(name, release, meta);
         button.append(image, copy);

@@ -35,6 +35,13 @@
     async function getCard(id) {
         const result = await read('/api/public/cards/' + encodeURIComponent(id));
         if (!result.card || result.card.id !== id || !Number.isSafeInteger(result.card.revision)) throw new Error('Invalid card response.');
+        // Authored transformations can point to cards outside the managed link
+        // group. Resolve their portrait metadata without adding extra form rows.
+        const known = new Set([id, ...(result.card.linkedCards || []).map(card => card.id)]);
+        const missing = new Set((result.card.builtinForms || []).map(form => form.targetId).filter(target => target && !known.has(target)));
+        if (missing.size) {
+            result.card.formCards = (await listCards()).filter(card => missing.has(card.id));
+        }
         return result.card;
     }
 
@@ -98,6 +105,7 @@
 
     function publishCurrent() {
         const project = window.getProjectDataObject?.();
+        const savedFingerprint = window.getCardEditFingerprint?.(project);
         if (!project || project.cardSource === 'official') throw new Error('Select a custom card to publish.');
         const current = window.currentContentCard;
         const id = current?.id || String(project.inputs?.['upload-folder-id'] || document.getElementById('upload-folder-id')?.value || '').trim()
@@ -139,7 +147,7 @@
             if (event.data.type === 'card-publisher-ready') popup.postMessage({ type: 'card-publisher-draft', nonce, id, request }, endpoint);
             if (event.data.type === 'card-publisher-saved' && event.data.id === id && Number.isSafeInteger(event.data.revision)) {
                 window.currentContentCard = { ...current, ...request.card, id, slug: id, revision: event.data.revision };
-                document.dispatchEvent(new CustomEvent('card-content-saved', { detail: { id, revision: event.data.revision } }));
+                document.dispatchEvent(new CustomEvent('card-content-saved', { detail: { id, revision: event.data.revision, savedFingerprint } }));
                 window.CardHubToast?.success('Card saved', { detail: request.card.name });
                 cleanup();
             }

@@ -142,3 +142,52 @@
 #viewer-card-picker[data-picker-presentation="abs-viewer"][data-picker-closing="true"] {
     pointer-events: none !important;
 }
+
+/* Match the calculator's portrait-first character grid. */
+body #viewer-card-picker .viewer-card-picker-result {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 10px;
+    min-height: 156px;
+    padding: 15px 8px 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+body #viewer-card-picker .viewer-card-picker-result-art {
+    width: 78px;
+    height: 78px;
+    flex: 0 0 78px;
+    border-color: var(--viewer-picker-accent);
+    object-fit: contain;
+    background: #17191e;
+}
+body #viewer-card-picker .viewer-card-picker-result-copy { width: 100%; gap: 5px; }
+body #viewer-card-picker .viewer-card-picker-result-name {
+    font-size: 12px;
+    line-height: 1.3;
+    white-space: normal;
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 2;
+    min-height: 2.6em;
+}
+body #viewer-card-picker .viewer-card-picker-result-date { display: none; }
+body #viewer-card-picker .viewer-card-picker-result-meta { font-size: 10px; white-space: normal; color: #c6c9d0; }
+body #viewer-card-picker .viewer-card-picker-source-badge {
+    position: absolute;
+    top: 5px;
+    right: 5px;
+    border-radius: 4px;
+    padding: 2px 4px;
+    background: #34383f;
+    color: #e3e5e9;
+    font-size: 8px;
+    font-weight: 800;
+}
+body #viewer-card-picker .viewer-card-picker-result:is(:hover,:focus-visible,.is-selected) {
+    border-color: var(--viewer-picker-accent);
+    box-shadow: 0 0 0 1px var(--viewer-picker-accent);
+}

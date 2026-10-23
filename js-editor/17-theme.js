@@ -1587,7 +1587,10 @@ window.syncToAbsLayout = function() {
             const isLR = raritySrc.includes('rarity_lr');
             const isCleanForm = Boolean(extraClass && extraClass.includes('abs-clean-form-icon'));
             const showLightning = !isCleanForm && (isLR || isSEZA);
-            const sezaLightningStyle = isSEZA && !isLR ? 'style="--lightning-color: rgb(255, 30, 80);"' : '';
+            // These nodes are rebuilt after updateIconImages changes the type;
+            // assign the color here rather than inheriting the old/default blue.
+            const lightningColor = isSEZA && !isLR ? 'rgb(255, 30, 80)' : (lightningColors[activeType] || lightningColors.agl);
+            const sezaLightningStyle = `style="--lightning-color: ${lightningColor};"`;
             const lrSpinHtml = (!isCleanForm && isLR) ? `<img src="https://abscustom.github.io/assets/images/lr_spin_dial.png" class="lr-spin-dial">` : '';
             const lrLightningHtml = showLightning ? `
                 <video class="lightning-overlay" autoplay muted loop playsinline ${sezaLightningStyle}>
