@@ -30,6 +30,11 @@ html body #cardsFilterModal .cards-filter-columns {display:flex !important;flex-
 html body #cardsFilterModal .cards-filter-controls {position:static !important;display:flex !important;flex-direction:column !important;flex-wrap:nowrap !important;gap:20px;width:100% !important;max-width:100% !important;min-width:0 !important;grid-area:auto !important;overflow:visible !important;box-sizing:border-box;}
 html body #cardsFilterModal .cards-filter-controls > * {width:100% !important;min-width:0 !important;max-width:100% !important;box-sizing:border-box;}
 html body #cardsFilterModal .cards-filter-columns {width:100% !important;box-sizing:border-box;}
+/* Keep each section's full height inside the scrolling drawer. Otherwise the
+   picker controls shrink to the viewport while their contents cover Categories. */
+html body #cardsFilterModal .cards-filter-columns > *,
+html body #cardsFilterModal .cards-filter-controls > * {flex:0 0 auto !important;}
+html body #cardsFilterModal .cards-filter-controls {max-height:none; border-right:0;}
 html body #cardsFilterModal .cards-filter-categories {border:0;padding:0;}
 html body #cardsFilterModal .category-filter-list {max-height:260px !important;overflow:auto !important;}
 html body #cardsFilterModal .lc-unit-picker-count {display:none !important;}
