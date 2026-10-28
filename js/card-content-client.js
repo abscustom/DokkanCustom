@@ -106,6 +106,7 @@
     function publishCurrent() {
         const project = window.getProjectDataObject?.();
         const savedFingerprint = window.getCardEditFingerprint?.(project);
+        const projectLoadRevision = window.getEditorProjectLoadRevision?.();
         if (!project || project.cardSource === 'official') throw new Error('Select a custom card to publish.');
         const current = window.currentContentCard;
         const id = current?.id || String(project.inputs?.['upload-folder-id'] || document.getElementById('upload-folder-id')?.value || '').trim()
@@ -135,25 +136,46 @@
             repoPath, assetBase, payload, builtinForms, status: 'published'
         } };
         if (/data:(?:image|video|audio)\//i.test(JSON.stringify(request))) throw new Error('Publish the new media assets first, then use their URLs before saving card content. Your offline JSON still contains the media.');
-        const nonce = crypto.randomUUID();
-        const url = new URL('/card-publisher.html', endpoint);
-        url.searchParams.set('origin', location.origin); url.searchParams.set('nonce', nonce);
-        const popup = window.open(url.href, '_blank', 'popup,width=680,height=740');
-        if (!popup) throw new Error('Allow the publisher window, then retry.');
-        const timeout = setTimeout(cleanup, 300000);
-        function cleanup() { clearTimeout(timeout); window.removeEventListener('message', receive); }
-        function receive(event) {
-            if (event.origin !== endpoint || event.source !== popup || event.data?.nonce !== nonce) return;
-            if (event.data.type === 'card-publisher-ready') popup.postMessage({ type: 'card-publisher-draft', nonce, id, request }, endpoint);
-            if (event.data.type === 'card-publisher-saved' && event.data.id === id && Number.isSafeInteger(event.data.revision)) {
-                window.currentContentCard = { ...current, ...request.card, id, slug: id, revision: event.data.revision };
-                document.dispatchEvent(new CustomEvent('card-content-saved', { detail: { id, revision: event.data.revision, savedFingerprint } }));
+        if (document.getElementById('card-save-dialog')?.open) return;
+        const dialog = document.createElement('dialog');
+        dialog.id = 'card-save-dialog'; dialog.className = 'abs-action-dialog';
+        dialog.setAttribute('aria-labelledby', 'card-save-title');
+        dialog.innerHTML = '<h2 id="card-save-title">Save card</h2><p data-card-name></p><p data-save-status role="status">Save this revision to your shared custom card.</p><div class="abs-dialog-actions"><button class="sba-gui-btn" data-save>Save card</button><button class="sba-gui-btn" data-cancel>Keep editing</button></div>';
+        dialog.querySelector('[data-card-name]').textContent = request.card.name;
+        const status = dialog.querySelector('[data-save-status]');
+        const button = dialog.querySelector('[data-save]');
+        let busy = false;
+        const dismiss = () => { if (!busy) dialog.close(); };
+        dialog.addEventListener('click', event => {
+            const r = dialog.getBoundingClientRect();
+            if (event.target === dialog && (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)) dismiss();
+        });
+        dialog.addEventListener('cancel', event => { if (busy) event.preventDefault(); });
+        dialog.querySelector('[data-cancel]').addEventListener('click', dismiss);
+        dialog.addEventListener('close', () => dialog.remove(), {once:true});
+        button.addEventListener('click', async () => {
+            if (busy) return;
+            busy = true; button.disabled = true; status.textContent = 'Saving…';
+            try {
+                if (!window.absProfile?.saveCard) throw new Error('Sign in through your profile before saving.');
+                const result = await window.absProfile.saveCard(id, request);
+                if (!Number.isSafeInteger(result.card?.revision)) throw new Error('Save response was incomplete. Check the latest revision before retrying.');
+                acceptSaved({revision:result.card.revision});
+                dialog.close();
+            } catch (error) {
+                status.textContent = error.status === 409 ? 'A newer revision exists. Your edits are still here. Export a backup and reload the latest card before retrying.' : error.message;
+            } finally { busy = false; button.disabled = false; }
+        });
+        function acceptSaved(receipt) {
+                // A late save response must not replace another card opened meanwhile.
+                if (window.currentContentCard !== current || window.getEditorProjectLoadRevision?.() !== projectLoadRevision) { return; }
+                const savedPayload = structuredClone(request.card.payload);
+                window.currentContentCard = { ...current, ...request.card, payload: savedPayload, id, slug: id, revision: receipt.revision };
+                document.dispatchEvent(new CustomEvent('card-content-saved', { detail: { id, revision: receipt.revision, savedFingerprint } }));
                 window.CardHubToast?.success('Card saved', { detail: request.card.name });
-                cleanup();
-            }
         }
-        window.addEventListener('message', receive);
-        return popup;
+        document.body.append(dialog); dialog.showModal(); button.focus();
+        return dialog;
     }
 
     function assertLegacyWriteAllowed(files) {

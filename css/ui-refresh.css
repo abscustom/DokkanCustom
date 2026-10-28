@@ -1,0 +1,49 @@
+/* Shared interaction surfaces; retain each feature's existing state owner. */
+html body .abs-action-dialog {
+    width:min(460px,calc(100vw - 32px)) !important; max-height:85dvh; overflow:auto;
+    padding:24px !important; border:1px solid var(--abs-shell-border,#45474c) !important;
+    border-radius:16px !important; background:var(--abs-shell-surface,#202124) !important;
+    color:var(--abs-shell-text,#f1f2f4) !important; font:14px/1.6 system-ui,sans-serif;
+    box-shadow:0 20px 70px #0008;
+}
+.abs-action-dialog::backdrop {background:#0009;backdrop-filter:none;}
+.abs-dialog-actions {display:flex;flex-wrap:wrap;gap:10px;margin-top:20px;}
+html body .abs-action-dialog .sba-gui-btn {font:600 13px/1.4 system-ui,sans-serif;padding:10px 14px;border-radius:9px;border:1px solid #ffffff30;background:#ffffff0d;color:#f2f2f2;cursor:pointer;}
+html body .abs-action-dialog .sba-gui-btn:hover {background:#ffffff20;}
+html body .abs-action-dialog .sba-gui-btn:focus-visible {outline:2px solid white;outline-offset:3px;}
+html body .abs-action-dialog .sba-gui-btn:disabled {opacity:.5;cursor:wait;}
+html body.admin-mode-active .abs-profile-edit {color:#a6f3ba !important;background:#19442d !important;border-color:#429665 !important;position:relative;margin-bottom:14px !important;}
+html body.admin-mode-active .abs-profile-edit::after {content:'';position:absolute;left:0;right:0;bottom:-9px;border-bottom:1px solid #ffffff30;}
+html body #nav-btn-viewer :is(.viewer-nav-cue,.viewer-nav-picker-cue,.viewer-nav-chevron,svg:last-child) {color:#fff !important;}
+html body #viewer-card-picker .picker-frame {display:none !important;}
+html body #viewer-card-picker .picker-unit-card {min-height:78px !important;}
+html body #viewer-card-picker .picker-thumb-wrapper {margin-top:6px !important;margin-bottom:0 !important;}
+html body #viewer-card-picker-results {display:grid !important;grid-template-columns:repeat(auto-fill,minmax(68px,1fr)) !important;gap:7px 5px !important;justify-items:center;}
+.shared-character-filters {display:flex;gap:8px;flex-wrap:wrap;width:100%;}
+.shared-character-filters select,.extra-card-filters select,.extra-card-filters input {min-width:0;max-width:100%;padding:10px;border:1px solid #ffffff30;border-radius:8px;background:#27282d;color:#f1f2f3;font:13px system-ui;}
+.shared-character-filters select {flex:1;min-width:120px;}
+.picker-unit-card {position:relative;}
+html body #cardsFilterModal {align-items:stretch !important;justify-content:flex-end !important;padding:0 !important;backdrop-filter:none !important;-webkit-backdrop-filter:none !important;background:#0005 !important;}
+html body #cardsFilterModal .cards-filter-dialog {position:relative !important;inset:auto !important;transform:none !important;margin:0 !important;width:min(440px,94vw) !important;height:100dvh !important;max-height:100dvh !important;border-radius:18px 0 0 18px !important;display:flex !important;flex-direction:column;overflow:hidden !important;background:#202126 !important;animation:abs-filter-enter 220ms ease-out;}
+html body #cardsFilterModal .calc-picker-header {flex:none;padding:22px !important;}
+html body #cardsFilterModal .cards-filter-columns {display:flex !important;flex-direction:column;gap:24px;padding:20px !important;overflow:auto !important;min-height:0;}
+html body #cardsFilterModal .cards-filter-controls {position:static !important;display:flex !important;flex-direction:column !important;flex-wrap:nowrap !important;gap:20px;width:100% !important;max-width:100% !important;min-width:0 !important;grid-area:auto !important;overflow:visible !important;box-sizing:border-box;}
+html body #cardsFilterModal .cards-filter-controls > * {width:100% !important;min-width:0 !important;max-width:100% !important;box-sizing:border-box;}
+html body #cardsFilterModal .cards-filter-columns {width:100% !important;box-sizing:border-box;}
+html body #cardsFilterModal .cards-filter-categories {border:0;padding:0;}
+html body #cardsFilterModal .category-filter-list {max-height:260px !important;overflow:auto !important;}
+html body #cardsFilterModal .lc-unit-picker-count {display:none !important;}
+.extra-card-filters {display:flex;flex-direction:column;gap:20px;}
+.extra-card-filters label {display:flex;flex-direction:column;gap:8px;}
+.extra-card-filters h3 {font:600 13px system-ui;margin:0 0 10px;}
+.extra-card-filters input {width:100%;box-sizing:border-box;margin-bottom:8px;}
+.extra-filter-options {display:flex;flex-wrap:wrap;gap:6px;max-height:180px;overflow:auto;}
+.extra-filter-options button {padding:8px 10px;color:#ddd;border:1px solid #ffffff25;border-radius:8px;background:#ffffff08;cursor:pointer;}
+.extra-filter-options button[aria-pressed=true] {background:#ffffff28;border-color:#aaa;color:white;}
+.extra-filter-options button[hidden] {display:none;}
+html body :is(#settingsDrawer .close-btn,.calc-unit-picker-dialog .calc-picker-close-btn) {display:none !important;}
+html body #abs-style-dock .phantom-theme-mark {width:48px !important;height:42px !important;object-fit:contain;filter:none;}
+html body #abs-style-dock {animation:abs-dock-enter 280ms cubic-bezier(.2,.8,.2,1);}
+@keyframes abs-dock-enter {from{translate:0 24px;}to{translate:0 0;}}
+@keyframes abs-filter-enter {from{translate:100% 0;}to{translate:0 0;}}
+@media(prefers-reduced-motion:reduce){html body #abs-style-dock,html body #cardsFilterModal .cards-filter-dialog {animation:none;}}

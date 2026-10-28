@@ -91,7 +91,7 @@
         `${repoRoot}css/tool-sba-nav.css?v=20260914-abs-clean-filters-settings-v1`,
         `${repoRoot}css/card-viewer-settings.css?v=${viewerSettingsVersion}`,
         `${repoRoot}css/viewer-card-picker.css?v=20261023-portrait-grid-v1`,
-        `${repoRoot}css/abs-navigation.css?v=20261017-editor-four-themes-v1`,
+        `${repoRoot}css/abs-navigation.css?v=20261027-ui-refresh`,
         `${repoRoot}css/sidebar-streamers.css?v=20261008-sidebar-live-indicator-v1`,
         `${repoRoot}css/unit-picker.css?v=20261007-abs-selector-shell-v2`
     ];
@@ -158,7 +158,7 @@
         await loadScript(`${repoRoot}js/card-content-config.js?v=20261017-card-content-config-v1`);
     }
     if (!window.CardContent) {
-        await loadScript(`${repoRoot}js/card-content-client.js?v=20261023-custom-viewer-v2`);
+        await loadScript(`${repoRoot}js/card-content-client.js?v=20261027-ui-refresh`);
     }
     const isSharedDatabaseViewer = /(?:^|\/)custom-card\.html$/i.test(window.location.pathname)
         || viewerParams.get('content') === 'database'
@@ -168,7 +168,7 @@
             await loadScript(`${repoRoot}js/card-content-renderer.js?v=20261023-custom-viewer-v2`);
         }
         if (!window.CardContent) {
-            await loadScript(`${repoRoot}js/card-content-client.js?v=20261023-custom-viewer-v2`);
+            await loadScript(`${repoRoot}js/card-content-client.js?v=20261027-ui-refresh`);
         }
         const requestedId = String(viewerParams.get('id') || '').trim();
         const requestedPath = String(viewerParams.get('path') || '').trim();
@@ -331,12 +331,13 @@
         'js/sidebar-streamers-feed.js',
         'js/abs-navigation.js',
         'js/unit-picker.js',
+        'js/release-time.js',
         'js/stars-pingpong.js',
         'js-card-details/viewer-card-picker.js'
     ];
 
     const scriptUrls = scripts.map(s => {
-        const scriptVersion = s === 'js/published-card-guards.js'
+        const scriptVersion = ["css/abs-navigation.css","js-calc/calc-card-loader.js","js-card-details/viewer-card-picker.js","js-editor/19-click-to-edit.js","js/abs-navigation.js","js/abs-profile.js","js/cards-workspace.js","js/main.js","js/sidebar-streamers-feed.js","js/sidebar-streamers.js","js/unit-picker.js","js/card-content-client.js","css/ui-refresh.css","js/card-search-filters.js"].includes(s) ? "20261027-ui-refresh" : s === 'js/published-card-guards.js'
             ? '20260928-loader-guard-v1'
             : s === 'js/card-content-renderer.js'
                 ? '20261023-custom-viewer-v2'

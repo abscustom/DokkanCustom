@@ -38,6 +38,16 @@ export async function handlePasswordAuth(request, env) {
     const origin = request.headers.get('Origin') || '';
     if (!PROFILE_SITE_ORIGINS.includes(origin)) throw new Failure(403, 'PROFILE_ORIGIN_REJECTED', 'Origin not allowed.');
     if (request.method === 'OPTIONS') return new Response(null, { status: 204, headers: cors(origin) });
+    if (/^\/profile\/password\/cards\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$/.test(path) && request.method === 'POST') {
+      await activeSession(request, env, true);
+      const target = new URL(request.url);
+      target.pathname = path.replace('/profile/password/cards/', '/api/content/cards/');
+      const saved = await handleContentAdmin(new Request(target, { method: 'PUT', headers: request.headers, body: request.body, duplex: 'half' }), env, { login: 'absadmin' });
+      const response = new Response(saved.body, saved);
+      for (const [name, value] of Object.entries(cors(origin))) response.headers.set(name, value);
+      response.headers.set('Cache-Control', 'no-store');
+      return response;
+    }
     const logout = path === '/profile/password/logout' && request.method === 'POST';
     if (!logout && !(path === '/profile/password/me' && request.method === 'GET')) throw new Failure(405, 'PROFILE_METHOD_NOT_ALLOWED', 'Method not allowed.');
     const row = await activeSession(request, env, true);

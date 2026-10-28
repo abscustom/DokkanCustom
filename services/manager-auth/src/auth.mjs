@@ -401,6 +401,16 @@ export async function profileMe(request, env) {
   return jsonProfile({ expiresAt: active.row.expires_at, ...profileResponse({ ...active.row, manager_access_status: active.managerAccess.status, manager_access_code: active.managerAccess.code }, env) }, 200, active.origin);
 }
 
+// Website writes use the origin-bound profile bearer and the linked Manager
+// session. Reuse expiry, token refresh and live repository authorization.
+export async function profileCardActor(request, env) {
+  const profile = await profileSessionFromRequest(request, env);
+  if (profile.managerAccess.status !== 'ready' || !profile.row.manager_session_hash) throw authRequired();
+  const active = await sessionByHash(profile.row.manager_session_hash, env);
+  if (active.row.user_id !== profile.row.user_id) throw authRequired();
+  return authorize(env, active.tokens, active.row.user_id, false, createGitHub(active.tokens.access_token), false);
+}
+
 export async function profileLogout(request, env) {
   const active = await profileSessionFromRequest(request, env);
   await env.DB.batch([
@@ -448,7 +458,11 @@ export async function callback(request, env) {
 export async function session(request, env) {
   const id = readCookie(request, SESSION_COOKIE);
   if (!/^[A-Za-z0-9_-]{43}$/.test(id)) throw authRequired();
-  const idHash = await hash(id), time = now();
+  return sessionByHash(await hash(id), env);
+}
+
+async function sessionByHash(idHash, env) {
+  const time = now();
   const row = await env.DB.prepare('SELECT * FROM sessions WHERE id_hash=?').bind(idHash).first();
   if (!row || row.expires_at <= time || row.last_seen_at + IDLE_SECONDS <= time || !userIds(env.ADMIN_USER_IDS).has(row.user_id)) {
     if (row) await env.DB.prepare('DELETE FROM sessions WHERE id_hash=?').bind(idHash).run();

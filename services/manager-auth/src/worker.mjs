@@ -3,6 +3,7 @@ import { start, callback, profileStart, profileCallback, profileExchange, profil
 import { snapshot, publicCards, linkChanges, deleteChanges, commit } from './cards.mjs';
 import { contentAdminMethod, handleContentAdmin, handlePublicContent, isPublicContentPath } from './content-api.mjs';
 import { handlePasswordAuth } from './password-auth.mjs';
+import { profileCardActor } from './auth.mjs';
 
 export async function handle(request, env) {
   const url = new URL(request.url), path = url.pathname;
@@ -23,6 +24,18 @@ export async function handle(request, env) {
     if (path === '/profile/exchange' && request.method === 'POST') return profileExchange(request,env);
     if (path === '/profile/me' && request.method === 'GET') return profileMe(request,env);
     if (path === '/profile/logout' && request.method === 'POST') return profileLogout(request,env);
+    if (/^\/profile\/cards\/[a-zA-Z0-9][a-zA-Z0-9_-]{0,127}$/.test(path) && request.method === 'POST') {
+      configuration(env);
+      const actor = await profileCardActor(request, env);
+      const target = new URL(request.url);
+      target.pathname = path.replace('/profile/cards/', '/api/content/cards/');
+      const response = await handleContentAdmin(new Request(target, { method: 'PUT', headers: request.headers, body: request.body, duplex: 'half' }), env, actor);
+      const copy = new Response(response.body, response);
+      copy.headers.set('Access-Control-Allow-Origin', origin);
+      copy.headers.set('Vary', 'Origin');
+      copy.headers.set('Cache-Control', 'no-store');
+      return copy;
+    }
     if (['/profile/exchange','/profile/me','/profile/logout'].includes(path)) throw new Failure(405,'PROFILE_METHOD_NOT_ALLOWED','This profile request method is not allowed.');
     throw new Failure(404,'PROFILE_NOT_FOUND','This profile action is unavailable.');
   }
@@ -84,7 +97,7 @@ function secure(response) {
   copy.headers.set('Referrer-Policy','no-referrer');
   copy.headers.set('X-Frame-Options','DENY');
   copy.headers.set('Permissions-Policy','camera=(), microphone=(), geolocation=()');
-  copy.headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'");
+  copy.headers.set('Content-Security-Policy',"default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdnjs.cloudflare.com; font-src 'self' https://fonts.gstatic.com https://cdnjs.cloudflare.com; img-src 'self' https: data:; connect-src 'self' https://decapi.me; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'");
   return copy;
 }
 export const service = {

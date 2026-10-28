@@ -93,7 +93,7 @@
             platform,
             platformName,
             status,
-            statusLabel: STATUS_LABELS[status],
+            statusLabel: item.stale && item.checkedAt ? STATUS_LABELS[status] + ' · last checked ' + new Date(item.checkedAt).toLocaleTimeString([], {hour:'2-digit',minute:'2-digit'}) : STATUS_LABELS[status],
             channelUrl,
             avatar: safeAvatarUrl(item.avatar),
         };

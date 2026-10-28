@@ -347,7 +347,7 @@
         const state=id?instances.get(id):activePicker;
         if(!state?.open)return false;
         const viewerPresentation = state.config.presentation === 'abs-viewer';
-        const animateViewerExit = viewerPresentation && reason !== 'replace' && canAnimateViewer(state);
+        const animateViewerExit = viewerPresentation && state.config.animateClose !== false && reason !== 'replace' && canAnimateViewer(state);
         state.open=false;
         state.root.setAttribute('aria-hidden','true');
         if (animateViewerExit) {
@@ -386,5 +386,50 @@
     }
     window.addEventListener('resize',()=>{if(activePicker)position(activePicker);},{passive:true});
     window.addEventListener('abs-shell-layout-change',()=>{if(activePicker)position(activePicker);});
-    window.DokkanUnitPicker=Object.freeze({open,close,isOpen:id=>Boolean((id?instances.get(id):activePicker)?.open),update,enhance,openEnhanced,openOnEntry});
+    function portrait({name,type='agl',rarity='',image='',fallback='',frame='',custom=false,isEza=false,isSeza=false,isTransformed=false,onImageError,onSelect}) {
+        const button = makeElement('button', 'picker-unit-card picker-type-' + type.toLowerCase());
+        button.type = 'button'; button.dataset.type = type.toLowerCase();
+        button.setAttribute('aria-label', [name,rarity,type.toUpperCase()].filter(Boolean).join(' · '));
+        button.dataset.pickerTooltip = button.getAttribute('aria-label');
+        Object.assign(button.dataset,{source:custom?'custom':'official',isEza:String(isEza),isSeza:String(isSeza),isTransformed:String(isTransformed)});
+        const states=[custom?'custom card':'',isSeza?'Super Extreme Z-Awakened':isEza?'Extreme Z-Awakened':'',isTransformed?'transformed form':''].filter(Boolean);
+        if(states.length)button.setAttribute('aria-label',button.getAttribute('aria-label')+' · '+states.join(', '));
+        const wrap = makeElement('div','picker-thumb-wrapper');
+        if (frame) { const border = makeElement('img','picker-frame'); border.src=frame;border.alt='';wrap.append(border); }
+        const art = makeElement('img','picker-thumb' + (custom ? ' is-fallback-thumb' : ''));
+        art.alt=''; art.loading='lazy'; if(image)art.src=image;
+        if(onImageError)art.onerror=()=>onImageError(art);
+        else art.addEventListener('error',()=>{if(fallback && art.src!==new URL(fallback,document.baseURI).href)art.src=fallback;else {art.removeAttribute('src');art.classList.add('picker-thumb-error');}});
+        wrap.append(art);button.append(wrap);
+        const badges=makeElement('span','picker-state-badges');badges.setAttribute('aria-hidden','true');
+        for(const [state,label,enabled] of [['custom','CUSTOM',custom],['seza','SEZA',isSeza],['eza','EZA',isEza&&!isSeza],['form','FORM',isTransformed]]) {
+            if(enabled){const badge=makeElement('span','picker-state-badge',label);badge.dataset.state=state;badges.append(badge);}
+        }
+        if(badges.childNodes.length)wrap.append(badges);
+        if(onSelect)button.addEventListener('click',onSelect);
+        return button;
+    }
+    function categoryNames(card) {
+        const raw = (window.DB?.cards || []).find(c=>String(c.id)===String(card.id)) || card;
+        const ids = card.categoryIds || raw.categories || [];
+        return [...new Set([...(card.categoryNames || []),...ids.map(id=>window.DB?.categories?.[id]?.name || String(id))])];
+    }
+    function mountCharacterFilters(host,{items,onChange,typeOf=card=>card.type || 'agl'}) {
+        host.querySelector('[data-shared-character-filters]')?.remove();
+        const group=makeElement('div','shared-character-filters');group.dataset.sharedCharacterFilters='true';
+        const type=makeElement('select');type.setAttribute('aria-label','Character type');
+        for(const value of ['all','agl','teq','int','str','phy']) {const o=makeElement('option','',value==='all'?'All types':value.toUpperCase());o.value=value;type.append(o);}
+        const category=makeElement('select');category.setAttribute('aria-label','Character category');
+        const all=makeElement('option','','All categories');all.value='';category.append(all);
+        group.updateItems=cards=>{
+            const existing=new Set([...category.options].map(o=>o.value));
+            [...new Set(cards.flatMap(categoryNames))].sort().forEach(name=>{if(!existing.has(name)){const o=makeElement('option','',name);o.value=name;category.append(o);}});
+        };
+        group.updateItems(items);
+        const change=()=>onChange(card=>(type.value==='all'||String(typeOf(card)).toLowerCase()===type.value)&&(!category.value||categoryNames(card).includes(category.value)));
+        type.addEventListener('change',change);category.addEventListener('change',change);
+        group.append(type,category);host.append(group);
+        return group;
+    }
+    window.DokkanUnitPicker=Object.freeze({portrait,mountCharacterFilters,categoryNames,open,close,isOpen:id=>Boolean((id?instances.get(id):activePicker)?.open),update,enhance,openEnhanced,openOnEntry});
 })();

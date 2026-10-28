@@ -342,7 +342,7 @@
         const response = await fetch(url.href, init);
         let payload = null;
         try { payload = await response.json(); } catch {}
-        if (!response.ok) throw Object.assign(new Error('Profile request failed.'), {status:response.status});
+        if (!response.ok) throw Object.assign(new Error(payload?.error?.message || 'Profile request failed.'), {status:response.status});
         return payload;
     }
 
@@ -666,7 +666,12 @@
         }
     }
 
-    window.absProfile = Object.freeze({getState:snapshot,signIn,signOut});
+    window.absProfile = Object.freeze({getState:snapshot,signIn,signOut,
+        saveCard: (id, body) => {
+            if (!profileToken) return Promise.reject(new Error('Sign in through your profile before saving this card.'));
+            return requestProfile('/profile/cards/' + encodeURIComponent(id), profileToken, 'POST', body);
+        }
+    });
     window.addEventListener('storage', event => {
         if (!isManagerHost && (event.key === TOKEN_KEY || event.key === null)) {
             // Do not resurrect a legacy tab-local handle after another tab signs out.

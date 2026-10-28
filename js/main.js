@@ -1879,6 +1879,7 @@ function setInlineRarityFilter(rarityVal, btnEl) {
 }
 
 function resetAllInlineFilters() {
+    window.CardSearchFilters?.reset();
     currentSourceFilter = 'all';
     currentInlineType = 'all';
     currentInlineRarity = 'all';
@@ -2219,7 +2220,7 @@ function filterCards(resetPage = true) {
             matchesSearch = nameMatch || idMatch;
         }
 
-        return matchesSource && matchesType && matchesRarity && matchesCategory && matchesKoScreen && matchesSearch;
+        return matchesSource && matchesType && matchesRarity && matchesCategory && matchesKoScreen && matchesSearch && (window.CardSearchFilters?.matches(item) ?? true);
     });
     filteredCardItems = arrangeLinkedCardsForDisplay(filteredCardItems);
 

@@ -49,7 +49,7 @@
         close.type = 'button';
         close.className = 'calc-picker-close-btn';
         close.textContent = '×';
-        header.append(close);
+        // Backdrop click and Escape dismiss the drawer.
         dialog.className = 'calc-unit-picker-dialog cards-filter-dialog';
         const columns = document.createElement('div');
         columns.className = 'cards-filter-columns';
@@ -63,7 +63,8 @@
         count.className = 'lc-unit-picker-count';
         count.setAttribute('role', 'status');
         count.setAttribute('aria-live', 'polite');
-        dialog.append(columns, count);
+        dialog.append(columns);
+        window.CardSearchFilters?.mount(controls);
         root.append(dialog);
         document.body.append(root);
         trigger.setAttribute('aria-controls', root.id);

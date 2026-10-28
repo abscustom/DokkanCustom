@@ -937,7 +937,7 @@ function filterPickerCards() {
         if (pickerSearchQuery) {
             matchesSearch = (c.name || '').toLowerCase().includes(pickerSearchQuery) || String(c.id).toLowerCase().includes(pickerSearchQuery);
         }
-        return matchesSrc && matchesSearch;
+        return matchesSrc && matchesSearch && (!window.calculatorExtraFilter || window.calculatorExtraFilter(c));
     });
     renderPickerGrid();
 }
@@ -949,60 +949,27 @@ function filterPickerCards() {
 function renderPickerGrid() {
     const grid = document.getElementById('unitPickerGrid');
     if (!grid) return;
+    const controls = document.querySelector('#unitPickerModal .picker-controls-row');
+    if (controls && allPickerCards.length && !controls.querySelector('[data-shared-character-filters]')) {
+        window.DokkanUnitPicker.mountCharacterFilters(controls,{items:allPickerCards,onChange:predicate=>{window.calculatorExtraFilter=predicate;filterPickerCards();}});
+    }
 
     if (filteredPickerCards.length === 0) {
         grid.innerHTML = `<div style="grid-column: 1/-1; padding: 40px; color: #94a3b8; font-weight: 800;">No units found matching your search.</div>`;
         return;
     }
 
-    grid.innerHTML = filteredPickerCards.map((c, i) => {
-        const exactCardId = String(c.id);
-        const folderId = exactCardId.length >= 7 ? exactCardId.substring(0, 7) : exactCardId;
-        const normId = parseInt(exactCardId, 10);
-        const circleFolderId = Math.floor(normId / 10) * 10;
-        const parentFolderId = (c.source === 'official' && typeof getCardParentId === 'function') ? Math.floor(getCardParentId(c.id) / 10) * 10 : circleFolderId;
+    grid.replaceChildren(...filteredPickerCards.map((c,i)=>{
+        const id=Math.floor(Number(c.id)/10)*10;
+        const custom=c.source==='custom';
+        const image=custom?(window.DokkanCustomCardMedia?.resolveCustomMediaUrl(c.thumbUrl,c.cardUrl)||c.thumbUrl):'./assets/card-art/cards/'+id+'/card_'+id+'_circle.png';
+        const parentId=!custom&&typeof getCardParentId==='function'?Math.floor(getCardParentId(c.id)/10)*10:id;
+        return window.DokkanUnitPicker.portrait({name:c.name,type:c.type,rarity:c.rarity,image,custom,
+            isEza:c.isEza,isSeza:c.isSeza,isTransformed:c.isTransformed,
+            onImageError:art=>{art.dataset.pickerFallbacks=JSON.stringify((c.thumbFallbacks||[]).map(url=>window.DokkanCustomCardMedia?.resolveCustomMediaUrl(url,c.cardUrl)||url));window.handlePickerCircleError(art,String(id),String(parentId),custom);},
+            frame:CALC_ASSET_URL+'frame_'+(c.type||'agl')+'.png',fallback:custom?c.thumbFallbacks?.[0]:undefined,onSelect:()=>selectUnitFromPicker(i)});
+    }));
 
-        const isCustom = c.source === 'custom';
-        const media = window.DokkanCustomCardMedia;
-        const circleUrl = isCustom
-            ? (media?.resolveCustomMediaUrl(c.thumbUrl, c.cardUrl) || c.thumbUrl || '')
-            : `./assets/card-art/cards/${circleFolderId}/card_${circleFolderId}_circle.png`;
-        const fallbackUrls = isCustom && media
-            ? media.escapeHtml(JSON.stringify((c.thumbFallbacks || []).map(url => media.resolveCustomMediaUrl(url, c.cardUrl)).filter(Boolean)))
-            : '';
-        const awakeningState = c.isSeza ? 'Super Extreme Z-Awakened' : (c.isEza ? 'Extreme Z-Awakened' : '');
-        const accessibleStates = [
-            awakeningState,
-            c.isTransformed ? 'transformed form' : '',
-            isCustom ? 'custom card' : ''
-        ].filter(Boolean).join(', ');
-        const accessibleName = `${c.name || 'Unknown unit'}, ${c.rarity || 'unknown rarity'}, ${typeKeyForCard(c.type)}${accessibleStates ? `, ${accessibleStates}` : ''}`;
-        const safeAccessibleName = media ? media.escapeHtml(accessibleName) : accessibleName.replace(/[&<>"']/g, '');
-        const tooltipText = `${c.name || 'Unknown unit'} · ${c.rarity || 'unknown rarity'} · ${typeKeyForCard(c.type)}`;
-        const safeTooltipText = media ? media.escapeHtml(tooltipText) : tooltipText.replace(/[&<>"']/g, '');
-        const frameSrc = `${CALC_ASSET_URL}frame_${c.type || 'agl'}.png`;
-
-        const pickerStates = [];
-        if (isCustom) pickerStates.push(['custom', 'CUSTOM']);
-        if (c.isSeza) pickerStates.push(['seza', 'SEZA']);
-        else if (c.isEza) pickerStates.push(['eza', 'EZA']);
-        if (c.isTransformed) pickerStates.push(['form', 'FORM']);
-        const stateBadges = pickerStates.length
-            ? `<span class="picker-state-badges" aria-hidden="true">${pickerStates.map(([state, label]) => `<span class="picker-state-badge" data-state="${state}">${label}</span>`).join('')}</span>`
-            : '';
-
-        const typeKey = (c.type || 'agl').toLowerCase();
-        const typeClass = `picker-type-${typeKey}`;
-
-        return `
-        <button type="button" class="picker-unit-card ${typeClass}" data-type="${typeKey}" data-source="${isCustom ? 'custom' : 'official'}" data-is-transformed="${Boolean(c.isTransformed)}" data-is-eza="${Boolean(c.isEza)}" data-is-seza="${Boolean(c.isSeza)}" aria-label="${safeAccessibleName}" data-picker-tooltip="${safeTooltipText}" onclick="selectUnitFromPicker(${i})">
-            <div class="picker-thumb-wrapper">
-                <img class="picker-frame" src="${frameSrc}" loading="lazy" alt="" aria-hidden="true">
-                <img class="picker-thumb${isCustom ? ' is-fallback-thumb' : ''}" src="${media ? media.escapeHtml(circleUrl) : circleUrl}" ${isCustom ? `data-picker-fallbacks="${fallbackUrls}"` : ''} loading="lazy" alt="" aria-hidden="true" onerror="window.handlePickerCircleError(this, '${circleFolderId}', '${parentFolderId}', ${isCustom})">
-                ${stateBadges}
-            </div>
-        </button>`;
-    }).join('\n');
 }
 
 function typeKeyForCard(type) {

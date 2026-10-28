@@ -193,6 +193,9 @@
         });
 
         const hubCards = cards.filter(card => {
+            // The public English picker must not expose untranslated database rows.
+            // Keep them in DB for form/skill resolution, outside the search pool.
+            if (/[\u3040-\u30ff\u3400-\u9fff\uff66-\uff9f]/u.test(cardName(card))) return false;
             const rawId = parseInt(card?.id, 10);
             if (!Number.isFinite(rawId)) return false;
             if (String(rawId).length >= 8) return false;
@@ -340,65 +343,11 @@
     }
 
     function createResultButton(card, currentId, bindSelection = true) {
-        const button = document.createElement('button');
-        button.type = 'button';
-        button.className = 'viewer-card-picker-result';
-        button.setAttribute('role', 'option');
-        button.setAttribute('aria-selected', String(cardId(card) === currentId));
-        const type = cardTypeLabel(card);
-        const rarity = cardRarityLabel(card);
-        const mode = cardModeLabel(card);
-        button.title = `${cardName(card)} · ${rarity} · ${type} · ${mode} · ${cardReleaseLabel(card)} · #${cardId(card)}`;
-        button.setAttribute('aria-label', button.title);
-        button.dataset.type = type.toLowerCase();
-        const colors = {agl:'#58baff',teq:'#62cf86',int:'#b28aff',str:'#f66f7d',phy:'#f1bf59'};
-        button.style.setProperty('--viewer-picker-accent', colors[type.toLowerCase()] || '#a4a7ae');
-        if (cardId(card) === currentId) button.classList.add('is-selected');
-
-        const image = document.createElement('img');
-        image.className = 'viewer-card-picker-result-art';
-        image.alt = '';
-        image.loading = 'lazy';
-        image.decoding = 'async';
-        const imageUrl = cardImageUrl(card);
-        if (imageUrl.primary) image.src = imageUrl.primary;
-        let triedFallback = false;
-        image.addEventListener('error', () => {
-            if (!triedFallback && imageUrl.fallback && imageUrl.fallback !== imageUrl.primary) {
-                triedFallback = true;image.src = imageUrl.fallback;
-                return;
-            }
-            image.hidden = true;
-            button.classList.add('has-missing-portrait');
-            if (!button.querySelector('.abs-picker-missing-art')) {
-                const missing = document.createElement('span');missing.className='abs-picker-missing-art';missing.textContent='No portrait';missing.setAttribute('aria-hidden','true');button.prepend(missing);
-            }
-        });
-        const copy = document.createElement('span');
-        copy.className = 'viewer-card-picker-result-copy';
-
-        const name = document.createElement('span');
-        name.className = 'viewer-card-picker-result-name';
-        name.textContent = cardName(card);
-
-        const release = document.createElement('span');
-        release.className = 'viewer-card-picker-result-date';
-        release.textContent = cardReleaseLabel(card);
-
-        const meta = document.createElement('span');
-        meta.className = 'viewer-card-picker-result-meta';
-        meta.textContent = `${rarity} · ${type}${mode && mode.toLowerCase() !== 'base' ? ` · ${mode}` : ''}`;
-
-        if (card.source === 'custom') {
-            const badge = document.createElement('span');
-            badge.className = 'viewer-card-picker-source-badge';
-            badge.textContent = 'CUSTOM';
-            button.append(badge);
-        }
-
-        copy.append(name, release, meta);
-        button.append(image, copy);
-        if (bindSelection) button.addEventListener('click', () => selectViewerCard(card));
+        const image = cardImageUrl(card);
+        const button = window.DokkanUnitPicker.portrait({name:cardName(card),type:cardTypeLabel(card).toLowerCase(),rarity:cardRarityLabel(card),image:image.primary,fallback:image.fallback,
+            isEza:cardMode(card)==='eza',isSeza:cardMode(card)==='seza',isTransformed:card.isTransformed||card.is_transform,
+            frame:'https://abscustom.github.io/assets/images/frame_' + cardTypeLabel(card).toLowerCase() + '.png',custom:card.source==='custom',onSelect:bindSelection?()=>selectViewerCard(card):null});
+        button.setAttribute('aria-selected',String(cardId(card)===currentId));
         return button;
     }
 
@@ -411,6 +360,7 @@
             presentation: 'abs-viewer',
             origin: '#nav-btn-viewer',
             animationDuration: 240,
+            animateClose: false,
             pageSize: MAX_RESULTS,
             items: getCardPool(),
             loading: isLoadingCards,
@@ -426,13 +376,16 @@
                 document.body.classList.remove('viewer-picker-open');
             },
             mountControls(host,api) {
+                let sourceChoice='all', extra=()=>true;
+                const apply=()=>api.setFilter(card=>(sourceChoice==='all'||(sourceChoice==='custom'?card.source==='custom':card.source!=='custom'))&&extra(card));
+                window.DokkanUnitPicker.mountCharacterFilters(host,{items:getCardPool(),typeOf:cardTypeLabel,onChange:predicate=>{extra=predicate;apply();}});
                 const group = document.createElement('div');group.className='picker-source-tabs';
                 [['all','All'],['official','Official'],['custom','Custom']].forEach(([source,label]) => {
                     const button = document.createElement('button');button.type='button';button.className='picker-source-tab';button.textContent=label;
                     button.classList.toggle('active',source==='all');button.setAttribute('aria-pressed',String(source==='all'));
                     button.addEventListener('click',()=>{
                         group.querySelectorAll('button').forEach(control=>{const selected=control===button;control.classList.toggle('active',selected);control.setAttribute('aria-pressed',String(selected));});
-                        api.setFilter(card=>source==='all'||(source==='custom'?card.source==='custom':card.source!=='custom'));
+                        sourceChoice=source;apply();
                     });group.append(button);
                 });host.append(group);
             },
@@ -441,6 +394,7 @@
     }
     function renderViewerCardPicker(query = '') {
         if (!pickerIsOpen || !window.DokkanUnitPicker) return;
+        document.querySelector('#viewer-card-picker [data-shared-character-filters]')?.updateItems?.(getCardPool());
         window.DokkanUnitPicker.update('viewer-card-picker', {
             items: getCardPool(), loading: isLoadingCards
         });

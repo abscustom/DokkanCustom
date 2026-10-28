@@ -7,7 +7,8 @@
         { twitch:'datruthdt', youtube:'datruthdt', displayName:'DaTruthDT' },
         { twitch:'toonrami', youtube:'ToonRami', displayName:'Toon' },
         { twitch:'slaybix', youtube:'slaybix', displayName:'Slay' },
-        { twitch:'nanogenix', youtube:'Nanogenix', displayName:'Nano' }
+        { twitch:'nanogenix', youtube:'Nanogenix', displayName:'Nano' },
+        { youtube:'Goresh', displayName:'Goresh', youtubeOnly:true }
     ];
     let timer = null;
     let pending = null;
@@ -24,13 +25,16 @@
         pending=(async()=>{
             const results=await Promise.allSettled(CHANNELS.map(async(item,originalIndex)=>{
                 if(item.youtubeOnly)return {...item,originalIndex,isLive:false,status:'not-applicable',avatar:`https://unavatar.io/youtube/${item.youtube}`};
-                const read=async url=>{const response=await fetch(url);if(!response.ok)throw Error(`Channel status HTTP ${response.status}`);return response.text();};
-                const [uptime,avatar]=await Promise.allSettled([read(`https://decapi.me/twitch/uptime/${item.twitch}`),read(`https://decapi.me/twitch/avatar/${item.twitch}`)]);
+                const read=async url=>{const response=await fetch(url,{signal:AbortSignal.timeout(8000)});if(!response.ok)throw Error(`Channel status HTTP ${response.status}`);return response.text();};
+                const previous=latest.find(entry=>entry.twitch===item.twitch);
+                const [uptime,avatar]=await Promise.allSettled([read(`https://decapi.me/twitch/uptime/${item.twitch}`),previous?.avatar ? Promise.resolve(previous.avatar) : read(`https://decapi.me/twitch/avatar/${item.twitch}`)]);
                 const text=(uptime.status==='fulfilled'?uptime.value:'').trim();
                 const avatarUrl=(avatar.status==='fulfilled'?avatar.value:'').trim();
                 const offline=/\boffline\b|\bnot live\b/i.test(text);
                 const live=!offline && /\d.*\b(?:seconds?|minutes?|hours?|days?)\b/i.test(text) && !/error|not found|does not exist/i.test(text);
-                return {...item,originalIndex,isLive:live,status:offline?'offline':live?'live':'error',uptime:live?text:null,avatar:/^https:\/\//i.test(avatarUrl)?avatarUrl:null};
+                const confirmed=offline||live;
+                const recent=previous?.checkedAt && Date.now()-previous.checkedAt<600000;
+                return {...item,originalIndex,isLive:confirmed?live:recent?previous.isLive:false,status:confirmed?(offline?'offline':'live'):recent?previous.status:'checking',stale:!confirmed,checkedAt:confirmed?Date.now():previous?.checkedAt,uptime:live?text:null,avatar:/^https:\/\//i.test(avatarUrl)?avatarUrl:previous?.avatar||null};
             }));
             latest=results.map((result,index)=>result.status==='fulfilled'?result.value:{...CHANNELS[index],originalIndex:index,isLive:false,status:'error',avatar:null});
             latest.sort((first,second)=>Number(second.isLive)-Number(first.isLive)||first.originalIndex-second.originalIndex);

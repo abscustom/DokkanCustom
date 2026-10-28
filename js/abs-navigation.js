@@ -155,7 +155,23 @@
             slot.setAttribute('aria-label', 'Page style');
             document.body.append(slot);
         }
+        const oldGroup = control.closest('.filter-group');
         if (control.parentElement !== slot) slot.append(control);
+        if (oldGroup && !oldGroup.querySelector('button,input,select')) oldGroup.remove();
+        control.querySelectorAll('.hud-btn-indicator,small').forEach(node => node.remove());
+        control.querySelectorAll('.phantom-theme-mark').forEach(node => {
+            if (node.tagName === 'IMG') return;
+            const logo = document.createElement('img'); logo.className = 'phantom-theme-mark';
+            logo.src = new URL('assets/images/phantom-style.png', assetBase).href; logo.alt = 'Phantom';
+            node.replaceWith(logo);
+        });
+        if (!slot.dataset.transitionReady) {
+            slot.dataset.transitionReady = 'true';
+            slot.addEventListener('click', event => {
+                if (!event.target.closest('button') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+                document.body.animate([{opacity:.65},{opacity:1}], {duration:260,easing:'ease-out'});
+            });
+        }
         const oldSlot = sidebar.querySelector('.abs-sidebar-style-slot');
         if (oldSlot) oldSlot.hidden = true;
         slot.hidden = false;
@@ -186,7 +202,7 @@
             if (existing?.dataset.loaded === 'true') { resolve(); return; }
             const scriptNode = existing || document.createElement('script');
             scriptNode.async = false;
-            scriptNode.src = new URL(`js/${file}?v=20261018-profile-edit-v1`, assetBase).href;
+            scriptNode.src = new URL(`js/${file}?v=20261027-ui-refresh`, assetBase).href;
             scriptNode.dataset.absProfileAsset = marker;
             scriptNode.addEventListener('load', () => { scriptNode.dataset.loaded = 'true'; resolve(); }, {once:true});
             scriptNode.addEventListener('error', () => reject(new Error(`Profile ${file} could not be loaded.`)), {once:true});

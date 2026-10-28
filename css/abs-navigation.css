@@ -1,3 +1,4 @@
+@import url("ui-refresh.css?v=20261027-ui-refresh");
 /* ABS shared shell; card-specific artwork, frames and skills remain untouched. */
 /* Reuse each page's available theme buttons in a viewport-level dock. */
 body.abs-shell:has(#abs-style-dock) { padding-bottom:calc(100px + env(safe-area-inset-bottom, 0px)) !important; }

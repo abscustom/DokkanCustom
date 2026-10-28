@@ -617,12 +617,17 @@ function requestFinishCardEditing() {
     if (dialog) dialog.remove();
     dialog = document.createElement('dialog');
     dialog.id = 'finish-card-edit-dialog';
+    dialog.className = 'abs-action-dialog';
     dialog.setAttribute('aria-labelledby', 'finish-card-edit-title');
     dialog.style.cssText = 'max-width:420px;width:calc(100% - 40px);padding:24px;border:1px solid #555;border-radius:14px;background:#202124;color:#fff;box-shadow:0 16px 60px #0009;';
-    dialog.innerHTML = '<h2 id="finish-card-edit-title" style="font-size:20px">Save your changes?</h2><p>This card has unsaved changes.</p><p role="alert" data-save-error hidden></p><div style="display:flex;flex-wrap:wrap;gap:10px"><button type="button" data-finish="save">Yes, save</button><button type="button" data-finish="leave">No, finish without saving</button><button type="button" data-finish="cancel">Keep editing</button></div>';
+    dialog.innerHTML = '<h2 id="finish-card-edit-title" style="font-size:20px">Save your changes?</h2><p>This card has unsaved changes.</p><p role="alert" data-save-error hidden></p><div style="display:flex;flex-wrap:wrap;gap:10px"><button type="button" class="sba-gui-btn" data-finish="save">Yes, save</button><button type="button" class="sba-gui-btn" data-finish="leave">No, finish without saving</button><button type="button" class="sba-gui-btn" data-finish="cancel">Keep editing</button></div>';
     dialog.addEventListener('click', event => {
         const choice = event.target.closest('[data-finish]')?.dataset.finish;
-        if (!choice) return;
+        if (!choice) {
+            const r = dialog.getBoundingClientRect();
+            if (event.target === dialog && (event.clientX < r.left || event.clientX > r.right || event.clientY < r.top || event.clientY > r.bottom)) dialog.close();
+            return;
+        }
         if (choice === 'save') {
             try {
                 if (typeof window.CardContent?.publishCurrent !== 'function') throw new Error('The publisher is unavailable. Please keep editing and retry.');
