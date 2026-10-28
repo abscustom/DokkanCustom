@@ -31,7 +31,8 @@
         const slot=document.getElementById('abs-sidebar-twitch');
         if (!slot || !window.ABSSidebarTwitch) return;
         window.ABSSidebarTwitch.mount(slot);
-        window.ABSSidebarTwitch.update(latest);
+        const hasSettings = Boolean(document.getElementById('settingsDrawer'));
+        window.ABSSidebarTwitch.update(latest.filter(item => !item.youtubeOnly || !hasSettings));
     }
     async function refresh() {
         if (pending) return pending;

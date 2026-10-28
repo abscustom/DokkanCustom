@@ -28,10 +28,11 @@ try {
     const page=await context.newPage();
     const open=async file=>{
         await page.goto(`http://127.0.0.1:${server.address().port}/${file}`,{waitUntil:'domcontentloaded'});
-        await page.waitForFunction(()=>window.absShellReady && window.ABSSidebarFeed && document.querySelectorAll('#abs-sidebar-twitch a').length===6);
+        await page.waitForFunction(()=>window.absShellReady && window.ABSSidebarFeed && document.querySelectorAll('#abs-sidebar-twitch a').length===(document.getElementById('settingsDrawer')?5:6));
         await page.evaluate(()=>{document.querySelector('#abs-loading-screen')?.remove();return ABSSidebarFeed.refresh();});
     };
     await open('index.html');
+    assert.equal(await page.locator('[data-channel="goresh"]').count(),0,'Home has Settings, so Goresh must not appear');
     assert.equal(await page.locator('[data-channel="theironcane"]').getAttribute('data-status'),'live');
     mode='failed';await open('support-memory.html');
     const iron=page.locator('[data-channel="theironcane"]');
@@ -40,7 +41,13 @@ try {
     for(const file of ['support-memory.html','leader-compatibility.html','damage-received.html','calculator.html','editor.html','card.html?id=4031731']) {
         await open(file);
         const goresh=page.locator('#abs-sidebar-twitch [data-channel="goresh"]');
-        console.log('Checking Goresh link on',file);
+        const hasSettings=await page.locator('#settingsDrawer').count()>0;
+        if(hasSettings) {
+            assert.equal(await goresh.count(),0,`Goresh must be absent on ${file}, which has Settings`);
+            console.log('PASS Goresh hidden on',file);
+            continue;
+        }
+        console.log('Checking Goresh link on page without Settings:',file);
         assert.equal(await goresh.getAttribute('href'),'https://www.youtube.com/@Goresh');
         assert.equal(await goresh.getAttribute('data-status'),'not-applicable');
         // Some tools open their character selector on entry. Dismiss it before testing navigation.
@@ -84,6 +91,6 @@ try {
     assert.equal(mobilePopup.url(),'https://www.youtube.com/@Goresh');
     await mobilePopup.close();
     if(process.env.STREAMER_SCREENSHOT)await mobile.screenshot({path:process.env.STREAMER_SCREENSHOT});
-    console.log('PASS Goresh links across six pages; outages across navigation, stale expiry, recovery, invalid responses, single refresh and blocked storage');
+    console.log('PASS Goresh only on pages without Settings; outages across navigation, stale expiry, recovery, invalid responses, single refresh and blocked storage');
     await noStorage.close();await context.close();
 } finally {await browser.close();server.close();}
