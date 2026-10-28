@@ -51,4 +51,9 @@ html body #abs-style-dock .phantom-theme-mark {width:48px !important;height:42px
 html body #abs-style-dock {animation:abs-dock-enter 280ms cubic-bezier(.2,.8,.2,1);}
 @keyframes abs-dock-enter {from{translate:0 24px;}to{translate:0 0;}}
 @keyframes abs-filter-enter {from{translate:100% 0;}to{translate:0 0;}}
+html.abs-theme-transition::view-transition {pointer-events:none;}
+html.abs-theme-transition::view-transition-old(root) {animation:abs-theme-fade-out 220ms ease both;mix-blend-mode:normal;}
+html.abs-theme-transition::view-transition-new(root) {animation:abs-theme-fade-in 220ms ease both;mix-blend-mode:normal;}
+@keyframes abs-theme-fade-out {to{opacity:0;}}
+@keyframes abs-theme-fade-in {from{opacity:0;}}
 @media(prefers-reduced-motion:reduce){html body #abs-style-dock,html body #cardsFilterModal .cards-filter-dialog {animation:none;}}

@@ -155,7 +155,7 @@
             slot.setAttribute('aria-label', 'Page style');
             document.body.append(slot);
         }
-        const oldGroup = control.closest('.filter-group');
+        const oldGroup = control.closest('.filter-group,.settings-theme-section');
         if (control.parentElement !== slot) slot.append(control);
         if (oldGroup && !oldGroup.querySelector('button,input,select')) oldGroup.remove();
         control.querySelectorAll('.hud-btn-indicator,small').forEach(node => node.remove());
@@ -167,10 +167,40 @@
         });
         if (!slot.dataset.transitionReady) {
             slot.dataset.transitionReady = 'true';
+            let replaying = false, transition = null, latestClick = 0, fallbackAnimation = null;
             slot.addEventListener('click', event => {
-                if (!event.target.closest('button') || matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-                document.body.animate([{opacity:.65},{opacity:1}], {duration:260,easing:'ease-out'});
-            });
+                const button = event.target.closest('.abs-hud-theme-btn');
+                if (!button || button.disabled || replaying) return;
+                const click = ++latestClick;
+                transition?.skipTransition();
+                if (matchMedia('(prefers-reduced-motion: reduce)').matches || button.classList.contains('active')) return;
+                if (typeof document.startViewTransition !== 'function') {
+                    fallbackAnimation?.cancel();
+                    fallbackAnimation = document.body.animate([{opacity:.65},{opacity:1}], {duration:220,easing:'ease-out'});
+                    return;
+                }
+                // Capture the old presentation before running the page's existing
+                // inline or bound click handler. Replay once inside the snapshot update.
+                event.preventDefault();
+                event.stopImmediatePropagation();
+                const apply = () => {
+                    if (click !== latestClick) return;
+                    replaying = true;
+                    try { button.click(); } finally { replaying = false; }
+                };
+                document.documentElement.classList.add('abs-theme-transition');
+                try {
+                    const current = transition = document.startViewTransition(apply);
+                    current.finished.catch(() => {}).finally(() => {
+                        if (transition !== current) return;
+                        transition = null;
+                        document.documentElement.classList.remove('abs-theme-transition');
+                    });
+                } catch {
+                    document.documentElement.classList.remove('abs-theme-transition');
+                    apply();
+                }
+            }, true);
         }
         const oldSlot = sidebar.querySelector('.abs-sidebar-style-slot');
         if (oldSlot) oldSlot.hidden = true;
