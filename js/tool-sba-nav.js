@@ -252,9 +252,6 @@
         const isOpen = drawer.classList.contains('open') || document.body.classList.contains('sba-side-settings-open');
         if (!isOpen) return;
 
-        const openedAt = Number(document.body.dataset.sbaPanelOpenedAt || '0');
-        if (Date.now() - openedAt < 120) return;
-
         if (drawer.contains(e.target) || btn?.contains(e.target)) return;
 
         document.body.classList.remove('sba-side-settings-open');
