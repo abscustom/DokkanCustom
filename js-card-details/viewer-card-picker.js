@@ -15,6 +15,68 @@
     let cardsLoadPromise = null;
     let contentCards = [];
     let contentLoadPromise = null;
+    let mechanicDataPromise = null;
+    const mechanicPatterns = {
+        Revive:/reviv|revival/i, 'Additional Attack':/additional.*attack/i,
+        Absorption:/absorb/i, 'Damage Reduction':/damage reduction|reduces damage received/i,
+        Evasion:/evad|dodg/i, Guard:/guard/i, Counter:/counter/i,
+        'Critical Hit':/critical hit/i, Healing:/recover.*HP|restores.*HP/i,
+        Domain:/domain|dokkan field/i, Standby:/standby/i, Transformation:/transform/i
+    };
+
+    function mountViewerFilters(host, onChange) {
+        let mechanic = '', extra = () => true, disposed = false;
+        const textById = new Map();
+        const apply = () => onChange(card => extra(card) && (!mechanic || mechanicPatterns[mechanic].test(textById.get(cardId(card)) || '')));
+        const group = window.DokkanUnitPicker.mountCharacterFilters(host,{items:getCardPool(),typeOf:cardTypeLabel,onChange:predicate=>{extra=predicate;apply();}});
+        const expandable = (title, select) => {
+            const details = document.createElement('details');details.className='viewer-filter-section';
+            const summary = document.createElement('summary');summary.textContent=title;
+            const search = document.createElement('input');search.type='search';search.placeholder='Search '+title.toLowerCase();search.setAttribute('aria-label',search.placeholder);
+            const narrow = () => [...select.options].forEach(option => option.hidden=Boolean(option.value && option.value!==select.value && !option.textContent.toLowerCase().includes(search.value.toLowerCase())));
+            search.addEventListener('input',narrow);
+            select.addEventListener('change',narrow);
+            details.append(summary,search,select);group.append(details);
+            return {details,narrow};
+        };
+        const category = expandable('Categories',group.querySelector('[aria-label="Character category"]'));
+        const updateItems = group.updateItems;
+        group.updateItems = cards => {updateItems(cards);category.narrow();};
+        const select = document.createElement('select');select.setAttribute('aria-label','Character mechanic');select.append(new Option('All mechanics',''));
+        Object.keys(mechanicPatterns).forEach(name=>select.append(new Option(name,name)));
+        const {details} = expandable('Mechanics',select);
+        select.disabled=true;
+        const status = document.createElement('p');status.role='status';details.append(status);
+        select.addEventListener('change',()=>{mechanic=select.value;apply();});
+        const load = async () => {
+            status.textContent='Loading mechanics…';
+            try {
+                mechanicDataPromise ||= Promise.all(['passive_skills','active_skills'].map(async name => {
+                    const response=await fetch(new URL('json/'+name+'.json',sharedAssetBase));
+                    if(!response.ok)throw Error('Could not load mechanics');
+                    return new Map(Object.values(await response.json()).map(row=>[String(row.id),row]));
+                })).catch(error=>{mechanicDataPromise=null;throw error;});
+                const [passives,actives]=await mechanicDataPromise;
+                const cards=getCardPool();
+                await Promise.all(cards.map(async card=>{
+                    let evidence=[passives.get(String(card.pass_id)),actives.get(String(card.active_id)),card.standby_id?'standby':'',card.field_id?'domain':'',card.is_transform?'transform':''];
+                    if(card.source==='custom' && window.CardContent?.enabled()) {
+                        const authored=await window.CardContent.getCard(card.id);
+                        const containers=authored.payload?.containers||{};
+                        evidence=[...Object.entries(containers).filter(([key])=>/passive|active|standby|domain/i.test(key)).map(([,value])=>value),...(authored.payload?.activeBlocksHTML||[])];
+                    }
+                    textById.set(cardId(card),JSON.stringify(evidence));
+                }));
+                if(disposed)return;
+                select.disabled=false;status.textContent='';apply();
+            } catch {
+                if(disposed)return;
+                status.textContent='Mechanics could not load. Close and reopen this section to retry.';
+            }
+        };
+        details.addEventListener('toggle',()=>{if(details.open && select.disabled)load();});
+        return () => {disposed=true;};
+    }
 
     function refreshContentCards() {
         if (!window.CardContent?.enabled() || contentLoadPromise) return contentLoadPromise;
@@ -362,6 +424,7 @@
             animationDuration: 240,
             animateClose: false,
             pageSize: MAX_RESULTS,
+            infiniteScroll: true,
             items: getCardPool(),
             loading: isLoadingCards,
             getSearchText: card => [cardName(card),cardId(card),card?.tag,card?.category,card?.element,card?.attribute].filter(Boolean).join(' '),
@@ -378,7 +441,7 @@
             mountControls(host,api) {
                 let sourceChoice='all', extra=()=>true;
                 const apply=()=>api.setFilter(card=>(sourceChoice==='all'||(sourceChoice==='custom'?card.source==='custom':card.source!=='custom'))&&extra(card));
-                window.DokkanUnitPicker.mountCharacterFilters(host,{items:getCardPool(),typeOf:cardTypeLabel,onChange:predicate=>{extra=predicate;apply();}});
+                const dispose = mountViewerFilters(host,predicate=>{extra=predicate;apply();});
                 const group = document.createElement('div');group.className='picker-source-tabs';
                 [['all','All'],['official','Official'],['custom','Custom']].forEach(([source,label]) => {
                     const button = document.createElement('button');button.type='button';button.className='picker-source-tab';button.textContent=label;
@@ -388,6 +451,7 @@
                         sourceChoice=source;apply();
                     });group.append(button);
                 });host.append(group);
+                return dispose;
             },
             emptyMessage: 'No viewer cards match this search.'
         };

@@ -118,6 +118,15 @@
         bindLifecycle(state);
         searchInput.addEventListener('input',()=>filterAndRender(state));
         loadMore.addEventListener('click',()=>{state.visibleCount += Math.max(1,Number(state.config.pageSize)||100);render(state);});
+        const sentinel = makeElement('div','picker-scroll-sentinel');
+        sentinel.setAttribute('aria-hidden','true');
+        viewport.append(sentinel);
+        state.sentinel = sentinel;
+        state.scrollObserver = typeof IntersectionObserver === 'function' ? new IntersectionObserver(entries => {
+            if (!state.open || !state.config.infiniteScroll || !entries.some(entry => entry.isIntersecting) || state.visibleCount >= state.filteredItems.length) return;
+            state.visibleCount += Math.max(1,Number(state.config.pageSize)||100);
+            render(state,true);
+        }, {root:viewport,rootMargin:'0px 0px 120px 0px'}) : null;
         return state;
     }
     function filterAndRender(state) {
@@ -128,14 +137,16 @@
         state.visibleCount = Math.max(1,Number(state.config.pageSize)||100);
         render(state);
     }
-    function render(state) {
+    function render(state, append = false) {
         if (!state.open) return;
-        state.grid.replaceChildren();
+        state.scrollObserver?.disconnect();
+        if (!append) state.grid.replaceChildren();
         const pending = Boolean(state.config.loading), error = state.config.error;
         state.grid.setAttribute('aria-busy',String(pending));
         const items = pending || error ? [] : state.filteredItems;
-        items.slice(0,state.visibleCount).forEach((item,index)=>{
-            const card = state.config.renderItem(item,index);
+        const start = append ? state.renderedCount : 0;
+        items.slice(start,state.visibleCount).forEach((item,index)=>{
+            const card = state.config.renderItem(item,start + index);
             if (!(card instanceof Element)) return;
             card.addEventListener('click',event=>{
                 if (event.defaultPrevented || card.matches(':disabled') || state.config.canSelect?.(item)===false) return;
@@ -157,6 +168,10 @@
         }
         state.count.textContent = pending ? 'Loading' : error ? 'Could not load characters' : items.length ? `Showing ${Math.min(state.visibleCount,items.length).toLocaleString()} of ${items.length.toLocaleString()}` : '0 characters';
         state.loadMore.hidden = pending || Boolean(error) || items.length<=state.visibleCount;
+        state.renderedCount = Math.min(state.visibleCount,items.length);
+        state.loadMore.parentElement.hidden = Boolean(state.config.infiniteScroll && state.scrollObserver);
+        state.sentinel.hidden = !state.config.infiniteScroll || !state.scrollObserver || pending || Boolean(error) || state.visibleCount >= items.length;
+        if (!state.sentinel.hidden) state.scrollObserver.observe(state.sentinel);
     }
     function viewerAnimationDuration(state) {
         if (state.config.presentation !== 'abs-viewer') return 0;
@@ -346,6 +361,7 @@
     function close(id,{restoreFocus=true,reason='dismiss',afterClose}={}) {
         const state=id?instances.get(id):activePicker;
         if(!state?.open)return false;
+        state.scrollObserver?.disconnect();
         const viewerPresentation = state.config.presentation === 'abs-viewer';
         const animateViewerExit = viewerPresentation && state.config.animateClose !== false && reason !== 'replace' && canAnimateViewer(state);
         state.open=false;
