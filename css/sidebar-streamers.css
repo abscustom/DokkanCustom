@@ -128,7 +128,8 @@
     background: #858a94;
 }
 
-.abs-sidebar-twitch__avatar[data-status='checking']::after {
+.abs-sidebar-twitch__avatar[data-status='checking']::after,
+.abs-sidebar-twitch__avatar[data-status='retrying']::after {
     background: #d0a44b;
 }
 
@@ -201,7 +202,8 @@
     color: #9297a1;
 }
 
-.abs-sidebar-twitch__status[data-status='checking'] {
+.abs-sidebar-twitch__status[data-status='checking'],
+.abs-sidebar-twitch__status[data-status='retrying'] {
     color: #e0c17e;
 }
 

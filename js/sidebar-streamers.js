@@ -3,9 +3,10 @@
 
     if (!window || !document || window.ABSSidebarTwitch) return;
 
-    const VALID_STATUSES = new Set(['checking', 'live', 'offline', 'error']);
+    const VALID_STATUSES = new Set(['checking', 'retrying', 'live', 'offline', 'error']);
     const STATUS_LABELS = Object.freeze({
         checking: 'Checking status',
+        retrying: 'Checking again soon',
         live: 'Live now',
         offline: 'Offline',
         error: 'Status unavailable',

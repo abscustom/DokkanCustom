@@ -12,7 +12,21 @@
     ];
     let timer = null;
     let pending = null;
-    let latest = CHANNELS.map((item,index)=>({...item,originalIndex:index,isLive:false,status:item.youtubeOnly?'not-applicable':'checking',avatar:null}));
+    const CACHE_KEY = 'abs_streamer_status_v1';
+    const MAX_STATUS_AGE = 600000;
+    let cached = {};
+    try { cached = JSON.parse(sessionStorage.getItem(CACHE_KEY) || '{}') || {}; } catch {}
+    let latest = CHANNELS.map((item,index)=>{
+        const saved = cached[item.twitch];
+        const valid = Number.isFinite(saved?.checkedAt) && saved.checkedAt <= Date.now() && Date.now()-saved.checkedAt < MAX_STATUS_AGE && ['live','offline'].includes(saved.status);
+        return {...item,originalIndex:index,isLive:valid && saved.status==='live',status:item.youtubeOnly?'not-applicable':valid?saved.status:'checking',avatar:valid?saved.avatar:null,
+            ...(valid?{checkedAt:saved.checkedAt,stale:true}:{})};
+    });
+    function retainStatus(previous) {
+        const age = Date.now()-Number(previous?.checkedAt);
+        const recent = Number.isFinite(age) && age >= 0 && age < MAX_STATUS_AGE && ['live','offline'].includes(previous?.status);
+        return {isLive:recent?previous.isLive:false,status:recent?previous.status:'retrying',stale:true,checkedAt:previous?.checkedAt,avatar:previous?.avatar||null};
+    }
     function render() {
         const slot=document.getElementById('abs-sidebar-twitch');
         if (!slot || !window.ABSSidebarTwitch) return;
@@ -33,10 +47,12 @@
                 const offline=/\boffline\b|\bnot live\b/i.test(text);
                 const live=!offline && /\d.*\b(?:seconds?|minutes?|hours?|days?)\b/i.test(text) && !/error|not found|does not exist/i.test(text);
                 const confirmed=offline||live;
-                const recent=previous?.checkedAt && Date.now()-previous.checkedAt<600000;
-                return {...item,originalIndex,isLive:confirmed?live:recent?previous.isLive:false,status:confirmed?(offline?'offline':'live'):recent?previous.status:'checking',stale:!confirmed,checkedAt:confirmed?Date.now():previous?.checkedAt,uptime:live?text:null,avatar:/^https:\/\//i.test(avatarUrl)?avatarUrl:previous?.avatar||null};
+                return {...item,originalIndex,...retainStatus(previous),...(confirmed?{isLive:live,status:offline?'offline':'live',stale:false,checkedAt:Date.now()}:{}),uptime:live?text:null,avatar:/^https:\/\//i.test(avatarUrl)?avatarUrl:previous?.avatar||null};
             }));
-            latest=results.map((result,index)=>result.status==='fulfilled'?result.value:{...CHANNELS[index],originalIndex:index,isLive:false,status:'error',avatar:null});
+            latest=results.map((result,index)=>result.status==='fulfilled'?result.value:{...CHANNELS[index],originalIndex:index,...retainStatus(latest.find(item=>item.twitch===CHANNELS[index].twitch))});
+            try {
+                sessionStorage.setItem(CACHE_KEY,JSON.stringify(Object.fromEntries(latest.filter(item=>item.twitch && ['live','offline'].includes(item.status) && item.checkedAt).map(item=>[item.twitch,{status:item.status,checkedAt:item.checkedAt,avatar:item.avatar}]))));
+            } catch {}
             latest.sort((first,second)=>Number(second.isLive)-Number(first.isLive)||first.originalIndex-second.originalIndex);
             render();
         })().finally(()=>{pending=null;});
