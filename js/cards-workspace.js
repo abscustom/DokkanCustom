@@ -42,6 +42,8 @@
         const title = header.querySelector('span');
         title.className = 'calc-picker-title-text';
         title.textContent = 'Filter characters';
+        title.classList.add('visually-hidden');
+        header.classList.add('cards-filter-accessible-header');
         const reset = header.querySelector('button');
         reset.className = 'picker-source-tab cards-filter-reset';
         reset.textContent = 'Reset all';
@@ -58,7 +60,12 @@
         controls.append(document.getElementById('sbaCardFiltersSlot'), document.getElementById('sbaAdvancedFilterSlot'));
         const categories = document.getElementById('sbaCategoryFilterSlot');
         categories.className = 'cards-filter-categories';
-        columns.append(controls, categories);
+        const categoryDropdown = document.createElement('details');
+        categoryDropdown.className = 'cards-filter-dropdown';
+        const categorySummary = document.createElement('summary');
+        categorySummary.textContent = 'Categories';
+        categoryDropdown.append(categorySummary, categories);
+        columns.append(reset, controls, categoryDropdown);
         const count = document.createElement('p');
         count.className = 'lc-unit-picker-count';
         count.setAttribute('role', 'status');
@@ -86,6 +93,7 @@
         });
         window.DokkanUnitPicker.enhance(root, {
             title: 'Filter characters', closeLabel: 'Close character filters',
+            searchLabel: dialog.querySelector('input[type="search"]')?.getAttribute('aria-label') || 'Search character categories',
             onClose() {
                 dialog.classList.remove('is-open');
                 dialog.setAttribute('aria-hidden', 'true');
@@ -103,6 +111,7 @@
                 dialog.removeAttribute('aria-hidden');
                 trigger.setAttribute('aria-expanded', 'true');
                 window.DokkanUnitPicker.openEnhanced(root.id);
+                reset.focus({preventScroll:true});
             }
         }, true);
         // Existing outside-click/Escape/navigation paths can still dismiss the live control.

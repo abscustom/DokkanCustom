@@ -31,13 +31,23 @@
         select('awakening','EZA Status',[['all','All'],['none','None'],['eza','EZA'],['seza','Super EZA']]);
         select('class','Class',[['all','All'],['super','Super'],['extreme','Extreme']]);
         const searchable=(key,title,names)=>{
-            const section=document.createElement('section');const label=document.createElement('h3');label.textContent=title;
+            const section=document.createElement('details');section.className='cards-filter-dropdown';const label=document.createElement('summary');label.textContent=title;
             const input=document.createElement('input');input.type='search';input.placeholder='Search '+title.toLowerCase();input.setAttribute('aria-label',input.placeholder);
             const list=document.createElement('div');list.className='extra-filter-options';
             names.forEach(name=>{const button=document.createElement('button');button.type='button';button.textContent=name;button.setAttribute('aria-pressed','false');button.addEventListener('click',()=>{selected[key].has(name)?selected[key].delete(name):selected[key].add(name);button.setAttribute('aria-pressed',String(selected[key].has(name)));refresh();});list.append(button);});
             input.addEventListener('input',()=>list.childNodes.forEach(node=>node.hidden=!node.textContent.toLowerCase().includes(input.value.toLowerCase())));
             section.append(label,input,list);root.append(section);
+            return section;
         };
+        const mechanicSection=searchable('mechanics','Mechanics',Object.keys(mechanics));
+        mechanicSection.querySelectorAll('button').forEach(button=>button.disabled=true);
+        // Move the live checkbox so the existing KO index, filtering and reset remain authoritative.
+        const koInput=document.getElementById('koScreenFilter');
+        if(koInput) {
+            const option=koInput.closest('label');option.className='mechanic-ko-option';
+            option.replaceChildren(koInput,document.createTextNode('KO Screen'));
+            mechanicSection.querySelector('.extra-filter-options').append(option);
+        }
         const status=document.createElement('p');status.role='status';status.textContent='Loading mechanics and link skills…';root.append(status);
         const base=new URL('../',document.currentScript?.src || new URL('js/card-search-filters.js',document.baseURI));
         const read=async name=>{const r=await fetch(new URL('json/'+name+'.json',base));if(!r.ok)throw Error(name);return Object.values(await r.json());};
@@ -60,7 +70,7 @@
                 if(catalogFailed||results.some(r=>r.status==='rejected'))status.textContent='Some custom-card details could not load. Reload to retry.';
                 else status.remove();
             } else status.remove();
-            searchable('mechanics','Mechanics',Object.keys(mechanics));
+            mechanicSection.querySelectorAll('button').forEach(button=>button.disabled=false);
             searchable('links','Link skills',[...linkNames].sort());refresh();
         }).catch(()=>{status.textContent='Could not load mechanics and link skills. Reload to retry.';});
     }

@@ -38,6 +38,35 @@ html body #cardsFilterModal .cards-filter-controls {max-height:none; border-righ
 html body #cardsFilterModal .cards-filter-categories {border:0;padding:0;}
 html body #cardsFilterModal .category-filter-list {max-height:260px !important;overflow:auto !important;}
 html body #cardsFilterModal .lc-unit-picker-count {display:none !important;}
+/* A compact filter rail, using the same type and fields throughout. */
+html body #cardsFilterModal,
+html body #cardsFilterModal :is(button,input,select,label,summary,.filter-group-label) {font:500 12px/1.4 system-ui,sans-serif !important;letter-spacing:0 !important;text-transform:none !important;}
+html body #cardsFilterModal .cards-filter-accessible-header {padding:0 !important;border:0 !important;height:0;min-height:0;}
+html body #cardsFilterModal .cards-filter-columns {gap:14px;}
+html body #cardsFilterModal .cards-filter-reset {align-self:flex-end;padding:7px 12px !important;min-height:34px;}
+html body #cardsFilterModal :is(.sba-card-filter-heading,#sbaAdvancedFilterSlot,#categoryFilterTitle,.category-filter-status,.category-filter-search-wrap svg) {display:none !important;}
+html body #cardsFilterModal .cards-filter-controls {gap:12px !important;}
+html body #cardsFilterModal .cards-inline-filter-bar {gap:10px !important;}
+html body #cardsFilterModal .filter-pill-group {display:grid !important;grid-template-columns:repeat(5,minmax(0,1fr));gap:5px !important;margin:0 !important;width:100% !important;}
+html body #cardsFilterModal .source-pill-group {grid-template-columns:repeat(2,minmax(0,1fr));}
+html body #cardsFilterModal .rarity-pill-group {grid-template-columns:repeat(3,minmax(0,1fr));}
+html body #cardsFilterModal .filter-group-label {grid-column:1/-1;flex:none !important;margin:0 !important;padding:0 !important;}
+html body #cardsFilterModal .filter-pill-btn {box-sizing:border-box;width:100% !important;min-width:0 !important;min-height:32px;height:auto !important;padding:6px 3px !important;}
+html body #cardsFilterModal .extra-card-filters {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;}
+html body #cardsFilterModal .extra-card-filters > :is(details,p) {grid-column:1/-1;}
+html body #cardsFilterModal .cards-filter-dropdown {min-width:0;width:100%;border-top:1px solid #ffffff20;padding-top:4px;}
+html body #cardsFilterModal .cards-filter-dropdown > summary {cursor:pointer;padding:10px 0;font-weight:600 !important;}
+html body #cardsFilterModal :is(.extra-card-filters input[type=search],#categoryFilterSearch) {width:100% !important;box-sizing:border-box;height:38px;min-height:38px;padding:9px 10px !important;margin:0 0 10px !important;border:1px solid #ffffff30 !important;border-radius:8px !important;background:#27282d !important;color:#f1f2f3 !important;outline-offset:2px;}
+html body #cardsFilterModal .category-filter-search-wrap {display:block;padding:0 !important;margin:0 !important;border:0 !important;background:none !important;}
+html body #cardsFilterModal .category-filter-heading {justify-content:flex-end;min-height:0;}
+html body #cardsFilterModal .category-filter-heading:not(:has(button:not([hidden]))) {display:none !important;}
+html body #cardsFilterModal :is(.extra-filter-options,.category-filter-list) {display:grid !important;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px;max-height:240px !important;overflow:auto !important;align-content:start;}
+html body #cardsFilterModal :is(.extra-filter-options button,.mechanic-ko-option,.category-filter-option) {box-sizing:border-box;display:flex;align-items:center;justify-content:center;text-align:center !important;min-height:36px;padding:7px 8px !important;margin:0;border:1px solid #ffffff25;border-radius:8px;background:#ffffff08;color:#ddd;white-space:normal;cursor:pointer;}
+html body #cardsFilterModal .extra-filter-options > [hidden] {display:none !important;}
+html body #cardsFilterModal .mechanic-ko-option {position:relative;}
+html body #cardsFilterModal .mechanic-ko-option input {position:absolute;width:1px;height:1px;opacity:0;}
+html body #cardsFilterModal .mechanic-ko-option:has(:checked) {background:#ffffff28;border-color:#aaa;color:white;}
+html body #cardsFilterModal .mechanic-ko-option:has(:focus-visible) {outline:2px solid white;outline-offset:2px;}
 .extra-card-filters {display:flex;flex-direction:column;gap:20px;}
 .extra-card-filters label {display:flex;flex-direction:column;gap:8px;}
 .extra-card-filters h3 {font:600 13px system-ui;margin:0 0 10px;}
